@@ -1,0 +1,78 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+/**
+ * @author Xanders
+ * @see https://team.xsamtech.com/xanderssamoth
+ */
+class Notification extends Model
+{
+    use HasFactory;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $guarded = [];
+
+    /**
+     * ONE-TO-MANY
+     * One type for several notifications
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(Type::class);
+    }
+
+    /**
+     * ONE-TO-MANY
+     * One status for several notifications
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(Status::class);
+    }
+
+    /**
+     * ONE-TO-MANY
+     * One from_user for several notifications
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function from_user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'from_user_id');
+    }
+
+    /**
+     * ONE-TO-MANY
+     * One to_user for several notifications
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function to_user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'to_user_id');
+    }
+
+    /**
+     * ONE-TO-MANY
+     * One work for several notifications
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function work(): BelongsTo
+    {
+        return $this->belongsTo(Work::class);
+    }
+}

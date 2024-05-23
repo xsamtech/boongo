@@ -8,7 +8,7 @@ use Spatie\Translatable\HasTranslations;
 
 /**
  * @author Xanders
- * @see https://www.linkedin.com/in/xanders-samoth-b2770737/
+ * @see https://team.xsamtech.com/xanderssamoth
  */
 class Status extends Model
 {
@@ -42,15 +42,6 @@ class Status extends Model
     public function users()
     {
         return $this->hasMany(User::class);
-    }
-
-    /**
-     * MANY-TO-ONE
-     * Several carts for a status
-     */
-    public function carts()
-    {
-        return $this->hasMany(Cart::class);
     }
 
     /**

@@ -11,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 /**
  * @author Xanders
- * @see https://www.linkedin.com/in/xanders-samoth-b2770737/
+ * @see https://team.xsamtech.com/xanderssamoth
  */
 class User extends Authenticatable
 {
@@ -63,11 +63,11 @@ class User extends Authenticatable
 
     /**
      * MANY-TO-MANY
-     * Several media_notices for several users
+     * Several subscriptions for several users
      */
-    public function medias()
+    public function subscriptions()
     {
-        return $this->belongsToMany(Media::class)->withTimestamps()->withPivot(['is_liked', 'status_id']);
+        return $this->belongsToMany(Subscription::class)->withTimestamps()->withPivot(['payment_id']);
     }
 
     /**
@@ -86,33 +86,6 @@ class User extends Authenticatable
     public function status()
     {
         return $this->belongsTo(Status::class);
-    }
-
-    /**
-     * MANY-TO-ONE
-     * Several medias for a user
-     */
-    public function owned_medias()
-    {
-        return $this->hasMany(Media::class);
-    }
-
-    /**
-     * MANY-TO-ONE
-     * Several carts for a user
-     */
-    public function carts()
-    {
-        return $this->hasMany(Cart::class);
-    }
-
-    /**
-     * MANY-TO-ONE
-     * Several donations for a user
-     */
-    public function donations()
-    {
-        return $this->hasMany(Donation::class);
     }
 
     /**

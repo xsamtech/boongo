@@ -4,15 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Translatable\HasTranslations;
 
 /**
  * @author Xanders
- * @see https://www.linkedin.com/in/xanders-samoth-b2770737/
+ * @see https://team.xsamtech.com/xanderssamoth
  */
 class Group extends Model
 {
-    use HasFactory, HasTranslations;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -20,11 +19,6 @@ class Group extends Model
      * @var array<int, string>
      */
     protected $guarded = [];
-
-    /**
-     * Translatable properties.
-     */
-    protected $translatable = ['group_name'];
 
     /**
      * MANY-TO-ONE
@@ -42,5 +36,14 @@ class Group extends Model
     public function types()
     {
         return $this->hasMany(Type::class);
+    }
+
+    /**
+     * MANY-TO-ONE
+     * Several categories for a group
+     */
+    public function categories()
+    {
+        return $this->hasMany(Category::class);
     }
 }

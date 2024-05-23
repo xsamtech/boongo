@@ -9,9 +9,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
  */
-class Role extends Model
+class PasswordReset extends Model
 {
     use HasFactory;
+
+    protected $table = 'password_resets';
 
     /**
      * The attributes that are mass assignable.
@@ -19,13 +21,4 @@ class Role extends Model
      * @var array<int, string>
      */
     protected $guarded = [];
-
-    /**
-     * MANY-TO-MANY
-     * Several users for several roles
-     */
-    public function users()
-    {
-        return $this->belongsToMany(User::class);
-    }
 }

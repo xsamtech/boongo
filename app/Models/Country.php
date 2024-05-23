@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
  */
-class Role extends Model
+class Country extends Model
 {
     use HasFactory;
 
@@ -21,11 +21,11 @@ class Role extends Model
     protected $guarded = [];
 
     /**
-     * MANY-TO-MANY
-     * Several users for several roles
+     * MANY-TO-ONE
+     * Several users for a country
      */
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->hasMany(User::class);
     }
 }
