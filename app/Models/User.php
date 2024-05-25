@@ -6,6 +6,9 @@ use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -47,16 +50,16 @@ class User extends Authenticatable
     /**
      * Accessor for Age.
      */
-    public function age()
+    public function age(): int
     {
-        return Carbon::parse($this->attributes['birth_date'])->age;
+        return Carbon::parse($this->attributes['birthdate'])->age;
     }
 
     /**
      * MANY-TO-MANY
      * Several roles for several users
      */
-    public function roles()
+    public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);
     }
@@ -65,7 +68,7 @@ class User extends Authenticatable
      * MANY-TO-MANY
      * Several subscriptions for several users
      */
-    public function subscriptions()
+    public function subscriptions(): BelongsToMany
     {
         return $this->belongsToMany(Subscription::class)->withTimestamps()->withPivot(['payment_id']);
     }
@@ -74,7 +77,7 @@ class User extends Authenticatable
      * ONE-TO-MANY
      * One country for several users
      */
-    public function country()
+    public function country(): BelongsTo
     {
         return $this->belongsTo(Country::class);
     }
@@ -83,7 +86,7 @@ class User extends Authenticatable
      * ONE-TO-MANY
      * One status for several users
      */
-    public function status()
+    public function status(): BelongsTo
     {
         return $this->belongsTo(Status::class);
     }
@@ -92,18 +95,31 @@ class User extends Authenticatable
      * MANY-TO-ONE
      * Several payments for a user
      */
-    public function payments()
+    public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
     }
 
     /**
      * MANY-TO-ONE
-     * Several notifications for a user
+     * Several notifications_from for a user
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function notifications()
+    public function notifications_from(): HasMany
     {
-        return $this->hasMany(Notification::class);
+        return $this->hasMany(Notification::class, 'from_user_id');
+    }
+
+    /**
+     * MANY-TO-ONE
+     * Several notifications_to for a user
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function notifications_to(): HasMany
+    {
+        return $this->hasMany(Notification::class, 'to_user_id');
     }
 
     /**

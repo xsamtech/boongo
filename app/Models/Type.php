@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Translatable\HasTranslations;
 
 /**
@@ -30,44 +32,53 @@ class Type extends Model
      * ONE-TO-MANY
      * One group for several types
      */
-    public function group()
+    public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);
     }
 
     /**
      * MANY-TO-ONE
-     * Several medias for a type
+     * Several works for a type
      */
-    public function medias()
+    public function works(): HasMany
     {
-        return $this->hasMany(Media::class);
+        return $this->hasMany(Work::class);
     }
 
     /**
      * MANY-TO-ONE
-     * Several books for a type
+     * Several subscriptions for a type
      */
-    public function books()
+    public function subscriptions(): HasMany
     {
-        return $this->hasMany(Book::class);
-    }
-
-    /**
-     * MANY-TO-ONE
-     * Several carts for a type
-     */
-    public function carts()
-    {
-        return $this->hasMany(Cart::class);
+        return $this->hasMany(Subscription::class);
     }
 
     /**
      * MANY-TO-ONE
      * Several payments for a type
      */
-    public function payments()
+    public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * MANY-TO-ONE
+     * Several notifications for a type
+     */
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    /**
+     * MANY-TO-ONE
+     * Several files for a type
+     */
+    public function files(): HasMany
+    {
+        return $this->hasMany(File::class);
     }
 }

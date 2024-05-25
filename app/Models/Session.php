@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @author Xanders
@@ -26,18 +28,18 @@ class Session extends Model
 
     /**
      * MANY-TO-MANY
-     * Several medias for several sessions
+     * Several works for several sessions
      */
-    public function medias()
+    public function works(): BelongsToMany
     {
-        return $this->belongsToMany(Media::class)->withTimestamps()->withPivot('is_viewed');
+        return $this->belongsToMany(Work::class)->withTimestamps()->withPivot(['read']);
     }
 
     /**
      * ONE-TO-MANY
      * One user for several sessions
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

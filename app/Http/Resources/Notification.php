@@ -24,20 +24,19 @@ class Notification extends JsonResource
             'type' => Type::make($this->type),
             'status' => Status::make($this->status),
             'from' => User::make($this->from_user),
-            'post' => Post::make($this->post),
-            'event' => Event::make($this->event),
-            'community' => Community::make($this->community),
-            'message' => Message::make($this->message),
-            'team' => Team::make($this->team),
-            'reaction' => Reaction::make($this->reaction),
-            'cart' => Cart::make($this->cart),
+            'to' => User::make($this->to_user),
+            'work' => Work::make($this->work),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'created_at_explicit' => $this->created_at->format('Y') == date('Y') ? explicitDayMonth($this->created_at->format('Y-m-d H:i:s')) : explicitDate($this->created_at->format('Y-m-d H:i:s')),
             'updated_at_explicit' => $this->updated_at->format('Y') == date('Y') ? explicitDayMonth($this->updated_at->format('Y-m-d H:i:s')) : explicitDate($this->updated_at->format('Y-m-d H:i:s')),
             'created_at_ago' => timeAgo($this->created_at->format('Y-m-d H:i:s')),
             'updated_at_ago' => timeAgo($this->updated_at->format('Y-m-d H:i:s')),
-            'to_user_id' => $this->to_user_id
+            'type_id' => $this->type_id,
+            'status_id' => $this->status_id,
+            'from_user_id' => $this->from_user_id,
+            'to_user_id' => $this->to_user_id,
+            'work_id' => $this->work_id
         ];
     }
 }
