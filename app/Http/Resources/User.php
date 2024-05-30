@@ -43,6 +43,7 @@ class User extends JsonResource
             'status' => Status::make($this->status),
             'roles' => Role::collection($this->roles),
             'subscriptions' => Subscription::collection($this->subscriptions)->sortByDesc('created_at')->toArray(),
+            'carts' => Cart::collection($this->carts)->sortByDesc('created_at')->toArray(),
             'payments' => Payment::collection($this->payments)->sortByDesc('created_at')->toArray(),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s')

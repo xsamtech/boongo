@@ -8,6 +8,7 @@ use App\Models\Notification;
 use App\Models\PasswordReset;
 use App\Models\PersonalAccessToken;
 use App\Models\Status;
+use App\Models\Type;
 use App\Models\User;
 use Nette\Utils\Random;
 use Illuminate\Filesystem\Filesystem;
@@ -45,15 +46,16 @@ class UserController extends BaseController
      */
     public function store(Request $request)
     {
-        $status_intermediate = Status::where('status_name->fr', 'Intermédiaire')->first();
+        $status_activated = Status::where('status_name->fr', 'Activé')->first();
         $status_unread = Status::where('status_name->fr', 'Non lue')->first();
+        $type_new_user = Type::where('type_name->fr', 'Nouvel utilisateur')->first();
         // Get inputs
         $inputs = [
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
             'surname' => $request->surname,
             'gender' => $request->gender,
-            'birth_date' => $request->birth_date,
+            'birthdate' => $request->birthdate,
             'city' => $request->city,
             'address_1' => $request->address_1,
             'address_2' => $request->address_2,
@@ -62,21 +64,17 @@ class UserController extends BaseController
             'phone' => $request->phone,
             'username' => $request->username,
             'password' => empty($request->password) ? null : Hash::make($request->password),
-            'belongs_to' => $request->belongs_to,
-            'parental_code' => $request->parental_code,
-            'api_token' => $request->api_token,
-            'prefered_theme' => $request->prefered_theme,
             'country_id' => $request->country_id,
-            'status_id' => is_null($status_intermediate) ? null : $status_intermediate->id
+            'status_id' => is_null($status_activated) ? null : $status_activated->id
         ];
         $users = User::all();
         $password_resets = PasswordReset::all();
-        $basic  = new \Vonage\Client\Credentials\Basic(config('vonage.api_key'), config('vonage.api_secret'));
-        $client = new \Vonage\Client($basic);
+        // $basic  = new \Vonage\Client\Credentials\Basic(config('vonage.api_key'), config('vonage.api_secret'));
+        // $client = new \Vonage\Client($basic);
 
-        // If "email" and "phone" are NULL, it means that it's a child. So, generate an email for him
+        // "email" and "phone" cannot all be NULL
         if (trim($inputs['email']) == null AND trim($inputs['phone']) == null) {
-            $inputs['email'] = 'child-' . Random::generate(10, '0-9a-zA-Z') . '@no_mail.com';
+            return $this->handleError($inputs['email'], __('validation.custom.email_or_phone.required'), 400);
         }
 
         if ($inputs['email'] != null) {
@@ -124,24 +122,6 @@ class UserController extends BaseController
             endforeach;
         }
 
-        // If it is a child's account, generate a code for his parent if the code does not exist
-        if ($inputs['belongs_to'] != null) {
-            $random_string = Random::generate(7, '0-9a-zA-Z');
-
-            $parent = User::find($inputs['belongs_to']);
-
-            if (is_null($parent)) {
-                return $this->handleError(__('notifications.find_parent_404'));
-            }
-
-            if ($parent->parental_code == null) {
-                $parent->update([
-                    'parental_code' => $random_string,
-                    'updated_at' => now()
-                ]);
-            }
-        }
-
         if ($inputs['password'] != null) {
             if ($request->confirm_password != $request->password OR $request->confirm_password == null) {
                 return $this->handleError($request->confirm_password, __('notifications.confirm_password_error'), 400);
@@ -163,12 +143,12 @@ class UserController extends BaseController
 
                 Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
-                try {
-                    $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'DikiTivi', (string) $password_reset->token));
+                // try {
+                //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
 
-                } catch (\Throwable $th) {
-                    return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
-                }
+                // } catch (\Throwable $th) {
+                //     return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
+                // }
 
             } else {
                 if ($inputs['email'] != null AND $inputs['phone'] == null) {
@@ -188,12 +168,12 @@ class UserController extends BaseController
                         'former_password' => $request->password
                     ]);
 
-                    try {
-                        $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'DikiTivi', (string) $password_reset->token));
+                    // try {
+                    //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
 
-                    } catch (\Throwable $th) {
-                        return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
-                    }
+                    // } catch (\Throwable $th) {
+                    //     return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
+                    // }
                 }
             }
         }
@@ -211,12 +191,14 @@ class UserController extends BaseController
 
                 $inputs['password'] = Hash::make($password_reset->former_password);
 
-                try {
-                    $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'DikiTivi', (string) $password_reset->token));
+                Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
-                } catch (\Throwable $th) {
-                    return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
-                }
+                // try {
+                //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
+
+                // } catch (\Throwable $th) {
+                //     return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
+                // }
 
             } else {
                 if ($inputs['email'] != null AND $inputs['phone'] == null) {
@@ -238,12 +220,12 @@ class UserController extends BaseController
                         'former_password' => Random::generate(10, 'a-zA-Z')
                     ]);
 
-                    try {
-                        $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'DikiTivi', (string) $password_reset->token));
+                    // try {
+                    //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
 
-                    } catch (\Throwable $th) {
-                        return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
-                    }
+                    // } catch (\Throwable $th) {
+                    //     return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
+                    // }
 
                     $inputs['password'] = Hash::make($password_reset->former_password);
                 }
@@ -258,26 +240,6 @@ class UserController extends BaseController
             'updated_at' => now()
         ]);
 
-        // If it is a child's account, give to the child the same password as the parent
-        if ($inputs['belongs_to'] != null) {
-            $parent = User::find($inputs['belongs_to']);
-            $parent_password_reset = PasswordReset::where('email', $parent->email)->orWhere('phone', $parent->phone)->first();
-
-            if (is_null($parent)) {
-                return $this->handleError(__('notifications.find_parent_404'));
-            }
-
-            $user->update([
-                'password' => $parent->password,
-                'updated_at' => now()
-            ]);
-
-            $password_reset->update([
-                'former_password' => $parent_password_reset->former_password,
-                'updated_at' => now()
-            ]);
-        }
-
         if ($request->role_id != null) {
             $user->roles()->attach([$request->role_id]);
         }
@@ -286,16 +248,9 @@ class UserController extends BaseController
             HISTORY AND/OR NOTIFICATION MANAGEMENT
         */
         Notification::create([
-            'notification_url' => 'about/terms_of_use',
-            'notification_content' => [
-                'en' => 'Welcome to the DikiTivi app! Please read our terms before you start.',
-                'fr' => 'Bienvenue sur l\'application DikiTivi ! Veuillez lire nos conditions avant de commencer.',
-                'ln' => 'Boyei malamu na application ya DikiTivi! Tosɛngi yo otánga mibeko na biso liboso ya kobanda.',
-            ],
-            'icon' => 'bi bi-person-check',
-            'color' => 'text-success',
+            'type_id' => is_null($type_new_user) ? null : $type_new_user->id,
             'status_id' => is_null($status_unread) ? null : $status_unread->id,
-            'user_id' => $user->id
+            'to_user_id' => $user->id
         ]);
 
         $object = new stdClass();
@@ -356,7 +311,7 @@ class UserController extends BaseController
             'lastname' => $request->lastname,
             'surname' => $request->surname,
             'gender' => $request->gender,
-            'birth_date' => $request->birth_date,
+            'birthdate' => $request->birthdate,
             'city' => $request->city,
             'address_1' => $request->address_1,
             'address_2' => $request->address_2,
@@ -366,11 +321,8 @@ class UserController extends BaseController
             'username' => $request->username,
             'password' => $request->password,
             'confirm_password' => $request->confirm_password,
-            'belongs_to' => $request->belongs_to,
-            'parental_code' => $request->parental_code,
             'email_verified_at' => $request->email_verified_at,
             'phone_verified_at' => $request->phone_verified_at,
-            'prefered_theme' => $request->prefered_theme,
             'country_id' => $request->country_id,
             'status_id' => $request->status
         ];
@@ -405,9 +357,9 @@ class UserController extends BaseController
             ]);
         }
 
-        if ($inputs['birth_date'] != null) {
+        if ($inputs['birthdate'] != null) {
             $user->update([
-                'birth_date' => $inputs['birth_date'],
+                'birthdate' => $inputs['birthdate'],
                 'updated_at' => now(),
             ]);
         }
@@ -606,36 +558,6 @@ class UserController extends BaseController
             ]);
         }
 
-        // If it is a child's account, generate a code for his parent if the code does not exist
-        if ($inputs['belongs_to'] != null) {
-            $random_string = Random::generate(7, '0-9a-zA-Z');
-
-            $parent = User::find($inputs['belongs_to']);
-
-            if (is_null($parent)) {
-                return $this->handleError(__('notifications.find_parent_404'));
-            }
-
-            if ($parent->parental_code == null) {
-                $parent->update([
-                    'parental_code' => $random_string,
-                    'updated_at' => now()
-                ]);
-            }
-
-            $user->update([
-                'belongs_to' => $inputs['belongs_to'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['parental_code'] != null) {
-            $user->update([
-                'parental_code' => $inputs['parental_code'],
-                'updated_at' => now(),
-            ]);
-        }
-
         if ($inputs['email_verified_at'] != null) {
             $user->update([
                 'email_verified_at' => $inputs['email_verified_at'],
@@ -725,13 +647,6 @@ class UserController extends BaseController
             }
         }
 
-        if ($inputs['prefered_theme'] != null) {
-            $user->update([
-                'prefered_theme' => $inputs['prefered_theme'],
-                'updated_at' => now(),
-            ]);
-        }
-
         if ($inputs['country_id'] != null) {
             $user->update([
                 'country_id' => $inputs['country_id'],
@@ -760,8 +675,7 @@ class UserController extends BaseController
         $password_reset_email = PasswordReset::whereNotNull('email')->where('email', $user->email)->first();
         $password_reset_phone = PasswordReset::whereNotNull('phone')->where('phone', $user->phone)->first();
         $personal_access_tokens = PersonalAccessToken::where('tokenable_id', $user->id)->get();
-        $notifications = Notification::where('user_id', $user->id)->get();
-        $children = User::where('belongs_to', $user->id)->get();
+        $notifications = Notification::where('from_user_id', $user->id)->get();
         $directory = $_SERVER['DOCUMENT_ROOT'] . '/public/storage/images/users/' . $user->id;
 
         if (!is_null($personal_access_tokens)) {
@@ -773,15 +687,6 @@ class UserController extends BaseController
         if (!is_null($notifications)) {
             foreach ($notifications as $notification):
                 $notification->delete();
-            endforeach;
-        }
-
-        if (!is_null($children)) {
-            foreach ($children as $child):
-                $child->update([
-                    'belongs_to' => null,
-                    'updated_at' => now()
-                ]);
             endforeach;
         }
 
@@ -961,29 +866,6 @@ class UserController extends BaseController
     }
 
     /**
-     * Search a user by a parental code.
-     *
-     * @param  string $parental_code
-     * @return \Illuminate\Http\Response
-     */
-    public function findByParentalCode($parental_code)
-    {
-        $parent = User::where('parental_code', $parental_code)->whereNull('belongs_to')->first();
-
-        if (is_null($parent)) {
-            return $this->handleError(__('notifications.find_parent_404'));
-        }
-
-        $users = User::where('belongs_to', $parent->id)->get();
-
-        if (count($users) == 0) {
-            return $this->handleResponse(ResourcesUser::collection($users), __('miscellaneous.empty_list'));
-        }
-
-        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'));
-    }
-
-    /**
      * Switch between user statuses.
      *
      * @param  $id
@@ -1002,59 +884,28 @@ class UserController extends BaseController
             HISTORY AND/OR NOTIFICATION MANAGEMENT
         */
         $status_activated = Status::where('status_name->fr', 'Activé')->first();
-        $status_intermediate = Status::where('status_name->fr', 'Intermédiaire')->first();
-        $status_blocked = Status::where('status_name->fr', 'Bloqué')->first();
+        $status_disabled = Status::where('status_name->fr', 'Désactivé')->first();
         $status_unread = Status::where('status_name->fr', 'Non lue')->first();
+        $type_user_return = Type::where('type_name->fr', 'Utilisateur de retour')->first();
 
-        // If it's a member whose accessing is accepted, send notification
-        if ($status_id == $status_activated->id OR $status_id == $status_intermediate->id) {
+        if ($status_id == $status_activated->id) {
             Notification::create([
-                'notification_url' => 'about/terms_of_use',
-                'notification_content' => [
-                    'en' => 'Your account has been activated. Please read our terms before you start.',
-                    'fr' => 'Votre compte a été activé. Veuillez lire nos conditions avant de commencer.',
-                    'ln' => 'Compte na yo esili ko activer. Tosɛngi yo otánga mibeko na biso liboso ya kobanda.',
-                ],
-                'icon' => 'bi bi-unlock-fill',
-                'color' => 'text-info',
+                'type_id' => $type_user_return->id,
                 'status_id' => $status_unread->id,
-                'user_id' => $user->id,
-            ]);
-
-            if ($user->id_card_recto == null AND $user->id_card_verso == null) {
-                // update "status_id" column
-                $user->update([
-                    'status_id' => $status_intermediate->id,
-                    'updated_at' => now()
-                ]);
-
-            } else {
-                // update "status_id" column
-                $user->update([
-                    'status_id' => $status_activated->id,
-                    'updated_at' => now()
-                ]);
-            }
-        }
-
-        // If it's a member whose accessing is blocked, send notification
-        if ($status_id == $status_blocked->id) {
-            Notification::create([
-                'notification_url' => 'about/terms_of_use',
-                'notification_content' => [
-                    'en' => 'Your account has been blocked. If you have any questions, contact us via the telephone number displayed on our website.',
-                    'fr' => 'Votre compte a été bloqué. Si vous avez des questions, contactez-nous via le n° de téléphone affiché sur notre site web.',
-                    'ln' => 'Compte na yo ekangami. Soki ozali na mituna, benga biso na nzela ya nimero ya telefone oyo emonisami na site Internet na biso.',
-                ],
-                'icon' => 'bi bi-lock-fill',
-                'color' => 'text-danger',
-                'status_id' => $status_unread->id,
-                'user_id' => $user->id,
+                'to_user_id' => $user->id,
             ]);
 
             // update "status_id" column
             $user->update([
-                'status_id' => $status_blocked->id,
+                'status_id' => $status_activated->id,
+                'updated_at' => now()
+            ]);
+        }
+
+        if ($status_id == $status_disabled->id) {
+            // update "status_id" column
+            $user->update([
+                'status_id' => $status_disabled->id,
                 'updated_at' => now()
             ]);
         }
@@ -1197,37 +1048,6 @@ class UserController extends BaseController
             'updated_at' => now()
         ]);
 
-        // If the user is a parent, change its children's password according to its own
-        if (!empty($user->parental_code)) {
-            $children = User::where('belongs_to', $user->id)->get();
-
-            foreach ($children as $child):
-                $child->update([
-                    'password' => $user->password,
-                    'updated_at' => now(),
-                ]);
-
-                if (!empty($child->email)) {
-                    $child_password_reset = PasswordReset::where('email', $child->email)->first();
-
-                    $child_password_reset->update([
-                        'former_password' => $inputs['password'],
-                        'updated_at' => now(),
-                    ]);
-
-                } else {
-                    if (!empty($child->phone)) {
-                        $child_password_reset = PasswordReset::where('phone', $child->phone)->first();
-
-                        $child_password_reset->update([
-                            'former_password' => $inputs['password'],
-                            'updated_at' => now(),
-                        ]);
-                    }
-                }
-            endforeach;
-        }
-
         return $this->handleResponse(new ResourcesUser($user), __('notifications.update_password_success'));
     }
 
@@ -1267,110 +1087,5 @@ class UserController extends BaseController
         ]);
 
         return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
-    }
-
-    /**
-     * Add user image in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function addImage(Request $request, $id)
-    {
-        $inputs = [
-            'user_id' => $request->user_id,
-            'image_name' => $request->image_name,
-            'image_64_recto' => $request->image_64_recto,
-            'image_64_verso' => $request->image_64_verso
-        ];
-
-        if ($inputs['image_64_recto'] != null AND $inputs['image_64_verso'] != null) {
-            // $extension = explode('/', explode(':', substr($inputs['image_64_recto'], 0, strpos($inputs['image_64_recto'], ';')))[1])[1];
-            $replace_recto = substr($inputs['image_64_recto'], 0, strpos($inputs['image_64_recto'], ',') + 1);
-            $replace_verso = substr($inputs['image_64_verso'], 0, strpos($inputs['image_64_verso'], ',') + 1);
-            // Find substring from replace here eg: data:image/png;base64,
-            $image_recto = str_replace($replace_recto, '', $inputs['image_64_recto']);
-            $image_recto = str_replace(' ', '+', $image_recto);
-            $image_verso = str_replace($replace_verso, '', $inputs['image_64_verso']);
-            $image_verso = str_replace(' ', '+', $image_verso);
-
-            // Clean "identity_data" directory
-            $file = new Filesystem;
-            $file->cleanDirectory($_SERVER['DOCUMENT_ROOT'] . '/public/storage/images/users/' . $inputs['user_id'] . '/identity_data');
-            // Create image URL
-            $image_url_recto = 'images/users/' . $id . '/identity_data/' . Str::random(50) . '.png';
-            $image_url_verso = 'images/users/' . $id . '/identity_data/' . Str::random(50) . '.png';
-
-            // Upload image
-            Storage::url(Storage::disk('public')->put($image_url_recto, base64_decode($image_recto)));
-            Storage::url(Storage::disk('public')->put($image_url_verso, base64_decode($image_verso)));
-
-            $user = User::find($id);
-
-            $user->update([
-                'id_card_type' => $inputs['image_name'],
-                'id_card_recto' => $image_url_recto,
-                'id_card_verso' => $image_url_verso,
-                'updated_at' => now(),
-            ]);
-
-            return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
-
-        } else {
-            if ($inputs['image_64_recto'] != null AND $inputs['image_64_verso'] == null) {
-                // $extension = explode('/', explode(':', substr($inputs['image_64_recto'], 0, strpos($inputs['image_64_recto'], ';')))[1])[1];
-                $replace_recto = substr($inputs['image_64_recto'], 0, strpos($inputs['image_64_recto'], ',') + 1);
-                // Find substring from replace here eg: data:image/png;base64,
-                $image_recto = str_replace($replace_recto, '', $inputs['image_64_recto']);
-                $image_recto = str_replace(' ', '+', $image_recto);
-
-                // Clean "identity_data" directory
-                $file = new Filesystem;
-                $file->cleanDirectory($_SERVER['DOCUMENT_ROOT'] . '/public/storage/images/users/' . $inputs['user_id'] . '/identity_data');
-                // Create image URL
-                $image_url_recto = 'images/users/' . $id . '/identity_data/' . Str::random(50) . '.png';
-
-                // Upload image
-                Storage::url(Storage::disk('public')->put($image_url_recto, base64_decode($image_recto)));
-
-                $user = User::find($id);
-
-                $user->update([
-                    'id_card_type' => $inputs['image_name'],
-                    'id_card_recto' => $image_url_recto,
-                    'updated_at' => now(),
-                ]);
-
-                return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
-            }
-
-            if ($inputs['image_64_recto'] == null AND $inputs['image_64_verso'] != null) {
-                // $extension = explode('/', explode(':', substr($inputs['image_64_verso'], 0, strpos($inputs['image_64_verso'], ';')))[1])[1];
-                $replace_verso = substr($inputs['image_64_verso'], 0, strpos($inputs['image_64_verso'], ',') + 1);
-                // Find substring from replace here eg: data:image/png;base64,
-                $image_verso = str_replace($replace_verso, '', $inputs['image_64_verso']);
-                $image_verso = str_replace(' ', '+', $image_verso);
-
-                // Clean "identity_data" directory
-                $file = new Filesystem;
-                $file->cleanDirectory($_SERVER['DOCUMENT_ROOT'] . '/public/storage/images/users/' . $inputs['user_id'] . '/identity_data');
-                // Create image URL
-                $image_url_verso = 'images/users/' . $id . '/identity_data/' . Str::random(50) . '.png';
-
-                // Upload image
-                Storage::url(Storage::disk('public')->put($image_url_verso, base64_decode($image_verso)));
-
-                $user = User::find($id);
-
-                $user->update([
-                    'id_card_type' => $inputs['image_name'],
-                    'id_card_verso' => $image_url_verso,
-                    'updated_at' => now(),
-                ]);
-
-                return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
-            }
-        }
     }
 }

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Group;
 use App\Models\Type;
 use Illuminate\Http\Request;
 use App\Http\Resources\Type as ResourcesType;
-use App\Models\Group;
 
 /**
  * @author Xanders
@@ -37,8 +37,7 @@ class TypeController extends BaseController
         $inputs = [
             'type_name' => [
                 'en' => $request->type_name_en,
-                'fr' => $request->type_name_fr,
-                'ln' => $request->type_name_ln
+                'fr' => $request->type_name_fr
             ],
             'type_description' => $request->type_description,
             'icon' => $request->icon,
@@ -100,8 +99,7 @@ class TypeController extends BaseController
             'id' => $request->id,
             'type_name' => [
                 'en' => $request->type_name_en,
-                'fr' => $request->type_name_fr,
-                'ln' => $request->type_name_ln
+                'fr' => $request->type_name_fr
             ],
             'type_description' => $request->type_description,
             'icon' => $request->icon,
@@ -124,8 +122,7 @@ class TypeController extends BaseController
             $type->update([
                 'type_name' => [
                     'en' => $request->type_name_en,
-                    'fr' => $request->type_name_fr,
-                    'ln' => $request->type_name_ln
+                    'fr' => $request->type_name_fr
                 ],
                 'updated_at' => now()
             ]);
@@ -158,8 +155,6 @@ class TypeController extends BaseController
                 'updated_at' => now(),
             ]);
         }
-
-        $type->update($inputs);
 
         return $this->handleResponse(new ResourcesType($type), __('notifications.update_type_success'));
     }

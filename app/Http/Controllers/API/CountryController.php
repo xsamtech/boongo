@@ -42,7 +42,7 @@ class CountryController extends BaseController
         $countries = Country::all();
 
         // Validate required fields
-        if ($inputs['country_name'] == null OR $inputs['country_name'] == ' ') {
+        if (trim($inputs['country_name']) == null) {
             return $this->handleError($inputs['country_name'], __('validation.required'), 400);
         }
 
@@ -92,7 +92,7 @@ class CountryController extends BaseController
             'country_lang_code' => $request->country_lang_code,
             'updated_at' => now()
         ];
-        // Select all countries of a same region and current country to check unique constraint
+        // Select all countries and current country to check unique constraint
         $countries = Country::all();
         $current_country = Country::find($inputs['id']);
 
@@ -130,7 +130,7 @@ class CountryController extends BaseController
 
     // ==================================== CUSTOM METHODS ====================================
     /**
-     * Search a country by its name.
+     * Search a country by its real name.
      *
      * @param  string $data
      * @return \Illuminate\Http\Response

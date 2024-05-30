@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
  */
-class File extends JsonResource
+class Cart extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -20,13 +20,13 @@ class File extends JsonResource
     {
         return [
             'id' => $this->id,
-            'file_name' => $this->file_name,
-            'file_url' => $this->file_url,
-            'type' => Type::make($this->type),
+            'payment_code' => $this->payment_code,
+            'status' => Status::make($this->status),
+            'payment' => Payment::make($this->payment),
+            'works' => Work::collection($this->works),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
-            'type_id' => $this->type_id,
-            'work_id' => $this->work_id
+            'user_id' => $this->user_id
         ];
     }
 }

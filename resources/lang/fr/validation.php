@@ -168,6 +168,9 @@ return [
         'role_name' => [
             'exists' => 'Ce nom de rôle existe déjà'
         ],
+        'file_name' => [
+            'exists' => 'Ce nom de fichier existe déjà'
+        ],
         'code' => [
             'exists' => 'Ce code existe déjà'
         ],
@@ -192,8 +195,8 @@ return [
         'country_name' => [
             'exists' => 'Ce pays existe déjà'
         ],
-        'deadline' => [
-            'exists' => 'Cette échéance existe déjà'
+        'number_of_hours' => [
+            'exists' => 'Ce nombre d\'heures existe déjà'
         ],
         'owner' => [
             'required' => 'A quelle entité ça appartient ?'

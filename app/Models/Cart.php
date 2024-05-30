@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
  */
-class Subscription extends Model
+class Cart extends Model
 {
     use HasFactory;
 
@@ -23,29 +23,38 @@ class Subscription extends Model
     protected $guarded = [];
 
     /**
-     * MANY-TO-MANY
-     * Several users for several subscriptions
+     * MANY-TO-ONE
+     * Several works for several carts
      */
-    public function users(): BelongsToMany
+    public function works(): BelongsToMany
     {
-        return $this->belongsToMany(User::class)->withTimestamps()->withPivot(['payment_id', 'status_id']);
+        return $this->belongsToMany(Work::class);
     }
 
     /**
      * ONE-TO-MANY
-     * One type for several subscriptions
+     * One status for several carts
      */
-    public function type(): BelongsTo
+    public function status(): BelongsTo
     {
-        return $this->belongsTo(Type::class);
+        return $this->belongsTo(Status::class);
     }
 
     /**
      * ONE-TO-MANY
-     * One category for several subscriptions
+     * One user for several carts
      */
-    public function category(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * ONE-TO-MANY
+     * One payment for several carts
+     */
+    public function payment(): BelongsTo
+    {
+        return $this->belongsTo(Payment::class);
     }
 }

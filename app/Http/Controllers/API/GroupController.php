@@ -34,18 +34,14 @@ class GroupController extends BaseController
     {
         // Get inputs
         $inputs = [
-            'group_name' => [
-                'en' => $request->group_name_en,
-                'fr' => $request->group_name_fr,
-                'ln' => $request->group_name_ln
-            ],
+            'group_name' => $request->group_name,
             'group_description' => $request->group_description
         ];
         // Select all groups to check unique constraint
         $groups = Group::all();
 
         // Validate required fields
-        if ($inputs['group_name'] == null) {
+        if (trim($inputs['group_name']) == null) {
             return $this->handleError($inputs['group_name'], __('validation.required'), 400);
         }
 
@@ -90,18 +86,15 @@ class GroupController extends BaseController
         // Get inputs
         $inputs = [
             'id' => $request->id,
-            'group_name' => [
-                'en' => $request->group_name_en,
-                'fr' => $request->group_name_fr,
-                'ln' => $request->group_name_ln
-            ],
+            'group_name' => $request->group_name,
             'group_description' => $request->group_description
         ];
-        // Select all groups and specific group to check unique constraint
-        $groups = Group::all();
-        $current_group = Group::find($inputs['id']);
 
         if ($inputs['group_name'] != null) {
+            // Select all groups and specific group to check unique constraint
+            $groups = Group::all();
+            $current_group = Group::find($inputs['id']);
+
             foreach ($groups as $another_group):
                 if ($current_group->group_name != $inputs['group_name']) {
                     if ($another_group->group_name == $inputs['group_name']) {
@@ -111,18 +104,14 @@ class GroupController extends BaseController
             endforeach;
 
             $group->update([
-                'group_name' => [
-                    'en' => $request->group_name_en,
-                    'fr' => $request->group_name_fr,
-                    'ln' => $request->group_name_ln
-                ],
+                'group_name' => $inputs['group_name'],
                 'updated_at' => now()
             ]);
         }
 
         if ($inputs['group_description'] != null) {
             $group->update([
-                'group_description' => $request->group_description,
+                'group_description' => $inputs['group_description'],
                 'updated_at' => now(),
             ]);
         }

@@ -47,19 +47,7 @@ class PasswordResetController extends BaseController
         ];
 
         // Validate required fields
-        if ($inputs['email'] == null AND $inputs['phone'] == null) {
-            return $this->handleError(__('validation.email_or_phone.required'), 400);
-        }
-
-        if ($inputs['email'] == ' ' AND $inputs['phone'] == ' ') {
-            return $this->handleError(__('validation.email_or_phone.required'), 400);
-        }
-
-        if ($inputs['email'] == null AND $inputs['phone'] == ' ') {
-            return $this->handleError(__('validation.email_or_phone.required'), 400);
-        }
-
-        if ($inputs['email'] == ' ' AND $inputs['phone'] == null) {
+        if (trim($inputs['email']) == null AND trim($inputs['phone']) == null) {
             return $this->handleError(__('validation.email_or_phone.required'), 400);
         }
 
@@ -125,19 +113,7 @@ class PasswordResetController extends BaseController
             'updated_at' => now()
         ];
 
-        if ($inputs['email'] == null AND $inputs['phone'] == null) {
-            return $this->handleError(__('validation.email_or_phone.required'), 400);
-        }
-
-        if ($inputs['email'] == ' ' AND $inputs['phone'] == ' ') {
-            return $this->handleError(__('validation.email_or_phone.required'), 400);
-        }
-
-        if ($inputs['email'] == null AND $inputs['phone'] == ' ') {
-            return $this->handleError(__('validation.email_or_phone.required'), 400);
-        }
-
-        if ($inputs['email'] == ' ' AND $inputs['phone'] == null) {
+        if (trim($inputs['email']) == null AND trim($inputs['phone']) == null) {
             return $this->handleError(__('validation.email_or_phone.required'), 400);
         }
 
@@ -267,8 +243,8 @@ class PasswordResetController extends BaseController
     {
         $password_reset = PasswordReset::where('phone', $data)->first();
         $user = User::where('phone', $data)->first();
-        $basic  = new \Vonage\Client\Credentials\Basic(config('vonage.api_key'), config('vonage.api_secret'));
-        $client = new \Vonage\Client($basic);
+        // $basic  = new \Vonage\Client\Credentials\Basic(config('vonage.api_key'), config('vonage.api_secret'));
+        // $client = new \Vonage\Client($basic);
 
         if (is_null($user)) {
             return $this->handleError(__('notifications.find_user_404'));
@@ -286,14 +262,14 @@ class PasswordResetController extends BaseController
                 'updated_at' => now()
             ]);
 
-            try {
-                $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'DikiTivi', (string) $password_reset->token));
+            // try {
+            //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
 
-            } catch (\Throwable $th) {
-                $response_error = json_decode($th->getMessage(), false);
+            // } catch (\Throwable $th) {
+            //     $response_error = json_decode($th->getMessage(), false);
 
-                return $this->handleError($response_error, __('notifications.create_user_SMS_failed'), 500);
-            }
+            //     return $this->handleError($response_error, __('notifications.create_user_SMS_failed'), 500);
+            // }
         }
 
         $object = new stdClass();

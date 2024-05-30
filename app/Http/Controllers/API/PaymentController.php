@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Cart;
 use App\Models\Payment;
 use App\Models\Status;
-use Nette\Utils\Random;
 use Illuminate\Http\Request;
 use App\Http\Resources\Payment as ResourcesPayment;
 
@@ -33,60 +31,30 @@ class PaymentController extends BaseController
     public function store(Request $request)
     {
         $user_id = is_numeric(explode('-', $request->reference)[2]) ? (int) explode('-', $request->reference)[2] : null;
-        $cart_id = is_numeric(explode('-', $request->reference)[3]) ? (int) explode('-', $request->reference)[3] : null;
-        $donation_id = is_numeric(explode('-', $request->reference)[4]) ? (int) explode('-', $request->reference)[4] : null;
         // Check if payment already exists
         $payment = Payment::where('order_number', $request->orderNumber)->first();
 
         // If payment exists
-            if ($payment != null) {
-                if ($cart_id != null) {
-                    $cart = Cart::find($cart_id);
-
-                    if (!is_null($cart)) {
-                        $random_char = Random::generate(7);
-
-                        $cart->update([
-                            'payment_code' => $random_char,
-                            'updated_at' => now()
-                        ]);
-                    }
-                }
-
-                $payment->update([
-                    'reference' => $request->reference,
-                    'provider_reference' => $request->provider_reference,
-                    'order_number' => $request->orderNumber,
-                    'amount' => $request->amount,
-                    'amount_customer' => $request->amountCustomer,
-                    'phone' => $request->phone,
-                    'currency' => $request->currency,
-                    'channel' => $request->channel,
-                    'type_id' => $request->type,
-                    'status_id' => $request->code,
-                    'cart_id' => $cart_id,
-                    'donation_id' => $donation_id,
-                    'user_id' => $user_id,
-                    'updated_at' => now()
-                ]);
+        if ($payment != null) {
+            $payment->update([
+                'reference' => $request->reference,
+                'provider_reference' => $request->provider_reference,
+                'order_number' => $request->orderNumber,
+                'amount' => $request->amount,
+                'amount_customer' => $request->amountCustomer,
+                'phone' => $request->phone,
+                'currency' => $request->currency,
+                'channel' => $request->channel,
+                'type_id' => $request->type,
+                'status_id' => $request->code,
+                'user_id' => $user_id,
+                'updated_at' => now()
+            ]);
 
             return $this->handleResponse(new ResourcesPayment($payment), __('notifications.update_payment_success'));
 
         // Otherwise, create new payment
         } else {
-            if ($cart_id != null) {
-                $cart = Cart::find($cart_id);
-
-                if (!is_null($cart)) {
-                    $random_char = Random::generate(7);
-
-                    $cart->update([
-                        'payment_code' => $random_char,
-                        'updated_at' => now()
-                    ]);
-                }
-            }
-
             $payment = Payment::create([
                 'reference' => $request->reference,
                 'provider_reference' => $request->provider_reference,
@@ -99,8 +67,6 @@ class PaymentController extends BaseController
                 'created_at' => $request->createdAt,
                 'type_id' => $request->type,
                 'status_id' => $request->code,
-                'cart_id' => $cart_id,
-                'donation_id' => $donation_id,
                 'user_id' => $user_id
             ]);
 
@@ -147,8 +113,6 @@ class PaymentController extends BaseController
             'channel' => $request->channel,
             'type_id' => $request->type_id,
             'status_id' => $request->status_id,
-            'cart_id' => $request->cart_id,
-            'donation_id' => $request->donation_id,
             'user_id' => $request->user_id,
             'updated_at' => now()
         ];

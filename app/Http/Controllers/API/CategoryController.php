@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\Category;
+use App\Models\Group;
 use Illuminate\Http\Request;
 use App\Http\Resources\Category as ResourcesCategory;
 
@@ -36,10 +37,13 @@ class CategoryController extends BaseController
         $inputs = [
             'category_name' => [
                 'en' => $request->category_name_en,
-                'fr' => $request->category_name_fr,
-                'ln' => $request->category_name_ln
+                'fr' => $request->category_name_fr
             ],
-            'category_description' => $request->category_description
+            'category_description' => $request->category_description,
+            'icon' => $request->icon,
+            'color' => $request->color,
+            'category_description' => $request->category_description,
+            'group_id' => $request->group_id
         ];
         // Select all categories belonging to a group to check unique constraint
         $categories = Category::all();
@@ -92,10 +96,13 @@ class CategoryController extends BaseController
             'id' => $request->id,
             'category_name' => [
                 'en' => $request->category_name_en,
-                'fr' => $request->category_name_fr,
-                'ln' => $request->category_name_ln
+                'fr' => $request->category_name_fr
             ],
-            'category_description' => $request->category_description
+            'category_description' => $request->category_description,
+            'category_description' => $request->category_description,
+            'icon' => $request->icon,
+            'color' => $request->color,
+            'group_id' => $request->group_id
         ];
         // Select all categories and specific category to check unique constraint
         $categories = Category::all();
@@ -113,8 +120,7 @@ class CategoryController extends BaseController
             $category->update([
                 'category_name' => [
                     'en' => $request->category_name_en,
-                    'fr' => $request->category_name_fr,
-                    'ln' => $request->category_name_ln
+                    'fr' => $request->category_name_fr
                 ],
                 'updated_at' => now()
             ]);
@@ -123,6 +129,27 @@ class CategoryController extends BaseController
         if ($inputs['category_description'] != null) {
             $category->update([
                 'category_description' => $request->category_description,
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['icon'] != null) {
+            $category->update([
+                'icon' => $request->icon,
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['color'] != null) {
+            $category->update([
+                'color' => $request->color,
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['group_id'] != null) {
+            $category->update([
+                'group_id' => $request->group_id,
                 'updated_at' => now(),
             ]);
         }
@@ -147,37 +174,7 @@ class CategoryController extends BaseController
 
     // ==================================== CUSTOM METHODS ====================================
     /**
-     * Find all categories by type.
-     *
-     * @param  int  $type_id
-     * @return \Illuminate\Http\Response
-     */
-    public function findAllByType($type_id)
-    {
-        $categories = Category::whereHas('medias', function ($query) use ($type_id) {
-                                    $query->where('type_id', $type_id);
-                                })->get();
-
-        return $this->handleResponse(ResourcesCategory::collection($categories), __('notifications.find_all_categories_success'));
-    }
-
-    /**
-     * Find all categories used for medias.
-     *
-     * @param  int  $for_youth
-     * @return \Illuminate\Http\Response
-     */
-    public function allUsedCategories($for_youth)
-    {
-        $categories = Category::whereHas('medias', function ($query) use ($for_youth) {
-                                    $query->where('for_youth', $for_youth);
-                                })->get();
-
-        return $this->handleResponse(ResourcesCategory::collection($categories), __('notifications.find_all_categories_success'));
-    }
-
-    /**
-     * Search a category by its name.
+     * Search a category by its real name.
      *
      * @param  string $locale
      * @param  string $data
@@ -192,5 +189,51 @@ class CategoryController extends BaseController
         }
 
         return $this->handleResponse(new ResourcesCategory($category), __('notifications.find_category_success'));
+    }
+
+    /**
+     * Find all type by group.
+     *
+     * @param  string $group_name
+     * @return \Illuminate\Http\Response
+     */
+    public function findByGroup($group_name)
+    {
+        $group = Group::where('group_name', $group_name)->first();
+
+        if (is_null($group)) {
+            return $this->handleError(__('notifications.find_group_404'));
+        }
+
+        $categories = Category::where('group_id', $group->id)->get();
+
+        return $this->handleResponse(ResourcesCategory::collection($categories), __('notifications.find_all_categories_success'));
+    }
+
+    /**
+     * Find all categories used in works.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function allUsedInWorks()
+    {
+        $categories = Category::whereHas('works')->get();
+
+        return $this->handleResponse(ResourcesCategory::collection($categories), __('notifications.find_all_categories_success'));
+    }
+
+    /**
+     * Find all categories used in works type, .
+     *
+     * @param  int  $type_id
+     * @return \Illuminate\Http\Response
+     */
+    public function allUsedInWorksType($type_id)
+    {
+        $categories = Category::whereHas('works', function ($query) use ($type_id) {
+                                    $query->where('type_id', $type_id);
+                                })->get();
+
+        return $this->handleResponse(ResourcesCategory::collection($categories), __('notifications.find_all_categories_success'));
     }
 }

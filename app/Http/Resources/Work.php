@@ -25,6 +25,7 @@ class Work extends JsonResource
             'work_url' => $this->work_url,
             'type' => Type::make($this->type),
             'status' => Status::make($this->status),
+            'user_owner' => User::make($this->user_owner),
             'categories' => Category::collection($this->categories),
             'files' => File::collection($this->files),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),

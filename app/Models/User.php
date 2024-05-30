@@ -70,7 +70,7 @@ class User extends Authenticatable
      */
     public function subscriptions(): BelongsToMany
     {
-        return $this->belongsToMany(Subscription::class)->withTimestamps()->withPivot(['payment_id']);
+        return $this->belongsToMany(Subscription::class)->withTimestamps()->withPivot(['payment_id', 'status_id']);
     }
 
     /**

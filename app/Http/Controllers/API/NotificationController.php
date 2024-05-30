@@ -36,22 +36,16 @@ class NotificationController extends BaseController
     {
         // Get inputs
         $inputs = [
-            'notification_url' => $request->notification_url,
-            'notification_content' => [
-                'en' => $request->notification_content_en,
-                'fr' => $request->notification_content_fr,
-                'ln' => $request->notification_content_ln
-            ],
-            'icon' => $request->icon,
-            'color' => $request->color,
+            'type_id' => $request->type_id,
             'status_id' => $request->status_id,
-            'user_id' => $request->user_id
+            'from_user_id' => $request->from_user_id,
+            'to_user_id' => $request->to_user_id,
+            'work_id' => $request->work_id
         ];
 
         $validator = Validator::make($inputs, [
-            'notification_url' => ['required'],
-            'notification_content' => ['required'],
-            'user_id' => ['required']
+            'type_id' => ['required'],
+            'status_id' => ['required']
         ]);
 
         if ($validator->fails()) {
@@ -92,23 +86,17 @@ class NotificationController extends BaseController
         // Get inputs
         $inputs = [
             'id' => $request->id,
-            'notification_url' => $request->notification_url,
-            'notification_content' => [
-                'en' => $request->notification_content_en,
-                'fr' => $request->notification_content_fr,
-                'ln' => $request->notification_content_ln
-            ],
-            'icon' => $request->icon,
-            'color' => $request->color,
+            'type_id' => $request->type_id,
             'status_id' => $request->status_id,
-            'user_id' => $request->user_id,
+            'from_user_id' => $request->from_user_id,
+            'to_user_id' => $request->to_user_id,
+            'work_id' => $request->work_id,
             'updated_at' => now()
         ];
 
         $validator = Validator::make($inputs, [
-            'notification_url' => ['required'],
-            'notification_content' => ['required'],
-            'user_id' => ['required']
+            'type_id' => ['required'],
+            'status_id' => ['required']
         ]);
 
         if ($validator->fails()) {
@@ -144,7 +132,7 @@ class NotificationController extends BaseController
      */
     public function selectByUser($user_id)
     {
-        $notifications = Notification::where('user_id', $user_id)->get();
+        $notifications = Notification::where('to_user_id', $user_id)->get();
 
         return $this->handleResponse(ResourcesNotification::collection($notifications), __('notifications.find_all_notifications_success'));
     }
@@ -158,7 +146,7 @@ class NotificationController extends BaseController
      */
     public function selectByStatusUser($status_id, $user_id)
     {
-        $notifications = Notification::where([['status_id', $status_id], ['user_id', $user_id]])->orderByDesc('created_at')->get();
+        $notifications = Notification::where([['status_id', $status_id], ['to_user_id', $user_id]])->orderByDesc('created_at')->get();
 
         return $this->handleResponse(ResourcesNotification::collection($notifications), __('notifications.find_all_notifications_success'));
     }
@@ -198,7 +186,7 @@ class NotificationController extends BaseController
     public function markAllRead($user_id)
     {
         $status_read = Status::where('status_name', 'Lue')->first();
-        $notifications = Notification::where('user_id', $user_id)->get();
+        $notifications = Notification::where('to_user_id', $user_id)->get();
 
         // update "status_id" column for all user notifications
         foreach ($notifications as $notification):

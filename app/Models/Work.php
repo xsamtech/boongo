@@ -42,6 +42,15 @@ class Work extends Model
     }
 
     /**
+     * MANY-TO-MANY
+     * Several carts for several works
+     */
+    public function carts(): BelongsToMany
+    {
+        return $this->belongsToMany(Cart::class);
+    }
+
+    /**
      * ONE-TO-MANY
      * One type for several works
      */
@@ -57,6 +66,15 @@ class Work extends Model
     public function status(): BelongsTo
     {
         return $this->belongsTo(Status::class);
+    }
+
+    /**
+     * ONE-TO-MANY
+     * One user_owner for several works
+     */
+    public function user_owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     /**
