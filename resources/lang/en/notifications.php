@@ -70,6 +70,13 @@ return [
     'create_type_success' => 'Type created',
     'update_type_success' => 'Type updated',
     'delete_type_success' => 'Type deleted',
+    // Category
+    'find_all_categories_success' => 'Categories found',
+    'find_category_success' => 'Category found',
+    'find_category_404' => 'Category not found',
+    'create_category_success' => 'Category created',
+    'update_category_success' => 'Category updated',
+    'delete_category_success' => 'Category deleted',
     // Country
     'find_all_countries_success' => 'Countries found',
     'find_country_success' => 'Country found',
@@ -150,6 +157,13 @@ return [
     'create_notification_success' => 'Notification created',
     'update_notification_success' => 'Notification updated',
     'delete_notification_success' => 'Notification deleted',
+    // Session
+    'find_all_sessions_success' => 'Sessions found',
+    'find_session_success' => 'Session found',
+    'find_session_404' => 'Session not found',
+    'create_session_success' => 'Session created',
+    'update_session_success' => 'Session updated',
+    'delete_session_success' => 'Session deleted',
     // Payment
     'find_all_payments_success' => 'Payments found',
     'find_payment_success' => 'Payment found',
@@ -171,12 +185,16 @@ return [
     'one_sponsoring_act' => '<strong><a href="/:from_username">:from_user_names</a></strong> just sponsored you.',
     'two_sponsoring_acts' => '<strong><a href="/:from_username">:from_user_names</a></strong> and another person just sponsored you.',
     'many_sponsoring_acts' => '<strong><a href="/:from_username">:from_user_names</a></strong> and :requests_count others just sponsored you.',
+    // Consulting
+    'one_consulting_act' => '<strong><a href="/:from_username">:from_user_names</a></strong> just consulted your <strong><a href="/:to_username/works/:work_id">:work_type</a></strong>.',
+    'two_consulting_acts' => '<strong><a href="/:from_username">:from_user_names</a></strong> and another person just consulted your <strong><a href="/:to_username/works/:work_id">:work_type</a></strong>.',
+    'many_consulting_acts' => '<strong><a href="/:from_username">:from_user_names</a></strong> and :requests_count others just consulted your <strong><a href="/:to_username/works/:work_id">:work_type</a></strong>.',
     // Subscriptions
     'one_subscription' => '<strong><a href="/:from_username">:from_user_names</a></strong> subscribed to your <strong><a href="/:to_username/works/:work_id">:work_type</a></strong>.',
     'two_subscriptions' => '<strong><a href="/:from_username">:from_user_names</a></strong> and another person subscribed to your <strong><a href="/:to_username/works/:work_id">:work_type</a></strong>.',
     'many_subscriptions' => '<strong><a href="/:from_username">:from_user_names</a></strong> and :requests_count others subscribed to your <strong><a href="/:to_username/works/:work_id">:work_type</a></strong>.',
     // Payment
-    'one_payment_done' => 'You have made a payment with code <strong>:code</strong>. Please click here for payment details.',
+    'payment_done' => 'You have made a payment with code <strong>:code</strong>. Please click here for payment details.',
     // Miscellaneous
     'welcome' => 'Welcome <strong><a href="/users/:to_user_id">:to_user_names</a></strong>. Click here to read our terms of use.',
     'welcome_back' => 'Welcome back <strong><a href="/users/:to_user_id">:to_user_names</a></strong>. Click here to see what\'s new in the plateform.',

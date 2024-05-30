@@ -70,6 +70,13 @@ return [
     'create_type_success' => 'Type créé',
     'update_type_success' => 'Type modifié',
     'delete_type_success' => 'Type supprimé',
+    // Category
+    'find_all_categories_success' => 'Catégories trouvées',
+    'find_category_success' => 'Catégorie trouvée',
+    'find_category_404' => 'Catégorie non trouvée',
+    'create_category_success' => 'Catégorie créée',
+    'update_category_success' => 'Catégorie modifiée',
+    'delete_category_success' => 'Catégorie supprimée',
     // Country
     'find_all_countries_success' => 'Pays trouvés',
     'find_country_success' => 'Pays trouvé',
@@ -150,6 +157,13 @@ return [
     'create_notification_success' => 'Notification créée',
     'update_notification_success' => 'Notification modifiée',
     'delete_notification_success' => 'Notification supprimée',
+    // Session
+    'find_all_sessions_success' => 'Sessions trouvées',
+    'find_session_success' => 'Session trouvée',
+    'find_session_404' => 'Session non trouvée',
+    'create_session_success' => 'Session créée',
+    'update_session_success' => 'Session modifiée',
+    'delete_session_success' => 'Session supprimée',
     // Payment
     'find_all_payments_success' => 'Paiements trouvés',
     'find_payment_success' => 'Paiement trouvé',
@@ -171,12 +185,16 @@ return [
     'one_sponsoring_act' => '<strong><a href="/:from_username">:from_user_names</a></strong> vient de vous sponsoriser.',
     'two_sponsoring_acts' => '<strong><a href="/:from_username">:from_user_names</a></strong> et une autre personne viennent de vous sponsoriser.',
     'many_sponsoring_acts' => '<strong><a href="/:from_username">:from_user_names</a></strong> and :requests_count autres viennent de vous sponsoriser.',
+    // Consulting
+    'one_consulting_act' => '<strong><a href="/:from_username">:from_user_names</a></strong> vient de consulter votre <strong><a href="/:to_username/works/:work_id">:work_type</a></strong>.',
+    'two_consulting_acts' => '<strong><a href="/:from_username">:from_user_names</a></strong> et une autre personne viennent de consulter votre <strong><a href="/:to_username/works/:work_id">:work_type</a></strong>.',
+    'many_consulting_acts' => '<strong><a href="/:from_username">:from_user_names</a></strong> and :requests_count autres viennent de consulter votre <strong><a href="/:to_username/works/:work_id">:work_type</a></strong>.',
     // Subscriptions
     'one_subscription' => '<strong><a href="/:from_username">:from_user_names</a></strong> a souscrit à votre <strong><a href="/:to_username/works/:work_id">:work_type</a></strong>.',
     'two_subscriptions' => '<strong><a href="/:from_username">:from_user_names</a></strong> et une autre persone ont souscrit à votre <strong><a href="/:to_username/works/:work_id">:work_type</a></strong>.',
     'many_subscriptions' => '<strong><a href="/:from_username">:from_user_names</a></strong> et :requests_count autres ont souscrit à votre <strong><a href="/:to_username/works/:work_id">:work_type</a></strong>.',
     // Payment
-    'one_payment_done' => 'Vous avez effectué un paiement avec le code <strong>:code</strong>. Veuillez cliquer ici pour voir les détails du paiement.',
+    'payment_done' => 'Vous avez effectué un paiement avec le code <strong>:code</strong>. Veuillez cliquer ici pour voir les détails du paiement.',
     // Miscellaneous
     'welcome' => 'Bienvenue <strong><a href="/users/:to_user_id">:to_user_names</a></strong>. Cliquez ici pour lire nos conditions d\'utilisation.',
     'welcome_back' => 'Bon retour <strong><a href="/users/:to_user_id">:to_user_names</a></strong>. Cliquez ici pour voir les nouveautés de la plateforme.',
