@@ -64,14 +64,13 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::get('work/trends/{year}', 'App\Http\Controllers\API\WorkController@trends')->name('work.api.trends');
     Route::get('work/search/{data}', 'App\Http\Controllers\API\WorkController@search')->name('work.api.search');
     Route::get('work/find_views/{work_id}', 'App\Http\Controllers\API\WorkController@findViews')->name('work.api.find_views');
-    Route::post('work/find_all_by_type/{locale}/{type_name}', 'App\Http\Controllers\API\WorkController@findAllByType')->name('work.api.find_all_by_type');
-    Route::post('work/find_all_by_type_status/{locale}/{type_name}/{status_name}', 'App\Http\Controllers\API\WorkController@findAllByTypeStatus')->name('work.api.find_all_by_type_status');
+    Route::get('work/find_all_by_type/{locale}/{type_name}', 'App\Http\Controllers\API\WorkController@findAllByType')->name('work.api.find_all_by_type');
+    Route::get('work/find_all_by_type_status/{locale}/{type_name}/{status_name}', 'App\Http\Controllers\API\WorkController@findAllByTypeStatus')->name('work.api.find_all_by_type_status');
     Route::post('work/filter_by_categories', 'App\Http\Controllers\API\WorkController@filterByCategories')->name('work.api.filter_by_categories');
     // Role
     Route::get('role/search/{data}', 'App\Http\Controllers\API\RoleController@search')->name('role.api.search');
     // User
     Route::get('user/{id}', 'App\Http\Controllers\API\UserController@show')->name('user.api.show');
-    Route::get('user/find_by_parental_code/{parental_code}', 'App\Http\Controllers\API\UserController@findByParentalCode')->name('user.api.find_by_parental_code');
     Route::post('user', 'App\Http\Controllers\API\UserController@store')->name('user.api.store');
     Route::post('user/login', 'App\Http\Controllers\API\UserController@login')->name('user.api.login');
     // PasswordReset
@@ -87,9 +86,24 @@ Route::group(['middleware' => ['api', 'localization']], function () {
 });
 Route::group(['middleware' => ['api', 'auth:sanctum', 'localization']], function () {
     Route::resource('work', 'App\Http\Controllers\API\WorkController');
+    Route::resource('cart', 'App\Http\Controllers\API\CartController');
+    Route::resource('user', 'App\Http\Controllers\API\UserController');
 
     // Work
-    Route::post('work/find_all_by_user/{user_id}', 'App\Http\Controllers\API\WorkController@findAllByUser')->name('work.api.find_all_by_user');
+    Route::get('work/find_all_by_user/{user_id}', 'App\Http\Controllers\API\WorkController@findAllByUser')->name('work.api.find_all_by_user');
     Route::put('work/switch_view/{work_id}', 'App\Http\Controllers\API\WorkController@switchView')->name('work.api.switch_view');
     Route::put('work/upload_files', 'App\Http\Controllers\API\WorkController@uploadFiles')->name('work.api.upload_files');
+    // Cart
+    Route::get('cart/is_inside/{work_id}/{user_id}', 'App\Http\Controllers\API\CartController@isInside')->name('user.api.is_inside');
+    Route::put('cart/add_to_cart/{work_id}/{user_id}', 'App\Http\Controllers\API\CartController@addToCart')->name('user.api.add_to_cart');
+    Route::put('cart/remove_from_cart/{work_id}/{cart_id}', 'App\Http\Controllers\API\CartController@removeFromCart')->name('user.api.remove_from_cart');
+    // User
+    Route::get('user/profile/{username}', 'App\Http\Controllers\API\UserController@profile')->name('user.api.profile');
+    Route::get('user/find_by_role/{locale}/{role_name}', 'App\Http\Controllers\API\UserController@findByRole')->name('user.api.find_by_role');
+    Route::get('user/find_by_not_role/{locale}/{role_name}', 'App\Http\Controllers\API\UserController@findByNotRole')->name('user.api.find_by_not_role');
+    Route::get('user/find_by_status/{status_id}', 'App\Http\Controllers\API\UserController@findByStatus')->name('user.api.find_by_status');
+    Route::put('user/switch_status/{id}/{status_id}', 'App\Http\Controllers\API\UserController@switchStatus')->name('user.api.switch_status');
+    Route::put('user/update_role/{id}', 'App\Http\Controllers\API\UserController@updateRole')->name('user.api.update_role');
+    Route::put('user/update_password/{id}', 'App\Http\Controllers\API\UserController@updatePassword')->name('user.api.update_password');
+    Route::put('user/update_avatar_picture/{id}', 'App\Http\Controllers\API\UserController@updateAvatarPicture')->name('user.api.update_avatar_picture');
 });

@@ -810,15 +810,15 @@ class UserController extends BaseController
                 return $this->handleError($inputs['password'], __('auth.password'), 400);
             }
 
-            if ($user->phone_verified_at == null) {
-                $password_reset = PasswordReset::where('phone', $user->phone)->first();
-				$object = new stdClass();
+            // if ($user->phone_verified_at == null) {
+            //     $password_reset = PasswordReset::where('phone', $user->phone)->first();
+			// 	$object = new stdClass();
 
-				$object->password_reset = new ResourcesPasswordReset($password_reset);
-				$object->user = new ResourcesUser($user);
+			// 	$object->password_reset = new ResourcesPasswordReset($password_reset);
+			// 	$object->user = new ResourcesUser($user);
 
-                return $this->handleError($object, __('notifications.unverified_token_phone'), 400);
-            }
+            //     return $this->handleError($object, __('notifications.unverified_token_phone'), 400);
+            // }
 
             $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -840,19 +840,19 @@ class UserController extends BaseController
                 return $this->handleError($inputs['password'], __('auth.password'), 400);
             }
 
-            if (!empty($user->email)) {
-                if ($inputs['username'] == $user->email) {
-                    if ($user->email_verified_at == null) {
-                        $password_reset = PasswordReset::where('email', $user->email)->first();
-                        $object = new stdClass();
+            // if (!empty($user->email)) {
+            //     if ($inputs['username'] == $user->email) {
+            //         if ($user->email_verified_at == null) {
+            //             $password_reset = PasswordReset::where('email', $user->email)->first();
+            //             $object = new stdClass();
 
-                        $object->password_reset = new ResourcesPasswordReset($password_reset);
-                        $object->user = new ResourcesUser($user);
+            //             $object->password_reset = new ResourcesPasswordReset($password_reset);
+            //             $object->user = new ResourcesUser($user);
 
-                        return $this->handleError($object, __('notifications.unverified_token_email'), 400);
-                    }
-                }
-            }
+            //             return $this->handleError($object, __('notifications.unverified_token_email'), 400);
+            //         }
+            //     }
+            // }
 
             $token = $user->createToken('auth_token')->plainTextToken;
 

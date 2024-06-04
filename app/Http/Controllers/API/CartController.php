@@ -156,7 +156,7 @@ class CartController extends BaseController
 
     // ==================================== CUSTOM METHODS ====================================
     /**
-     * Check if work is in cart or watchlist.
+     * Check if work is in cart
      *
      * @param  int $work_id
      * @param  int $user_id
@@ -249,22 +249,22 @@ class CartController extends BaseController
     /**
      * Remove work from cart.
      *
-     * @param  int $cart_id
      * @param  int $work_id
+     * @param  int $cart_id
      * @return \Illuminate\Http\Response
      */
-    public function removeFromCart($cart_id, $work_id)
+    public function removeFromCart($work_id, $cart_id)
     {
-        $cart = Cart::find($cart_id);
-
-        if (is_null($cart)) {
-            return $this->handleError(__('notifications.find_cart_404'));
-        }
-
         $work = Work::find($work_id);
 
         if (is_null($work)) {
             return $this->handleError(__('notifications.find_work_404'));
+        }
+
+        $cart = Cart::find($cart_id);
+
+        if (is_null($cart)) {
+            return $this->handleError(__('notifications.find_cart_404'));
         }
 
         $cart->works()->detach($work->id);
