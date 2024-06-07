@@ -142,35 +142,35 @@ class WorkController extends BaseController
 
         if ($inputs['work_content'] != null) {
             $work->update([
-                'work_content' => $request->work_content,
+                'work_content' => $inputs['work_content'],
                 'updated_at' => now(),
             ]);
         }
 
         if ($inputs['work_url'] != null) {
             $work->update([
-                'work_url' => $request->work_url,
+                'work_url' => $inputs['work_url'],
                 'updated_at' => now(),
             ]);
         }
 
         if ($inputs['type_id'] != null) {
             $work->update([
-                'type_id' => $request->type_id,
+                'type_id' => $inputs['type_id'],
                 'updated_at' => now(),
             ]);
         }
 
         if ($inputs['status_id'] != null) {
             $work->update([
-                'status_id' => $request->status_id,
+                'status_id' => $inputs['status_id'],
                 'updated_at' => now(),
             ]);
         }
 
         if ($inputs['user_id'] != null) {
             $work->update([
-                'user_id' => $request->user_id,
+                'user_id' => $inputs['user_id'],
                 'updated_at' => now(),
             ]);
         }
