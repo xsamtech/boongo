@@ -91,11 +91,11 @@ class CountryController extends BaseController
             'country_phone_code' => $request->country_phone_code,
             'country_lang_code' => $request->country_lang_code
         ];
-        $current_country = Country::find($inputs['id']);
 
         if ($inputs['country_name'] != null) {
             // Select all countries and current country to check unique constraint
             $countries = Country::all();
+            $current_country = Country::find($inputs['id']);
 
             foreach ($countries as $another_country):
                 if ($current_country->country_name != $inputs['country_name']) {
