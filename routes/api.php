@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth:sanctum', 'localization'])->group(function () {
-    Route::apiResource('country', 'App\Http\Controllers\API\CountryController')->except(['index']);
+    Route::apiResource('country', 'App\Http\Controllers\API\CountryController')->except(['index', 'store']);
     Route::apiResource('group', 'App\Http\Controllers\API\GroupController');
     Route::apiResource('status', 'App\Http\Controllers\API\StatusController')->except(['search', 'findByGroup']);
     Route::apiResource('type', 'App\Http\Controllers\API\TypeController')->except(['search', 'findByGroup']);
@@ -47,6 +47,7 @@ Route::group(['middleware' => ['api', 'localization']], function () {
 
     // Country
     Route::get('country', 'App\Http\Controllers\API\CountryController@index')->name('country.api.index');
+    Route::post('country', 'App\Http\Controllers\API\CountryController@store')->name('country.api.store');
     // Status
     Route::get('status/search/{locale}/{data}', 'App\Http\Controllers\API\StatusController@search')->name('status.api.search');
     Route::get('status/find_by_group/{locale}/{group_name}', 'App\Http\Controllers\API\StatusController@findByGroup')->name('status.api.find_by_group');
