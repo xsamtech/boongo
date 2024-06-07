@@ -89,26 +89,41 @@ class CountryController extends BaseController
             'id' => $request->id,
             'country_name' => $request->country_name,
             'country_phone_code' => $request->country_phone_code,
-            'country_lang_code' => $request->country_lang_code,
-            'updated_at' => now()
+            'country_lang_code' => $request->country_lang_code
         ];
-        // Select all countries and current country to check unique constraint
-        $countries = Country::all();
         $current_country = Country::find($inputs['id']);
 
-        if ($inputs['country_name'] == null OR $inputs['country_name'] == ' ') {
-            return $this->handleError($inputs['country_name'], __('validation.required'), 400);
+        if ($inputs['country_name'] != null) {
+            // Select all countries and current country to check unique constraint
+            $countries = Country::all();
+
+            foreach ($countries as $another_country):
+                if ($current_country->country_name != $inputs['country_name']) {
+                    if ($another_country->country_name == $inputs['country_name']) {
+                        return $this->handleError($inputs['country_name'], __('validation.custom.country_name.exists'), 400);
+                    }
+                }
+            endforeach;
+
+            $country->update([
+                'country_name' => $inputs['country_name'],
+                'updated_at' => now()
+            ]);
         }
 
-        foreach ($countries as $another_country):
-            if ($current_country->country_name != $inputs['country_name']) {
-                if ($another_country->country_name == $inputs['country_name']) {
-                    return $this->handleError($inputs['country_name'], __('validation.custom.country_name.exists'), 400);
-                }
-            }
-        endforeach;
+        if ($inputs['country_phone_code'] != null) {
+            $country->update([
+                'country_phone_code' => $inputs['country_phone_code'],
+                'updated_at' => now()
+            ]);
+        }
 
-        $country->update($inputs);
+        if ($inputs['country_lang_code'] != null) {
+            $country->update([
+                'country_lang_code' => $inputs['country_lang_code'],
+                'updated_at' => now()
+            ]);
+        }
 
         return $this->handleResponse(new ResourcesCountry($country), __('notifications.update_country_success'));
     }
