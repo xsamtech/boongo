@@ -22,7 +22,7 @@ Route::middleware(['auth:sanctum', 'localization'])->group(function () {
     Route::apiResource('subscription', 'App\Http\Controllers\API\SubscriptionController')->except(['index']);
     Route::apiResource('cart', 'App\Http\Controllers\API\CartController')->except(['index']);
     Route::apiResource('role', 'App\Http\Controllers\API\RoleController')->except(['search']);
-    Route::apiResource('user', 'App\Http\Controllers\API\UserController')->except(['show', 'store', 'login']);
+    Route::apiResource('user', 'App\Http\Controllers\API\UserController')->except(['store', 'show', 'login']);
     Route::apiResource('password_reset', 'App\Http\Controllers\API\PasswordResetController')->except(['searchByEmailOrPhone', 'searchByEmail', 'searchByPhone', 'checkToken']);
     Route::apiResource('personal_access_token', 'App\Http\Controllers\API\PersonalAccessTokenController')->except(['search']);
     Route::apiResource('notification', 'App\Http\Controllers\API\NotificationController');
@@ -91,9 +91,9 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::put('payment/switch_status/{status_id}/{id}', 'App\Http\Controllers\API\PaymentController@switchStatus')->name('payment.api.switch_status');
 });
 Route::group(['middleware' => ['api', 'auth:sanctum', 'localization']], function () {
-    Route::resource('work', 'App\Http\Controllers\API\WorkController');
-    Route::resource('cart', 'App\Http\Controllers\API\CartController');
-    Route::resource('user', 'App\Http\Controllers\API\UserController');
+    Route::resource('work', 'App\Http\Controllers\API\WorkController')->except(['index', 'show', 'trends', 'search', 'findAllByUser', 'findAllByType', 'findAllByTypeStatus', 'findViews', 'filterByCategories']);
+    Route::resource('cart', 'App\Http\Controllers\API\CartController')->except(['index']);
+    Route::resource('user', 'App\Http\Controllers\API\UserController')->except(['store', 'show', 'login']);
     Route::resource('notification', 'App\Http\Controllers\API\NotificationController');
 
     // Work
