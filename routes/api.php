@@ -40,6 +40,7 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::resource('type', 'App\Http\Controllers\API\TypeController');
     Route::resource('category', 'App\Http\Controllers\API\CategoryController');
     Route::resource('work', 'App\Http\Controllers\API\WorkController');
+    Route::resource('subscription', 'App\Http\Controllers\API\SubscriptionController');
     Route::resource('role', 'App\Http\Controllers\API\RoleController');
     Route::resource('user', 'App\Http\Controllers\API\UserController');
     Route::resource('password_reset', 'App\Http\Controllers\API\PasswordResetController');
@@ -69,6 +70,8 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::get('work/find_all_by_type/{locale}/{type_name}', 'App\Http\Controllers\API\WorkController@findAllByType')->name('work.api.find_all_by_type');
     Route::get('work/find_all_by_type_status/{locale}/{type_name}/{status_name}', 'App\Http\Controllers\API\WorkController@findAllByTypeStatus')->name('work.api.find_all_by_type_status');
     Route::post('work/filter_by_categories', 'App\Http\Controllers\API\WorkController@filterByCategories')->name('work.api.filter_by_categories');
+    // Subscription
+    Route::get('subscription', 'App\Http\Controllers\API\SubscriptionController@index')->name('subscription.api.index');
     // Role
     Route::get('role/search/{data}', 'App\Http\Controllers\API\RoleController@search')->name('role.api.search');
     // User
