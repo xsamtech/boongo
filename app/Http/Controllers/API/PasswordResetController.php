@@ -102,22 +102,71 @@ class PasswordResetController extends BaseController
      */
     public function update(Request $request, PasswordReset $password_reset)
     {
-        $random_int_stringified = (string) random_int(1000000, 9999999);
         // Get inputs
         $inputs = [
             'id' => $request->id,
             'email' => $request->email,
             'phone' => $request->phone,
-            'token' => $random_int_stringified,
-            'former_password' => $request->former_password,
-            'updated_at' => now()
+            'token' => $request->token,
+            'former_password' => $request->former_password
         ];
+        if ($inputs['email'] != null) {
+            // Select all password resets and a specific password reset to check constraint
+            $password_resets = PasswordReset::all();
+            $current_password_reset = PasswordReset::find($inputs['id']);
 
-        if (trim($inputs['email']) == null AND trim($inputs['phone']) == null) {
-            return $this->handleError(__('validation.email_or_phone.required'), 400);
+            // Check if email already exists
+            foreach ($password_resets as $another_password_reset):
+                if (!empty($current_password_reset->email)) {
+                    if ($current_password_reset->email != $inputs['email']) {
+                        if ($another_password_reset->email == $inputs['email']) {
+                            return $this->handleError($inputs['email'], __('validation.custom.email.exists'), 400);
+                        }
+                    }
+                }
+            endforeach;
+
+            $password_reset->update([
+                'email' => $inputs['email'],
+                'updated_at' => now(),
+            ]);
         }
 
-        $password_reset->update($inputs);
+        if ($inputs['phone'] != null) {
+            // Select all password resets and a specific password reset to check constraint
+            $password_resets = PasswordReset::all();
+            $current_password_reset = PasswordReset::find($inputs['id']);
+
+            // Check if phone already exists
+            foreach ($password_resets as $another_password_reset):
+                if (!empty($current_password_reset->phone)) {
+                    if ($current_password_reset->phone != $inputs['phone']) {
+                        if ($another_password_reset->phone == $inputs['phone']) {
+                            return $this->handleError($inputs['phone'], __('validation.custom.phone.exists'), 400);
+                        }
+                    }
+                }
+            endforeach;
+
+            $password_reset->update([
+                'phone' => $inputs['phone'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['token'] != null) {
+            $password_reset->update([
+                'token' => $inputs['token'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['former_password'] != null) {
+            $password_reset->update([
+                'former_password' => $inputs['former_password'],
+                'updated_at' => now(),
+            ]);
+        }
 
         return $this->handleResponse(new ResourcesPasswordReset($password_reset), __('notifications.update_password_reset_success'));
     }

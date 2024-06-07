@@ -96,11 +96,11 @@ class CartController extends BaseController
             'user_id' => $request->user_id,
             'payment_id' => $request->payment_id
         ];
-        // Select all carts to check unique constraint
-        $carts = Cart::all();
-        $current_cart = Cart::find($inputs['id']);
-
         if ($inputs['payment_code'] != null) {
+            // Select all carts to check unique constraint
+            $carts = Cart::all();
+            $current_cart = Cart::find($inputs['id']);
+
             foreach ($carts as $another_cart):
                 if ($current_cart->payment_code != $inputs['payment_code']) {
                     if ($another_cart->payment_code == $inputs['payment_code']) {
@@ -110,28 +110,28 @@ class CartController extends BaseController
             endforeach;
 
             $cart->update([
-                'payment_code' => $request->payment_code,
+                'payment_code' => $inputs['payment_code'],
                 'updated_at' => now(),
             ]);
         }
 
         if ($inputs['status_id'] != null) {
             $cart->update([
-                'status_id' => $request->status_id,
+                'status_id' => $inputs['status_id'],
                 'updated_at' => now(),
             ]);
         }
 
         if ($inputs['user_id'] != null) {
             $cart->update([
-                'user_id' => $request->user_id,
+                'user_id' => $inputs['user_id'],
                 'updated_at' => now(),
             ]);
         }
 
         if ($inputs['payment_id'] != null) {
             $cart->update([
-                'payment_id' => $request->payment_id,
+                'payment_id' => $inputs['payment_id'],
                 'updated_at' => now(),
             ]);
         }
