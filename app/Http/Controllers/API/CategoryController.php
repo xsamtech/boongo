@@ -42,7 +42,6 @@ class CategoryController extends BaseController
             'category_description' => $request->category_description,
             'icon' => $request->icon,
             'color' => $request->color,
-            'category_description' => $request->category_description,
             'group_id' => $request->group_id
         ];
         // Select all categories belonging to a group to check unique constraint
@@ -98,7 +97,6 @@ class CategoryController extends BaseController
                 'en' => $request->category_name_en,
                 'fr' => $request->category_name_fr
             ],
-            'category_description' => $request->category_description,
             'category_description' => $request->category_description,
             'icon' => $request->icon,
             'color' => $request->color,
