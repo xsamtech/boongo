@@ -324,7 +324,7 @@ class UserController extends BaseController
             'email_verified_at' => $request->email_verified_at,
             'phone_verified_at' => $request->phone_verified_at,
             'country_id' => $request->country_id,
-            'status_id' => $request->status
+            'status_id' => $request->status_id
         ];
         $users = User::all();
         $current_user = User::find($inputs['id']);
