@@ -138,7 +138,7 @@ class RoleController extends BaseController
 
     // ==================================== CUSTOM METHODS ====================================
     /**
-     * Search a role by its name.
+     * Search a role by its real name.
      *
      * @param  string $data
      * @return \Illuminate\Http\Response
