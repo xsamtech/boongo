@@ -175,6 +175,15 @@ class WorkController extends BaseController
             ]);
         }
 
+        if ($request->categories_ids == null) {
+            if (count($work->categories) > 0) {
+                $work->categories()->detach();
+            }
+
+        } else {
+            $work->categories()->sync($request->categories_ids);
+        }
+
         return $this->handleResponse(new ResourcesWork($work), __('notifications.update_work_success'));
     }
 
