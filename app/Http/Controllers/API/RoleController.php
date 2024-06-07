@@ -87,14 +87,14 @@ class RoleController extends BaseController
         $inputs = [
             'id' => $request->id,
             'role_name' => $request->role_name,
-            'role_description' => $request->role_description,
-            'updated_at' => now()
+            'role_description' => $request->role_description
         ];
-        // Select all roles and specific role to check unique constraint
-        $roles = Role::all();
-        $current_role = Role::find($inputs['id']);
 
         if ($inputs['role_name'] != null) {
+            // Select all roles and specific role to check unique constraint
+            $roles = Role::all();
+            $current_role = Role::find($inputs['id']);
+
             foreach ($roles as $another_role):
                 if ($current_role->role_name != $inputs['role_name']) {
                     if ($another_role->role_name == $inputs['role_name']) {
