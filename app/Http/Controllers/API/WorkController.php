@@ -385,8 +385,12 @@ class WorkController extends BaseController
             return $this->handleError(__('notifications.find_work_404'));
         }
 
-        if (!empty($request->user_id) and !empty($request->ip_address) or !empty($request->user_id) and empty($request->ip_address)) {
-            $session = Session::where('user_id', $request->user_id)->first();
+        if (!$request->hasHeader('X-user-id') and !$request->hasHeader('X-ip-address')) {
+            return $this->handleError(__('validation.custom.owner.required'));
+        }
+
+        if ($request->hasHeader('X-user-id') and $request->hasHeader('X-ip-address') or $request->hasHeader('X-user-id') and !$request->hasHeader('X-ip-address')) {
+            $session = Session::where('user_id', $request->header('X-user-id'))->first();
 
             if (!empty($session)) {
                 if (count($session->works) == 0) {
@@ -402,7 +406,11 @@ class WorkController extends BaseController
                 if ($work->user_id != null) {
                     $status_unread = Status::where('status_name->fr', 'Non lue')->first();
                     $type_consulting = Type::where('type_name->fr', 'Consultation d\'œuvre')->first();
-                    $visitor = User::find($request->user_id);
+                    $visitor = User::find($request->header('X-user-id'));
+
+                    if (is_null($visitor)) {
+                        return $this->handleError(__('notifications.find_visitor_404'));
+                    }
 
                     /*
                         HISTORY AND/OR NOTIFICATION MANAGEMENT
@@ -420,8 +428,8 @@ class WorkController extends BaseController
             }
         }
 
-        if (empty($request->user_id) and !empty($request->ip_address)) {
-            $session = Session::where('ip_address', $request->ip_address)->first();
+        if (!$request->hasHeader('X-user-id') and $request->hasHeader('X-ip-address')) {
+            $session = Session::where('ip_address', $request->header('X-ip-address'))->first();
 
             if (!empty($session)) {
                 if ($session->works() == null) {

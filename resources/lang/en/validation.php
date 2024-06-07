@@ -199,7 +199,7 @@ return [
             'exists' => 'This number of hours already exists'
         ],
         'owner' => [
-            'required' => 'What entity does it belong to?'
+            'required' => 'Select an entity please'
         ],
         'type_name' => [
             'exists' => 'This type name already exists'

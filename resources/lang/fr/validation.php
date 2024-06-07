@@ -199,7 +199,7 @@ return [
             'exists' => 'Ce nombre d\'heures existe déjà'
         ],
         'owner' => [
-            'required' => 'A quelle entité ça appartient ?'
+            'required' => 'Sélectionner une entité s’il vous plait'
         ],
         'type_name' => [
             'exists' => 'Ce nom de type existe déjà'
