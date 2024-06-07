@@ -25,7 +25,7 @@ Route::middleware(['auth:sanctum', 'localization'])->group(function () {
     Route::apiResource('user', 'App\Http\Controllers\API\UserController')->except(['show', 'store', 'login']);
     Route::apiResource('password_reset', 'App\Http\Controllers\API\PasswordResetController')->except(['searchByEmailOrPhone', 'searchByEmail', 'searchByPhone', 'checkToken']);
     Route::apiResource('personal_access_token', 'App\Http\Controllers\API\PersonalAccessTokenController')->except(['search']);
-    Route::apiResource('notification', 'App\Http\Controllers\API\NotificationController')->except(['store']);
+    Route::apiResource('notification', 'App\Http\Controllers\API\NotificationController');
     Route::apiResource('payment', 'App\Http\Controllers\API\PaymentController')->except(['store', 'find_by_order_number', 'find_by_order_number_user', 'switch_status']);
     Route::apiResource('session', 'App\Http\Controllers\API\SessionController');
 });
