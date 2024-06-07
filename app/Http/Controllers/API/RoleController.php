@@ -104,14 +104,14 @@ class RoleController extends BaseController
             endforeach;
 
             $role->update([
-                'role_name' => $request->role_name,
+                'role_name' => $inputs['role_name'],
                 'updated_at' => now(),
             ]);
         }
 
         if ($inputs['role_description'] != null) {
             $role->update([
-                'role_description' => $request->role_description,
+                'role_description' => $inputs['role_description'],
                 'updated_at' => now(),
             ]);
         }
