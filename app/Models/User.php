@@ -93,6 +93,15 @@ class User extends Authenticatable
 
     /**
      * MANY-TO-ONE
+     * Several carts for a user
+     */
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    /**
+     * MANY-TO-ONE
      * Several payments for a user
      */
     public function payments(): HasMany
