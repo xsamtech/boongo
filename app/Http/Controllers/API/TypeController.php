@@ -196,13 +196,12 @@ class TypeController extends BaseController
     /**
      * Find all type by group.
      *
-     * @param  string $locale
      * @param  string $group_name
      * @return \Illuminate\Http\Response
      */
-    public function findByGroup($locale, $group_name)
+    public function findByGroup($group_name)
     {
-        $group = Group::where('group_name->' . $locale, $group_name)->first();
+        $group = Group::where('group_name', $group_name)->first();
 
         if (is_null($group)) {
             return $this->handleError(__('notifications.find_group_404'));
