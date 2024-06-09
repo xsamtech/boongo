@@ -2,13 +2,13 @@
  * Custom scripts
  * 
  * @author Xanders Samoth
- * @see https://www.xsam-tech.com
+ * @see https://team.xsamtech.com/xanderssamoth
  */
 /* Some variables */
-var currentHost = $('[name="cnpr-url"]').attr('content');
-var currentUser = $('[name="cnpr-visitor"]').attr('content');
+var currentHost = $('[name="bng-url"]').attr('content');
+var currentUser = $('[name="bng-visitor"]').attr('content');
 var currentLanguage = $('html').attr('lang');
-var headers = { 'Authorization': 'Bearer ' + $('[name="cnpr-ref"]').attr('content'), 'Accept': 'application/json', 'X-localization': navigator.language };
+var headers = { 'Authorization': 'Bearer ' + $('[name="bng-ref"]').attr('content'), 'Accept': 'application/json', 'X-localization': navigator.language };
 var modalUser = $('#cropModalUser');
 var retrievedAvatar = document.getElementById('retrieved_image');
 var retrievedImageOtherUser = document.getElementById('retrieved_image_other_user');
