@@ -6,6 +6,7 @@
  */
 /* Some variables */
 var currentHost = $('[name="bng-url"]').attr('content');
+var apiHost = $('[name="bng-api-url"]').attr('content');
 var currentUser = $('[name="bng-visitor"]').attr('content');
 var currentLanguage = $('html').attr('lang');
 var headers = { 'Authorization': 'Bearer ' + $('[name="bng-ref"]').attr('content'), 'Accept': 'application/json', 'X-localization': navigator.language };
@@ -148,7 +149,7 @@ $(document).ready(function () {
             reader.onloadend = function () {
                 var base64_data = reader.result;
                 var userId = document.getElementById('user_id').value;
-                var mUrl = currentHost + '/api/user/update_avatar_picture/' + parseInt(currentUser.split('-')[1]);
+                var mUrl = apiHost + '/user/update_avatar_picture/' + parseInt(currentUser.split('-')[1]);
                 var datas = JSON.stringify({ 'id': parseInt(currentUser.split('-')[1]), 'user_id': userId, 'image_64': base64_data, 'account_owner_id': userId });
 
                 $.ajax({
@@ -238,7 +239,7 @@ function markAllRead(entity, id) {
         headers: headers,
         type: 'PUT',
         contentType: 'application/json',
-        url: currentHost + '/api/' + entity + '/mark_all_read/' + parseInt(id),
+        url: apiHost + '/' + entity + '/mark_all_read/' + parseInt(id),
         dataType: 'json',
         data: datas,
         success: function () {
@@ -262,7 +263,7 @@ function switchRead(entity, element) {
         headers: headers,
         type: 'PUT',
         contentType: 'application/json',
-        url: currentHost + '/api/' + entity + '/switch_status/' + parseInt(id),
+        url: apiHost + '/' + entity + '/switch_status/' + parseInt(id),
         dataType: 'json',
         data: JSON.stringify({ 'id': parseInt(id) }),
         success: function () {
