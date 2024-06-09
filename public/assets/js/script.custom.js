@@ -5,16 +5,162 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 /* Some variables */
-var currentHost = $('[name="bng-url"]').attr('content');
-var apiHost = $('[name="bng-api-url"]').attr('content');
-var currentUser = $('[name="bng-visitor"]').attr('content');
-var currentLanguage = $('html').attr('lang');
-var headers = { 'Authorization': 'Bearer ' + $('[name="bng-ref"]').attr('content'), 'Accept': 'application/json', 'X-localization': navigator.language };
-var modalUser = $('#cropModalUser');
-var retrievedAvatar = document.getElementById('retrieved_image');
-var retrievedImageOtherUser = document.getElementById('retrieved_image_other_user');
-var currentImageOtherUser = document.querySelector('#otherUserImageWrapper img');
-var cropper;
+const navigator = window.navigator;
+const currentHost = $('[name="bng-url"]').attr('content');
+const apiHost = $('[name="bng-api-url"]').attr('content');
+const currentUser = $('[name="bng-visitor"]').attr('content');
+const currentLanguage = $('html').attr('lang');
+const headers = { 'Authorization': 'Bearer ' + $('[name="bng-ref"]').attr('content'), 'Accept': $('.mime-type').val(), 'X-localization': navigator.language };
+const modalUser = $('#cropModalUser');
+const retrievedAvatar = document.getElementById('retrieved_image');
+const retrievedImageOtherUser = document.getElementById('retrieved_image_other_user');
+const currentImageOtherUser = document.querySelector('#otherUserImageWrapper img');
+let cropper;
+
+/* Mobile user agent */
+const userAgent = navigator.userAgent;
+const normalizedUserAgent = userAgent.toLowerCase();
+const standalone = navigator.standalone;
+
+const isIos = /ip(ad|hone|od)/.test(normalizedUserAgent) || navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+const isAndroid = /android/.test(normalizedUserAgent);
+const isSafari = /safari/.test(normalizedUserAgent);
+const isWebview = (isAndroid && /; wv\)/.test(normalizedUserAgent)) || (isIos && !standalone && !isSafari);
+
+/**
+ * If the window is webview, hide some elements
+ */
+if (isWebview) {
+    $('.detect-webview').addClass('d-none');
+
+} else {
+    $('.detect-webview').removeClass('d-none');
+}
+
+/**
+ * Get cookie by name
+ * 
+ * @param string cname
+ */
+function getCookie(cname) {
+    let name = cname + '=';
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+
+    return '';
+}
+
+/**
+ * Toggle Password Visibility
+ * 
+ * @param string current
+ * @param string element
+ */
+function passwordVisible(current, element) {
+    var el = document.getElementById(element);
+
+    if (el.type === 'password') {
+        el.type = 'text';
+        current.innerHTML = '<i class="bi bi-eye-slash-fill"></i>'
+
+    } else {
+        el.type = 'password';
+        current.innerHTML = '<i class="bi bi-eye-fill"></i>'
+    }
+}
+
+/**
+ * Switch between two elements visibility
+ * 
+ * @param string current
+ * @param string element1
+ * @param string element2
+ * @param string message1
+ * @param string message2
+ */
+function switchDisplay(current, form_id, element1, element2, message1, message2) {
+    var _form = document.getElementById(form_id);
+    var el1 = document.getElementById(element1);
+    var el2 = document.getElementById(element2);
+
+    _form.reset();
+    el1.classList.toggle('d-none');
+    el2.classList.toggle('d-none');
+
+    if (el1.classList.contains('d-none')) {
+        current.innerHTML = message1;
+    }
+
+    if (el2.classList.contains('d-none')) {
+        current.innerHTML = message2;
+    }
+}
+
+/**
+ * Token writter
+ * 
+ * @param string id
+ */
+function tokenWritter(id) {
+    var _val = document.getElementById(id).value;
+    var _splitId = id.split('_');
+    var key = event.keyCode || event.charCode;
+
+    if (key === 8 || key === 46 || key === 37) {
+        if (_splitId[2] !== '1') {
+            var previousElement = document.getElementById('check_digit_' + (parseInt(_splitId[2]) - 1));
+
+            previousElement.focus();
+        }
+
+    } else {
+        var nextElement = document.getElementById('check_digit_' + (parseInt(_splitId[2]) + 1));
+
+        if (key === 39) {
+            nextElement.focus();
+        }
+
+        if (_splitId[2] !== '7') {
+            if (_val !== undefined && Number.isInteger(parseInt(_val))) {
+                nextElement.focus();
+            }
+        }
+    }
+}
+
+/**
+ * Dynamically load JS files
+ */
+function loadAllJS() {
+    $.getScript('/assets/addons/custom/jquery/js/jquery.min.js');
+    $.getScript('/assets/addons/custom/jquery/js/jquery-ui.min.js');
+    $.getScript('/assets/addons/streamo/js/vendor/jquery-migrate-3.3.0.min.js');
+    $.getScript('/assets/addons/custom/bootstrap/js/popper.min.js');
+    $.getScript('/assets/addons/custom/mdb/js/mdb.min.js');
+    $.getScript('/assets/addons/custom/bootstrap/js/bootstrap.bundle.min.js');
+    $.getScript('/assets/addons/streamo/js/plugins.js');
+    $.getScript('/assets/addons/streamo/js/ajax-mail.js');
+    $.getScript('/assets/addons/custom/perfect-scrollbar/dist/perfect-scrollbar.min.js');
+    $.getScript('/assets/addons/custom/cropper/js/cropper.min.js');
+    $.getScript('/assets/addons/custom/sweetalert2/dist/sweetalert2.min.js');
+    $.getScript('/assets/addons/custom/jquery/scroll4ever/js/jquery.scroll4ever.js');
+    $.getScript('/assets/addons/custom/autosize/js/autosize.min.js');
+    $.getScript('/assets/addons/streamo/js/main.js');
+    $.getScript('/assets/addons/custom/biliap/js/biliap.cores.js');
+    $.getScript('/assets/js/script.js');
+}
 
 $(document).ready(function () {
     /* Perfect scrollbar */
@@ -56,6 +202,8 @@ $(document).ready(function () {
 
     /* Click to back to top */
     let btnBackTop = document.getElementById('btnBackTop');
+
+    $(btnBackTop).click(function (e) { e.stopPropagation(); $('html, body').animate({ scrollTop: '0' }); });
 
     /* When the user scrolls down 20px from the top of the document, show the button */
     window.onscroll = function() { scrollFunction() };
