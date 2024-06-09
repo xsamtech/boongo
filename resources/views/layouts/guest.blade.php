@@ -3,11 +3,11 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="keywords" content="@lang('miscellaneous.keywords')">
-        <meta name="dktv-url" content="{{ getWebURL() }}">
-        <meta name="dktv-api-url" content="{{ getApiURL() }}">
-        <meta name="dktv-visitor" content="{{ !empty(Auth::user()) ? Auth::user()->id : null }}">
+        <meta name="bng-url" content="{{ getWebURL() }}">
+        <meta name="bng-api-url" content="{{ getApiURL() }}">
+        <meta name="bng-visitor" content="{{ !empty(Auth::user()) ? Auth::user()->id : null }}">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <meta name="dktv-ref" content="{{ !empty(Auth::user()) ? Auth::user()->api_token : null }}">
+        <meta name="bng-ref" content="{{ !empty(Auth::user()) ? Auth::user()->api_token : null }}">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <!-- ============ Favicon ============ -->
@@ -127,13 +127,11 @@
 			<div id="top-header">
 				<div class="container">
 					<ul class="header-links pull-left">
-						<li><a href="#"><i class="fa fa-phone"></i> +021-95-51-84</a></li>
-						<li><a href="#"><i class="fa fa-envelope-o"></i> email@email.com</a></li>
-						<li><a href="#"><i class="fa fa-map-marker"></i> 1734 Stonecoal Road</a></li>
+						<li><a href="#"><i class="fa fa-phone"></i> +243 815 737 600</a></li>
+						<li><a href="#"><i class="fa fa-envelope-o"></i> contact@boongo7.com</a></li>
 					</ul>
 					<ul class="header-links pull-right">
-						<li><a href="#"><i class="fa fa-dollar"></i> USD</a></li>
-						<li><a href="#"><i class="fa fa-user-o"></i> My Account</a></li>
+						<li><a href="#"><i class="fa fa-user-o"></i> @lang('miscellaneous.menu.account_settings')</a></li>
 					</ul>
 				</div>
 			</div>
@@ -149,7 +147,7 @@
 						<div class="col-md-3">
 							<div class="header-logo">
 								<a href="#" class="logo">
-									<img src="./img/logo.png" alt="">
+									<img src="{{ asset('assets/img/brand.png') }}" alt="logo" width="160">
 								</a>
 							</div>
 						</div>

@@ -67,7 +67,9 @@ return [
     'download' => 'Download',
     'upload' => [
         'use_camera' => 'Use camera',
-        'upload_file' => 'Upload file',
+        'upload_document' => 'Upload document',
+        'upload_image' => 'Upload image (Photo/Video)',
+        'register_audio' => 'Register an audio',
         'choose_existing_file' => 'Choose existing file',
     ],
     'activate' => 'Activate',
@@ -192,13 +194,13 @@ return [
     // ===== LOGIN PAGE
     'login_title1' => 'Log in',
     'login_title2' => 'Identify yourself',
-    'login_description' => 'Your data is safe with us. So you need to identify yourself to be sure it\'s you.',
+    'login_description' => 'Your data is safe with us. So you need to identify yourself to be sure it’s you.',
     'login_username' => 'Phone number, E-mail or username',
     'remember_me' => 'Stay connected',
     'forgotten_password' => 'Forgotten password?',
     'not_member' => 'Not a member?',
     'signup_with' => 'or sign up with:',
-    'go_register' => 'I don\'t have an account',
+    'go_register' => 'I don’t have an account',
 
     // ===== REGISTER PAGE
     'register_title1' => 'Sign up',
@@ -249,7 +251,7 @@ return [
     ],
     'confirm_password' => [
         'label' => 'Confirm password',
-        'error' => 'Your confirmation doesn\'t match the new password',
+        'error' => 'Your confirmation doesn’t match the new password',
     ],
     'choose_role' => 'Choose a role',
     'go_login' => 'Already have an account',
@@ -269,87 +271,30 @@ return [
         'cookies' => 'Cookies',
         'contact' => 'Contact',
         'login_register' => 'log in or register',
-        'account_settings' => 'Account settings',
-        'messages' => 'Chats',
-        'history' => 'Activities history',
-        'notifications' => [
-            'title' => 'Notifications',
-            'the_public' => 'Everybody',
-            'connections' => 'Connections',
-            'mentions' => 'Mentions'
+        'account' => [
+            'title' => 'My account',
+            'cart' => 'My cart',
+            'works' => 'My books',
         ],
+        'messages' => 'Messages',
+        'notifications' => 'Notifications',
         'admin' => [
+            'role' => 'Role',
             'group' => [
                 'title' => 'Group',
-                'visibility' => 'Visibility',
                 'type' => 'Type',
                 'status' => 'Status',
-                'reaction' => 'Reaction'
-            ],
-            'field' => [
-                'title' => 'Field',
                 'category' => 'Category'
             ],
-            'miscellaneous' => [
-                'title' => 'Miscellaneous',
-                'role' => 'Role',
-                'reason' => 'Reason',
-                'coverage_area' => 'Coverage area',
-                'budget' => 'Budget',
-            ],
-        ],
-        'developer' => [
-            'apis' => [
-                'title' => 'APIs',
-                'products' => 'Products',
-                'services' => 'Services',
-                'search' => 'Search engine',
-            ],
-            'integration' => [
-                'title' => 'Integration',
-                'button' => 'Button',
-                'post' => 'Post',
-            ],
+            'subscription' => 'Subscription',
+            'work' => 'Work',
+            'users' => 'Users',
         ],
         'public' => [
-            'news_feed' => 'News feed',
-            'orders' => [
-                'title' => 'Orders',
-                'cart' => [
-                    'title' => 'Cart',
-                    'ongoing' => 'Ongoing',
-                    'archives' => 'Archives',
-                ],
-                'wishlist' => 'Wishlist',
-            ],
-            'communities' => [
-                'title' => 'Communities',
-                'yours' => 'Yours',
-                'connections' => 'Connections',
-                'popular' => 'The most popular',
-            ],
-            'events' => [
-                'title' => 'Events',
-                'yours' => 'Yours',
-                'local' => 'Local',
-                'at_the_moment' => 'At the moment',
-                'popular' => 'The most popular',
-            ],
-            'profile' => [
-                'title' => 'My profile',
-                'products' => 'Products',
-                'services' => 'Services',
-                'connections' => 'Connections',
-                'my_activities' => 'My activities',
-            ],
-            'settings' => [
-                'title' => 'Settings',
-                'account' => 'Account',
-                'notification' => 'Notification',
-                'privacy_and_safety' => 'Privacy and safety',
-                'connections' => 'Connections',
-                'messages' => 'Messaging',
-            ],
+            'books' => 'Books',
+            'mag_newspapers' => 'Magazines & newspapers',
+            'mapping' => 'Mapping',
+            'medias' => 'Medias',
         ],
     ],
 
@@ -396,8 +341,22 @@ return [
 
     // ===== ADMIN PAGES
     'admin' => [
+        'icon_name' => 'Icon name',
+        'color_name' => 'Color name',
         'home' => [
-            'title' => 'Admin area',
+            'title' => 'Admin area'
+        ],
+
+        'role' => [
+            'details' => 'Role details',
+            'link' => 'Manage roles',
+            'add' => 'Add a role',
+            'edit' => 'Edit the role',
+            'search' => 'Search a role',
+            'list' => 'Roles list',
+            'data' => [
+                'role_name' => 'Role name'
+            ],
         ],
 
         // Group
@@ -411,19 +370,6 @@ return [
             'choose_group' => 'Choose a group',
             'data' => [
                 'group_name' => 'Group name'
-            ],
-
-            // Visibility
-            'visibility' => [
-                'details' => 'Visibility details',
-                'link' => 'Manage visibilities',
-                'add' => 'Add a visibility',
-                'edit' => 'Edit the visibility',
-                'search' => 'Search a visibility',
-                'list' => 'Visibilities list',
-                'data' => [
-                    'visibility_name' => 'Visibility name'
-                ],
             ],
 
             // Type
@@ -452,32 +398,6 @@ return [
                 ],
             ],
 
-            // Reaction
-            'reaction' => [
-                'details' => 'Reaction details',
-                'link' => 'Manage reactions',
-                'add' => 'Add a reaction',
-                'edit' => 'Edit the reaction',
-                'search' => 'Search a reaction',
-                'list' => 'Reactions list',
-                'data' => [
-                    'reaction_name' => 'Reaction name'
-                ],
-            ],
-        ],
-
-        // Field
-        'field' => [
-            'details' => 'Field détails',
-            'link' => 'Manage fields',
-            'add' => 'Add a field',
-            'edit' => 'Edit the field',
-            'search' => 'Search a field',
-            'list' => 'Fields list',
-            'data' => [
-                'field_name' => 'Field name'
-            ],
-
             // Category
             'category' => [
                 'details' => 'Category details',
@@ -487,74 +407,53 @@ return [
                 'search' => 'Search a category',
                 'list' => 'Categories list',
                 'data' => [
-                    'category_name' => 'Category name',
-                    'choose_type' => 'Choose a type'
+                    'category_name' => 'Category name'
                 ],
             ],
         ],
 
-        // Miscellaneous
-        'miscellaneous' => [
-            'link' => 'Manage other data',
-            'search' => 'Search among other data',
-
-            // Role
-            'role' => [
-                'details' => 'Role details',
-                'link' => 'Mange roles',
-                'add' => 'Add a role',
-                'edit' => 'Edit the role',
-                'search' => 'Search a role',
-                'list' => 'Roles list',
-                'data' => [
-                    'role_name' => 'Role name'
-                ],
+        // Subscription
+        'subscription' => [
+            'details' => 'Subscription details',
+            'link' => 'Manage subscriptions',
+            'add' => 'Add a subscription',
+            'edit' => 'Edit the subscription',
+            'search' => 'Search a subscription',
+            'list' => 'Subscriptions list',
+            'data' => [
+                'number_of_hours' => 'Number of hours',
+                'price' => 'Price',
+                'choose_type' => 'Choose the type'
             ],
+        ],
 
-            // Reason
-            'reason' => [
-                'details' => 'Reason details',
-                'link' => 'Manage reasons',
-                'add' => 'Add a reason',
-                'edit' => 'Edit the reason',
-                'search' => 'Search a reason',
-                'list' => 'Reasons list',
-                'data' => [
-                    'reason_content' => 'Reason content',
-                    'report_count' => 'Number of reactions',
-                    'number_of_days' => 'Number of days'
-                ],
+        // Work
+        'work' => [
+            'details' => 'Work details',
+            'link' => 'Manage works',
+            'add' => 'Add a work',
+            'edit' => 'Edit the work',
+            'search' => 'Search a work',
+            'list' => 'Works list',
+            'data' => [
+                'work_title' => 'Work title',
+                'work_content' => 'Work content',
+                'work_url' => 'Work URL',
+                'choose_type' => 'Choose the type',
+                'choose_status' => 'Choose the status',
+                'choose_categories' => 'Choose categories'
             ],
+        ],
 
-            // Coverage area
-            'coverage_area' => [
-                'details' => 'Coverage area details',
-                'link' => 'Manage coverage areas',
-                'add' => 'Add a coverage area',
-                'edit' => 'Edit the coverage area',
-                'search' => 'Search a coverage area',
-                'list' => 'Coverage areas list',
-                'data' => [
-                    'area_name' => 'Coverage area name',
-                    'percentage' => 'Percentage'
-                ],
-            ],
-
-            // Budget
-            'budget' => [
-                'details' => 'Budget details',
-                'link' => 'Manage budgets',
-                'add' => 'Add a budget',
-                'edit' => 'Edit the budget',
-                'search' => 'Search a budget',
-                'list' => 'Budgets list',
-                'data' => [
-                    'notifications_count' => 'Number of notifications',
-                    'reactions_count' => 'Number of reations',
-                    'amount' => 'Price'
-                ],
-            ],
-        ]
+        // Users
+        'users' => [
+            'details' => 'user details',
+            'link' => 'Manage users',
+            'add' => 'Add a user',
+            'edit' => 'Edit the user',
+            'search' => 'Search a user',
+            'list' => 'Users list'
+        ],
     ],
 
     // ===== DEVELOPER PAGES
