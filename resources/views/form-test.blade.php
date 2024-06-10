@@ -139,7 +139,7 @@
 @endif
 
 		<!-- SECTION -->
-		<form method="POST" action="{{ route('admin.work.home') }}" class="section py-5">
+		<form method="POST" action="{{ route('admin.work.home') }}" class="section py-5" enctype="multipart/form-data">
             <h1 class="text-center mb-4">@lang('miscellaneous.admin.work.add')</h1>
 @csrf
 

@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\ApiClientManager;
 use App\Http\Controllers\Controller;
+use App\Models\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
  * @author Xanders
@@ -60,11 +63,17 @@ class AdminController extends Controller
             }
 
             // Upload document
-            if ($request->register_document != null) {
-                $this::$api_client_manager::call('POST', getApiURL() . '/work/upload_files', $api_token, [
+            if ($request->hasFile('register_document')) {
+                $file_url = 'documents/works/' . $work->data->id . '/' . Str::random(50) . '.' . $request->file('register_document')->extension();
+
+                // Upload file
+                Storage::url(Storage::disk('public')->put($file_url, $request->file('file_url')));
+
+                File::create([
+                    'file_name' => $work->data->work_title,
+                    'file_url' => $file_url,
                     'type_id' => $document_type->data->id,
-                    'work_id' => $work->data->id,
-                    'file_url' => $request->register_document
+                    'work_id' => $work->data->id
                 ]);
             }
 
