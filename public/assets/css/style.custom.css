@@ -232,7 +232,7 @@ a:hover.bng-text-secondary {
     }
 }
 
-@media screen and (max-width: 375px) {
+@media screen and (max-width: 370px) {
     #top-header .top-contact {
         display: none;
     }
