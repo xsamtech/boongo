@@ -26,6 +26,7 @@
         <!-- ============ Addons CSS Files ============ -->
  		<!-- Bootstrap -->
  		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/electro/bootstrap/css/bootstrap.min.css') }}"/>
+ 		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/custom/bootstrap/css/bootstrap.min.css') }}"/>
  		<!-- Slick -->
  		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/electro/slick/css/slick.css') }}"/>
  		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/electro/slick/css/slick-theme.css') }}"/>
@@ -161,9 +162,7 @@
                             <li><a href="mailto:contact@boongo7.com"><i class="fa-solid fa-envelope"></i> contact@boongo7.com</a></li>
                         </ul>
                         <ul class="header-links pull-right">
-                            <li>
-                                <a href="{{ Auth::check() ? route('account') : route('login') }}"><i class="fa-solid {{ Auth::check() ? 'fa-user' :'fa-power-off' }}"></i> {{ Auth::check() ? __('miscellaneous.menu.account.title') : __('miscellaneous.login_title1') }}</a>
-                            </li>
+                            <li><a href="{{ Auth::check() ? route('account') : route('login') }}"><i class="fa-solid {{ Auth::check() ? 'fa-user' :'fa-power-off' }}"></i> {{ Auth::check() ? __('miscellaneous.menu.account.title') : __('miscellaneous.login_title1') }}</a></li>
                         </ul>
                     </div>
 				</div>
@@ -177,10 +176,10 @@
 					<!-- row -->
 					<div class="row">
 						<!-- LOGO -->
-						<div class="col-md-3">
+						<div class="col-md-3 mb-sm-0 mb-3">
 							<div class="header-logo">
 								<a href="{{ route('home') }}" class="logo">
-									<img src="{{ asset('assets/img/brand.png') }}" alt="logo" width="160">
+									<img src="{{ asset('assets/img/brand.png') }}" alt="logo" width="160" class="align-bottom">
 								</a>
 							</div>
 						</div>
