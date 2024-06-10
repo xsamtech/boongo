@@ -378,22 +378,6 @@
 		<!-- /FOOTER -->
 
         <span id="btnBackTop" class="btn btn-floating btn-primary d-none" style="position: fixed; bottom: 2rem; right: 2rem;"><i class="fa-solid fa-chevron-up"></i></span>
-		<!-- jQuery Plugins -->
-        <script src="{{ asset('assets/addons/custom/jquery/jquery.min.js') }}"></script>
-        <script src="{{ asset('assets/addons/custom/jquery/jquery-ui/jquery-ui.min.js') }}"></script>
-        <script src="{{ asset('assets/addons/electro/bootstrap/js/bootstrap.min.js') }}"></script>
-        <script src="{{ asset('assets/addons/custom/bootstrap/js/bootstrap.min.js') }}"></script>
-		<script src="{{ asset('assets/addons/electro/slick/js/slick.min.js') }}"></script>
-		<script src="{{ asset('assets/addons/electro/nouislider/js/nouislider.min.js') }}"></script>
-		<script src="{{ asset('assets/addons/custom/jquery/jquery.zoom/jquery.zoom.min.js') }}"></script>
-        <script src="{{ asset('assets/addons/custom/perfect-scrollbar/dist/perfect-scrollbar.min.js') }}"></script>
-        <script src="{{ asset('assets/addons/custom/autosize/js/autosize.min.js') }}"></script>
-        <script src="{{ asset('assets/addons/custom/dataTables/datatables.min.js') }}"></script>
-        <script src="{{ asset('assets/addons/custom/cropper/js/cropper.min.js') }}"></script>
-        <script src="{{ asset('assets/addons/custom/sweetalert2/dist/sweetalert2.min.js') }}"></script>
-        <script src="{{ asset('assets/addons/custom/jquery/scroll4ever/js/jquery.scroll4ever.js') }}"></script>
-		<script src="{{ asset('assets/js/script.electro.js') }}"></script>
-		<script src="{{ asset('assets/js/script.custom2.js') }}"></script>
 
         <!-- ### Crop user image ### -->
         <div class="modal fade" id="cropModalUser" tabindex="-1" role="dialog" aria-labelledby="cropModalUserLabel" aria-hidden="true">
@@ -449,5 +433,22 @@
             </div>
         </div>
         <!-- END MODALS-->
-    </body>
+
+        <!-- jQuery Plugins -->
+        <script src="{{ asset('assets/addons/custom/jquery/jquery.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/jquery/jquery-ui/jquery-ui.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/electro/bootstrap/js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/bootstrap/js/bootstrap.min.js') }}"></script>
+		<script src="{{ asset('assets/addons/electro/slick/js/slick.min.js') }}"></script>
+		<script src="{{ asset('assets/addons/electro/nouislider/js/nouislider.min.js') }}"></script>
+		<script src="{{ asset('assets/addons/custom/jquery/jquery.zoom/jquery.zoom.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/perfect-scrollbar/dist/perfect-scrollbar.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/autosize/js/autosize.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/dataTables/datatables.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/cropper/js/cropper.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/sweetalert2/dist/sweetalert2.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/jquery/scroll4ever/js/jquery.scroll4ever.js') }}"></script>
+		<script src="{{ asset('assets/js/script.electro.js') }}"></script>
+		<script src="{{ asset('assets/js/script.custom2.js') }}"></script>
+	</body>
 </html>
