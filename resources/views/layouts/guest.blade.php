@@ -50,6 +50,9 @@
 
         <!-- ============ Custom CSS ============ -->
         <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/style.custom.css') }}">
+        <style>
+            .header-logo .logo { vertical-align: 3px; }
+        </style>
 @if (request()->has('app_id'))
         <style>
             .detect-webview { display: none;!important }
