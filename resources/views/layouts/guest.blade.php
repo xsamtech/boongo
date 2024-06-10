@@ -124,6 +124,10 @@
         @if (!empty($token_sent))
             @lang('auth.otp-code')
         @endif
+
+        @if (Route::is('home'))
+            @lang('miscellaneous.welcome_title')
+        @endif
     @endif
 @endif
         </title>
