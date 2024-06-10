@@ -158,9 +158,9 @@
                                     <input type="text" name="register_work_url" id="register_work_url" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_url')">
                                 </div>
 
-                                <div id="editor" class="form-group mb-3">
-                                    <label for="register_work_content" class="visually-hidden">@lang('miscellaneous.admin.work.data.work_content')</label>
-                                    <textarea name="register_work_content" id="edit" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_content')"></textarea>
+                                <div id="editor">
+                                    <label for="register_work_content">@lang('miscellaneous.admin.work.data.work_content')</label>
+                                    <div id="edit"></div>
                                 </div>
 
                                 <div class="form-group mb-3">
