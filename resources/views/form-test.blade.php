@@ -159,7 +159,7 @@
 
                                 <div class="form-group mb-3">
                                     <label for="register_work_url">@lang('miscellaneous.menu.admin.group.type')</label>
-                                    <select class="form-select" aria-label="@lang('miscellaneous.admin.work.data.choose_type')">
+                                    <select name="type_id" class="form-select" aria-label="@lang('miscellaneous.admin.work.data.choose_type')">
                                         <option class="disabled" selected>@lang('miscellaneous.admin.work.data.choose_type')</option>
 @forelse ($types as $type)
                                         <option value="{{ $type->id }}">{{ $type->type_name }}</option>
