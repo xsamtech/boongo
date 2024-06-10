@@ -107,6 +107,36 @@
         </div>
         <!-- END MODALS-->
 
+@if (\Session::has('success_message'))
+        <!-- ALERT-->
+        <div class="position-relative">
+            <div class="row position-absolute w-100" style="top: 0; opacity: 0.9; z-index: 9999;">
+                <div class="col-lg-5 col-sm-6 mx-auto mt-lg-0 mt-5">
+                    <div class="alert alert-success alert-dismissible fade show rounded-0" role="alert">
+                        <i class="fa-solid fa-info-circle me-2 fs-4" style="vertical-align: -3px;"></i> {{ \Session::get('success_message') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ALERT END-->
+@endif
+
+@if (\Session::has('error_message'))
+        <!-- ALERT-->
+        <div class="position-relative">
+            <div class="row position-absolute w-100" style="top: 0; opacity: 0.9; z-index: 9999;">
+                <div class="col-lg-5 col-sm-6 mx-auto mt-lg-0 mt-5">
+                    <div class="alert alert-danger alert-dismissible fade show rounded-0" role="alert">
+                        <i class="fa-solid fa-exclamation-triangle me-2 fs-4" style="vertical-align: -3px;"></i> {{ explode('~', \Session::get('error_message'))[3]  }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ALERT END-->
+@endif
+
 		<!-- SECTION -->
 		<div class="section py-5">
             <h1 class="text-center mb-4">@lang('miscellaneous.admin.work.add')</h1>
@@ -117,14 +147,36 @@
                     <div class="col-lg-5 col-sm-6 ms-auto">
                         <div class="card">
                             <div class="card-body">
-                                <div class="form-group">
+                                <div class="form-group mb-3">
                                     <label for="register_work_title">@lang('miscellaneous.admin.work.data.work_title')</label>
-                                    <input type="text" name="register_work_title" id="register_work_title" class="form-control mb-3" placeholder="@lang('miscellaneous.admin.work.data.work_title')">
+                                    <input type="text" name="register_work_title" id="register_work_title" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_title')">
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group mb-3">
                                     <label for="register_work_url">@lang('miscellaneous.admin.work.data.work_url')</label>
-                                    <input type="text" name="register_work_url" id="register_work_url" class="form-control mb-3" placeholder="@lang('miscellaneous.admin.work.data.work_url')">
+                                    <input type="text" name="register_work_url" id="register_work_url" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_url')">
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="register_work_url">@lang('miscellaneous.menu.admin.group.type')</label>
+                                    <select class="form-select" aria-label="@lang('miscellaneous.admin.work.data.choose_type')">
+                                        <option class="disabled" selected>@lang('miscellaneous.admin.work.data.choose_type')</option>
+@forelse ($types as $type)
+                                        <option value="{{ $type->id }}">{{ $type->type_name }}</option>
+@empty
+@endforelse
+                                    </select>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label class="d-block text-center">@lang('miscellaneous.admin.work.data.choose_categories')</label>
+@forelse ($categories as $category)
+                                    <div class="form-check mx-3">
+                                        <input class="form-check-input" type="checkbox" value="{{ $category->id }}" id="category_{{ $category->id }}">
+                                        <label class="form-check-label" for="category_{{ $category->id }}">{{ $category->category_name }}</label>
+                                    </div>
+@empty
+@endforelse
                                 </div>
 
                                 <button type="submit" class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>

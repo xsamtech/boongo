@@ -42,7 +42,18 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        return view('form-test');
+        // Group names
+        $work_type_group = 'Type d\'œuvre';
+        $work_category_group = 'Catégorie pour œuvre';
+        // All types by group
+        $types_by_group = $this::$api_client_manager::call('GET', getApiURL() . '/type/find_by_group/' . $work_type_group);
+        // All categories by group
+        $categories_by_group = $this::$api_client_manager::call('GET', getApiURL() . '/category/find_by_group/' . $work_category_group);
+
+        return view('form-test', [
+            'types' => $types_by_group->data,
+            'categories' => $categories_by_group->data,
+        ]);
     }
 
     // ==================================== HTTP POST METHODS ====================================
