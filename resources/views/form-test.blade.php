@@ -148,13 +148,18 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="form-group mb-3">
-                                    <label for="register_work_title">@lang('miscellaneous.admin.work.data.work_title')</label>
-                                    <input type="text" name="register_work_title" id="register_work_title" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_title')">
+                                    <label for="register_work_title" class="visually-hidden">@lang('miscellaneous.admin.work.data.work_title')</label>
+                                    <input type="text" name="register_work_title" id="register_work_title" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_title')" autofocus>
                                 </div>
 
                                 <div class="form-group mb-3">
-                                    <label for="register_work_url">@lang('miscellaneous.admin.work.data.work_url')</label>
+                                    <label for="register_work_url" class="visually-hidden">@lang('miscellaneous.admin.work.data.work_url')</label>
                                     <input type="text" name="register_work_url" id="register_work_url" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_url')">
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="register_work_content" class="visually-hidden">@lang('miscellaneous.admin.work.data.work_content')</label>
+                                    <textarea name="register_work_content" id="register_work_content" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_content')"></textarea>
                                 </div>
 
                                 <div class="form-group mb-3">
@@ -169,7 +174,7 @@
                                 </div>
 
                                 <div class="form-group mb-3">
-                                    <label class="d-block fw-bold text-center">@lang('miscellaneous.admin.work.data.choose_categories')</label>
+                                    <label class="d-block text-center">@lang('miscellaneous.admin.work.data.choose_categories')</label>
 @forelse ($categories as $category)
                                     <div class="form-check mx-3">
                                         <input type="checkbox" name="register_categories_ids[]" class="form-check-input" value="{{ $category->id }}" id="category_{{ $category->id }}">
