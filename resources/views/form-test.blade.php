@@ -136,19 +136,16 @@
                             <div id="otherUserImageWrapper" class="card-body pb-4 text-center">
                                 <p class="card-text m-0">@lang('miscellaneous.account.personal_infos.click_to_change_picture')</p>
 
-                                <label for="image_other_user" href="#" class="thumbnail" style="cursor: pointer;">
-                                    <img src="{{ asset('assets/img/cover.png') }}" alt="cover" class="other-user-image img-fluid rounded-4">
-                                    <input type="file" name="image_other_user" id="image_other_user" style="position: absolute; left: -99999px;">
-                                </label>
-                                <input type="hidden" name="data_other_user" id="data_other_user">
-
-                                {{-- <div class="bg-image hover-overlay mt-3">
+                                <div class="bg-image hover-overlay mt-3">
+                                    <img src="{{ !empty($manager->avatar_url) ? $manager->avatar_url : asset('assets/img/user.png') }}" alt="{{ $manager->firstname . ' ' . $manager->lastname }}" class="other-user-image img-fluid rounded-4">
                                     <div class="mask rounded-4" style="background-color: rgba(5, 5, 5, 0.5);">
-                                        <label role="button" class="d-flex h-100 justify-content-center align-items-center">
+                                        <label role="button" for="image_other_user" class="d-flex h-100 justify-content-center align-items-center">
                                             <i class="bi bi-pencil-fill text-white fs-2"></i>
+                                            <input type="file" name="image_other_user" id="image_other_user" class="d-none">
                                         </label>
+                                        <input type="hidden" name="data_other_user" id="data_other_user">
                                     </div>
-                                </div> --}}
+                                </div>
 
                                 <p class="d-none mt-2 mb-0 small text-success fst-italic">@lang('miscellaneous.waiting_register')</p>
                             </div>
@@ -174,6 +171,6 @@
         <script src="{{ asset('assets/addons/custom/cropper/js/cropper.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/sweetalert2/dist/sweetalert2.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/jquery/scroll4ever/js/jquery.scroll4ever.js') }}"></script>
-		<script src="{{ asset('assets/js/script.custom2.js') }}"></script>
+		<script src="{{ asset('assets/js/script.custom.js') }}"></script>
 	</body>
 </html>
