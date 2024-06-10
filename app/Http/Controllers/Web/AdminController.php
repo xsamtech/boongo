@@ -64,7 +64,7 @@ class AdminController extends Controller
                 $this::$api_client_manager::call('POST', getApiURL() . '/work/upload_files', $api_token, [
                     'type_id' => $document_type->data->id,
                     'work_id' => $work->data->id,
-                    'image_64' => $request->data_other_user
+                    'file_url' => $request->register_document
                 ]);
             }
 

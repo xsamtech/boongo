@@ -477,7 +477,7 @@ class WorkController extends BaseController
         }
 
         if ($request->hasFile('file_url')) {
-            $file_url = 'images/works/' . $work->id . '/' . Str::random(50) . '.' . $request->file('file_url')->extension();
+            $file_url = ($type->id == 7 ? 'documents/works/' : ($type->id == 8 ? 'audios/works/' : 'images/works/')) . $work->id . '/' . Str::random(50) . '.' . $request->file('file_url')->extension();
 
             // Upload file
             Storage::url(Storage::disk('public')->put($file_url, $request->file('file_url')));
