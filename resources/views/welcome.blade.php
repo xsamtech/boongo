@@ -8,7 +8,7 @@
 			<div class="container">
 				<!-- row -->
 				<div class="row">
-                    <div class="col-lg-4 col-sm-6 mx-auto">
+                    <div class="col-lg-4 col-sm-6 ml-auto mr-auto">
                         <div class="card border border-default z-depth-0">
                             <div class="card-body">
                                 <div class="form-group">
