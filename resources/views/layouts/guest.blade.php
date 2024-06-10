@@ -203,6 +203,7 @@
 						<!-- ACCOUNT -->
 						<div class="col-md-3 clearfix">
 							<div class="header-ctn">
+@if (Auth::check())
 								<!-- Wishlist -->
 								<div>
 									<a href="#">
@@ -255,6 +256,7 @@
 									</div>
 								</div>
 								<!-- /Cart -->
+@endif
 
 								<!-- Menu Toogle -->
 								<div class="menu-toggle">
