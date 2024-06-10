@@ -74,7 +74,7 @@ return [
     'unlock' => 'Unlock',
     'search_input' => 'Search here',
     'search' => 'Search',
-    'all_categories' => 'All categories',
+    'all_categories' => 'Any category',
     'mark_all_read' => 'Mark all as read',
     'empty_list' => 'The list is empty',
     'see_more' => 'See more',

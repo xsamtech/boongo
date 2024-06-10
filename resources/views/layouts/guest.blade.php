@@ -161,7 +161,7 @@
                             <li><a href="mailto:contact@boongo7.com"><i class="fa-solid fa-envelope"></i> contact@boongo7.com</a></li>
                         </ul>
                         <ul class="header-links pull-right">
-                            <li><a href="#"><i class="fa fa-user-o"></i> @lang('miscellaneous.menu.account.title')</a></li>
+                            <li><a href="#"><i class="fa-solid fa-user"></i> @lang('miscellaneous.menu.account.title')</a></li>
                         </ul>
                     </div>
 				</div>
@@ -316,8 +316,8 @@
 								<h3 class="footer-title">@lang('miscellaneous.public.about.enterprise_title')</h3>
 								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut.</p>
 								<ul class="footer-links">
-									<li><a href="tel:+243815737600"><i class="fa fa-phone"></i>+243 815 737 600</a></li>
-									<li><a href="mailto:contact@boongo7.com"><i class="fa fa-envelope-o"></i>contact@boongo7.com</a></li>
+									<li><a href="tel:+243815737600"><i class="fa-solid fa-phone"></i>+243 815 737 600</a></li>
+									<li><a href="mailto:contact@boongo7.com"><i class="fa-solid fa-envelope"></i>contact@boongo7.com</a></li>
 								</ul>
 							</div>
 						</div>
@@ -357,15 +357,13 @@
 			<!-- /top footer -->
 
 			<!-- bottom footer -->
-			<div id="bottom-footer" class="section">
+			<div id="bottom-footer" class="section py-0">
 				<div class="container">
 					<!-- row -->
 					<div class="row">
 						<div class="col-md-12 text-center">
 							<span class="copyright">
-								<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 								Copyright &copy;{{ date('Y') }}</script> @lang('miscellaneous.all_right_reserved') | Designed by <a href="https://xsamtech.com" target="_blank">Xsam Technologies</a>
-							<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 							</span>
 						</div>
 					</div>

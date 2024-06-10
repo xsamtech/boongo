@@ -74,7 +74,7 @@ return [
     'unlock' => 'Débloquer',
     'search_input' => 'Rechercher ici',
     'search' => 'Rechercher',
-    'all_categories' => 'Toutes les catégories',
+    'all_categories' => 'Toute catégorie',
     'mark_all_read' => 'Tout marquer comme lue',
     'empty_list' => 'La liste est vide',
     'see_more' => 'Voir plus',
