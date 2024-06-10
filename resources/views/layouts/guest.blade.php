@@ -176,7 +176,7 @@
 					<div class="row">
 						<!-- LOGO -->
 						<div class="col-md-3 mb-sm-0 mb-3">
-							<div class="header-logo">
+							<div class="header-logo" style="margin-top: 10px;">
 								<a href="{{ route('home') }}" class="logo">
 									<img src="{{ asset('assets/img/brand.png') }}" alt="logo" width="160" class="align-bottom">
 								</a>
