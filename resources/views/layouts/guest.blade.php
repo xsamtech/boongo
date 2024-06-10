@@ -436,6 +436,7 @@
         <script src="{{ asset('assets/addons/electro/bootstrap/js/jquery.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/jquery/jquery-ui/jquery-ui.min.js') }}"></script>
         <script src="{{ asset('assets/addons/electro/bootstrap/js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/bootstrap/js/bootstrap.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/electro/slick/js/slick.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/electro/nouislider/js/nouislider.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/custom/jquery/jquery.zoom/jquery.zoom.min.js') }}"></script>
