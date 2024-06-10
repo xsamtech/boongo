@@ -51,7 +51,8 @@
         <!-- ============ Custom CSS ============ -->
         <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/style.custom.css') }}">
         <style>
-            .header-logo .logo { vertical-align: 5px; }
+            .header-logo .logo { margin-top: 10px; }
+            @media only screen and (max-width: 500px) { .header-logo .logo { margin-top: 0; margin-bottom: 10px; } }
         </style>
 @if (request()->has('app_id'))
         <style>
