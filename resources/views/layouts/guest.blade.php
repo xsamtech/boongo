@@ -128,6 +128,24 @@
         @if (Route::is('home'))
             @lang('miscellaneous.welcome_title')
         @endif
+        @if (Route::is('about.home'))
+            @lang('miscellaneous.menu.about')
+        @endif
+        @if (Route::is('book.home'))
+            @lang('miscellaneous.menu.public.books')
+        @endif
+        @if (Route::is('newspaper.home'))
+            @lang('miscellaneous.menu.public.mag_newspapers')
+        @endif
+        @if (Route::is('map.home'))
+            @lang('miscellaneous.menu.public.mapping')
+        @endif
+        @if (Route::is('media.home'))
+            @lang('miscellaneous.menu.public.medias')
+        @endif
+        @if (Route::is('about.entity') || Route::is('account.entity') || Route::is('book.datas') || Route::is('newspaper.datas') || Route::is('map.datas') || Route::is('media.datas'))
+            {{ $entity_title }}
+        @endif
     @endif
 @endif
         </title>
@@ -139,13 +157,15 @@
 			<!-- TOP HEADER -->
 			<div id="top-header">
 				<div class="container">
-					<ul class="header-links pull-left">
-						<li><a href="tel:+243815737600"><i class="fa-solid fa-phone"></i> +243 815 737 600</a></li>
-						<li><a href="mailto:contact@boongo7.com"><i class="fa-solid fa-envelope-o"></i> contact@boongo7.com</a></li>
-					</ul>
-					<ul class="header-links pull-right">
-						<li><a href="#"><i class="fa fa-user-o"></i> @lang('miscellaneous.menu.account.title')</a></li>
-					</ul>
+                    <div class="d-flex justify-content-between">
+                        <ul class="header-links pull-left">
+                            <li><a href="tel:+243815737600"><i class="fa-solid fa-phone"></i> +243 815 737 600</a></li>
+                            <li><a href="mailto:contact@boongo7.com"><i class="fa-solid fa-envelope"></i> contact@boongo7.com</a></li>
+                        </ul>
+                        <ul class="header-links pull-right">
+                            <li><a href="#"><i class="fa fa-user-o"></i> @lang('miscellaneous.menu.account.title')</a></li>
+                        </ul>
+                    </div>
 				</div>
 			</div>
 			<!-- /TOP HEADER -->
@@ -176,7 +196,7 @@
 										<option value="1">Category 02</option>
 									</select>
 									<input class="input" placeholder="@lang('miscellaneous.search_input')">
-									<button class="search-btn">@lang('miscellaneous.search')</button>
+									<button class="search-btn"><i class="fa-solid fa-search"></i></button>
 								</form>
 							</div>
 						</div>
@@ -362,14 +382,13 @@
 		<!-- /FOOTER -->
 
 		<!-- jQuery Plugins -->
-        <script src="{{ asset('assets/addons/custom/jquery/js/jquery.min.js') }}"></script>
-        <script src="{{ asset('assets/addons/custom/jquery/js/jquery-ui.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/jquery/jquery.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/jquery/jquery-ui/jquery-ui.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/electro/slick/js/slick.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/electro/nouislider/js/nouislider.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/custom/jquery/jquery.zoom/jquery.zoom.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/perfect-scrollbar/dist/perfect-scrollbar.min.js') }}"></script>
-		<script src="{{ asset('assets/addons/custom/dataTables/DataTables-1.13.4/js/dataTables.bootstrap5.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/autosize/js/autosize.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/dataTables/datatables.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/cropper/js/cropper.min.js') }}"></script>
