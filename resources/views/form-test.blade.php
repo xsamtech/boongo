@@ -162,7 +162,7 @@
 		<!-- jQuery Plugins -->
         <script src="{{ asset('assets/addons/custom/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/jquery/jquery-ui/jquery-ui.min.js') }}"></script>
-        <script src="{{ asset('assets/addons/custom/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/bootstrap/js/bootstrap.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/cooladmin/slick/slick.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/custom/jquery/jquery.zoom/jquery.zoom.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/perfect-scrollbar/dist/perfect-scrollbar.min.js') }}"></script>
