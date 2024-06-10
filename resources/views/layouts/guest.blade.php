@@ -25,7 +25,7 @@
 
         <!-- ============ Addons CSS Files ============ -->
  		<!-- Bootstrap -->
- 		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/custom/bootstrap/css/bootstrap.min.css') }}"/>
+ 		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/electro/bootstrap/css/bootstrap.min.css') }}"/>
  		<!-- Slick -->
  		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/electro/slick/css/slick.css') }}"/>
  		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/electro/slick/css/slick-theme.css') }}"/>
@@ -53,11 +53,6 @@
 @if (request()->has('app_id'))
         <style>
             .detect-webview { display: none;!important }
-            body{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:14px;line-height:1.42857143;color:#333;background-color:#fff}button,input,select,textarea{font-family:inherit;font-size:inherit;line-height:inherit}a{color:#337ab7;text-decoration:none}a:focus,a:hover{color:#23527c;text-decoration:underline}a:focus{outline:5px auto -webkit-focus-ring-color;outline-offset:-2px}img{vertical-align:middle}
-        </style>
-@else
-        <style>
-            body{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:14px;line-height:1.42857143;color:#333;background-color:#fff}button,input,select,textarea{font-family:inherit;font-size:inherit;line-height:inherit}a{color:#337ab7;text-decoration:none}a:focus,a:hover{color:#23527c;text-decoration:underline}a:focus{outline:5px auto -webkit-focus-ring-color;outline-offset:-2px}img{vertical-align:middle}
         </style>
 @endif
 
@@ -383,9 +378,9 @@
 		<!-- /FOOTER -->
 
 		<!-- jQuery Plugins -->
-        <script src="{{ asset('assets/addons/custom/jquery/jquery.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/electro/bootstrap/js/jquery.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/jquery/jquery-ui/jquery-ui.min.js') }}"></script>
-        <script src="{{ asset('assets/addons/custom/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/electro/bootstrap/js/bootstrap.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/electro/slick/js/slick.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/electro/nouislider/js/nouislider.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/custom/jquery/jquery.zoom/jquery.zoom.min.js') }}"></script>
