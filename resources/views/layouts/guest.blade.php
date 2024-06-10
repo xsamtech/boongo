@@ -161,7 +161,9 @@
                             <li><a href="mailto:contact@boongo7.com"><i class="fa-solid fa-envelope"></i> contact@boongo7.com</a></li>
                         </ul>
                         <ul class="header-links pull-right">
-                            <li><a href="#"><i class="fa-solid fa-user"></i> @lang('miscellaneous.menu.account.title')</a></li>
+                            <li>
+                                <a href="{{ Auth::check() ? route('account') : route('login') }}"><i class="fa-solid fa-user"></i> {{ Auth::check() ? __('miscellaneous.menu.account.title') : __('miscellaneous.login_title1') }}</a>
+                            </li>
                         </ul>
                     </div>
 				</div>
