@@ -21,11 +21,6 @@
                                     <input type="text" name="register_work_url" id="register_work_url" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_url')">
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="register_work_url">@lang('miscellaneous.admin.work.data.work_url')</label>
-                                    <input type="text" name="register_work_url" id="register_work_url" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_url')">
-                                </div>
-
                                 <button type="submit" class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
                             </div>
                         </div>
