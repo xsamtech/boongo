@@ -42,7 +42,7 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        return view('welcome');
+        return view('form-test');
     }
 
     // ==================================== HTTP POST METHODS ====================================
