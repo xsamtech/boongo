@@ -137,7 +137,7 @@
                                 <p class="card-text m-0">@lang('miscellaneous.account.personal_infos.click_to_change_picture')</p>
 
                                 <div class="bg-image hover-overlay mt-3">
-                                    <img src="{{ !empty($manager->avatar_url) ? $manager->avatar_url : asset('assets/img/user.png') }}" alt="{{ $manager->firstname . ' ' . $manager->lastname }}" class="other-user-image img-fluid rounded-4">
+                                    <img src="{{ asset('assets/img/user.png') }}" alt="@lang('miscellaneous.admin.work.data.work_title')" class="other-user-image img-fluid rounded-4">
                                     <div class="mask rounded-4" style="background-color: rgba(5, 5, 5, 0.5);">
                                         <label role="button" for="image_other_user" class="d-flex h-100 justify-content-center align-items-center">
                                             <i class="bi bi-pencil-fill text-white fs-2"></i>
