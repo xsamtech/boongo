@@ -142,7 +142,7 @@
                                     <div class="mask rounded-4" style="background-color: rgba(5, 5, 5, 0.5);">
                                         <label role="button" for="image_other_user" class="d-flex h-100 justify-content-center align-items-center">
                                             <i class="fa-solid fa-pencil-alt text-white fs-2"></i>
-                                            <input type="file" name="image_other_user" id="image_other_user">
+                                            <input type="file" name="image_other_user" id="image_other_user" class="d-none">
                                         </label>
                                         <input type="hidden" name="data_other_user" id="data_other_user">
                                     </div>
