@@ -344,7 +344,7 @@ $(document).ready(function () {
 
     $('#cropModalOtherUser').on('shown.bs.modal', function () {
         cropper = new Cropper(retrievedImageOtherUser, {
-            aspectRatio: 1,
+            // aspectRatio: 1,
             viewMode: 3,
             preview: '#cropModalOtherUser .preview',
             done: function (data) { console.log(data); },
