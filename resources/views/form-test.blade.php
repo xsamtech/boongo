@@ -113,7 +113,7 @@
 			<div class="container">
 				<!-- row -->
 				<div class="row">
-                    <div class="col-lg-5 col-sm-6 mx-auto">
+                    <div class="col-lg-5 col-sm-6 ms-auto">
                         <div class="card">
                             <div class="card-body">
                                 <div class="form-group">
@@ -131,7 +131,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-4 col-sm-6 mx-auto">
+                    <div class="col-lg-4 col-sm-6 me-auto">
                         <div class="card rounded-4">
                             <div id="otherUserImageWrapper" class="card-body pb-4 text-center">
                                 <p class="card-text m-0">@lang('miscellaneous.account.personal_infos.click_to_change_picture')</p>
