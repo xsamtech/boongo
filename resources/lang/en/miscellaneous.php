@@ -313,6 +313,7 @@ return [
         ],
         'personal_infos' => [
             'title' => 'Personal Infos',
+            'click_to_change_picture' => 'Cliquez sur l\'image pour la modifier',
             'change_avatar' => 'Change the avatar',
             'link' => 'Register update',
         ],

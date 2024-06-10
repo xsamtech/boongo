@@ -313,8 +313,9 @@ return [
         ],
         'personal_infos' => [
             'title' => 'Infos personnelles',
-            'change_avatar' => 'Modifier l’avatar',
-            'link' => 'Enregistrer mise à jour',
+            'click_to_change_picture' => 'Cliquez sur l\'image pour la modifier',
+            'change_avatar' => 'Modifier l\'avatar',
+            'link' => 'Enregistrer modifications',
         ],
         'update_password' => [
             'title' => 'Modifier mot de passe',
