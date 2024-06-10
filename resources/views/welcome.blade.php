@@ -8,7 +8,7 @@
 			<div class="container">
 				<!-- row -->
 				<div class="row">
-                    <div class="col-lg-4 col-sm-6 col-lg-offset-3">
+                    <div class="col-lg-4 col-sm-6 col-lg-offset-2">
                         <div class="card">
                             <div class="card-body">
                                 <div class="form-group">
