@@ -107,12 +107,13 @@
         <!-- END MODALS-->
 
 		<!-- SECTION -->
-		<div class="section">
+		<div class="section py-5">
+            <h1 class="text-center mb-4">@lang('miscellaneous.admin.work.add')</h1>
 			<!-- container -->
 			<div class="container">
 				<!-- row -->
 				<div class="row">
-                    <div class="col-lg-4 col-sm-6 col-lg-offset-2">
+                    <div class="col-lg-4 col-sm-6 mx-auto">
                         <div class="card">
                             <div class="card-body">
                                 <div class="form-group">
@@ -130,7 +131,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-3 col-sm-5">
+                    <div class="col-lg-3 col-sm-6 mx-auto">
                         <div class="card rounded-4">
                             <div id="otherUserImageWrapper" class="card-body pb-4 text-center">
                                 <p class="card-text m-0">@lang('miscellaneous.account.personal_infos.click_to_change_picture')</p>
