@@ -343,12 +343,29 @@ $(document).ready(function () {
     $('#cropModalOtherUser').on('shown.bs.modal', function () {
         $('#retrieved_image_other_user').cropper('destroy')
 
+        // cropper = new Cropper(retrievedImageOtherUser, {
+        //     aspectRatio: 1,
+        //     viewMode: 3,
+        //     preview: '#cropModalOtherUser .preview',
+        //     done: function (data) { console.log(data); },
+        //     error: function (data) { console.log(data); }
+        // });
+
         cropper = new Cropper(retrievedImageOtherUser, {
-            aspectRatio: 1,
-            viewMode: 3,
-            preview: '#cropModalOtherUser .preview',
-            done: function (data) { console.log(data); },
-            error: function (data) { console.log(data); }
+            autoCropArea: 0.7,
+            viewMode: 1,
+            center: true,
+            dragMode: 'move',
+            movable: true,
+            scalable: true,
+            guides: true,
+            zoomOnWheel: true,
+            cropBoxMovable: true,
+            wheelZoomRatio: 0.1,
+            ready: function () {
+            //Should set crop box data first here
+            cropper.setCropBoxData(cropBoxData).setCanvasData(canvasData);
+            }
         });
 
     }).on('hidden.bs.modal', function () {
