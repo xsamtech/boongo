@@ -43,7 +43,7 @@
  		<![endif]-->
 
         <!-- ============ Custom CSS ============ -->
-        <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/style.custom.css') }}">
+        {{-- <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/style.custom.css') }}"> --}}
 @if (request()->has('app_id'))
         <style>
             .detect-webview { display: none;!important }
