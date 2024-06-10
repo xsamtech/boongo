@@ -140,8 +140,8 @@
                                     <img src="{{ asset('assets/img/cover.png') }}" alt="@lang('miscellaneous.admin.work.data.work_title')" class="other-user-image img-fluid rounded-4">
                                     <div class="mask rounded-4" style="background-color: rgba(5, 5, 5, 0.5);">
                                         <label role="button" for="image_other_user" class="d-flex h-100 justify-content-center align-items-center">
-                                            <i class="bi bi-pencil-fill text-white fs-2"></i>
-                                            <input type="file" name="image_other_user" id="image_other_user" class="d-none">
+                                            <i class="fa-solid fa-pencil-alt text-white fs-2"></i>
+                                            <input type="file" name="image_other_user" id="image_other_user">
                                         </label>
                                         <input type="hidden" name="data_other_user" id="data_other_user">
                                     </div>
