@@ -34,7 +34,7 @@
                     <div class="col-lg-4 col-sm-6">
                         <div class="card rounded-4">
                             <div id="otherUserImageWrapper" class="card-body pb-4 text-center">
-                                <p class="card-text m-0">@lang('miscellaneous.pages_content.account.personal_infos.click_to_change_picture')</p>
+                                <p class="card-text m-0">@lang('miscellaneous.account.personal_infos.click_to_change_picture')</p>
 
                                 <div class="bg-image hover-overlay mt-3">
                                     <img src="{{ asset('assets/img/cover.png') }}" alt="cover" class="other-user-image img-fluid rounded-4">
