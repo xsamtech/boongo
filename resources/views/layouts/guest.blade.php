@@ -31,6 +31,12 @@
  		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/electro/slick/css/slick-theme.css') }}"/>
  		<!-- nouislider -->
  		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/electro/nouislider/css/nouislider.min.css') }}"/>
+ 		<!-- Perfect scrollbar -->
+ 		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/custom/perfect-scrollbar/css/perfect-scrollbar.css') }}"/>
+ 		<!-- jQuery UI -->
+ 		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/custom/jquery/jquery-ui/jquery-ui.min.css') }}"/>
+ 		<!-- CropperJS -->
+ 		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/custom/cropper/css/cropper.min.css') }}"/>
 
         <!-- ============ Electro CSS File ============ -->
         <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/style.electro.css') }}"/>
@@ -351,10 +357,14 @@
 
 		<!-- jQuery Plugins -->
 		<script src="{{ asset('assets/addons/cooladmin/jquery-3.2.1.min.js') }}"></script>
+		<script src="{{ asset('assets/addons/custom/jquery/jquery-ui/jquery-ui.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/custom/bootstrap/js/bootstrap.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/electro/slick/js/slick.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/electro/nouislider/js/nouislider.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/custom/jquery/jquery.zoom/jquery.zoom.min.js') }}"></script>
+		<script src="{{ asset('assets/addons/custom/perfect-scrollbar/dist/perfect-scrollbar.min.js') }}"></script>
+		<script src="{{ asset('assets/addons/custom/autosize/js/autosize.min.js') }}"></script>
+		<script src="{{ asset('assets/addons/custom/cropper/js/cropper.min.js') }}"></script>
 		<script src="{{ asset('assets/js/script.electro.js') }}"></script>
 		<script src="{{ asset('assets/js/script.custom.js') }}"></script>
 	</body>
