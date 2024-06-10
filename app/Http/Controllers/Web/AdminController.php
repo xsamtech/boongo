@@ -42,7 +42,7 @@ class AdminController extends Controller
             'work_url' => $request->register_work_url,
             'type_id' => $request->type_id,
             'status_id' => $relevant_status->data->id,
-            'categories_ids' => $request->categories_ids,
+            'categories_ids' => $request->register_categories_ids,
         ];
         // Add an admin
         $work = $this::$api_client_manager::call('POST', getApiURL() . '/user', $api_token, $inputs);

@@ -169,11 +169,11 @@
                                 </div>
 
                                 <div class="form-group mb-3">
-                                    <label class="d-block text-center">@lang('miscellaneous.admin.work.data.choose_categories')</label>
+                                    <label class="d-block fw-bold text-center">@lang('miscellaneous.admin.work.data.choose_categories')</label>
 @forelse ($categories as $category)
                                     <div class="form-check mx-3">
-                                        <input class="form-check-input" type="checkbox" value="{{ $category->id }}" id="category_{{ $category->id }}">
-                                        <label class="form-check-label" for="category_{{ $category->id }}">{{ $category->category_name }}</label>
+                                        <input type="checkbox" name="register_categories_ids[]" class="form-check-input" value="{{ $category->id }}" id="category_{{ $category->id }}">
+                                        <label class="form-check-label bng-text-secondary" for="category_{{ $category->id }}">{{ $category->category_name }}</label>
                                     </div>
 @empty
 @endforelse
