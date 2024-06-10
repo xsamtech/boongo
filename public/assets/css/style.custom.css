@@ -221,7 +221,6 @@ a:hover.bng-text-secondary {
 
 /********** Miscellaneous **********/
 /* From electro template */
-
 .header-logo .logo {
     margin-top: 10px;
 }
@@ -233,7 +232,11 @@ a:hover.bng-text-secondary {
     }
 }
 
-@media screen and (max-width: 375px) {}
+@media screen and (max-width: 375px) {
+    #top-header .top-contact {
+        display: none;
+    }
+}
 
 /* Ajax loading bar */
 .loader {
