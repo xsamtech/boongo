@@ -150,7 +150,7 @@
     </head>
 	<body>
         <!-- ### Crop user image ### -->
-        <div class="modal fade" id="cropModalUser" tabindex="-1" aria-labelledby="cropModalUserLabel" aria-hidden="true">
+        <div class="modal fade" id="cropModalUser" tabindex="-1" role="dialog" aria-labelledby="cropModalUserLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -177,7 +177,7 @@
         </div>
 
         <!-- ### Crop other user image ### -->
-        <div class="modal fade" id="cropModalOtherUser" tabindex="-1" aria-labelledby="cropModalOtherUserLabel" aria-hidden="true" data-bs-backdrop="{{ Route::is('branch.home') ? 'static' : 'true' }}">
+        <div class="modal fade" id="cropModalOtherUser" tabindex="-1" role="dialog" aria-labelledby="cropModalOtherUserLabel" aria-hidden="true" data-bs-backdrop="{{ Route::is('branch.home') ? 'static' : 'true' }}">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
