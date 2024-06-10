@@ -464,6 +464,12 @@ return [
         'view_cart' => 'Voir panier',
         'checkout' => 'Commander',
 
+        // Footer
+        'footer' => [
+            'useful_links' => 'Liens utiles',
+            'services' => 'Services'
+        ],
+
         // Home
         'home' => [
             'most_popular' => 'Les plus populaire',
