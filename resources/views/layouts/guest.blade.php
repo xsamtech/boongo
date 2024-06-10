@@ -21,7 +21,9 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/css/flag-icons.min.css">
 
  		<!-- ============ Google font ============ -->
- 		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+ 		<link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 
         <!-- ============ Addons CSS Files ============ -->
  		<!-- Bootstrap -->
@@ -31,14 +33,12 @@
  		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/electro/slick/css/slick-theme.css') }}"/>
  		<!-- nouislider -->
  		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/electro/nouislider/css/nouislider.min.css') }}"/>
- 		<!-- Perfect scrollbar -->
- 		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/custom/perfect-scrollbar/css/perfect-scrollbar.css') }}"/>
- 		<!-- jQuery UI -->
- 		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/custom/jquery/jquery-ui/jquery-ui.min.css') }}"/>
- 		<!-- jQuery DataTable -->
- 		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/custom/dataTables/DataTables-1.13.4/css/dataTables.bootstrap5.min.css') }}"/>
- 		<!-- CropperJS -->
- 		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/custom/cropper/css/cropper.min.css') }}"/>
+ 		<!-- Other -->
+        <link rel="stylesheet" href="{{ asset('assets/addons/custom/jquery/jquery-ui/jquery-ui.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/addons/custom/perfect-scrollbar/css/perfect-scrollbar.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/addons/custom/dataTables/datatables.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/addons/custom/cropper/css/cropper.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/addons/custom/sweetalert2/dist/sweetalert2.min.css') }}">
 
         <!-- ============ Electro CSS File ============ -->
         <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/style.electro.css') }}"/>
@@ -362,16 +362,18 @@
 		<!-- /FOOTER -->
 
 		<!-- jQuery Plugins -->
-		<script src="{{ asset('assets/addons/cooladmin/jquery-3.2.1.min.js') }}"></script>
-		<script src="{{ asset('assets/addons/custom/jquery/jquery-ui/jquery-ui.min.js') }}"></script>
-		<script src="{{ asset('assets/addons/custom/bootstrap/js/bootstrap.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/jquery/js/jquery.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/jquery/js/jquery-ui.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/electro/slick/js/slick.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/electro/nouislider/js/nouislider.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/custom/jquery/jquery.zoom/jquery.zoom.min.js') }}"></script>
-		<script src="{{ asset('assets/addons/custom/perfect-scrollbar/dist/perfect-scrollbar.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/perfect-scrollbar/dist/perfect-scrollbar.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/custom/dataTables/DataTables-1.13.4/js/dataTables.bootstrap5.min.js') }}"></script>
-		<script src="{{ asset('assets/addons/custom/autosize/js/autosize.min.js') }}"></script>
-		<script src="{{ asset('assets/addons/custom/cropper/js/cropper.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/autosize/js/autosize.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/dataTables/datatables.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/cropper/js/cropper.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/sweetalert2/dist/sweetalert2.min.js') }}"></script>
 		<script src="{{ asset('assets/js/script.electro.js') }}"></script>
 		<script src="{{ asset('assets/js/script.custom.js') }}"></script>
 	</body>
