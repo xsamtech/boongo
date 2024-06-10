@@ -138,6 +138,7 @@ a.bng-bg-primary-transparent:hover {
 .bng-text-danger {
     color: #db3337 !important;
 }
+
 a:hover.bng-text-danger {
     color: #cf2f32 !important;
 }
@@ -221,8 +222,18 @@ a:hover.bng-text-secondary {
 /********** Miscellaneous **********/
 /* From electro template */
 
-@media screen and (max-width: 375px) {
+.header-logo .logo {
+    margin-top: 10px;
 }
+
+@media only screen and (max-width: 500px) {
+    .header-logo .logo {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
+
+@media screen and (max-width: 375px) {}
 
 /* Ajax loading bar */
 .loader {
