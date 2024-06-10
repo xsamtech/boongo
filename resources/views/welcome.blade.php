@@ -33,7 +33,7 @@
 
                                 <label for="image_other_user" href="#" class="thumbnail" style="cursor: pointer;">
                                     <img src="{{ asset('assets/img/cover.png') }}" alt="cover" class="other-user-image img-fluid rounded-4">
-                                    <input type="file" name="image_other_user" id="image_other_user" style="margin-left: -99999px;">
+                                    <input type="file" name="image_other_user" id="image_other_user" style="position: absolute; left: -99999px;">
                                 </label>
                                 <input type="hidden" name="data_other_user" id="data_other_user">
 
