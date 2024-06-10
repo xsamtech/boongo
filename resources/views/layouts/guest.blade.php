@@ -206,7 +206,7 @@
 
 		<!-- HEADER -->
 		<header>
-            <span class="menu-sidebar2__content d-none"></span>
+            <span id="price-max" class="menu-sidebar2__content d-none"></span>
 			<!-- TOP HEADER -->
 			<div id="top-header">
 				<div class="container">
