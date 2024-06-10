@@ -25,7 +25,6 @@
 
         <!-- ============ Addons CSS Files ============ -->
  		<!-- Bootstrap -->
- 		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/custom/bootstrap/css/bootstrap.min.css') }}"/>
  		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/electro/bootstrap/css/bootstrap.min.css') }}"/>
  		<!-- Slick -->
  		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/electro/slick/css/slick.css') }}"/>
