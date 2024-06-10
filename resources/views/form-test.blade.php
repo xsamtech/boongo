@@ -139,9 +139,11 @@
 @endif
 
 		<!-- SECTION -->
-		<div class="section py-5">
+		<form method="POST" action="{{ route('admin.work.home') }}" class="section py-5">
             <h1 class="text-center mb-4">@lang('miscellaneous.admin.work.add')</h1>
-			<!-- container -->
+@csrf
+
+            <!-- container -->
 			<div class="container">
 				<!-- row -->
 				<div class="row">
@@ -219,7 +221,7 @@
 				<!-- /row -->
 			</div>
 			<!-- /container -->
-		</div>
+		</form>
 		<!-- /SECTION -->
 
         <span id="btnBackTop" class="btn btn-floating btn-primary pb-0 d-none" style="position: fixed; bottom: 2rem; right: 2rem;"><i class="fa-solid fa-chevron-up"></i></span>
