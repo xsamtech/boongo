@@ -190,8 +190,8 @@
 								<form>
 									<select class="input-select">
 										<option value="0">@lang('miscellaneous.all_categories')</option>
-										<option value="1">Category 01</option>
-										<option value="1">Category 02</option>
+										{{-- <option value="1">Category 01</option>
+										<option value="1">Category 02</option> --}}
 									</select>
 									<input class="input" placeholder="@lang('miscellaneous.search_input')">
 									<button class="search-btn"><i class="fa-solid fa-search"></i></button>
