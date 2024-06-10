@@ -36,6 +36,7 @@
         <link rel="stylesheet" href="{{ asset('assets/addons/custom/dataTables/datatables.min.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/addons/custom/cropper/css/cropper.min.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/addons/custom/sweetalert2/dist/sweetalert2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/addons/custom/wysiwyg-editor-master/css/froala_editor.min.css') }}">
 
  		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
  		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -157,9 +158,9 @@
                                     <input type="text" name="register_work_url" id="register_work_url" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_url')">
                                 </div>
 
-                                <div class="form-group mb-3">
+                                <div id="editor" class="form-group mb-3">
                                     <label for="register_work_content" class="visually-hidden">@lang('miscellaneous.admin.work.data.work_content')</label>
-                                    <textarea name="register_work_content" id="register_work_content" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_content')"></textarea>
+                                    <textarea name="register_work_content" id="edit" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_content')"></textarea>
                                 </div>
 
                                 <div class="form-group mb-3">
@@ -222,7 +223,8 @@
 		<!-- /SECTION -->
 
         <span id="btnBackTop" class="btn btn-floating btn-primary pb-0 d-none" style="position: fixed; bottom: 2rem; right: 2rem;"><i class="fa-solid fa-chevron-up"></i></span>
-		<!-- jQuery Plugins -->
+
+        <!-- jQuery Plugins -->
         <script src="{{ asset('assets/addons/custom/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/jquery/jquery-ui/jquery-ui.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/mdb/js/mdb.min.js') }}"></script>
@@ -235,6 +237,7 @@
         <script src="{{ asset('assets/addons/custom/cropper/js/cropper.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/sweetalert2/dist/sweetalert2.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/jquery/scroll4ever/js/jquery.scroll4ever.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/wysiwyg-editor-master/js/froala_editor.min.js') }}"></script>
 		<script src="{{ asset('assets/js/script.custom.js') }}"></script>
 	</body>
 </html>
