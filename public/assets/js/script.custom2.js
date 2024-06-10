@@ -341,6 +341,8 @@ $(document).ready(function () {
     });
 
     $('#cropModalOtherUser').on('shown.bs.modal', function () {
+        $('#retrieved_image_other_user').cropper('destroy')
+
         cropper = new Cropper(retrievedImageOtherUser, {
             aspectRatio: 1,
             viewMode: 3,
