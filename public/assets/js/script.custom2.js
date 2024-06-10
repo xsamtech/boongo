@@ -327,9 +327,7 @@ $(document).ready(function () {
         var files = e.target.files;
         var done = function (url) {
             retrievedImageOtherUser.src = url;
-            var modal = document.getElementById('cropModalOtherUser');
-
-            $(modal).modal('show');
+            $('#cropModalOtherUser').modal('show');
         };
 
         if (files && files.length > 0) {
