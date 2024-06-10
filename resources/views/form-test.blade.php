@@ -158,9 +158,9 @@
                                     <input type="text" name="register_work_url" id="register_work_url" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_url')">
                                 </div>
 
-                                <div id="editor">
-                                    <label for="register_work_content">@lang('miscellaneous.admin.work.data.work_content')</label>
-                                    <div id="edit"></div>
+                                <div id="editor" class="form-group mb-3">
+                                    <label for="register_work_content" class="visually-hidden">@lang('miscellaneous.admin.work.data.work_content')</label>
+                                    <textarea name="register_work_content" id="edit" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_content')"></textarea>
                                 </div>
 
                                 <div class="form-group mb-3">
@@ -239,5 +239,12 @@
         <script src="{{ asset('assets/addons/custom/jquery/scroll4ever/js/jquery.scroll4ever.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/wysiwyg-editor-master/js/froala_editor.min.js') }}"></script>
 		<script src="{{ asset('assets/js/script.custom.js') }}"></script>
+		<script type="text/javascript">
+            $(function () {
+                $('#edit').editable({
+                    inlineMode: false
+                });
+            });
+        </script>
 	</body>
 </html>
