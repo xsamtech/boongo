@@ -156,7 +156,7 @@
 			<div id="top-header">
 				<div class="container">
                     <div class="d-flex justify-content-between align-items-center">
-                        <ul class="header-links pull-left d-sm-inline-block d-none">
+                        <ul class="header-links pull-left top-contact">
                             <li><a href="tel:+243815737600"><i class="fa-solid fa-phone"></i> +243 815 737 600</a></li>
                             <li><a href="mailto:contact@boongo7.com"><i class="fa-solid fa-envelope"></i> contact@boongo7.com</a></li>
                         </ul>
