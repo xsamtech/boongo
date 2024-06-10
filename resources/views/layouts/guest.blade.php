@@ -51,7 +51,7 @@
         <!-- ============ Custom CSS ============ -->
         <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/style.custom.css') }}">
         <style>
-            .header-logo .logo { vertical-align: -5px; }
+            .header-logo .logo { vertical-align: 5px; }
         </style>
 @if (request()->has('app_id'))
         <style>
