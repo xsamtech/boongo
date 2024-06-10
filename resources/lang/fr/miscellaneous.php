@@ -12,18 +12,14 @@ return [
     |--------------------------------------------------------------------------
     |
     */
-    'demo_message' => 'Espace présentant la maquette de la plateforme',
-    'welcome_title' => 'Votre plateforme agroalimentaire',
-    'welcome_description_product' => 'Partager, trouvez, achetez ou vendez vos produits agroalimentaires.',
-    'welcome_description_service' => 'Offrez ou commandez des services aux agriculteurs, aux éleveurs ou aux pêcheurs.',
-    'welcome_description_food' => 'Vendez de la nourriture saine et bio et attirer plus de clients chez vous.',
-    'slogan' => 'Mieux nourrir la vie !',
-    'keywords' => 'kulisha, agribusiness agroalimentaire, agriculteur, éleveur, pêche, pêcheur, mieux nourrir la vie',
+    'welcome_title' => 'Bienvenue sur Boongo',
+    'welcome_description' => 'Lire ou commander des livres, revues et journaux. Consulter des cartes geographiques.',
+    'keywords' => 'lire, commander, livre, journal, revue, cartographie',
     'all_right_reserved' => 'Tous droits réservés',
     'follow_us' => 'Suivez-nous :',
     'call_us' => 'Appelez-nous :',
     'bank_transaction_description' => 'Transaction bancaire depuis l’application Kulisha',
-    'theme' => 'Mode',
+    'menu_toggle' => 'Menu',
     'description' => 'Description',
     'color' => 'Couleur',
     'icon_font' => 'Icône font',
@@ -76,13 +72,15 @@ return [
     'deactivate' => 'Désactiver',
     'lock' => 'Bloquer',
     'unlock' => 'Débloquer',
-    'search_label' => 'Rechercher des produits, des médicaments ou autres services',
+    'search_input' => 'Rechercher ici',
     'search' => 'Rechercher',
+    'all_categories' => 'Toutes les catégories',
     'mark_all_read' => 'Tout marquer comme lue',
     'empty_list' => 'La liste est vide',
     'see_more' => 'Voir plus',
     'see_less' => 'Voir moins',
     'show' => 'Afficher',
+    'show_all' => 'Afficher tout',
     'entry' => 'entrée',
     'entries' => 'entrées',
     'error_label' => 'Erreur :',
@@ -456,197 +454,62 @@ return [
         ],
     ],
 
-    // ===== DEVELOPER PAGES
-    'developer' => [
-        // Home
-        'home' => [
-            'title' => 'Espace du développeur',
-        ],
-
-        // APIs
-        'apis' => [
-            // Product
-            'product' => [
-            ],
-
-            // Service
-            'service' => [
-            ],
-
-            // Search
-            'search' => [
-            ],
-        ],
-
-        // Integration
-        'integration' => [
-            // Button
-            'button' => [
-            ],
-
-            // Post
-            'post' => [
-            ],
-        ],
-    ],
-
     // ===== PUBLIC PAGES
     'public' => [
+        'your_subscriptions' => 'Vos abonnements',
+        'your_cart' => 'Votre panier',
+        'add_to_cart' => 'Ajouter au panier',
+        'withdraw_from_cart' => 'Retirer du panier',
+        'subtotal' => 'SOUS-TOTAL :',
+        'view_cart' => 'Voir panier',
+        'checkout' => 'Commander',
+
         // Home
         'home' => [
-            'view_profile' => 'Voir profil',
-            'help' => 'Aide et support',
+            'most_popular' => 'Les plus populaire',
+            'books' => 'Ouvrages',
+            'mags_newspapers' => 'Mags, Revues & journaux',
+        ],
 
-            // Posts
-            'posts' => [
-                'new' => 'Partagez quelque chose ...',
+        // About
+        'about' => [
+            'enterprise_title' => 'A propos de nous',
+            'app_title' => 'A propos de l’application Boongo',
 
-                // Type
-                'type' => [
-                    'image' => 'Image',
-                    'event' => 'Evénement',
-                    'poll' => 'Créer sondage',
-                    'anonymous_question' => 'Question anonyme',
-                ],
-
-                // Actions
-                'actions' => [
-                    'save' => 'Enregistrer le post',
-                    'unfollow_owner' => 'Ne plus suivre @:owner',
-                    'hide' => 'Cacher ce post',
-                    'report' => 'Signaler ce post',
-                ],
+            // Terms
+            'terms_of_use' => [
+                'description' => 'Lire nos conditions d’utilisation',
             ],
 
-            // Stories
-            'stories' => [
-                'new' => 'Poster une story',
+            // Privacy
+            'privacy_policy' => [
+                'description' => 'Votre vie privée est notre priorité',
             ],
 
-            // Trends
-            'trends' => [
-            ],
-
-            // Suggestions
-            'suggestions' => [
-            ],
-
-            // Articles
-            'articles' => [
-            ],
-
-            // At the moment
-            'at_the_moment' => [
+            // Contact
+            'contact' => [
+                'description' => 'Ecrir un message et discuter avec l’administrateur',
             ],
         ],
 
-        // Orders
-        'orders' => [
-            // Cart
-            'cart' => [
-            ],
-
-            // Wishlist
-            'wishlist' => [
-            ],
+        // Books
+        'books' => [
+            'description' => 'Lire/commander un ouvrage',
         ],
 
-        // Notification
-        'notifications' => [
-            // The public
-            'the_public' => [
-            ],
-
-            // Connections
-            'connections' => [
-            ],
-
-            // Mentions
-            'mentions' => [
-            ],
+        // Mag & newspaper
+        'mags_newspapers' => [
+            'description' => 'Lire des revues ou des journaux',
         ],
 
-        // Communities
-        'communities' => [
-            // Yours
-            'yours' => [
-            ],
-
-            // Connections
-            'connections' => [
-            ],
-
-            // Popular
-            'popular' => [
-            ],
+        // Mapping
+        'mapping' => [
+            'description' => 'Consulter des cartes géographiques',
         ],
 
-        // events
-        'events' => [
-            // Yours
-            'yours' => [
-            ],
-
-            // Connections
-            'local' => [
-            ],
-
-            // At the moment
-            'at_the_moment' => [
-            ],
-
-            // Popular
-            'popular' => [
-            ],
-        ],
-
-        // Profile
-        'profile' => [
-            // Statistics
-            'statistics' => [
-                'posts' => 'Post',
-                'followers' => 'Abonnés',
-                'following' => 'Abonnements',
-            ],
-
-            // Products
-            'products' => [
-            ],
-
-            // Services
-            'services' => [
-            ],
-
-            // Connections
-            'connections' => [
-            ],
-
-            // My activities
-            'my_activities' => [
-            ],
-        ],
-
-        // Settings
-        'settings' => [
-            // Account
-            'account' => [
-            ],
-
-            // Notification
-            'notification' => [
-            ],
-
-            // Privacy and safety
-            'privacy_and_safety' => [
-            ],
-
-            // Connections
-            'connections' => [
-            ],
-
-            // Messages
-            'messages' => [
-            ],
+        // Medias
+        'medias' => [
+            'description' => 'Photos/vidéos éducatives et informatives',
         ],
     ],
 ];

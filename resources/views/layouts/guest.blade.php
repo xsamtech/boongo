@@ -158,12 +158,12 @@
 							<div class="header-search">
 								<form>
 									<select class="input-select">
-										<option value="0">All Categories</option>
+										<option value="0">@lang('miscellaneous.all_categories')</option>
 										<option value="1">Category 01</option>
 										<option value="1">Category 02</option>
 									</select>
-									<input class="input" placeholder="Search here">
-									<button class="search-btn">Search</button>
+									<input class="input" placeholder="@lang('miscellaneous.search_input')">
+									<button class="search-btn">@lang('miscellaneous.search')</button>
 								</form>
 							</div>
 						</div>
@@ -176,7 +176,7 @@
 								<div>
 									<a href="#">
 										<i class="fa fa-heart-o"></i>
-										<span>Your Wishlist</span>
+										<span>@lang('miscellaneous.public.your_subscriptions')</span>
 										<div class="qty">2</div>
 									</a>
 								</div>
@@ -186,7 +186,7 @@
 								<div class="dropdown">
 									<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
 										<i class="fa fa-shopping-cart"></i>
-										<span>Your Cart</span>
+										<span>@lang('miscellaneous.public.your_cart')</span>
 										<div class="qty">3</div>
 									</a>
 									<div class="cart-dropdown">
@@ -215,11 +215,11 @@
 										</div>
 										<div class="cart-summary">
 											<small>3 Item(s) selected</small>
-											<h5>SUBTOTAL: $2940.00</h5>
+											<h5>@lang('miscellaneous.public.subtotal') $2940.00</h5>
 										</div>
 										<div class="cart-btns">
-											<a href="#">View Cart</a>
-											<a href="#">Checkout  <i class="fa fa-arrow-circle-right"></i></a>
+											<a href="#">@lang('miscellaneous.public.view_cart')</a>
+											<a href="#">@lang('miscellaneous.public.checkout')<i class="fa fa-arrow-circle-right ms-2"></i></a>
 										</div>
 									</div>
 								</div>
@@ -229,7 +229,7 @@
 								<div class="menu-toggle">
 									<a href="#">
 										<i class="fa fa-bars"></i>
-										<span>Menu</span>
+										<span>@lang('miscellaneous.menu_toggle')</span>
 									</a>
 								</div>
 								<!-- /Menu Toogle -->
@@ -253,13 +253,12 @@
 				<div id="responsive-nav">
 					<!-- NAV -->
 					<ul class="main-nav nav navbar-nav">
-						<li class="active"><a href="#">Home</a></li>
-						<li><a href="#">Hot Deals</a></li>
-						<li><a href="#">Categories</a></li>
-						<li><a href="#">Laptops</a></li>
-						<li><a href="#">Smartphones</a></li>
-						<li><a href="#">Cameras</a></li>
-						<li><a href="#">Accessories</a></li>
+						<li class="{{ Route::is('home') ? 'active' : '' }}"><a href="{{ route('home') }}">@lang('miscellaneous.menu.home')</a></li>
+						<li class="{{ Route::is('about.home') ? 'active' : '' }}"><a href="{{ route('about.home') }}">@lang('miscellaneous.menu.about')</a></li>
+						<li class="{{ Route::is('book.home') || Route::is('book.datas') ? 'active' : '' }}"><a href="{{ route('book.home') }}">@lang('miscellaneous.menu.public.books')</a></li>
+						<li class="{{ Route::is('newspaper.home') || Route::is('newspaper.datas') ? 'active' : '' }}"><a href="{{ route('newspaper.home') }}">@lang('miscellaneous.menu.public.mag_newspapers')</a></li>
+						<li class="{{ Route::is('map.home') || Route::is('map.datas') ? 'active' : '' }}"><a href="{{ route('map.home') }}">@lang('miscellaneous.menu.public.mapping')</a></li>
+						<li class="{{ Route::is('media.home') || Route::is('media.datas') ? 'active' : '' }}"><a href="{{ route('media.home') }}">@lang('miscellaneous.menu.public.medias')</a></li>
 					</ul>
 					<!-- /NAV -->
 				</div>
@@ -269,38 +268,9 @@
 		</nav>
 		<!-- /NAVIGATION -->
 
-		<!-- BREADCRUMB -->
-		<div id="breadcrumb" class="section">
-			<!-- container -->
-			<div class="container">
-				<!-- row -->
-				<div class="row">
-					<div class="col-md-12">
-						<h3 class="breadcrumb-header">Regular Page</h3>
-						<ul class="breadcrumb-tree">
-							<li><a href="#">Home</a></li>
-							<li class="active">Blank</li>
-						</ul>
-					</div>
-				</div>
-				<!-- /row -->
-			</div>
-			<!-- /container -->
-		</div>
-		<!-- /BREADCRUMB -->
+@include('partials.breadcrumb')
 
-		<!-- SECTION -->
-		<div class="section">
-			<!-- container -->
-			<div class="container">
-				<!-- row -->
-				<div class="row">
-				</div>
-				<!-- /row -->
-			</div>
-			<!-- /container -->
-		</div>
-		<!-- /SECTION -->
+@yield('guest-content')
 
 		<!-- NEWSLETTER -->
 		<div id="newsletter" class="section">
