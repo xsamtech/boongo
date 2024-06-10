@@ -155,14 +155,14 @@
 			<!-- TOP HEADER -->
 			<div id="top-header">
 				<div class="container">
-                    <div class="d-flex justify-content-between">
-                        <ul class="header-links pull-left">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <ul class="header-links pull-left d-sm-inline-block d-none">
                             <li><a href="tel:+243815737600"><i class="fa-solid fa-phone"></i> +243 815 737 600</a></li>
                             <li><a href="mailto:contact@boongo7.com"><i class="fa-solid fa-envelope"></i> contact@boongo7.com</a></li>
                         </ul>
                         <ul class="header-links pull-right">
                             <li>
-                                <a href="{{ Auth::check() ? route('account') : route('login') }}"><i class="fa-solid fa-user"></i> {{ Auth::check() ? __('miscellaneous.menu.account.title') : __('miscellaneous.login_title1') }}</a>
+                                <a href="{{ Auth::check() ? route('account') : route('login') }}"><i class="fa-solid {{ Auth::check() ? 'fa-user' :'fa-power-off' }}"></i> {{ Auth::check() ? __('miscellaneous.menu.account.title') : __('miscellaneous.login_title1') }}</a>
                             </li>
                         </ul>
                     </div>
@@ -316,7 +316,7 @@
 						<div class="col-lg-6 col-sm-7">
 							<div class="footer">
 								<h3 class="footer-title">@lang('miscellaneous.public.about.enterprise_title')</h3>
-								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut.</p>
+								<p class="mb-4 pl-lg-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut.</p>
 								<ul class="footer-links">
 									<li><a href="tel:+243815737600"><i class="fa-solid fa-phone"></i>+243 815 737 600</a></li>
 									<li><a href="mailto:contact@boongo7.com"><i class="fa-solid fa-envelope"></i>contact@boongo7.com</a></li>
