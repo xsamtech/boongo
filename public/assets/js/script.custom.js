@@ -358,10 +358,7 @@ $(document).ready(function () {
     });
 
     $('#cropModalOtherUser #crop_other_user').on('click', function () {
-        var canvas = cropper.getCroppedCanvas({
-            width: 700,
-            height: 700
-        });
+        var canvas = cropper.getCroppedCanvas(/*{ width: 700, height: 700 }*/);
 
         canvas.toBlob(function (blob) {
             URL.createObjectURL(blob);

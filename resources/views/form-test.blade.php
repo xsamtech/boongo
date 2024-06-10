@@ -25,6 +25,7 @@
 
         <!-- ============ Addons CSS Files ============ -->
  		<!-- Bootstrap -->
+ 		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/custom/mdb/css/mdb.min.css') }}"/>
  		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/custom/bootstrap/css/bootstrap.min.css') }}"/>
  		<!-- Slick -->
  		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/cooladmin/slick/slick.css') }}"/>
@@ -162,6 +163,7 @@
 		<!-- jQuery Plugins -->
         <script src="{{ asset('assets/addons/custom/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/jquery/jquery-ui/jquery-ui.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/mdb/js/mdb.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/bootstrap/js/bootstrap.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/cooladmin/slick/slick.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/custom/jquery/jquery.zoom/jquery.zoom.min.js') }}"></script>
