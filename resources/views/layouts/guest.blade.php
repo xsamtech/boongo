@@ -306,7 +306,7 @@
 @yield('guest-content')
 
 		<!-- FOOTER -->
-		<footer id="footer">
+		<footer id="footer" class="mt-5">
 			<!-- top footer -->
 			<div class="section">
 				<!-- container -->
