@@ -113,17 +113,17 @@
 			<div class="container">
 				<!-- row -->
 				<div class="row">
-                    <div class="col-lg-4 col-sm-6 mx-auto">
+                    <div class="col-lg-5 col-sm-6 mx-auto">
                         <div class="card">
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="register_work_title">@lang('miscellaneous.admin.work.data.work_title')</label>
-                                    <input type="text" name="register_work_title" id="register_work_title" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_title')">
+                                    <input type="text" name="register_work_title" id="register_work_title" class="form-control mb-3" placeholder="@lang('miscellaneous.admin.work.data.work_title')">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="register_work_url">@lang('miscellaneous.admin.work.data.work_url')</label>
-                                    <input type="text" name="register_work_url" id="register_work_url" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_url')">
+                                    <input type="text" name="register_work_url" id="register_work_url" class="form-control mb-3" placeholder="@lang('miscellaneous.admin.work.data.work_url')">
                                 </div>
 
                                 <button type="submit" class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
@@ -131,7 +131,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-3 col-sm-6 mx-auto">
+                    <div class="col-lg-4 col-sm-6 mx-auto">
                         <div class="card rounded-4">
                             <div id="otherUserImageWrapper" class="card-body pb-4 text-center">
                                 <p class="card-text m-0">@lang('miscellaneous.account.personal_infos.click_to_change_picture')</p>
