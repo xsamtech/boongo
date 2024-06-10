@@ -434,7 +434,7 @@
 
         <span id="btnBackTop" class="btn btn-floating btn-primary d-none" style="position: fixed; bottom: 2rem; right: 2rem;"><i class="fa-solid fa-chevron-up"></i></span>
 		<!-- jQuery Plugins -->
-        <script src="{{ asset('assets/addons/electro/bootstrap/js/jquery.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/jquery/jquery-ui/jquery-ui.min.js') }}"></script>
         <script src="{{ asset('assets/addons/electro/bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('assets/addons/custom/bootstrap/js/bootstrap.min.js') }}"></script>
