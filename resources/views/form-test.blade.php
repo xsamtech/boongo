@@ -179,6 +179,11 @@
 @endforelse
                                 </div>
 
+                                <div class="form-group mb-4">
+                                    <label for="register_document" class="form-label">@lang('miscellaneous.upload.upload_document')</label>
+                                    <input type="file" name="register_document" id="register_document" class="form-control">
+                                </div>
+
                                 <button type="submit" class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
                             </div>
                         </div>
