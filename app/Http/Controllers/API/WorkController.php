@@ -492,4 +492,41 @@ class WorkController extends BaseController
 
         return $this->handleResponse(new ResourcesWork($work), __('notifications.update_work_success'));
     }
+
+    /**
+     * Update work picture in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function addImage(Request $request, $id)
+    {
+        $type = Type::where('type_name->fr', 'Image (Photo/Vidéo)')->first();
+        $inputs = [
+            'work_id' => $request->work_id,
+            'image_64' => $request->image_64
+        ];
+        // $extension = explode('/', explode(':', substr($inputs['image_64'], 0, strpos($inputs['image_64'], ';')))[1])[1];
+        $replace = substr($inputs['image_64'], 0, strpos($inputs['image_64'], ',') + 1);
+        // Find substring from replace here eg: data:image/png;base64,
+        $image = str_replace($replace, '', $inputs['image_64']);
+        $image = str_replace(' ', '+', $image);
+        // Create image URL
+		$image_url = 'images/works/' . $id . '/' . Str::random(50) . '.png';
+
+		// Upload image
+		Storage::url(Storage::disk('public')->put($image_url, base64_decode($image)));
+
+		$work = Work::find($id);
+
+        File::create([
+            'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
+            'file_url' => $image_url,
+            'type_id' => $type->id,
+            'work_id' => $work->id
+        ]);
+
+        return $this->handleResponse(new ResourcesWork($work), __('notifications.update_work_success'));
+    }
 }
