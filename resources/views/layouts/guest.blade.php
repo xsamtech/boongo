@@ -351,7 +351,7 @@
 
 		<!-- jQuery Plugins -->
 		<script src="{{ asset('assets/addons/cooladmin/jquery-3.2.1.min.js') }}"></script>
-		<script src="{{ asset('assets/addons/custom/bootstrap/css/bootstrap.min.css') }}"></script>
+		<script src="{{ asset('assets/addons/custom/bootstrap/js/bootstrap.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/electro/slick/js/slick.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/electro/nouislider/js/nouislider.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/custom/jquery/jquery.zoom/jquery.zoom.min.js') }}"></script>
