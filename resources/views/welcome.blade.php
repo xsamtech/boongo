@@ -9,7 +9,7 @@
 				<!-- row -->
 				<div class="row">
                     <div class="col-lg-4 col-sm-6 col-lg-offset-4 col-sm-offset-3">
-                        <div class="card border border-light z-depth-0">
+                        <div class="card">
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Email address</label>
