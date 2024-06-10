@@ -35,6 +35,8 @@
  		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/custom/perfect-scrollbar/css/perfect-scrollbar.css') }}"/>
  		<!-- jQuery UI -->
  		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/custom/jquery/jquery-ui/jquery-ui.min.css') }}"/>
+ 		<!-- jQuery DataTable -->
+ 		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/custom/dataTables/DataTables-1.13.4/css/dataTables.bootstrap5.min.css') }}"/>
  		<!-- CropperJS -->
  		<link type="text/css" rel="stylesheet" href="{{ asset('assets/addons/custom/cropper/css/cropper.min.css') }}"/>
 
@@ -363,6 +365,7 @@
 		<script src="{{ asset('assets/addons/electro/nouislider/js/nouislider.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/custom/jquery/jquery.zoom/jquery.zoom.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/custom/perfect-scrollbar/dist/perfect-scrollbar.min.js') }}"></script>
+		<script src="{{ asset('assets/addons/custom/dataTables/DataTables-1.13.4/js/dataTables.bootstrap5.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/custom/autosize/js/autosize.min.js') }}"></script>
 		<script src="{{ asset('assets/addons/custom/cropper/js/cropper.min.js') }}"></script>
 		<script src="{{ asset('assets/js/script.electro.js') }}"></script>
