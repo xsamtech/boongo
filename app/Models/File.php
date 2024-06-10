@@ -15,6 +15,13 @@ class File extends Model
     use HasFactory;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $guarded = [];
+
+    /**
      * ONE-TO-MANY
      * One type for several files
      */
