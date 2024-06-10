@@ -60,6 +60,7 @@ return [
     'reset' => 'Reset',
     'open' => 'Open',
     'close' => 'Close',
+    'waiting_register' => 'Waiting register ...',
     'download' => 'Download',
     'upload' => [
         'use_camera' => 'Use camera',

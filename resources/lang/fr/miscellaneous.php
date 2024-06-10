@@ -60,6 +60,7 @@ return [
     'reset' => 'Réinitialiser',
     'open' => 'Ouvrir',
     'close' => 'Fermer',
+    'waiting_register' => 'Enregistrement en attente ...',
     'download' => 'Télécharger',
     'upload' => [
         'use_camera' => 'Utiliser caméra',
