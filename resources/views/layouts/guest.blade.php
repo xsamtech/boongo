@@ -179,7 +179,7 @@
 						<!-- LOGO -->
 						<div class="col-md-3">
 							<div class="header-logo">
-								<a href="#" class="logo">
+								<a href="{{ route('home') }}" class="logo">
 									<img src="{{ asset('assets/img/brand.png') }}" alt="logo" width="160">
 								</a>
 							</div>
@@ -226,7 +226,7 @@
 										<div class="cart-list">
 											<div class="product-widget">
 												<div class="product-img">
-													<img src="./img/product01.png" alt="">
+													<img src="" alt="">
 												</div>
 												<div class="product-body">
 													<h3 class="product-name"><a href="#">product name goes here</a></h3>
@@ -237,7 +237,7 @@
 
 											<div class="product-widget">
 												<div class="product-img">
-													<img src="./img/product02.png" alt="">
+													<img src="" alt="">
 												</div>
 												<div class="product-body">
 													<h3 class="product-name"><a href="#">product name goes here</a></h3>
@@ -323,8 +323,6 @@
 								</ul>
 							</div>
 						</div>
-
-						<div class="clearfix visible-xs"></div>
 
 						<div class="col-lg-3 col-sm-5">
 							<div class="footer">
