@@ -252,16 +252,17 @@
             $(function () {
                 /* Register form-data */
                 $('form#workData').submit(function (e) {
-                    e.preventDefault();
+					e.preventDefault();
 
                     var formData = new FormData(this);
                     var categories = [];
 
-                    $.ajax({
-                        headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
-                        type: 'POST',
-                        url: apiHost + '/work',
-                        data: formData,
+					$.ajax({
+						headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
+						type: 'POST',
+						contentType: 'multipart/form-data',
+						url: apiHost + '/work',
+						data: formData,
 						beforeSend: function () {
 							$('#workData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
 						},
@@ -296,18 +297,18 @@
 						complete: function() {
 							location.reload();
 						},
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        error: function (xhr, error, status_description) {
+						cache: false,
+						contentType: false,
+						processData: false,
+						error: function (xhr, error, status_description) {
 							$('#workData .request-message').addClass('text-danger').html(xhr);
-                            console.log(xhr.responseJSON);
-                            console.log(xhr.status);
-                            console.log(error);
-                            console.log(status_description);
-                        }
-                    });
-                });
+							console.log(xhr.responseJSON);
+							console.log(xhr.status);
+							console.log(error);
+							console.log(status_description);
+						}
+					});
+				});
             });
         </script>
 	</body>
