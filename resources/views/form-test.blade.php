@@ -251,7 +251,7 @@
 		<script type="text/javascript">
             $(function () {
                 /* Register form-data */
-                $('#workData').submit(function (e) {
+                $('form#workData').submit(function (e) {
                     e.preventDefault();
 
                     var formData = new FormData(this);
