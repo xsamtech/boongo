@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Type as ModelType;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -18,6 +19,10 @@ class Work extends JsonResource
      */
     public function toArray($request)
     {
+        $type_img = ModelType::where('type_name->fr', 'Image (Photo/Vidéo)')->first();
+        $type_doc = ModelType::where('type_name->fr', 'Document')->first();
+        $files = File::collection($this->files)->sortByDesc('created_at')->toArray();
+
         return [
             'id' => $this->id,
             'work_title' => $this->work_title,
@@ -27,7 +32,8 @@ class Work extends JsonResource
             'status' => Status::make($this->status),
             'user_owner' => User::make($this->user_owner),
             'categories' => Category::collection($this->categories),
-            'files' => File::collection($this->files),
+            'image' => !empty($files) ? (inArrayR($type_img->id, $files, 'type_id') ? $files[0] : null) : null,
+            'document' => !empty($files) ? (inArrayR($type_doc->id, $files, 'type_id') ? $files[0] : null) : null,
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'type_id' => $this->type_id,
