@@ -287,7 +287,7 @@
                                 contentType: 'application/json',
                                 url: apiHost + '/work/' + parseInt(res.data.id),
                                 dataType: 'json',
-                                data: JSON.stringify({ 'id': parseInt(res.data.id), 'categories_ids': categories }),
+                                data: JSON.stringify({ 'id': parseInt(res.data.id), 'categories_ids[]': categories }),
                                 success: function (dt) {
                                     $('form#workData .request-message').addClass('text-success').html(dt.message);
                                 },
