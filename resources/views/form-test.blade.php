@@ -280,12 +280,11 @@
 						},
 						success: function (res) {
                             console.log(categories);
-                            console.log(res);
 
                             $.ajax({
                                 headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'application/json', 'X-localization': navigator.language },
                                 type: 'PUT',
-                                url: apiHost + '/work/' + res.data.id,
+                                url: apiHost + '/work/' + parseInt(res.data.id),
                                 dataType: 'json',
                                 data: JSON.stringify({ 'id': parseInt(res.data.id), 'categories_ids': categories }),
                                 success: function () {
