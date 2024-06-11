@@ -1,6 +1,6 @@
 
         @if ($lastPage > 1)
-                        <nav aria-label="Page navigation example class=" class="text-center">
+                        <nav aria-label="Page navigation" class="text-center">
                             <ul class="pagination">
                                 <li class="page-item">
                                     <a role="button" class="page-link{{ !request()->has('page') ? ' d-none' : '' }}" onclick="event.preventDefault(); window.location.replace('{{ !empty($entity) ? route(\Request::route()->getName(), ['entity' => $entity]) . (request()->has('page') && request()->get('page') != '1' ? '?page=' . request()->get('page') - 1 : '') : route(\Request::route()->getName()) . (request()->has('page') && request()->get('page') != '1' ? '?page=' . request()->get('page') - 1 : '') }}');">
