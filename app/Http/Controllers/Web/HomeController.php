@@ -44,15 +44,14 @@ class HomeController extends Controller
     {
         // Group names
         $work_type_group = 'Type d\'œuvre';
-        $work_category_group = 'Catégorie pour œuvre';
         // All types by group
         $types_by_group = $this::$api_client_manager::call('GET', getApiURL() . '/type/find_by_group/' . $work_type_group);
         // All categories by group
-        $categories_by_group = $this::$api_client_manager::call('GET', getApiURL() . '/category/find_by_group/' . $work_category_group);
+        $categories = $this::$api_client_manager::call('GET', getApiURL() . '/category');
 
         return view('form-test', [
             'types' => $types_by_group->data,
-            'categories' => $categories_by_group->data,
+            'categories' => $categories->data
         ]);
     }
 
