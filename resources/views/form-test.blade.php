@@ -265,7 +265,7 @@
 
                     document.querySelectorAll('[name="categories_ids"]').forEach(item => {
                         if (item.checked === true) {
-                            categories.push(item.value);
+                            categories.push(parseInt(item.value));
                         }
                     });
 
@@ -303,7 +303,7 @@
                             });
                         },
 						complete: function() {
-                            $('#myform')[0].reset();
+                            document.getElementById('workData').reset();
 						},
 						cache: false,
 						contentType: false,
