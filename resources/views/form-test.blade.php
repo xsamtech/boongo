@@ -237,36 +237,38 @@
             </form>
         </div>
 
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-9 mx-auto">
-                    <div class="card border py-5">
-                        <div class="card-header">
-                            <h3 class="m-0">@lang('miscellaneous.admin.work.list')</h3>
-                        </div>
+        <div class="py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-9 mx-auto">
+                        <div class="card border">
+                            <div class="card-header">
+                                <h3 class="m-0">@lang('miscellaneous.admin.work.list')</h3>
+                            </div>
 @if (count($works) > 0)
-                        <ul class="list-group list-group-flush">
+                            <ul class="list-group list-group-flush">
     @foreach ($works as $item)
-                            <li class="list-group-item py-3">
-                                <img src="{{ !empty($item->image_url) ? $item->image_url : asset('assets/img/cover.png') }}" alt="{{ $item->work_title }}" width="100" class="float-sm-start rounded-4 me-3">
-                                <h4 class="my-2 dktv-text-green fw-bold">{{ $item->work_title }}</h4>
-                                <p class="text-muted">{{ !empty($item->work_content) ? Str::limit($item->work_content, 20, '...') : '' }}</p>
+                                <li class="list-group-item py-3">
+                                    <img src="{{ !empty($item->image_url) ? $item->image_url : asset('assets/img/cover.png') }}" alt="{{ $item->work_title }}" width="100" class="float-sm-start rounded-4 me-3">
+                                    <h4 class="my-2 dktv-text-green fw-bold">{{ $item->work_title }}</h4>
+                                    <p class="text-muted">{{ !empty($item->work_content) ? Str::limit($item->work_content, 20, '...') : '' }}</p>
         @if (!empty($item->document_url))
-                                <a href="{{ $item->document_url }}" target="_blank" class="px-4 py-3"><i class="fa-solid fa-file-pdf me-2 fs-4 bng-text-danger"></i></a>
+                                    <a href="{{ $item->document_url }}" target="_blank" class="px-4 py-3"><i class="fa-solid fa-file-pdf me-2 fs-4 bng-text-danger"></i></a>
         @endif
         @if (!empty($item->video_url))
-                                <a href="{{ $item->video_url }}" target="_blank" class="px-4 py-3"><i class="fa-solid fa-play-circle me-2 fs-4 bng-text-primary"></i></a>
+                                    <a href="{{ $item->video_url }}" target="_blank" class="px-4 py-3"><i class="fa-solid fa-play-circle me-2 fs-4 bng-text-primary"></i></a>
         @endif
-                            </li>
+                                </li>
     @endforeach
-                        </ul>
+                            </ul>
 
     @if ($lastPage > 1)
-                        <div class="card-body text-center">
+                            <div class="card-body text-center">
         @include('partials.pagination')
-                        </div>
+                            </div>
     @endif
 @endif
+                        </div>
                     </div>
                 </div>
             </div>
