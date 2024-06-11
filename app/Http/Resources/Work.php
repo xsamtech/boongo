@@ -23,21 +23,23 @@ class Work extends JsonResource
         $type_doc = ModelType::where('type_name->fr', 'Document')->first();
         $files = File::collection($this->files)->sortByDesc('created_at')->toArray();
 
-        return [
-            'id' => $this->id,
-            'work_title' => $this->work_title,
-            'work_content' => $this->work_content,
-            'work_url' => $this->work_url,
-            'type' => Type::make($this->type),
-            'status' => Status::make($this->status),
-            'user_owner' => User::make($this->user_owner),
-            'categories' => Category::collection($this->categories),
-            'image' => !empty($files) ? (inArrayR($type_img->id, $files, 'type_id') ? $files[0] : null) : null,
-            'document' => !empty($files) ? (inArrayR($type_doc->id, $files, 'type_id') ? $files[0] : null) : null,
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
-            'type_id' => $this->type_id,
-            'status_id' => $this->status_id
-        ];
+        return $files->pluck('type_id', $type_img->id)->unique();
+        
+        // return [
+        //     'id' => $this->id,
+        //     'work_title' => $this->work_title,
+        //     'work_content' => $this->work_content,
+        //     'work_url' => $this->work_url,
+        //     'type' => Type::make($this->type),
+        //     'status' => Status::make($this->status),
+        //     'user_owner' => User::make($this->user_owner),
+        //     'categories' => Category::collection($this->categories),
+        //     'image' => !empty($files) ? (inArrayR($type_img->id, $files, 'type_id') ? $files[0] : null) : null,
+        //     'document' => !empty($files) ? (inArrayR($type_doc->id, $files, 'type_id') ? $files[0] : null) : null,
+        //     'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+        //     'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+        //     'type_id' => $this->type_id,
+        //     'status_id' => $this->status_id
+        // ];
     }
 }
