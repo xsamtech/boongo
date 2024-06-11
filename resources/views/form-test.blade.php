@@ -248,7 +248,7 @@
                         <ul class="list-group list-group-flush">
     @foreach ($works as $item)
                             <li class="list-group-item py-3">
-                                <img src="{{ !empty($item->image_url) ? $item->image_url : asset('assets/img/blank-media-video.png') }}" alt="{{ $item->work_title }}" width="100" class="float-sm-start rounded-4 me-3">
+                                <img src="{{ !empty($item->image_url) ? $item->image_url : asset('assets/img/cover.png') }}" alt="{{ $item->work_title }}" width="100" class="float-sm-start rounded-4 me-3">
                                 <h4 class="my-2 dktv-text-green fw-bold">{{ $item->work_title }}</h4>
                                 <p class="text-muted">{{ !empty($item->work_content) ? Str::limit($item->work_content, 20, '...') : '' }}</p>
         @if (!empty($item->document_url))
