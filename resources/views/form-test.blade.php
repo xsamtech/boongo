@@ -186,7 +186,7 @@
                                         </select>
                                     </div>
 
-                                    <div class="form-group mb-4">
+                                    <div class="form-group">
                                         <label class="d-block text-center">@lang('miscellaneous.admin.work.data.choose_categories')</label>
 @forelse ($categories as $category)
                                         <div class="form-check mx-3">
@@ -226,7 +226,7 @@
                     <!-- /row -->
 
                     <!-- row -->
-                    <div class="row">
+                    <div class="row mt-3">
                         <div class="col-lg-4 col-sm-6 col-9 mx-auto">
                             <button class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
                         </div>
@@ -284,15 +284,13 @@
                             $.ajax({
                                 headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'application/json', 'X-localization': navigator.language },
                                 type: 'PUT',
+                                contentType: 'application/json',
                                 url: apiHost + '/work/' + parseInt(res.data.id),
                                 dataType: 'json',
                                 data: JSON.stringify({ 'id': parseInt(res.data.id), 'categories_ids': categories }),
-                                success: function () {
-                                    $('form#workData .request-message').addClass('text-success').html(res.message);
+                                success: function (dt) {
+                                    $('form#workData .request-message').addClass('text-success').html(dt.message);
                                 },
-                                cache: false,
-                                contentType: false,
-                                processData: false,
                                 error: function (xhr, error, status_description) {
                                     console.log(xhr.responseJSON);
                                     console.log(xhr.status);
