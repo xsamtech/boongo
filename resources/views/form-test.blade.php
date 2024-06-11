@@ -279,6 +279,9 @@
 							$('form#workData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
 						},
 						success: function (res) {
+                            console.log(categories);
+                            console.log(res);
+
                             $.ajax({
                                 headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'application/json', 'X-localization': navigator.language },
                                 type: 'PUT',
@@ -286,6 +289,7 @@
                                 dataType: 'json',
                                 data: JSON.stringify({ 'id': parseInt(res.data.id), 'categories_ids': categories }),
                                 success: function () {
+                                    $('form#workData .request-message').addClass('text-success').html(res.message);
                                 },
                                 cache: false,
                                 contentType: false,
@@ -299,7 +303,7 @@
                             });
                         },
 						complete: function() {
-							$('form#workData .request-message').addClass('text-success').html(res.message);
+                            $('#myform')[0].reset();
 						},
 						cache: false,
 						contentType: false,

@@ -60,7 +60,7 @@ class WorkController extends BaseController
         $work = Work::create($inputs);
 
         if ($request->categories_ids != null) {
-            $work->categories()->attach([$request->categories_ids]);
+            $work->categories()->attach($request->categories_ids);
         }
 
         if ($request->hasFile('file_url')) {
@@ -101,11 +101,11 @@ class WorkController extends BaseController
             $image_url = 'images/works/' . $work->id . '/' . Str::random(50) . '.png';
 
             // Upload image
-            $dir_result = Storage::url(Storage::disk('public')->put($image_url, base64_decode($image)));
+            Storage::url(Storage::disk('public')->put($image_url, base64_decode($image)));
 
             File::create([
                 'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
-                'file_url' => $dir_result,
+                'file_url' => '/storage/' . $image_url,
                 'type_id' => $request->image_type_id,
                 'work_id' => $work->id
             ]);
