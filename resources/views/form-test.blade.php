@@ -222,7 +222,7 @@
                                 </div>
                             </div>
 
-                            <p class="request-message"></p>
+                            <div class="d-flex justify-content-center mt-5 text-center request-message"></div>
                         </div>
                     </div>
                     <!-- /row -->
