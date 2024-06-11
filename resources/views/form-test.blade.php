@@ -190,7 +190,7 @@
                                         <label class="d-block text-center">@lang('miscellaneous.admin.work.data.choose_categories')</label>
 @forelse ($categories as $category)
                                         <div class="form-check mx-3">
-                                            <input type="checkbox" name="categories_ids[]" id="category_{{ $category->id }}" class="form-check-input" value="{{ $category->id }}">
+                                            <input type="checkbox" name="categories_ids" id="category_{{ $category->id }}" class="form-check-input" value="{{ $category->id }}">
                                             <label class="form-check-label bng-text-secondary" for="category_{{ $category->id }}">{{ $category->category_name }}</label>
                                         </div>
 @empty
@@ -255,40 +255,58 @@
                     e.preventDefault();
 
                     var formData = new FormData(this);
-                    var categories = formData.getAll('categories_ids[]');
 
-                    formData.append('categories_ids', categories);
+                    $.ajax({
+                        headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
+                        type: 'POST',
+                        url: apiHost + '/work',
+                        data: formData,
+						beforeSend: function () {
+							$('#workData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
+						},
+						success: function (res) {
+							$('#workData .request-message').addClass('text-success').html(res.message);
 
-                    window.alert(formData.values()[5]);
-                    // for (const value of formData.values()) {
-                    //     console.log(value);
-                    // }
+                            let categories = [];
 
-                    // $.ajax({
-                    //     headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
-                    //     type: 'POST',
-                    //     url: apiHost + '/work',
-                    //     data: formData,
-					// 	beforeSend: function () {
-					// 		$('#workData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
-					// 	},
-					// 	success: function (res) {
-					// 		$('#workData .request-message').addClass('text-success').html(res.message);
-					// 	},
-					// 	complete: function() {
-					// 		location.reload();
-					// 	},
-                    //     cache: false,
-                    //     contentType: false,
-                    //     processData: false,
-                    //     error: function (xhr, error, status_description) {
-					// 		$('#workData .request-message').addClass('text-danger').html(xhr);
-                    //         console.log(xhr.responseJSON);
-                    //         console.log(xhr.status);
-                    //         console.log(error);
-                    //         console.log(status_description);
-                    //     }
-                    // });
+                            document.querySelectorAll('[type="checkbox"]').forEach(item => {
+                                if (item.checked === true) {
+                                    categories.push(item.value);
+                                }
+                            });
+
+                            $.ajax({
+                                headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'application/json', 'X-localization': navigator.language }
+                                type: 'PUT',
+                                contentType: 'application/json',
+                                url: apiHost + '/work/' + res.data.id,
+                                dataType: 'json',
+                                data: JSON.stringify({ 'id': parseInt(res.data.id), 'categories_ids': categories }),
+                                success: function () {
+                                },
+                                error: function (xhr, error, status_description) {
+                                    console.log(xhr.responseJSON);
+                                    console.log(xhr.status);
+                                    console.log(error);
+                                    console.log(status_description);
+                                }
+                            });
+                        },
+						complete: function() {
+							$('#workData .request-message').addClass('text-success').html(res.message);
+							location.reload();
+						},
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        error: function (xhr, error, status_description) {
+							$('#workData .request-message').addClass('text-danger').html(xhr);
+                            console.log(xhr.responseJSON);
+                            console.log(xhr.status);
+                            console.log(error);
+                            console.log(status_description);
+                        }
+                    });
                 });
             });
         </script>
