@@ -196,8 +196,6 @@
 @empty
 @endforelse
                                     </div>
-
-                                    <button type="button" class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
                                 </div>
                             </div>
                         </div>
@@ -223,6 +221,14 @@
                             </div>
 
                             <div class="d-flex justify-content-center mt-5 text-center request-message"></div>
+                        </div>
+                    </div>
+                    <!-- /row -->
+
+                    <!-- row -->
+                    <div class="row">
+                        <div class="col-lg-4 col-sm-6 col-9 mx-auto">
+                            <button class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
                         </div>
                     </div>
                     <!-- /row -->
@@ -257,24 +263,22 @@
                     var formData = new FormData(this);
                     var categories = [];
 
-					$.ajax({
+                    document.querySelectorAll('[name="categories_ids"]').forEach(item => {
+                        if (item.checked === true) {
+                            categories.push(item.value);
+                        }
+                    });
+
+                    $.ajax({
 						headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
 						type: 'POST',
 						contentType: 'multipart/form-data',
 						url: apiHost + '/work',
 						data: formData,
 						beforeSend: function () {
-							$('#workData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
+							$('form#workData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
 						},
 						success: function (res) {
-							$('#workData .request-message').addClass('text-success').html(res.message);
-
-                            document.querySelectorAll('[type="checkbox"]').forEach(item => {
-                                if (item.checked === true) {
-                                    categories.push(item.value);
-                                }
-                            });
-
                             $.ajax({
                                 headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'application/json', 'X-localization': navigator.language }
                                 type: 'PUT',
@@ -295,13 +299,13 @@
                             });
                         },
 						complete: function() {
-							location.reload();
+							$('form#workData .request-message').addClass('text-success').html(res.message);
 						},
 						cache: false,
 						contentType: false,
 						processData: false,
 						error: function (xhr, error, status_description) {
-							$('#workData .request-message').addClass('text-danger').html(xhr);
+							$('form#workData .request-message').addClass('text-danger').html(xhr);
 							console.log(xhr.responseJSON);
 							console.log(xhr.status);
 							console.log(error);
