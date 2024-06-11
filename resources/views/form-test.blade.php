@@ -237,6 +237,37 @@
             </form>
         </div>
 
+        <hr>
+
+        <div class="card border py-5">
+            <div class="card-header">
+                <h3 class="m-0">@lang('miscellaneous.admin.work.list')</h3>
+            </div>
+@if (count($works) > 0)
+            <ul class="list-group list-group-flush">
+    @foreach ($works as $item)
+                <li class="list-group-item">
+                    <img src="{{ !empty($item->image_url) ? $item->image_url : asset('assets/img/blank-media-video.png') }}" alt="{{ $item->work_title }}" width="160" class="float-sm-start rounded-4 me-3">
+                    <h4 class="my-2 dktv-text-green fw-bold">{{ $item->work_title }}</h4>
+                    <p class="text-muted">{{ !empty($item->work_content) ? Str::limit($item->work_content, 20, '...') : '' }}</p>
+        @if (!empty($item->document_url))
+                    <a href="{{ $item->document_url }}" target="_blank" class="px-4 py-3"><i class="fa-solid fa-file-pdf me-2 fs-4 bng-text-danger"></i></a>
+        @endif
+        @if (!empty($item->video_url))
+                    <a href="{{ $item->video_url }}" target="_blank" class="px-4 py-3"><i class="fa-solid fa-play-circle me-2 fs-4 bng-text-primary"></i></a>
+        @endif
+                </li>
+    @endforeach
+            </ul>
+
+    @if ($lastPage > 1)
+            <div class="card-body text-center">
+        @include('partials.pagination')
+            </div>
+    @endif
+@endif
+        </div>
+
         <span id="btnBackTop" class="btn btn-floating btn-primary pb-0 d-none" style="position: fixed; bottom: 2rem; right: 2rem;"><i class="fa-solid fa-chevron-up"></i></span>
 
         <!-- jQuery Plugins -->
