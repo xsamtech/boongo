@@ -257,7 +257,7 @@
                     var formData = new FormData(this);
                     var categories = formData.getAll('categories_ids');
 
-                    formData.append('categories_ids', categories);
+                    formData.append('categories_ids[]', categories);
 
                     for (const value of formData.values()) {
                         console.log(value);
