@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\File as ModelFile;
 use App\Models\Type as ModelType;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,12 +20,13 @@ class Work extends JsonResource
      */
     public function toArray($request)
     {
-        $type_img = ModelType::where('type_name->fr', 'Image (Photo/Vidéo)')->first();
-        $type_doc = ModelType::where('type_name->fr', 'Document')->first();
+        $img_type = ModelType::where('type_name->fr', 'Image (Photo/Vidéo)')->first();
+        $doc_type = ModelType::where('type_name->fr', 'Document')->first();
         $files = File::collection($this->files)->sortByDesc('created_at')->toArray();
 
-        return File::collection($this->files)->pluck('type_id', $type_img->id)->unique();
-        
+        $img = File::collection($this->files)->pluck('type_id', $img_type->id)->unique();
+        return ModelFile::where('type_id', $img);
+
         // return [
         //     'id' => $this->id,
         //     'work_title' => $this->work_title,
