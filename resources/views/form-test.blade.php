@@ -277,7 +277,7 @@
                         contentType: false,
                         processData: false,
                         error: function (xhr, error, status_description) {
-							$('#workData .request-message').addClass('text-danger').html(xhr.responseJSON.message + ' : ' + xhr.responseJSON.error);
+							$('#workData .request-message').addClass('text-danger').html(xhr);
                             console.log(xhr.responseJSON);
                             console.log(xhr.status);
                             console.log(error);
