@@ -25,7 +25,8 @@ class Work extends JsonResource
         $files = File::collection($this->files)->sortByDesc('created_at')->toArray();
 
         $img = File::collection($this->files)->pluck('type_id', $img_type->id)->unique();
-        return ModelFile::where('type_id', $img);
+
+        return ModelFile::where('type_id', $img)->first();
 
         // return [
         //     'id' => $this->id,
