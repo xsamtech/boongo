@@ -260,7 +260,7 @@
                     formData.append('categories_ids', categories);
 
                     for (const value of formData.values()) {
-                        window.alert(value);
+                        console.log(value);
                     }
                     // $.ajax({
                     //     headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
