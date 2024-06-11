@@ -171,6 +171,7 @@
 
                 <input type="hidden" name="image_type_id" id="image_type_id" value="6">
                 <input type="hidden" name="file_type_id" id="file_type_id" value="7">
+                <input type="hidden" name="status_id" id="status_id" value="5">
 @csrf
 
                 <!-- container -->
@@ -215,7 +216,7 @@
                                         <label class="d-block text-center">@lang('miscellaneous.admin.work.data.choose_categories')</label>
 @forelse ($categories as $category)
                                         <div class="form-check mx-3">
-                                            <input type="checkbox" name="register_categories_ids[]" id="category_{{ $category->id }}" class="form-check-input" value="{{ $category->id }}">
+                                            <input type="checkbox" name="register_categories_ids" id="category_{{ $category->id }}" class="form-check-input" value="{{ $category->id }}">
                                             <label class="form-check-label bng-text-secondary" for="category_{{ $category->id }}">{{ $category->category_name }}</label>
                                         </div>
 @empty
@@ -280,7 +281,7 @@
 
                     var formData = new FormData(this);
 
-                    formData.append('register_categories_ids', $('input[name="register_categories_ids[]"]:checked').val());
+                    formData.append('register_categories_ids', $('input[name="register_categories_ids"]:checked').val());
 
                     $.ajax({
                         headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },

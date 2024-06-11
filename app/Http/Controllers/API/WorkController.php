@@ -98,7 +98,7 @@ class WorkController extends BaseController
             $image = str_replace($replace, '', $request->data_other_user);
             $image = str_replace(' ', '+', $image);
             // Create image URL
-            $image_url = 'images/works/' . $work->id . '/' . Str::random(50) . '.png';
+            $image_url = 'storage/images/works/' . $work->id . '/' . Str::random(50) . '.png';
 
             // Upload image
             Storage::url(Storage::disk('public')->put($image_url, base64_decode($image)));
