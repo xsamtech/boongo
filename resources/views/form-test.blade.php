@@ -259,34 +259,35 @@
 
                     formData.append('categories_ids', categories);
 
-                    for (const value of formData.values()) {
-                        console.log(value);
-                    }
-                    // $.ajax({
-                    //     headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
-                    //     type: 'POST',
-                    //     url: apiHost + '/work',
-                    //     data: formData,
-					// 	beforeSend: function () {
-					// 		$('#workData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
-					// 	},
-					// 	success: function (res) {
-					// 		$('#workData .request-message').addClass('text-success').html(res.message);
-					// 	},
-					// 	complete: function() {
-					// 		location.reload();
-					// 	},
-                    //     cache: false,
-                    //     contentType: false,
-                    //     processData: false,
-                    //     error: function (xhr, error, status_description) {
-					// 		$('#workData .request-message').addClass('text-danger').html(xhr);
-                    //         console.log(xhr.responseJSON);
-                    //         console.log(xhr.status);
-                    //         console.log(error);
-                    //         console.log(status_description);
-                    //     }
-                    // });
+                    // for (const value of formData.values()) {
+                    //     console.log(value);
+                    // }
+
+                    $.ajax({
+                        headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
+                        type: 'POST',
+                        url: apiHost + '/work',
+                        data: formData,
+						beforeSend: function () {
+							$('#workData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
+						},
+						success: function (res) {
+							$('#workData .request-message').addClass('text-success').html(res.message);
+						},
+						complete: function() {
+							location.reload();
+						},
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        error: function (xhr, error, status_description) {
+							$('#workData .request-message').addClass('text-danger').html(xhr);
+                            console.log(xhr.responseJSON);
+                            console.log(xhr.status);
+                            console.log(error);
+                            console.log(status_description);
+                        }
+                    });
                 });
             });
         </script>

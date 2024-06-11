@@ -60,7 +60,7 @@ class WorkController extends BaseController
         $work = Work::create($inputs);
 
         if ($request->categories_ids != null) {
-            $work->categories()->attach($request->categories_ids);
+            $work->categories()->attach([$request->categories_ids]);
         }
 
         if ($request->hasFile('file_url')) {
