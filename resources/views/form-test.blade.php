@@ -277,36 +277,40 @@
                 /* Register form-data */
                 $('form#workData').submit(function (e) {
                     e.preventDefault();
-                    $('#alertLoading').removeClass('d-none');
 
                     var formData = new FormData(this);
+                    var categories = formData.getAll('register_categories_ids');
 
-                    formData.append('register_categories_ids', $('input[name="register_categories_ids"]:checked').val());
+                    console.log(categories);
+                    // formData.append('register_categories_ids', $('input[name="register_categories_ids"]:checked').val());
 
-                    $.ajax({
-                        headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
-                        type: 'POST',
-                        url: apiHost + '/work',
-                        data: formData,
-                        success: function (res) {
-                            $('#alertLoading').addClass('d-none');
-                            $('#alertSuccess').removeClass('d-none');
-                            $('#alertSuccess .alert').html('<i class="fa-solid fa-info-circle me-2 fs-4" style="vertical-align: -3px;"></i> ' + res.message + ' <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>');
-                            location.reload();
-                        },
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        error: function (xhr, error, status_description) {
-                            $('#alertLoading').addClass('d-none');
-                            $('#alertSuccess').addClass('d-none');
-                            $('#alertError .alert').html('<i class="fa-solid fa-exclamation-triangle me-2 fs-4" style="vertical-align: -3px;"></i> ' + xhr.responseJSON.message + ' : ' + xhr.responseJSON.error + ' <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>');
-                            console.log(xhr.responseJSON);
-                            console.log(xhr.status);
-                            console.log(error);
-                            console.log(status_description);
-                        }
-                    });
+                    // $.ajax({
+                    //     headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
+                    //     type: 'POST',
+                    //     url: apiHost + '/work',
+                    //     data: formData,
+					// 	beforeSend: function () {
+					// 		$('#data p').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
+					// 	},
+					// 	success: function (res) {
+					// 		$('#data p').addClass('text-success').html(res.message);
+					// 	},
+					// 	complete: function() {
+					// 		location.reload();
+					// 	},
+                    //     cache: false,
+                    //     contentType: false,
+                    //     processData: false,
+                    //     error: function (xhr, error, status_description) {
+                    //         $('#alertLoading').addClass('d-none');
+                    //         $('#alertSuccess').addClass('d-none');
+                    //         $('#alertError .alert').html('<i class="fa-solid fa-exclamation-triangle me-2 fs-4" style="vertical-align: -3px;"></i> ' + xhr.responseJSON.message + ' : ' + xhr.responseJSON.error + ' <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>');
+                    //         console.log(xhr.responseJSON);
+                    //         console.log(xhr.status);
+                    //         console.log(error);
+                    //         console.log(status_description);
+                    //     }
+                    // });
                 });
             });
         </script>
