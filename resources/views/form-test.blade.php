@@ -280,7 +280,7 @@
 						},
 						success: function (res) {
                             $.ajax({
-                                headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'application/json', 'X-localization': navigator.language }
+                                headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'application/json', 'X-localization': navigator.language },
                                 type: 'PUT',
                                 url: apiHost + '/work/' + res.data.id,
                                 dataType: 'json',
