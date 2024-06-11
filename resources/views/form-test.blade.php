@@ -197,7 +197,7 @@
 @endforelse
                                     </div>
 
-                                    <button type="submit" class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
+                                    <button type="button" class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
                                 </div>
                             </div>
                         </div>
