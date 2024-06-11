@@ -255,7 +255,7 @@
                     e.preventDefault();
 
                     var formData = new FormData(this);
-                    var categories = formData.getAll('categories_ids');
+                    var categories = formData.getAll('categories_ids[]');
 
                     formData.append('categories_ids', categories);
 
