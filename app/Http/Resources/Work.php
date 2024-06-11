@@ -23,7 +23,7 @@ class Work extends JsonResource
         $type_doc = ModelType::where('type_name->fr', 'Document')->first();
         $files = File::collection($this->files)->sortByDesc('created_at')->toArray();
 
-        return $files->pluck('type_id', $type_img->id)->unique();
+        return File::collection($this->files)->pluck('type_id', $type_img->id)->unique();
         
         // return [
         //     'id' => $this->id,
