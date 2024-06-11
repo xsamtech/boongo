@@ -265,8 +265,6 @@
 							$('#workData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
 						},
 						success: function (res) {
-							$('#workData .request-message').addClass('text-success').html(res.message);
-
                             let categories = [];
 
                             document.querySelectorAll('[type="checkbox"]').forEach(item => {
@@ -294,7 +292,7 @@
                         },
 						complete: function() {
 							$('#workData .request-message').addClass('text-success').html(res.message);
-							location.reload();
+							// location.reload();
 						},
                         cache: false,
                         contentType: false,
