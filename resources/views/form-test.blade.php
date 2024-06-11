@@ -251,7 +251,7 @@
                                 <li class="list-group-item py-3">
                                     <img src="{{ !empty($item->image_url) ? $item->image_url : asset('assets/img/cover.png') }}" alt="{{ $item->work_title }}" width="100" class="float-sm-start rounded-4 me-3">
                                     <h4 class="my-2 dktv-text-green fw-bold">{{ $item->work_title }}</h4>
-                                    <p class="text-muted">{{ !empty($item->work_content) ? Str::limit($item->work_content, 20, '...') : '' }}</p>
+                                    <p class="text-muted">{{ !empty($item->work_content) ? Str::limit($item->work_content, 50, '...') : '' }}</p>
         @if (!empty($item->document_url))
                                     <a href="{{ $item->document_url }}" target="_blank" class="px-4 py-3"><i class="fa-solid fa-file-pdf me-2 fs-4 bng-text-danger"></i></a>
         @endif
