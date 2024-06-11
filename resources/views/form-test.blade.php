@@ -138,32 +138,6 @@
         <!-- ALERT END-->
 @endif
 
-        <!-- ALERT-->
-        <div class="position-relative">
-            <div id="alertLoading" class="row position-absolute w-100 d-none" style="top: 0; opacity: 0.9; z-index: 9999;">
-                <div class="col-lg-5 col-sm-6 mx-auto mt-lg-0 mt-5">
-                    <div class="alert alert-warning rounded-0" role="alert">
-                        @lang('miscellaneous.loading')
-                    </div>
-                </div>
-            </div>
-
-            <div id="alertSuccess" class="row position-absolute w-100 d-none" style="top: 0; opacity: 0.9; z-index: 9999;">
-                <div class="col-lg-5 col-sm-6 mx-auto mt-lg-0 mt-5">
-                    <div class="alert alert-success alert-dismissible fade show rounded-0" role="alert">
-                    </div>
-                </div>
-            </div>
-
-            <div id="alertError" class="row position-absolute w-100 d-none" style="top: 0; opacity: 0.9; z-index: 9999;">
-                <div class="col-lg-5 col-sm-6 mx-auto mt-lg-0 mt-5">
-                    <div class="alert alert-danger alert-dismissible fade show rounded-0" role="alert">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- ALERT END-->
-
         <div class="py-5">
             {{-- <form action="{{ route('admin.work.home') }}" method="post" enctype="multipart/form-data"> --}}
             <form id="workData">
@@ -247,6 +221,8 @@
                                     <p class="d-none mt-2 mb-0 small text-success fst-italic">@lang('miscellaneous.waiting_register')</p>
                                 </div>
                             </div>
+
+                            <p class="request-message"></p>
                         </div>
                     </div>
                     <!-- /row -->
@@ -275,42 +251,39 @@
 		<script type="text/javascript">
             $(function () {
                 /* Register form-data */
-                $('form#workData').submit(function (e) {
+                $('#workData').submit(function (e) {
                     e.preventDefault();
 
                     var formData = new FormData(this);
                     var categories = formData.getAll('categories_ids');
 
-                    window.alert(categories);
-                    // formData.append('categories_ids', $('input[name="categories_ids"]:checked').val());
+                    formData.append('categories_ids', categories);
 
-                    // $.ajax({
-                    //     headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
-                    //     type: 'POST',
-                    //     url: apiHost + '/work',
-                    //     data: formData,
-					// 	beforeSend: function () {
-					// 		$('#data p').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
-					// 	},
-					// 	success: function (res) {
-					// 		$('#data p').addClass('text-success').html(res.message);
-					// 	},
-					// 	complete: function() {
-					// 		location.reload();
-					// 	},
-                    //     cache: false,
-                    //     contentType: false,
-                    //     processData: false,
-                    //     error: function (xhr, error, status_description) {
-                    //         $('#alertLoading').addClass('d-none');
-                    //         $('#alertSuccess').addClass('d-none');
-                    //         $('#alertError .alert').html('<i class="fa-solid fa-exclamation-triangle me-2 fs-4" style="vertical-align: -3px;"></i> ' + xhr.responseJSON.message + ' : ' + xhr.responseJSON.error + ' <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>');
-                    //         console.log(xhr.responseJSON);
-                    //         console.log(xhr.status);
-                    //         console.log(error);
-                    //         console.log(status_description);
-                    //     }
-                    // });
+                    $.ajax({
+                        headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
+                        type: 'POST',
+                        url: apiHost + '/work',
+                        data: formData,
+						beforeSend: function () {
+							$('#workData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
+						},
+						success: function (res) {
+							$('#workData .request-message').addClass('text-success').html(res.message);
+						},
+						complete: function() {
+							location.reload();
+						},
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        error: function (xhr, error, status_description) {
+							$('#workData .request-message').addClass('text-danger').html(xhr.responseJSON.message + ' : ' + xhr.responseJSON.error);
+                            console.log(xhr.responseJSON);
+                            console.log(xhr.status);
+                            console.log(error);
+                            console.log(status_description);
+                        }
+                    });
                 });
             });
         </script>
