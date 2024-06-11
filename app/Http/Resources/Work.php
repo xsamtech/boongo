@@ -20,29 +20,27 @@ class Work extends JsonResource
      */
     public function toArray($request)
     {
+        $files = File::collection($this->files)->sortByDesc('created_at')->toArray();
         $img_type = ModelType::where('type_name->fr', 'Image (Photo/Vidéo)')->first();
         $doc_type = ModelType::where('type_name->fr', 'Document')->first();
-        $files = File::collection($this->files)->sortByDesc('created_at')->toArray();
+        $img = ModelFile::where([['type_id', $img_type->id], ['work_id', $this->id]])->first();
+        $doc = ModelFile::where([['type_id', $doc_type->id], ['work_id', $this->id]])->first();
 
-        $img = File::collection($this->files)->pluck('type_id', $img_type->id)->unique();
-
-        return ModelFile::where('type_id', $img)->first();
-
-        // return [
-        //     'id' => $this->id,
-        //     'work_title' => $this->work_title,
-        //     'work_content' => $this->work_content,
-        //     'work_url' => $this->work_url,
-        //     'type' => Type::make($this->type),
-        //     'status' => Status::make($this->status),
-        //     'user_owner' => User::make($this->user_owner),
-        //     'categories' => Category::collection($this->categories),
-        //     'image' => !empty($files) ? (inArrayR($type_img->id, $files, 'type_id') ? $files[0] : null) : null,
-        //     'document' => !empty($files) ? (inArrayR($type_doc->id, $files, 'type_id') ? $files[0] : null) : null,
-        //     'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-        //     'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
-        //     'type_id' => $this->type_id,
-        //     'status_id' => $this->status_id
-        // ];
+        return [
+            'id' => $this->id,
+            'work_title' => $this->work_title,
+            'work_content' => $this->work_content,
+            'work_url' => $this->work_url,
+            'type' => Type::make($this->type),
+            'status' => Status::make($this->status),
+            'user_owner' => User::make($this->user_owner),
+            'categories' => Category::collection($this->categories),
+            'image' => !empty($files) ? (inArrayR($img_type->id, $files, 'type_id') ? $img : null) : null,
+            'document' => !empty($files) ? (inArrayR($doc_type->id, $files, 'type_id') ? $doc : null) : null,
+            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+            'type_id' => $this->type_id,
+            'status_id' => $this->status_id
+        ];
     }
 }
