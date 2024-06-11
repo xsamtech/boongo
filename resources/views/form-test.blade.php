@@ -281,7 +281,7 @@
                     var formData = new FormData(this);
                     var categories = formData.getAll('categories_ids');
 
-                    windows.alert(categories);
+                    console.log(categories);
                     // formData.append('categories_ids', $('input[name="categories_ids"]:checked').val());
 
                     // $.ajax({
