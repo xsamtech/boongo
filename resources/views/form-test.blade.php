@@ -216,7 +216,7 @@
                                         <label class="d-block text-center">@lang('miscellaneous.admin.work.data.choose_categories')</label>
 @forelse ($categories as $category)
                                         <div class="form-check mx-3">
-                                            <input type="checkbox" name="register_categories_ids" id="category_{{ $category->id }}" class="form-check-input" value="{{ $category->id }}">
+                                            <input type="checkbox" name="categories_ids" id="category_{{ $category->id }}" class="form-check-input" value="{{ $category->id }}">
                                             <label class="form-check-label bng-text-secondary" for="category_{{ $category->id }}">{{ $category->category_name }}</label>
                                         </div>
 @empty
@@ -279,10 +279,10 @@
                     e.preventDefault();
 
                     var formData = new FormData(this);
-                    var categories = formData.getAll('register_categories_ids');
+                    var categories = formData.getAll('categories_ids');
 
                     console.log(categories);
-                    // formData.append('register_categories_ids', $('input[name="register_categories_ids"]:checked').val());
+                    // formData.append('categories_ids', $('input[name="categories_ids"]:checked').val());
 
                     // $.ajax({
                     //     headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
