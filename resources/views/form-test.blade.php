@@ -172,6 +172,9 @@
             {{-- <form action="{{ route('admin.work.home') }}" method="post" enctype="multipart/form-data"> --}}
             <form id="workData">
                 <h1 class="text-center mb-4">@lang('miscellaneous.admin.work.add')</h1>
+
+                <input type="hidden" name="image_type_id" id="image_type_id" value="6">
+                <input type="hidden" name="file_type_id" id="file_type_id" value="7">
 @csrf
 
                 <!-- container -->

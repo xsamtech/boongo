@@ -87,6 +87,30 @@ class WorkController extends BaseController
             ]);
         }
 
+        if ($request->data_other_user != null) {
+            if ($request->image_type_id == null) {
+                return $this->handleError($inputs['type_id'], __('validation.required'), 400);
+            }
+
+            // $extension = explode('/', explode(':', substr($request->data_other_user, 0, strpos($request->data_other_user, ';')))[1])[1];
+            $replace = substr($request->data_other_user, 0, strpos($request->data_other_user, ',') + 1);
+            // Find substring from replace here eg: data:image/png;base64,
+            $image = str_replace($replace, '', $request->data_other_user);
+            $image = str_replace(' ', '+', $image);
+            // Create image URL
+            $image_url = 'images/works/' . $work->id . '/' . Str::random(50) . '.png';
+
+            // Upload image
+            Storage::url(Storage::disk('public')->put($image_url, base64_decode($image)));
+
+            File::create([
+                'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
+                'file_url' => $image_url,
+                'type_id' => $request->image_type_id,
+                'work_id' => $work->id
+            ]);
+        }
+
         return $this->handleResponse(new ResourcesWork($work), __('notifications.create_work_success'));
     }
 
