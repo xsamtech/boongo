@@ -301,7 +301,7 @@
                         },
 						complete: function() {
                             document.getElementById('workData').reset();
-							// location.reload();
+							location.reload();
 						},
 						cache: false,
 						contentType: false,
