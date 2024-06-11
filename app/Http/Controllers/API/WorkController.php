@@ -63,6 +63,30 @@ class WorkController extends BaseController
             $work->categories()->attach($request->categories_ids);
         }
 
+        if ($request->hasFile('file_url')) {
+            if ($request->file_type_id == null) {
+                return $this->handleError($inputs['type_id'], __('validation.required'), 400);
+            }
+
+            $type = Type::find($request->file_type_id);
+
+            if (is_null($type)) {
+                return $this->handleError(__('notifications.find_type_404'));
+            }
+
+            $file_url = ($request->file_type_id == 7 ? 'documents/works/' : ($request->file_type_id == 8 ? 'audios/works/' : 'images/works/')) . $work->id . '/' . Str::random(50) . '.' . $request->file('file_url')->extension();
+
+            // Upload file
+            Storage::url(Storage::disk('public')->put($file_url, $request->file('file_url')));
+
+            File::create([
+                'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
+                'file_url' => $file_url,
+                'type_id' => $request->file_type_id,
+                'work_id' => $work->id
+            ]);
+        }
+
         return $this->handleResponse(new ResourcesWork($work), __('notifications.create_work_success'));
     }
 

@@ -138,8 +138,39 @@
         <!-- ALERT END-->
 @endif
 
+        <!-- ALERT-->
+        <div id="alertLoading" class="position-relative d-none">
+            <div class="row position-absolute w-100" style="top: 0; opacity: 0.9; z-index: 9999;">
+                <div class="col-lg-5 col-sm-6 mx-auto mt-lg-0 mt-5">
+                    <div class="alert alert-warning rounded-0" role="alert">
+                        @lang('miscellaneous.loading')
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="alertSuccess" class="position-relative d-none">
+            <div class="row position-absolute w-100" style="top: 0; opacity: 0.9; z-index: 9999;">
+                <div class="col-lg-5 col-sm-6 mx-auto mt-lg-0 mt-5">
+                    <div class="alert alert-success alert-dismissible fade show rounded-0" role="alert">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="alertError" class="position-relative d-none">
+            <div class="row position-absolute w-100" style="top: 0; opacity: 0.9; z-index: 9999;">
+                <div class="col-lg-5 col-sm-6 mx-auto mt-lg-0 mt-5">
+                    <div class="alert alert-danger alert-dismissible fade show rounded-0" role="alert">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ALERT END-->
+
         <div class="py-5">
-            <form action="{{ route('admin.work.home') }}" method="post" enctype="multipart/form-data">
+            {{-- <form action="{{ route('admin.work.home') }}" method="post" enctype="multipart/form-data"> --}}
+            <form id="workData">
                 <h1 class="text-center mb-4">@lang('miscellaneous.admin.work.add')</h1>
 @csrf
 
@@ -151,28 +182,28 @@
                             <div class="card">
                                 <div class="card-body">
                                     <div class="form-group mb-3">
-                                        <label for="register_work_title" class="visually-hidden">@lang('miscellaneous.admin.work.data.work_title')</label>
-                                        <input type="text" name="register_work_title" id="register_work_title" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_title')" autofocus>
+                                        <label for="work_title" class="visually-hidden">@lang('miscellaneous.admin.work.data.work_title')</label>
+                                        <input type="text" name="work_title" id="work_title" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_title')" autofocus>
                                     </div>
 
                                     <div class="form-group mb-3">
-                                        <label for="register_work_url" class="visually-hidden">@lang('miscellaneous.admin.work.data.work_url')</label>
-                                        <input type="text" name="register_work_url" id="register_work_url" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_url')">
-                                    </div>
-
-                                    <div id="editor" class="form-group mb-3">
-                                        <label for="register_work_content" class="visually-hidden">@lang('miscellaneous.admin.work.data.work_content')</label>
-                                        <textarea name="register_work_content" id="edit" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_content')"></textarea>
+                                        <label for="work_content" class="visually-hidden">@lang('miscellaneous.admin.work.data.work_content')</label>
+                                        <textarea name="work_content" id="work_content" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_content')"></textarea>
                                     </div>
 
                                     <div class="form-group mb-3">
-                                        <label for="register_document">@lang('miscellaneous.upload.upload_document')</label>
-                                        <input type="file" name="register_document" id="register_document" class="form-control">
+                                        <label for="work_url" class="visually-hidden">@lang('miscellaneous.admin.work.data.work_url')</label>
+                                        <input type="text" name="work_url" id="work_url" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_url')">
                                     </div>
 
                                     <div class="form-group mb-3">
-                                        <label for="register_work_url">@lang('miscellaneous.menu.admin.group.type')</label>
-                                        <select name="type_id" class="form-select" aria-label="@lang('miscellaneous.admin.work.data.choose_type')">
+                                        <label for="file_url">@lang('miscellaneous.upload.upload_document')</label>
+                                        <input type="file" name="file_url" id="file_url" class="form-control">
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="type_id">@lang('miscellaneous.menu.admin.group.type')</label>
+                                        <select id="type_id" name="type_id" class="form-select" aria-label="@lang('miscellaneous.admin.work.data.choose_type')">
                                             <option class="small" selected disabled>@lang('miscellaneous.admin.work.data.choose_type')</option>
 @forelse ($types as $type)
                                             <option value="{{ $type->id }}">{{ $type->type_name }}</option>
@@ -185,7 +216,7 @@
                                         <label class="d-block text-center">@lang('miscellaneous.admin.work.data.choose_categories')</label>
 @forelse ($categories as $category)
                                         <div class="form-check mx-3">
-                                            <input type="checkbox" name="register_categories_ids[]" class="form-check-input" value="{{ $category->id }}" id="category_{{ $category->id }}">
+                                            <input type="checkbox" name="register_categories_ids[]" id="category_{{ $category->id }}" class="form-check-input" value="{{ $category->id }}">
                                             <label class="form-check-label bng-text-secondary" for="category_{{ $category->id }}">{{ $category->category_name }}</label>
                                         </div>
 @empty
@@ -243,8 +274,37 @@
 		<script src="{{ asset('assets/js/script.custom.js') }}"></script>
 		<script type="text/javascript">
             $(function () {
-                $('#edit').editable({
-                    inlineMode: false
+                /* Register form-data */
+                $('form#workData').submit(function (e) {
+                    e.preventDefault();
+                    $('#alertLoading').removeClass('d-none');
+
+                    var formData = new FormData(this);
+
+                    $.ajax({
+                        headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
+                        type: 'POST',
+                        url: apiHost + '/work',
+                        data: formData,
+                        success: function (res) {
+                            $('#alertLoading').addClass('d-none');
+                            $('#alertSuccess').removeClass('d-none');
+                            $('#alertSuccess .alert').html('<i class="fa-solid fa-info-circle me-2 fs-4" style="vertical-align: -3px;"></i> ' + res.message + ' <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>');
+                            location.reload();
+                        },
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        error: function (xhr, error, status_description) {
+                            $('#alertLoading').addClass('d-none');
+                            $('#alertSuccess').addClass('d-none');
+                            $('#alertError .alert').html('<i class="fa-solid fa-exclamation-triangle me-2 fs-4" style="vertical-align: -3px;"></i> ' + xhr.responseJSON.message + ' : ' + xhr.responseJSON.error + ' <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>');
+                            console.log(xhr.responseJSON);
+                            console.log(xhr.status);
+                            console.log(error);
+                            console.log(status_description);
+                        }
+                    });
                 });
             });
         </script>
