@@ -34,7 +34,7 @@ class AdminController extends Controller
      */
     public function addWork(Request $request)
     {
-        dd($request->all());
+        dd($request->register_document);
         $api_token = '1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc';
         // Find status by name
         $relevant_status_name = 'Pertinente';
