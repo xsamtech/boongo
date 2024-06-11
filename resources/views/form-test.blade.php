@@ -190,7 +190,7 @@
                                         <label class="d-block text-center">@lang('miscellaneous.admin.work.data.choose_categories')</label>
 @forelse ($categories as $category)
                                         <div class="form-check mx-3">
-                                            <input type="checkbox" name="categories_ids" id="category_{{ $category->id }}" class="form-check-input" value="{{ $category->id }}">
+                                            <input type="checkbox" name="categories_ids[]" id="category_{{ $category->id }}" class="form-check-input" value="{{ $category->id }}">
                                             <label class="form-check-label bng-text-secondary" for="category_{{ $category->id }}">{{ $category->category_name }}</label>
                                         </div>
 @empty
@@ -257,7 +257,7 @@
                     var formData = new FormData(this);
                     var categories = formData.getAll('categories_ids');
 
-                    formData.append('categories_ids[]', categories);
+                    formData.append('categories_ids', categories);
 
                     for (const value of formData.values()) {
                         console.log(value);
