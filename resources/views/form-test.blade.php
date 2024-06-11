@@ -197,7 +197,7 @@
 @endforelse
                                     </div>
 
-                                    <button type="submit" class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
+                                    <button class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
                                 </div>
                             </div>
                         </div>
@@ -251,7 +251,7 @@
 		<script type="text/javascript">
             $(function () {
                 /* Register form-data */
-                $('#workData').submit(function (e) {
+                $('#workData').click(function (e) {
                     e.preventDefault();
 
                     var formData = new FormData(this);
