@@ -269,6 +269,8 @@
                         }
                     });
 
+                    var categories_ids = JSON.stringify(categories);
+
                     $.ajax({
 						headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
 						type: 'POST',
@@ -279,7 +281,7 @@
 							$('form#workData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
 						},
 						success: function (res) {
-                            console.log(categories);
+                            console.log(categories_ids);
 
                             $.ajax({
                                 headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'application/json', 'X-localization': navigator.language },
@@ -287,7 +289,7 @@
                                 contentType: 'application/json',
                                 url: apiHost + '/work/' + parseInt(res.data.id),
                                 dataType: 'json',
-                                data: JSON.stringify({ 'id': parseInt(res.data.id), 'categories_ids[]': categories }),
+                                data: JSON.stringify({ 'id': parseInt(res.data.id), 'categories_ids': categories_ids }),
                                 success: function (dt) {
                                     $('form#workData .request-message').addClass('text-success').html(dt.message);
                                 },
