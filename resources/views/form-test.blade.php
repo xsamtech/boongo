@@ -139,27 +139,23 @@
 @endif
 
         <!-- ALERT-->
-        <div id="alertLoading" class="position-relative d-none">
-            <div class="row position-absolute w-100" style="top: 0; opacity: 0.9; z-index: 9999;">
+        <div class="position-relative">
+            <div id="alertLoading" class="row position-absolute w-100 d-none" style="top: 0; opacity: 0.9; z-index: 9999;">
                 <div class="col-lg-5 col-sm-6 mx-auto mt-lg-0 mt-5">
                     <div class="alert alert-warning rounded-0" role="alert">
                         @lang('miscellaneous.loading')
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div id="alertSuccess" class="position-relative d-none">
-            <div class="row position-absolute w-100" style="top: 0; opacity: 0.9; z-index: 9999;">
+            <div id="alertSuccess" class="row position-absolute w-100 d-none" style="top: 0; opacity: 0.9; z-index: 9999;">
                 <div class="col-lg-5 col-sm-6 mx-auto mt-lg-0 mt-5">
                     <div class="alert alert-success alert-dismissible fade show rounded-0" role="alert">
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div id="alertError" class="position-relative d-none">
-            <div class="row position-absolute w-100" style="top: 0; opacity: 0.9; z-index: 9999;">
+            <div id="alertError" class="row position-absolute w-100 d-none" style="top: 0; opacity: 0.9; z-index: 9999;">
                 <div class="col-lg-5 col-sm-6 mx-auto mt-lg-0 mt-5">
                     <div class="alert alert-danger alert-dismissible fade show rounded-0" role="alert">
                     </div>
@@ -283,6 +279,8 @@
                     $('#alertLoading').removeClass('d-none');
 
                     var formData = new FormData(this);
+
+                    formData.append('register_categories_ids', $('input[name="register_categories_ids[]"]:checked').val());
 
                     $.ajax({
                         headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },

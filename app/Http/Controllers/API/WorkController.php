@@ -77,11 +77,11 @@ class WorkController extends BaseController
             $file_url = ($request->file_type_id == 7 ? 'documents/works/' : ($request->file_type_id == 8 ? 'audios/works/' : 'images/works/')) . $work->id . '/' . Str::random(50) . '.' . $request->file('file_url')->extension();
 
             // Upload file
-            Storage::url(Storage::disk('public')->put($file_url, $request->file('file_url')));
+            $dir_result = Storage::url(Storage::disk('public')->put($file_url, $request->file('file_url')));
 
             File::create([
                 'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
-                'file_url' => $file_url,
+                'file_url' => $dir_result,
                 'type_id' => $request->file_type_id,
                 'work_id' => $work->id
             ]);
