@@ -303,6 +303,7 @@
                         },
 						complete: function() {
                             document.getElementById('workData').reset();
+							location.reload();
 						},
 						cache: false,
 						contentType: false,
