@@ -139,7 +139,7 @@
 @endif
 
 		<!-- SECTION -->
-		<form method="POST" action="{{ route('admin.work.home') }}" class="section py-5" enctype="multipart/form-data">
+		<form method="POST" action="{{ route('admin.work.home') }}" class="section py-5">
             <h1 class="text-center mb-4">@lang('miscellaneous.admin.work.add')</h1>
 @csrf
 
@@ -168,7 +168,7 @@
                                 <div class="form-group mb-3">
                                     <label for="register_work_url">@lang('miscellaneous.menu.admin.group.type')</label>
                                     <select name="type_id" class="form-select" aria-label="@lang('miscellaneous.admin.work.data.choose_type')">
-                                        <option class="disabled" selected>@lang('miscellaneous.admin.work.data.choose_type')</option>
+                                        <option class="small" selected disabled>@lang('miscellaneous.admin.work.data.choose_type')</option>
 @forelse ($types as $type)
                                         <option value="{{ $type->id }}">{{ $type->type_name }}</option>
 @empty
