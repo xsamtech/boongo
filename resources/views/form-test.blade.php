@@ -239,7 +239,7 @@
 
         <div class="container">
             <div class="row">
-                <div class="col-lg-9 ms-auto">
+                <div class="col-lg-9 mx-auto">
                     <div class="card border py-5">
                         <div class="card-header">
                             <h3 class="m-0">@lang('miscellaneous.admin.work.list')</h3>
