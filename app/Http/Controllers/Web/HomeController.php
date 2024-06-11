@@ -53,7 +53,8 @@ class HomeController extends Controller
         return view('form-test', [
             'types' => $types_by_group->data,
             'categories' => $categories->data,
-            'works' => $works->data
+            'works' => $works->data,
+            'lastPage' => $works->lastPage,
         ]);
     }
 
