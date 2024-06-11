@@ -166,6 +166,11 @@
                                 </div>
 
                                 <div class="form-group mb-3">
+                                    <label for="register_document">@lang('miscellaneous.upload.upload_document')</label>
+                                    <input type="file" name="register_document" id="register_document" class="form-control">
+                                </div>
+
+                                <div class="form-group mb-3">
                                     <label for="register_work_url">@lang('miscellaneous.menu.admin.group.type')</label>
                                     <select name="type_id" class="form-select" aria-label="@lang('miscellaneous.admin.work.data.choose_type')">
                                         <option class="small" selected disabled>@lang('miscellaneous.admin.work.data.choose_type')</option>
@@ -176,7 +181,7 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group mb-3">
+                                <div class="form-group mb-4">
                                     <label class="d-block text-center">@lang('miscellaneous.admin.work.data.choose_categories')</label>
 @forelse ($categories as $category)
                                     <div class="form-check mx-3">
@@ -185,11 +190,6 @@
                                     </div>
 @empty
 @endforelse
-                                </div>
-
-                                <div class="form-group mb-4">
-                                    <label for="register_document">@lang('miscellaneous.upload.upload_document')</label>
-                                    <input type="file" name="register_document" id="register_document" class="form-control">
                                 </div>
 
                                 <button type="submit" class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
