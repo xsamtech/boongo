@@ -50,6 +50,7 @@ class HomeController extends Controller
         $categories = $this::$api_client_manager::call('GET', getApiURL() . '/category');
         $works = $this::$api_client_manager::call('GET', getApiURL() . '/work');
 
+        dd($works->lastPage);
         return view('form-test', [
             'types' => $types_by_group->data,
             'categories' => $categories->data,
