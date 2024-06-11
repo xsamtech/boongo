@@ -197,7 +197,7 @@
 @endforelse
                                     </div>
 
-                                    <button class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
+                                    <button type="submit" class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
                                 </div>
                             </div>
                         </div>
@@ -251,10 +251,11 @@
 		<script type="text/javascript">
             $(function () {
                 /* Register form-data */
-                $('#workData').click(function (e) {
+                $('#workData').submit(function (e) {
                     e.preventDefault();
 
                     var formData = new FormData(this);
+                    var categories = [];
 
                     $.ajax({
                         headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
@@ -265,7 +266,7 @@
 							$('#workData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
 						},
 						success: function (res) {
-                            let categories = [];
+							$('#workData .request-message').addClass('text-success').html(res.message);
 
                             document.querySelectorAll('[type="checkbox"]').forEach(item => {
                                 if (item.checked === true) {
@@ -276,12 +277,14 @@
                             $.ajax({
                                 headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'application/json', 'X-localization': navigator.language }
                                 type: 'PUT',
-                                contentType: 'application/json',
                                 url: apiHost + '/work/' + res.data.id,
                                 dataType: 'json',
                                 data: JSON.stringify({ 'id': parseInt(res.data.id), 'categories_ids': categories }),
                                 success: function () {
                                 },
+                                cache: false,
+                                contentType: false,
+                                processData: false,
                                 error: function (xhr, error, status_description) {
                                     console.log(xhr.responseJSON);
                                     console.log(xhr.status);
@@ -291,8 +294,7 @@
                             });
                         },
 						complete: function() {
-							$('#workData .request-message').addClass('text-success').html(res.message);
-							// location.reload();
+							location.reload();
 						},
                         cache: false,
                         contentType: false,
