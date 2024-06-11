@@ -48,10 +48,12 @@ class HomeController extends Controller
         $types_by_group = $this::$api_client_manager::call('GET', getApiURL() . '/type/find_by_group/' . $work_type_group);
         // All categories by group
         $categories = $this::$api_client_manager::call('GET', getApiURL() . '/category');
+        $works = $this::$api_client_manager::call('GET', getApiURL() . '/work');
 
         return view('form-test', [
             'types' => $types_by_group->data,
-            'categories' => $categories->data
+            'categories' => $categories->data,
+            'works' => $works->data
         ]);
     }
 
