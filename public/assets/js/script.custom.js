@@ -13,8 +13,8 @@ const currentLanguage = $('html').attr('lang');
 const headers = { 'Authorization': 'Bearer ' + $('[name="bng-ref"]').attr('content'), 'Accept': $('.mime-type').val(), 'X-localization': navigator.language };
 const modalUser = $('#cropModalUser');
 const retrievedAvatar = document.getElementById('retrieved_image');
-const retrievedImageOtherUser = document.getElementById('retrieved_image_other_user');
-const currentImageOtherUser = document.querySelector('#otherUserImageWrapper img');
+const retrievedImageOther = document.getElementById('retrieved_image_other');
+const currentImageOther = document.querySelector('#otherImageWrapper img');
 let cropper;
 
 /* Mobile user agent */
@@ -323,11 +323,11 @@ $(document).ready(function () {
     });
 
     /* Display cropped image */
-    $('#image_other_user').on('change', function (e) {
+    $('#image_other').on('change', function (e) {
         var files = e.target.files;
         var done = function (url) {
-            retrievedImageOtherUser.src = url;
-            var modal = new bootstrap.Modal(document.getElementById('cropModalOtherUser'), { keyboard: false });
+            retrievedImageOther.src = url;
+            var modal = new bootstrap.Modal(document.getElementById('cropModalOther'), { keyboard: false });
 
             modal.show();
         };
@@ -342,11 +342,11 @@ $(document).ready(function () {
         }
     });
 
-    $('#cropModalOtherUser').on('shown.bs.modal', function () {
-        cropper = new Cropper(retrievedImageOtherUser, {
+    $('#cropModalOther').on('shown.bs.modal', function () {
+        cropper = new Cropper(retrievedImageOther, {
             // aspectRatio: 1,
             viewMode: 3,
-            preview: '#cropModalOtherUser .preview'
+            preview: '#cropModalOther .preview'
         });
 
     }).on('hidden.bs.modal', function () {
@@ -355,7 +355,7 @@ $(document).ready(function () {
         cropper = null;
     });
 
-    $('#cropModalOtherUser #crop_other_user').on('click', function () {
+    $('#cropModalOther #crop_other').on('click', function () {
         var canvas = cropper.getCroppedCanvas(/*{ width: 700, height: 700 }*/);
 
         canvas.toBlob(function (blob) {
@@ -366,9 +366,9 @@ $(document).ready(function () {
             reader.onloadend = function () {
                 var base64_data = reader.result;
 
-                $(currentImageOtherUser).attr('src', base64_data);
-                $('#data_other_user').attr('value', base64_data);
-                $('#otherUserImageWrapper p').removeClass('d-none');
+                $(currentImageOther).attr('src', base64_data);
+                $('#image_64').attr('value', base64_data);
+                $('#otherImageWrapper p').removeClass('d-none');
             };
         });
     });

@@ -80,12 +80,12 @@
             </div>
         </div>
 
-        <!-- ### Crop other user image ### -->
-        <div class="modal fade" id="cropModalOtherUser" tabindex="-1" aria-labelledby="cropModalOtherUserLabel" aria-hidden="true" data-bs-backdrop="{{ Route::is('branch.home') ? 'static' : 'true' }}">
+        <!-- ### Crop other image ### -->
+        <div class="modal fade" id="cropModalOther" tabindex="-1" aria-labelledby="cropModalOtherLabel" aria-hidden="true" data-bs-backdrop="{{ Route::is('branch.home') ? 'static' : 'true' }}">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="cropModalOtherUserLabel">{{ __('miscellaneous.crop_before_save') }}</h5>
+                        <h5 class="modal-title" id="cropModalOtherLabel">{{ __('miscellaneous.crop_before_save') }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -93,7 +93,7 @@
                             <div class="row">
                                 <div class="col-12 mb-sm-0 mb-4">
                                     <div class="bg-image">
-                                        <img src="" id="retrieved_image_other_user" class="img-fluid">
+                                        <img src="" id="retrieved_image_other" class="img-fluid">
                                     </div>
                                 </div>
                             </div>
@@ -101,7 +101,7 @@
                     </div>
                     <div class="modal-footer d-flex justify-content-between">
                         <button type="button" class="btn btn-light border rounded-pill" data-bs-dismiss="modal">@lang('miscellaneous.cancel')</button>
-                        <button type="button" id="crop_other_user" class="btn btn-primary rounded-pill" data-bs-dismiss="modal">{{ __('miscellaneous.register') }}</button>
+                        <button type="button" id="crop_other" class="btn btn-primary rounded-pill" data-bs-dismiss="modal">{{ __('miscellaneous.register') }}</button>
                     </div>
                 </div>
             </div>
@@ -202,17 +202,17 @@
 
                         <div class="col-lg-4 col-sm-6 me-auto">
                             <div class="card rounded-4">
-                                <div id="otherUserImageWrapper" class="card-body pb-4 text-center">
+                                <div id="otherImageWrapper" class="card-body pb-4 text-center">
                                     <p class="card-text m-0">@lang('miscellaneous.account.personal_infos.click_to_change_picture')</p>
 
                                     <div class="bg-image hover-overlay mt-3">
                                         <img src="{{ asset('assets/img/cover.png') }}" alt="@lang('miscellaneous.admin.work.data.work_title')" class="other-user-image img-fluid rounded-4">
                                         <div class="mask rounded-4" style="background-color: rgba(5, 5, 5, 0.5);">
-                                            <label role="button" for="image_other_user" class="d-flex h-100 justify-content-center align-items-center">
+                                            <label role="button" for="image_other" class="d-flex h-100 justify-content-center align-items-center">
                                                 <i class="fa-solid fa-pencil-alt text-white fs-2"></i>
-                                                <input type="file" name="image_other_user" id="image_other_user" class="d-none">
+                                                <input type="file" name="image_other" id="image_other" class="d-none">
                                             </label>
-                                            <input type="hidden" name="data_other_user" id="data_other_user">
+                                            <input type="hidden" name="image_64" id="image_64">
                                         </div>
                                     </div>
 
@@ -306,10 +306,12 @@
                         }
                     });
 
-                    var categories_ids = JSON.stringify(categories);
+                    for (let i = 0; i < categories.length; i++) {
+                        formData.append('categories_ids[' + i + ']', categories[i]);
+                    }
 
                     $.ajax({
-						headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
+						headers: { 'Authorization': 'Bearer 1|01zRmkS0gTYqy0sltCEtnAGfzIRMslDCYK1JKj4w8a2adcb1', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
 						type: 'POST',
 						contentType: 'multipart/form-data',
 						url: apiHost + '/work',
@@ -318,35 +320,25 @@
 							$('form#workData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
 						},
 						success: function (res) {
-                            console.log(categories_ids);
+                            if ($('form#workData .request-message').hasClass('text-danger')) {
+                                $('form#workData .request-message').removeClass('text-danger');
+                            }
 
-                            $.ajax({
-                                headers: { 'Authorization': 'Bearer 1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc', 'Accept': 'application/json', 'X-localization': navigator.language },
-                                type: 'PUT',
-                                contentType: 'application/json',
-                                url: apiHost + '/work/' + parseInt(res.data.id),
-                                dataType: 'json',
-                                data: JSON.stringify({ 'id': parseInt(res.data.id), 'categories_ids': categories_ids }),
-                                success: function (dt) {
-                                    $('form#workData .request-message').addClass('text-success').html(dt.message);
-                                },
-                                error: function (xhr, error, status_description) {
-                                    console.log(xhr.responseJSON);
-                                    console.log(xhr.status);
-                                    console.log(error);
-                                    console.log(status_description);
-                                }
-                            });
+							$('form#workData .request-message').addClass('text-success').html(res.message);
                         },
 						complete: function() {
                             document.getElementById('workData').reset();
-							location.reload();
+							// location.reload();
 						},
 						cache: false,
 						contentType: false,
 						processData: false,
 						error: function (xhr, error, status_description) {
-							$('form#workData .request-message').addClass('text-danger').html(xhr);
+                            if ($('form#workData .request-message').hasClass('text-success')) {
+                                $('form#workData .request-message').removeClass('text-success');
+                            }
+
+                            $('form#workData .request-message').addClass('text-danger').html(xhr.message);
 							console.log(xhr.responseJSON);
 							console.log(xhr.status);
 							console.log(error);

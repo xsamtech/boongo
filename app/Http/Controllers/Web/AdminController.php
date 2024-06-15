@@ -4,11 +4,8 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\ApiClientManager;
 use App\Http\Controllers\Controller;
-use App\Models\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 /**
  * @author Xanders
@@ -26,64 +23,4 @@ class AdminController extends Controller
     // ==================================== HTTP GET METHODS ====================================
 
     // ==================================== HTTP POST METHODS ====================================
-    /**
-     * GET: Welcome/Home page
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Support\Facades\Redirect
-     */
-    public function addWork(Request $request)
-    {
-        dd($request->file('register_document'));
-        $api_token = '1|fjhakjU33XG5KPJ9HnGmw4a90rhlpvi2xM06alhkf5a69ecc';
-        // Find status by name
-        $relevant_status_name = 'Pertinente';
-        $relevant_status = $this::$api_client_manager::call('GET', getApiURL() . '/status/search/fr/' . $relevant_status_name);
-        // Find type by name
-        $document_type_name = 'Document';
-        $document_type = $this::$api_client_manager::call('GET', getApiURL() . '/type/search/fr/' . $document_type_name);
-        // User inputs
-        $inputs = [
-            'work_title' => $request->register_work_title,
-            'work_content' => $request->register_work_content,
-            'work_url' => $request->register_work_url,
-            'type_id' => $request->type_id,
-            'status_id' => $relevant_status->data->id,
-            'categories_ids' => $request->register_categories_ids,
-        ];
-        // Add an admin
-        $work = $this::$api_client_manager::call('POST', getApiURL() . '/work', $api_token, $inputs);
-
-        if ($work->success AND $relevant_status->success AND $document_type->success) {
-            // Udpate avatar if it is changed
-            if ($request->data_other_user != null) {
-                $this::$api_client_manager::call('PUT', getApiURL() . '/work/add_image/' . $work->data->id, $api_token, [
-                    'work_id' => $work->data->id,
-                    'image_64' => $request->data_other_user
-                ]);
-            }
-
-            // Upload document
-            if ($request->hasFile('register_document')) {
-                $file_url = 'documents/works/' . $work->data->id . '/' . Str::random(50) . '.' . $request->file('register_document')->extension();
-
-                // Upload file
-                Storage::url(Storage::disk('public')->put($file_url, $request->file('file_url')));
-
-                File::create([
-                    'file_name' => $work->data->work_title,
-                    'file_url' => $file_url,
-                    'type_id' => $document_type->data->id,
-                    'work_id' => $work->data->id
-                ]);
-            }
-
-            return Redirect::back()->with('success_message', __('notifications.registered_data'));
-
-        } else {
-            $resp_error = $inputs['work_title'] . '~' . $inputs['work_content'] . '~' . $inputs['work_url'] . '~' . (!empty($work->message) ? $work->message : (!empty($relevant_status->message) ? $relevant_status->message : (!empty($document_type->message) ? $document_type->message : 'ERROR')));
-
-            return Redirect::back()->with('error_message', $resp_error);
-        }
-    }
 }
