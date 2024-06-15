@@ -4,7 +4,7 @@
                             <ul class="pagination">
                                 <li class="page-item">
                                     <a role="button" class="page-link{{ !request()->has('page') ? ' d-none' : '' }}" onclick="event.preventDefault(); window.location.replace('{{ !empty($entity) ? route(\Request::route()->getName(), ['entity' => $entity]) . (request()->has('page') && request()->get('page') != '1' ? '?page=' . request()->get('page') - 1 : '') : route(\Request::route()->getName()) . (request()->has('page') && request()->get('page') != '1' ? '?page=' . request()->get('page') - 1 : '') }}');">
-                                        <i class="zmdi zmdi-chevron-left"></i>
+                                        <i class="fa-solid fa-chevron-left"></i>
                                     </a>
                                 </li>
             @if ($lastPage > 5)
@@ -30,7 +30,7 @@
             @endif
                                 <li class="page-item">
                                     <a role="button" class="page-link{{ request()->get('page') == $lastPage ? ' d-none' : '' }}" onclick="event.preventDefault(); window.location.replace('{{ !empty($entity) ? route(\Request::route()->getName(), ['entity' => $entity]) . '?page=' . (request()->has('page') ? request()->get('page') + 1 : request()->get('page') + 2) : route(\Request::route()->getName()) . '?page=' . (request()->has('page') ? request()->get('page') + 1 : request()->get('page') + 2) }}');">
-                                        <i class="zmdi zmdi-chevron-right"></i>
+                                        <i class="fa-solid fa-chevron-right"></i>
                                     </a>
                                 </li>
                             </ul>
