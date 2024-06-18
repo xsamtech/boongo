@@ -202,6 +202,7 @@ return [
             'required' => 'Select an entity please'
         ],
         'type_name' => [
+            'required' => 'The "type" field is required',
             'exists' => 'This type name already exists'
         ],
     ],

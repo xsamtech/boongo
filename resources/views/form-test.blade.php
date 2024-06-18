@@ -17,7 +17,8 @@
         <link rel="manifest" href="{{ asset('assets/img/favicon/site.webmanifest') }}">
 
         <!-- ============ Font Icons Files ============ -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> --}}
+        <link rel="stylesheet" href="{{ asset('assets/fonts/fontawesome/css/all.min.css') }}">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/css/flag-icons.min.css">
 
  		<!-- ============ Google font ============ -->
@@ -157,7 +158,7 @@
                                 <div class="card-body">
                                     <div class="form-group mb-3">
                                         <label for="work_title" class="visually-hidden">@lang('miscellaneous.admin.work.data.work_title')</label>
-                                        <input type="text" name="work_title" id="work_title" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_title')" autofocus>
+                                        <input type="text" name="work_title" id="work_title" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_title')">
                                     </div>
 
                                     <div class="form-group mb-3">
@@ -216,7 +217,7 @@
                                         </div>
                                     </div>
 
-                                    <p class="d-none mt-2 mb-0 small text-success fst-italic">@lang('miscellaneous.waiting_register')</p>
+                                    <p class="d-none mt-2 mb-0 small bng-text-primary fst-italic">@lang('miscellaneous.waiting_register')</p>
                                 </div>
                             </div>
 
@@ -242,31 +243,58 @@
                 <div class="row">
                     <div class="col-lg-9 mx-auto">
                         <div class="card border">
-                            <div class="card-header">
-                                <h3 class="m-0">@lang('miscellaneous.admin.work.list')</h3>
+                            <div class="card-header d-sm-flex justify-content-between align-items-center">
+                                <h3 class="m-sm-0 mb-1">{{ request()->has('type') ? request()->get('type') : __('miscellaneous.admin.work.list') }}</h3>
+
+                                <form class="input-group w-50 m-0" method="get">
+                                    <select name="type" class="form-select m-0">
+                                        <option class="small" disabled selected>@lang('miscellaneous.admin.work.data.choose_type')</option>
+                                        <option value="empty">@lang('miscellaneous.all_types')</option>
+@forelse ($types as $type)
+                                        <option>{{ $type->type_name }}</option>
+@empty
+@endforelse
+                                    </select>
+                                    <button type="submit" class="btn bng-btn-success m-0"><i class="fa-solid fa-search"></i></button>
+                                </form>
                             </div>
 @if (count($works) > 0)
                             <ul class="list-group list-group-flush">
     @foreach ($works as $item)
                                 <li class="list-group-item py-3">
-                                    <img src="{{ !empty($item->image_url) ? $item->image_url : asset('assets/img/cover.png') }}" alt="{{ $item->work_title }}" width="100" class="float-sm-start rounded-4 me-3">
-                                    <h4 class="my-2 dktv-text-green fw-bold">{{ $item->work_title }}</h4>
-                                    <p class="text-muted">{{ !empty($item->work_content) ? Str::limit($item->work_content, 50, '...') : '' }}</p>
+                                    <div class="d-lg-flex justify-content-between">
+                                        <div class="mb-lg-0 mb-4">
+                                            <img src="{{ !empty($item->image_url) ? $item->image_url : asset('assets/img/cover.png') }}" alt="{{ $item->work_title }}" width="100" class="float-sm-start rounded-4 mb-3 me-3">
+                                            <h4 class="my-2 dktv-text-green fw-bold">{{ $item->work_title }}</h4>
+                                            <p class="mb-3 text-muted">{{ !empty($item->work_content) ? Str::limit($item->work_content, 50, '...') : '' }}</p>
         @if (!empty($item->document_url))
-                                    <a href="{{ $item->document_url }}" target="_blank" class="px-4 py-3"><i class="fa-solid fa-file-pdf me-2 fs-4 bng-text-danger"></i></a>
+                                            <a href="{{ $item->document_url }}" target="_blank" class="px-4 py-3"><i class="fa-solid fa-file-pdf me-2 fs-4 bng-text-danger"></i></a>
         @endif
         @if (!empty($item->video_url))
-                                    <a href="{{ $item->video_url }}" target="_blank" class="px-4 py-3"><i class="fa-solid fa-play-circle me-2 fs-4 bng-text-primary"></i></a>
+                                            <a href="{{ $item->video_url }}" target="_blank" class="px-4 py-3"><i class="fa-solid fa-play-circle me-2 fs-4 bng-text-primary"></i></a>
         @endif
+                                        </div>
+
+                                        <h5 class="w-25">
+        @forelse ($item->categories as $category)
+                                            <div class="badge badge-warning d-inline-block mb-2 me-2 text-black fw-normal">{{ $category->category_name }}</div>
+        @empty
+        @endforelse
+                                        </h5>
+                                    </div>
                                 </li>
     @endforeach
                             </ul>
 
     @if ($lastPage > 1)
-                            <div class="card-body text-center">
+                            <div class="card-body pb-0 d-flex justify-content-center">
         @include('partials.pagination')
                             </div>
     @endif
+@else
+                            <div class="card-body text-center">
+                                <p class="m-0 lead bng-text-primary">@lang('miscellaneous.empty_list')</p>
+                            </div>
 @endif
                         </div>
                     </div>
@@ -325,11 +353,10 @@
                             }
 
 							$('form#workData .request-message').addClass('text-success').html(res.message);
-                        },
-						complete: function() {
+
                             document.getElementById('workData').reset();
-							// location.reload();
-						},
+							location.reload();
+                        },
 						cache: false,
 						contentType: false,
 						processData: false,
@@ -338,7 +365,7 @@
                                 $('form#workData .request-message').removeClass('text-success');
                             }
 
-                            $('form#workData .request-message').addClass('text-danger').html(xhr.message);
+                            $('form#workData .request-message').addClass('text-danger').html(xhr.responseJSON.message);
 							console.log(xhr.responseJSON);
 							console.log(xhr.status);
 							console.log(error);

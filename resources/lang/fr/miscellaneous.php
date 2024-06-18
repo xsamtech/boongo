@@ -76,6 +76,7 @@ return [
     'search_input' => 'Rechercher ici',
     'search' => 'Rechercher',
     'all_categories' => 'Toute catégorie',
+    'all_types' => 'Tous les types',
     'mark_all_read' => 'Tout marquer comme lue',
     'empty_list' => 'La liste est vide',
     'see_more' => 'Voir plus',

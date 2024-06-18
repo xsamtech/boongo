@@ -37,6 +37,8 @@ class Work extends JsonResource
             'categories' => Category::collection($this->categories),
             'image_url' => !empty($files) ? (inArrayR($img_type->id, $files, 'type_id') ? getWebURL() . '/public' . $img->file_url : null) : null,
             'document_url' => !empty($files) ? (inArrayR($doc_type->id, $files, 'type_id') ? getWebURL() . '/public' . $doc->file_url : null) : null,
+            // 'image_url' => !empty($files) ? (inArrayR($img_type->id, $files, 'type_id') ? getWebURL() . '/' . $img->file_url : null) : null,
+            // 'document_url' => !empty($files) ? (inArrayR($doc_type->id, $files, 'type_id') ? getWebURL() . '/' . $doc->file_url : null) : null,
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'type_id' => $this->type_id,

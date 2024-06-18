@@ -202,6 +202,7 @@ return [
             'required' => 'Sélectionner une entité s’il vous plait'
         ],
         'type_name' => [
+            'required' => 'Le champ "type" est obligatoire',
             'exists' => 'Ce nom de type existe déjà'
         ],
     ],
