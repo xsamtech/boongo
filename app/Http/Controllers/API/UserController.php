@@ -141,7 +141,7 @@ class UserController extends BaseController
                     'former_password' => $request->password
                 ]);
 
-                Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
+                // Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
                 // try {
                 //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
@@ -158,7 +158,7 @@ class UserController extends BaseController
                         'former_password' => $request->password
                     ]);
 
-                    Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
+                    // Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
                 }
 
                 if ($inputs['email'] == null AND $inputs['phone'] != null) {
@@ -191,7 +191,7 @@ class UserController extends BaseController
 
                 $inputs['password'] = Hash::make($password_reset->former_password);
 
-                Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
+                // Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
                 // try {
                 //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
@@ -208,7 +208,7 @@ class UserController extends BaseController
                         'former_password' => Random::generate(10, 'a-zA-Z')
                     ]);
 
-                    Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
+                    // Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
                     $inputs['password'] = Hash::make($password_reset->former_password);
                 }
