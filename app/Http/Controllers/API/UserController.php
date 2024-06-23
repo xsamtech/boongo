@@ -233,16 +233,17 @@ class UserController extends BaseController
         }
 
         $user = User::create($inputs);
+
+        if ($request->role_id != null) {
+            $user->roles()->attach([$request->role_id]);
+        }
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         $user->update([
             'api_token' => $token,
             'updated_at' => now()
         ]);
-
-        if ($request->role_id != null) {
-            $user->roles()->attach([$request->role_id]);
-        }
 
         /*
             HISTORY AND/OR NOTIFICATION MANAGEMENT
