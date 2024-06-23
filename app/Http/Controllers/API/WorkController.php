@@ -89,7 +89,7 @@ class WorkController extends BaseController
 
         if ($request->image_64 != null) {
             if ($request->image_type_id == null) {
-                return $this->handleError($inputs['type_id'], __('validation.required'), 400);
+                return $this->handleError($request->image_type_id, __('validation.required'), 400);
             }
 
             // $extension = explode('/', explode(':', substr($request->image_64, 0, strpos($request->image_64, ';')))[1])[1];
