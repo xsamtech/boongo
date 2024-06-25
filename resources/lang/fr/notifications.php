@@ -127,6 +127,7 @@ return [
     'find_concerned_404' => 'Concerné non trouvé',
     'find_visitor_404' => 'Visiteur non trouvé',
     'create_user_success' => 'Utilisateur créé',
+    'login_user_success' => 'Vous êtes connecté(e)',
     'create_user_SMS_failed' => 'Il y a un problème avec le service des SMS',
     'update_user_success' => 'Utilisateur modifié',
     'update_password_success' => 'Mot de passe modifié',

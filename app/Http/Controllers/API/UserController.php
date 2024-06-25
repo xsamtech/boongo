@@ -828,7 +828,7 @@ class UserController extends BaseController
                 'updated_at' => now(),
             ]);
 
-            return $this->handleResponse(new ResourcesUser($user), __('notifications.find_user_success'));
+            return $this->handleResponse(new ResourcesUser($user), __('notifications.login_user_success'));
 
         } else {
             $user = User::where('email', $inputs['username'])->orWhere('username', $inputs['username'])->first();
@@ -862,7 +862,7 @@ class UserController extends BaseController
                 'updated_at' => now(),
             ]);
 
-            return $this->handleResponse(new ResourcesUser($user), __('notifications.find_user_success'));
+            return $this->handleResponse(new ResourcesUser($user), __('notifications.login_user_success'));
         }
     }
 
