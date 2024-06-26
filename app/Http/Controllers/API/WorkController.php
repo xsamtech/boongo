@@ -280,7 +280,7 @@ class WorkController extends BaseController
     {
         $works = Work::whereHas('sessions', function ($query) use ($year) {
                     $query->whereYear('sessions.created_at', '=', $year);
-                })->distinct()->limit(7)->orderByDesc('created_at')->get();
+                })->distinct()->limit(7)->get();
         $count_all = Work::whereHas('sessions', function ($query) use ($year) {
                     $query->whereYear('sessions.created_at', '=', $year);
                 })->distinct()->count();

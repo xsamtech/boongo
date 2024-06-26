@@ -29,7 +29,7 @@ class Work extends Model
      */
     public function sessions(): BelongsToMany
     {
-        return $this->belongsToMany(Session::class, 'work_session')->withTimestamps()->withPivot(['read']);
+        return $this->belongsToMany(Session::class, 'work_session')->orderByPivot('created_at', 'desc')->withTimestamps()->withPivot(['read']);
     }
 
     /**
