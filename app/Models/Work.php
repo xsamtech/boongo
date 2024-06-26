@@ -56,7 +56,7 @@ class Work extends Model
      */
     public function type(): BelongsTo
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsTo(Type::class);
     }
 
     /**
