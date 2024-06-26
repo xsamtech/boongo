@@ -132,7 +132,17 @@ class WorkController extends BaseController
         if ($request->hasHeader('X-user-id') and $request->hasHeader('X-ip-address') or $request->hasHeader('X-user-id') and !$request->hasHeader('X-ip-address')) {
             $session = Session::where('user_id', $request->header('X-user-id'))->first();
 
-            if (!empty($session)) {
+            if (is_null($session)) {
+                $session = Session::create([
+                    'id' => Str::random(255),
+                    'ip_address' =>  $request->hasHeader('X-ip-address') ? $request->header('X-ip-address') : null,
+                    'user_agent' => $request->header('X-user-agent'),
+                    'user_id' => $request->header('X-user-id')
+                ]);
+
+                $session->works()->attach([$work->id]);
+
+            } else {
                 if (count($session->works) == 0) {
                     $session->works()->attach([$work->id]);
                 }
@@ -146,7 +156,16 @@ class WorkController extends BaseController
         if ($request->hasHeader('X-ip-address')) {
             $session = Session::where('ip_address', $request->header('X-ip-address'))->first();
 
-            if (!empty($session)) {
+            if (is_null($session)) {
+                $session = Session::create([
+                    'id' => Str::random(255),
+                    'ip_address' =>  $request->header('X-ip-address'),
+                    'user_agent' => $request->header('X-user-agent')
+                ]);
+
+                $session->works()->attach([$work->id]);
+
+            } else {
                 if (count($session->works) == 0) {
                     $session->works()->attach([$work->id]);
                 }
