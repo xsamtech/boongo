@@ -32,7 +32,7 @@ class Session extends Model
      */
     public function works(): BelongsToMany
     {
-        return $this->belongsToMany(Work::class)->withTimestamps()->withPivot(['read']);
+        return $this->belongsToMany(Work::class, 'work_session')->withTimestamps()->withPivot(['read']);
     }
 
     /**
