@@ -70,6 +70,7 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::get('work/find_all_by_type/{locale}/{type_name}', 'App\Http\Controllers\API\WorkController@findAllByType')->name('work.api.find_all_by_type');
     Route::get('work/find_all_by_type_status/{locale}/{type_name}/{status_name}', 'App\Http\Controllers\API\WorkController@findAllByTypeStatus')->name('work.api.find_all_by_type_status');
     Route::post('work/filter_by_categories', 'App\Http\Controllers\API\WorkController@filterByCategories')->name('work.api.filter_by_categories');
+    Route::post('work/filter_by_categories_type_status', 'App\Http\Controllers\API\WorkController@filterByCategoriesTypeStatus')->name('work.api.filter_by_categories_type_status');
     // Subscription
     Route::get('subscription', 'App\Http\Controllers\API\SubscriptionController@index')->name('subscription.api.index');
     // Role

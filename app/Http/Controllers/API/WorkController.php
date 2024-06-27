@@ -447,6 +447,39 @@ class WorkController extends BaseController
     }
 
     /**
+     * Filter works by categories.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string $locale
+     * @param  string $type_name
+     * @param  string $status_name
+     * @return \Illuminate\Http\Response
+     */
+    public function filterByCategoriesTypeStatus(Request $request, $locale, $type_name, $status_name)
+    {
+        $type = Type::where('type_name->' . $locale, $type_name)->first();
+
+        if (is_null($type)) {
+            return $this->handleError(__('notifications.find_type_404'));
+        }
+
+        $status = Status::where('status_name->' . $locale, $status_name)->first();
+
+        if (is_null($status)) {
+            return $this->handleError(__('notifications.find_status_404'));
+        }
+
+        $works = Work::whereHas('categories', function ($query) use ($request) {
+                        $query->whereIn('categories.id', $request->categories_ids);
+                    })->where([['works.type_id', $type->id], ['works.status_id', $status->id]])->orderByDesc('works.created_at')->paginate(12);
+        $count_all = Work::whereHas('categories', function ($query) use ($request) {
+                        $query->whereIn('categories.id', $request->categories_ids);
+                    })->where([['works.type_id', $type->id], ['works.status_id', $status->id]])->count();
+
+        return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
+    }
+
+    /**
      * Switch the work view.
      *
      * @param  \Illuminate\Http\Request  $request
