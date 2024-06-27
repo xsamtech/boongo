@@ -394,10 +394,10 @@ class WorkController extends BaseController
             return $this->handleError(__('notifications.find_status_404'));
         }
 
-        $works = Work::where([['type_id', $type->id], ['status_id', $status->id]])->orderByDesc('created_at')->get();
+        $works = Work::where([['type_id', $type->id], ['status_id', $status->id]])->orderByDesc('created_at')->paginate(12);
         $count_all = Work::where([['type_id', $type->id], ['status_id', $status->id]])->count();
 
-        return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all);
+        return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
     }
 
     /**
