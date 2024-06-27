@@ -395,7 +395,7 @@ class WorkController extends BaseController
         }
 
         $works = Work::where([['type_id', $type->id], ['status_id', $status->id]])->orderByDesc('created_at')->get();
-        $count_all = Work::where('type_id', $type->id)->count();
+        $count_all = Work::where([['type_id', $type->id], ['status_id', $status->id]])->count();
 
         return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all);
     }
