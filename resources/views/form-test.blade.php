@@ -339,7 +339,7 @@
                     }
 
                     $.ajax({
-						headers: { 'Authorization': 'Bearer 1|01zRmkS0gTYqy0sltCEtnAGfzIRMslDCYK1JKj4w8a2adcb1', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
+						headers: { 'Authorization': 'Bearer 5|2DYESvYD3Sj89qWsyc45CtN0T81AYWqhzzJJ2yRG7349b165', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
 						type: 'POST',
 						contentType: 'multipart/form-data',
 						url: apiHost + '/work',
