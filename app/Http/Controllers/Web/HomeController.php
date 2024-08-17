@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\ApiClientManager;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Lang;
 
 /**
  * @author Xanders
@@ -90,6 +91,35 @@ class HomeController extends Controller
                 'lastPage' => $works->lastPage,
             ]);
         }
+    }
+
+    /**
+     * GET: About page
+     *
+     * @return \Illuminate\View\View
+     */
+    public function about()
+    {
+        $titles = Lang::get('miscellaneous.public.about.content.titles');
+
+        return view('about', ['titles' => $titles]);
+    }
+
+    /**
+     * GET: About, inner pages
+     *
+     * @return \Illuminate\View\View
+     */
+    public function aboutEntity($entity)
+    {
+        $titles = Lang::get('miscellaneous.public.about.' . $entity . '.titles');
+
+        return view('about', [
+            'titles' => $titles,
+            'entity' => $entity,
+            'entity_title' => __('miscellaneous.public.about.' . $entity . '.title'),
+            'entity_menu' => __('miscellaneous.menu.' . $entity),
+        ]);
     }
 
     // ==================================== HTTP POST METHODS ====================================
