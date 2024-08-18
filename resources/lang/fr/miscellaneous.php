@@ -482,6 +482,7 @@ return [
 
         // About
         'about' => [
+            'enterprise_title' => 'Boongo',
             'title' => 'A propos de Boongo',
             'description' => '',
             'other_links' => [

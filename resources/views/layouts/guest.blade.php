@@ -208,7 +208,7 @@
 		<header>
             <span class="menu-sidebar2__content d-none"></span>
 			<!-- TOP HEADER -->
-			<div id="top-header">
+			<div id="top-header" class="detect-webview">
 				<div class="container">
                     <div class="d-flex justify-content-between align-items-center">
                         <ul class="header-links pull-left top-contact">
@@ -240,7 +240,7 @@
 						<!-- /LOGO -->
 
 						<!-- SEARCH BAR -->
-						<div class="col-md-6">
+						<div class="col-md-6 detect-webview">
 							<div class="header-search">
 								<form>
 									<select class="input-select">
@@ -256,7 +256,7 @@
 						<!-- /SEARCH BAR -->
 
 						<!-- ACCOUNT -->
-						<div class="col-md-3 clearfix">
+						<div class="col-md-3 clearfix detect-webview">
 							<div class="header-ctn">
 @if (Auth::check())
 								<!-- Wishlist -->
@@ -334,7 +334,7 @@
 		<!-- /HEADER -->
 
 		<!-- NAVIGATION -->
-		<nav id="navigation">
+		<nav id="navigation" class="detect-webview">
 			<!-- container -->
 			<div class="container">
 				<!-- responsive-nav -->
@@ -379,7 +379,7 @@
 							</div>
 						</div>
 
-						<div class="col-lg-3 col-sm-5">
+						<div class="col-lg-3 col-sm-5 detect-webview">
 							<div class="footer">
 								<h3 class="footer-title">@lang('miscellaneous.public.footer.useful_links')</h3>
 								<ul class="footer-links">
@@ -391,7 +391,7 @@
 							</div>
 						</div>
 
-						<div class="col-lg-3 col-sm-5">
+						<div class="col-lg-3 col-sm-5 detect-webview">
 							<div class="footer">
 								<h3 class="footer-title">@lang('miscellaneous.public.footer.services')</h3>
 								<ul class="footer-links">
