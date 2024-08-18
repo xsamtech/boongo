@@ -363,7 +363,7 @@
 		<!-- FOOTER -->
 		<footer id="footer" class="mt-5">
 			<!-- top footer -->
-			<div class="section">
+			<div class="section detect-webview">
 				<!-- container -->
 				<div class="container">
 					<!-- row -->
@@ -379,7 +379,7 @@
 							</div>
 						</div>
 
-						<div class="col-lg-3 col-sm-5 detect-webview">
+						<div class="col-lg-3 col-sm-5">
 							<div class="footer">
 								<h3 class="footer-title">@lang('miscellaneous.public.footer.useful_links')</h3>
 								<ul class="footer-links">
@@ -391,7 +391,7 @@
 							</div>
 						</div>
 
-						<div class="col-lg-3 col-sm-5 detect-webview">
+						<div class="col-lg-3 col-sm-5">
 							<div class="footer">
 								<h3 class="footer-title">@lang('miscellaneous.public.footer.services')</h3>
 								<ul class="footer-links">
@@ -417,7 +417,7 @@
 			<div id="bottom-footer" class="section py-0">
 				<div class="container">
 					<!-- row -->
-					<div class="row">
+					<div class="row py-0">
 						<div class="col-md-12 text-center">
 							<span class="copyright">
 								Copyright &copy;{{ date('Y') }}</script> @lang('miscellaneous.all_right_reserved') | Designed by <a href="https://xsamtech.com" target="_blank">Xsam Technologies</a>
