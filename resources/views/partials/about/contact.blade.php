@@ -6,7 +6,7 @@
 				<!-- row -->
 				<div class="row">
                     <div class="col-sm-8" style="min-height: 50rem;">
-                        <p class="lead" style="margin-top: 1rem;">@lang('miscellaneous.public.about.contact.description')</p>
+                        <p class="lead">@lang('miscellaneous.public.about.contact.description')</p>
                         <div class="contact-form-wrap">
                             <form id="contact-form" action="assets/php/mail.php" method="POST">
                                 <div class="contact-page-form">

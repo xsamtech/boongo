@@ -6,7 +6,7 @@
 				<!-- row -->
 				<div class="row">
                     <div class="col-sm-8" style="min-height: 50rem;">
-                        <p class="lead" style="margin-top: 1rem;">@lang('miscellaneous.public.about.terms_of_use.description')</p>
+                        <p class="lead">@lang('miscellaneous.public.about.terms_of_use.description')</p>
 @foreach ($titles as $ttl)
     @foreach ($ttl['contents'] as $cnt)
                         <div class="mb-4">
