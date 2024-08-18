@@ -1,6 +1,6 @@
 
 		<!-- SECTION -->
-		<div class="section">
+		<div class="section{{ request()->has('app_id') ? ' pt-0' : '' }}">
 			<!-- container -->
 			<div class="container">
 				<!-- row -->
