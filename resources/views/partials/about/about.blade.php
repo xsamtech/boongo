@@ -1,8 +1,8 @@
 
 		<!-- SECTION -->
-		<div class="section{{ request()->has('app_id') ? ' pt-0' : '' }}">
+		<div class="section">
 			<!-- container -->
-			<div class="container">
+			<div class="container{{ request()->has('app_id') ? ' pt-0' : '' }}">
 				<!-- row -->
 				<div class="row">
                     <div class="col-sm-8">
