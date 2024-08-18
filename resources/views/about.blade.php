@@ -2,7 +2,7 @@
 
 @section('guest-content')
 
-    @if (Route::is('about'))
+    @if (Route::is('about.home'))
         @include('partials.about.about')
     @endif
 

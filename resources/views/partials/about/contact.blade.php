@@ -1,22 +1,12 @@
 
-        <!-- About Area -->
-        <div id="pricing" class="pricing-plan-area section-pt py-5 border-top border-bottom">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-6 m-auto">
-                        <!-- Section Title -->
-                        <div class="section-title mb-3 text-center">
-                            <h2>@lang('miscellaneous.public.about.contact.title')</h2>
-                            <p>@lang('miscellaneous.public.about.contact.description')</p>
-                        </div><!--// Section Title -->
-                    </div>
-                </div>
-
-                <hr class="mt-4 mb-5">
-
-                <div class="row">
+		<!-- SECTION -->
+		<div class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
                     <div class="col-sm-8">
-                        {{-- <div class="contact-form-wrap">
+                        <div class="contact-form-wrap">
                             <form id="contact-form" action="assets/php/mail.php" method="POST">
                                 <div class="contact-page-form">
                                     <div class="row contact-input">
@@ -42,5 +32,11 @@
                                     </div>
                                 </div>
                             </form>
-                        </div> --}}
+                        </div>
                     </div>
+                </div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /SECTION -->

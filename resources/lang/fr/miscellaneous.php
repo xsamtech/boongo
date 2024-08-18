@@ -753,15 +753,15 @@ return [
 
             // Pricing
             'pricing' => [
-                'title' => 'Our pricing plan',
+                'title' => 'Notre plan tarifaire',
             ],
 
             // Contact
             'contact' => [
-                'title' => 'Contact Us',
-                'description' => 'You can either write to us directly here, or by email, or you can go to our address below',
-                'message_subject' => 'Subject',
-                'message_content' => 'Message content'
+                'title' => 'Nous contacter',
+                'description' => 'Vous pouvez soit nous écrire directement ici, soit par email, soit vous rendre à notre adresse ci-dessous',
+                'message_subject' => 'Sujet',
+                'message_content' => 'Contenu du message'
             ],
 
             // Donate
