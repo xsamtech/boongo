@@ -5,7 +5,7 @@
 			<div class="container">
 				<!-- row -->
 				<div class="row">
-                    <div class="col-sm-8">
+                    <div class="col-sm-8" style="min-height: 50rem;">
 @foreach ($titles as $ttl)
     @if ($ttl['ref'] == 'mission')
                         <hr class="my-5">
