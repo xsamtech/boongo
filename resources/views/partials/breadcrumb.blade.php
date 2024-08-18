@@ -31,16 +31,16 @@
                         </h3>
 
 @if (Route::is('about.home'))
-                        <ul class="breadcrumb-tree{{ request()->has('app_id') ? 'd-none' : '' }}">
-							<li><a href="{{ route('home') }}">@lang('miscellaneous.menu.home')</a></li>
-							<li class="active">@lang('miscellaneous.menu.about')</li>
+                        <ul class="breadcrumb-tree">
+							<li class="detect-webview"><a href="{{ route('home') }}">@lang('miscellaneous.menu.home')</a></li>
+							<li class="active detect-webview">@lang('miscellaneous.menu.about')</li>
 						</ul>
 @endif
 @if (Route::is('about.entity'))
-                        <ul class="breadcrumb-tree detect-webview">
-							<li><a href="{{ route('home') }}">@lang('miscellaneous.menu.home')</a></li>
-							<li><a href="{{ route('about.home') }}">@lang('miscellaneous.menu.about')</a></li>
-							<li class="active">{{ $entity_menu }}</li>
+                        <ul class="breadcrumb-tree">
+							<li class="detect-webview"><a href="{{ route('home') }}">@lang('miscellaneous.menu.home')</a></li>
+							<li class="detect-webview"><a href="{{ route('about.home') }}">@lang('miscellaneous.menu.about')</a></li>
+							<li class="active detect-webview">{{ $entity_menu }}</li>
 						</ul>
 @endif
 @if (Route::is('book.home'))
