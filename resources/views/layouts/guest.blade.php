@@ -205,7 +205,7 @@
         <!-- END MODALS-->
 
 		<!-- HEADER -->
-		<header>
+		<header class="detect-webview">
             <span class="menu-sidebar2__content d-none"></span>
 			<!-- TOP HEADER -->
 			<div id="top-header" class="detect-webview">
@@ -240,7 +240,7 @@
 						<!-- /LOGO -->
 
 						<!-- SEARCH BAR -->
-						<div class="col-md-6 detect-webview">
+						<div class="col-md-6">
 							<div class="header-search">
 								<form>
 									<select class="input-select">
@@ -256,7 +256,7 @@
 						<!-- /SEARCH BAR -->
 
 						<!-- ACCOUNT -->
-						<div class="col-md-3 clearfix detect-webview">
+						<div class="col-md-3 clearfix">
 							<div class="header-ctn">
 @if (Auth::check())
 								<!-- Wishlist -->
