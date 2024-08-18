@@ -31,7 +31,7 @@
                         </h3>
 
 @if (Route::is('about.home'))
-                        <ul class="breadcrumb-tree detect-webview">
+                        <ul class="breadcrumb-tree{{ request()->has('app_id') ? 'd-none' : '' }}">
 							<li><a href="{{ route('home') }}">@lang('miscellaneous.menu.home')</a></li>
 							<li class="active">@lang('miscellaneous.menu.about')</li>
 						</ul>
