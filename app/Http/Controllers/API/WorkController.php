@@ -469,14 +469,22 @@ class WorkController extends BaseController
             return $this->handleError(__('notifications.find_status_404'));
         }
 
-        $works = Work::whereHas('categories', function ($query) use ($request) {
-                        $query->whereIn('categories.id', $request->categories_ids);
-                    })->where([['works.type_id', $type->id], ['works.status_id', $status->id]])->orderByDesc('works.created_at')->paginate(12);
-        $count_all = Work::whereHas('categories', function ($query) use ($request) {
-                        $query->whereIn('categories.id', $request->categories_ids);
-                    })->where([['works.type_id', $type->id], ['works.status_id', $status->id]])->count();
+        if (isset($request->categories_ids)) {
+            $works = Work::whereHas('categories', function ($query) use ($request) {
+                            $query->whereIn('categories.id', $request->categories_ids);
+                        })->where([['works.type_id', $type->id], ['works.status_id', $status->id]])->orderByDesc('works.created_at')->paginate(12);
+            $count_all = Work::whereHas('categories', function ($query) use ($request) {
+                            $query->whereIn('categories.id', $request->categories_ids);
+                        })->where([['works.type_id', $type->id], ['works.status_id', $status->id]])->count();
 
-        return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
+            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
+
+        } else {
+            $works = Work::where([['type_id', $type->id], ['status_id', $status->id]])->orderByDesc('created_at')->paginate(12);
+            $count_all = Work::where([['type_id', $type->id], ['status_id', $status->id]])->count();
+
+            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
+        }
     }
 
     /**
