@@ -470,20 +470,20 @@ class WorkController extends BaseController
         }
 
         if ($request->categories_ids[0] == 0) {
-            $works = Work::where([['type_id', $type->id], ['status_id', $status->id]])->orderByDesc('created_at')->paginate(12);
+            $works = Work::where([['type_id', $type->id], ['status_id', $status->id]])->orderByDesc('created_at')->get();
             $count_all = Work::where([['type_id', $type->id], ['status_id', $status->id]])->count();
 
-            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
+            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all);
 
         } else {
             $works = Work::whereHas('categories', function ($query) use ($request) {
                             $query->whereIn('categories.id', $request->categories_ids);
-                        })->where([['works.type_id', $type->id], ['works.status_id', $status->id]])->orderByDesc('works.created_at')->paginate(12);
+                        })->where([['works.type_id', $type->id], ['works.status_id', $status->id]])->orderByDesc('works.created_at')->get();
             $count_all = Work::whereHas('categories', function ($query) use ($request) {
                             $query->whereIn('categories.id', $request->categories_ids);
                         })->where([['works.type_id', $type->id], ['works.status_id', $status->id]])->count();
 
-            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
+            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all);
         }
     }
 
