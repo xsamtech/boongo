@@ -129,7 +129,7 @@ class WorkController extends BaseController
             return $this->handleError(__('notifications.find_work_404'));
         }
 
-        if ($request->hasHeader('X-user-id') AND $request->hasHeader('X-ip-address') OR $request->hasHeader('X-user-id') AND !$request->hasHeader('X-ip-address')) {
+        if ($request->hasHeader('X-user-id') and $request->hasHeader('X-ip-address') or $request->hasHeader('X-user-id') and !$request->hasHeader('X-ip-address')) {
             $session = Session::where('user_id', $request->header('X-user-id'))->first();
 
             if (is_null($session)) {
@@ -293,87 +293,42 @@ class WorkController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string $data
-     * @param  null|string $locale
-     * @param  null|string $type_name
      * @return \Illuminate\Http\Response
      */
-    public function search(Request $request, $data, $locale = null, $type_name = null)
+    public function search(Request $request, $data)
     {
-        if ($locale != null OR $type_name != null) {
-            $type = Type::where('type_name->' . $locale, $type_name)->first();
+        $works = Work::where('work_title', 'LIKE', '%' . $data . '%')->orderByDesc('created_at')->paginate(12);
+        $count_all = Work::where('work_title', 'LIKE', '%' . $data . '%')->count();
 
-            if (is_null($type)) {
-                return $this->handleError(__('notifications.find_type_404'));
-            }
+        if ($request->hasHeader('X-user-id') and $request->hasHeader('X-ip-address') or $request->hasHeader('X-user-id') and !$request->hasHeader('X-ip-address')) {
+            $session = Session::where('user_id', $request->header('X-user-id'))->first();
 
-            $works = Work::where([['work_title', 'LIKE', '%' . $data . '%'], ['type_id', $type->id]])->orderByDesc('created_at')->paginate(12);
-            $count_all = Work::where([['work_title', 'LIKE', '%' . $data . '%'], ['type_id', $type->id]])->count();
+            if (!empty($session)) {
+                if (count($session->works) == 0) {
+                    $session->works()->attach($works->pluck('id'));
+                }
 
-            if ($request->hasHeader('X-user-id') AND $request->hasHeader('X-ip-address') OR $request->hasHeader('X-user-id') AND !$request->hasHeader('X-ip-address')) {
-                $session = Session::where('user_id', $request->header('X-user-id'))->first();
-
-                if (!empty($session)) {
-                    if (count($session->works) == 0) {
-                        $session->works()->attach($works->pluck('id'));
-                    }
-
-                    if (count($session->works) > 0) {
-                        $session->works()->syncWithoutDetaching($works->pluck('id'));
-                    }
+                if (count($session->works) > 0) {
+                    $session->works()->syncWithoutDetaching($works->pluck('id'));
                 }
             }
-
-            if ($request->hasHeader('X-ip-address')) {
-                $session = Session::where('ip_address', $request->header('X-ip-address'))->first();
-
-                if (!empty($session)) {
-                    if (count($session->works) == 0) {
-                        $session->works()->attach($works->pluck('id'));
-                    }
-
-                    if (count($session->works) > 0) {
-                        $session->works()->syncWithoutDetaching($works->pluck('id'));
-                    }
-                }
-            }
-
-            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
         }
 
-        if ($locale == null AND $type_name == null) {
-            $works = Work::where('work_title', 'LIKE', '%' . $data . '%')->orderByDesc('created_at')->paginate(12);
-            $count_all = Work::where('work_title', 'LIKE', '%' . $data . '%')->count();
+        if ($request->hasHeader('X-ip-address')) {
+            $session = Session::where('ip_address', $request->header('X-ip-address'))->first();
 
-            if ($request->hasHeader('X-user-id') AND $request->hasHeader('X-ip-address') OR $request->hasHeader('X-user-id') AND !$request->hasHeader('X-ip-address')) {
-                $session = Session::where('user_id', $request->header('X-user-id'))->first();
+            if (!empty($session)) {
+                if (count($session->works) == 0) {
+                    $session->works()->attach($works->pluck('id'));
+                }
 
-                if (!empty($session)) {
-                    if (count($session->works) == 0) {
-                        $session->works()->attach($works->pluck('id'));
-                    }
-
-                    if (count($session->works) > 0) {
-                        $session->works()->syncWithoutDetaching($works->pluck('id'));
-                    }
+                if (count($session->works) > 0) {
+                    $session->works()->syncWithoutDetaching($works->pluck('id'));
                 }
             }
-
-            if ($request->hasHeader('X-ip-address')) {
-                $session = Session::where('ip_address', $request->header('X-ip-address'))->first();
-
-                if (!empty($session)) {
-                    if (count($session->works) == 0) {
-                        $session->works()->attach($works->pluck('id'));
-                    }
-
-                    if (count($session->works) > 0) {
-                        $session->works()->syncWithoutDetaching($works->pluck('id'));
-                    }
-                }
-            }
-
-            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
         }
+
+        return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
     }
 
     /**
@@ -551,7 +506,7 @@ class WorkController extends BaseController
             return $this->handleError(__('validation.custom.owner.required'));
         }
 
-        if ($request->hasHeader('X-user-id') AND $request->hasHeader('X-ip-address') OR $request->hasHeader('X-user-id') AND !$request->hasHeader('X-ip-address')) {
+        if ($request->hasHeader('X-user-id') and $request->hasHeader('X-ip-address') or $request->hasHeader('X-user-id') and !$request->hasHeader('X-ip-address')) {
             $session = Session::where('user_id', $request->header('X-user-id'))->first();
 
             if (!empty($session)) {

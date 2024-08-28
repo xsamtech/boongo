@@ -65,7 +65,7 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::get('work', 'App\Http\Controllers\API\WorkController@index')->name('work.api.index');
     Route::get('work/{id}', 'App\Http\Controllers\API\WorkController@show')->name('work.api.show');
     Route::get('work/trends/{year}', 'App\Http\Controllers\API\WorkController@trends')->name('work.api.trends');
-    Route::get('work/search/{data}/{locale}/{type_name}', 'App\Http\Controllers\API\WorkController@search')->name('work.api.search');
+    Route::get('work/search/{data}', 'App\Http\Controllers\API\WorkController@search')->name('work.api.search');
     Route::get('work/find_views/{work_id}', 'App\Http\Controllers\API\WorkController@findViews')->name('work.api.find_views');
     Route::get('work/find_all_by_type/{locale}/{type_name}', 'App\Http\Controllers\API\WorkController@findAllByType')->name('work.api.find_all_by_type');
     Route::get('work/find_all_by_type_status/{locale}/{type_name}/{status_name}', 'App\Http\Controllers\API\WorkController@findAllByTypeStatus')->name('work.api.find_all_by_type_status');
