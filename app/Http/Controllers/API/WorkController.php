@@ -299,7 +299,7 @@ class WorkController extends BaseController
      */
     public function search(Request $request, $data, $locale = null, $type_name = null)
     {
-        if ($type_name != null) {
+        if ($locale != null OR $type_name != null) {
             $type = Type::where('type_name->' . $locale, $type_name)->first();
 
             if (is_null($type)) {
@@ -338,8 +338,9 @@ class WorkController extends BaseController
             }
 
             return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
+        }
 
-        } else {
+        if ($locale == null AND $type_name == null) {
             $works = Work::where('work_title', 'LIKE', '%' . $data . '%')->orderByDesc('created_at')->paginate(12);
             $count_all = Work::where('work_title', 'LIKE', '%' . $data . '%')->count();
 
