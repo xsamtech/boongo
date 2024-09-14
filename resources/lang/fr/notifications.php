@@ -84,6 +84,13 @@ return [
     'create_country_success' => 'Pays créé',
     'update_country_success' => 'Pays modifié',
     'delete_country_success' => 'Pays supprimé',
+    // Partner
+    'find_all_partners_success' => 'Partenaires trouvés',
+    'find_partner_success' => 'Partenaire trouvé',
+    'find_partner_404' => 'Partenaire non trouvé',
+    'create_partner_success' => 'Partenaire créé',
+    'update_partner_success' => 'Partenaire modifié',
+    'delete_partner_success' => 'Partenaire supprimé',
     // Work
     'find_all_works_success' => 'Œuvres trouvées',
     'find_work_success' => 'Œuvre trouvée',

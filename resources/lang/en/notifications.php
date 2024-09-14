@@ -84,6 +84,13 @@ return [
     'create_country_success' => 'Country created',
     'update_country_success' => 'Country updated',
     'delete_country_success' => 'Country deleted',
+    // Partner
+    'find_all_partners_success' => 'Partners found',
+    'find_partner_success' => 'Partner found',
+    'find_partner_404' => 'Partner not found',
+    'create_partner_success' => 'Partner created',
+    'update_partner_success' => 'Partner updated',
+    'delete_partner_success' => 'Partner deleted',
     // Work
     'find_all_works_success' => 'Works found',
     'find_work_success' => 'Work found',
