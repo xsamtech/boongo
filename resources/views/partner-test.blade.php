@@ -230,9 +230,6 @@
                     </div>
                 </div>
             </div>
-            {{-- <form action="{{ route('admin.work.home') }}" method="post" enctype="multipart/form-data"> --}}
-            <form id="partnerData">
-            </form>
         </div>
 
         <span id="btnBackTop" class="btn btn-floating btn-primary pb-0 d-none" style="position: fixed; bottom: 2rem; right: 2rem;"><i class="fa-solid fa-chevron-up"></i></span>
