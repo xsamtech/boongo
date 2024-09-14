@@ -49,7 +49,7 @@
         <!-- ============ Custom CSS ============ -->
         <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/style.custom.css') }}">
 
-        <title>@lang('miscellaneous.admin.work.add')</title>
+        <title>@lang('miscellaneous.admin.partner.add')</title>
     </head>
 	<body>
         <span class="menu-sidebar2__content d-none"></span>
@@ -140,74 +140,37 @@
 @endif
 
         <div class="py-5">
-            {{-- <form action="{{ route('admin.work.home') }}" method="post" enctype="multipart/form-data"> --}}
-            <form id="workData">
-                <h1 class="text-center mb-4">@lang('miscellaneous.admin.work.add')</h1>
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-lg-7 d-flex justify-content-between align-items-center mx-auto mb-4">
+                                <h1 class="m-0">@lang('miscellaneous.admin.partner.add')</h1>
+                                <p class="m-0"><a href="{{ route('home') }}">@lang('miscellaneous.admin.work.link')</a></p>
+                            </div>
+                        </div>
+                    </div>
 
-                <input type="hidden" name="image_type_id" id="image_type_id" value="6">
-                <input type="hidden" name="file_type_id" id="file_type_id" value="7">
-                <input type="hidden" name="status_id" id="status_id" value="5">
+                    <div class="col-lg-5 col-sm-6">
+                        {{-- <form action="{{ route('admin.work.home') }}" method="post" enctype="multipart/form-data"> --}}
+                        <form id="partnerData">
 @csrf
 
-                <!-- container -->
-                <div class="container">
-                    <!-- row -->
-                    <div class="row">
-                        <div class="col-lg-5 col-sm-6 ms-auto">
-                            <div class="card">
+                            <div class="card mb-4">
                                 <div class="card-body">
                                     <div class="form-group mb-3">
-                                        <label for="work_title" class="visually-hidden">@lang('miscellaneous.admin.work.data.work_title')</label>
-                                        <input type="text" name="work_title" id="work_title" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_title')">
-                                    </div>
-
-                                    <div class="form-group mb-3">
-                                        <label for="work_content" class="visually-hidden">@lang('miscellaneous.admin.work.data.work_content')</label>
-                                        <textarea name="work_content" id="work_content" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_content')"></textarea>
-                                    </div>
-
-                                    <div class="form-group mb-3">
-                                        <label for="work_url" class="visually-hidden">@lang('miscellaneous.admin.work.data.work_url')</label>
-                                        <input type="text" name="work_url" id="work_url" class="form-control" placeholder="@lang('miscellaneous.admin.work.data.work_url')">
-                                    </div>
-
-                                    <div class="form-group mb-3">
-                                        <label for="file_url">@lang('miscellaneous.upload.upload_document')</label>
-                                        <input type="file" name="file_url" id="file_url" class="form-control">
-                                    </div>
-
-                                    <div class="form-group mb-3">
-                                        <label for="type_id">@lang('miscellaneous.menu.admin.group.type')</label>
-                                        <select id="type_id" name="type_id" class="form-select" aria-label="@lang('miscellaneous.admin.work.data.choose_type')">
-                                            <option class="small" selected disabled>@lang('miscellaneous.admin.work.data.choose_type')</option>
-@forelse ($types as $type)
-                                            <option value="{{ $type->id }}">{{ $type->type_name }}</option>
-@empty
-@endforelse
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label class="d-block text-center">@lang('miscellaneous.admin.work.data.choose_categories')</label>
-@forelse ($categories as $category)
-                                        <div class="form-check mx-3">
-                                            <input type="checkbox" name="categories_ids" id="category_{{ $category->id }}" class="form-check-input" value="{{ $category->id }}">
-                                            <label class="form-check-label bng-text-secondary" for="category_{{ $category->id }}">{{ $category->category_name }}</label>
-                                        </div>
-@empty
-@endforelse
+                                        <label for="name" class="visually-hidden">@lang('miscellaneous.admin.partner.data.name')</label>
+                                        <input type="text" name="name" id="name" class="form-control" placeholder="@lang('miscellaneous.admin.partner.data.name')">
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="col-lg-4 col-sm-6 me-auto">
                             <div class="card rounded-4">
                                 <div id="otherImageWrapper" class="card-body pb-4 text-center">
                                     <p class="card-text m-0">@lang('miscellaneous.account.personal_infos.click_to_change_picture')</p>
 
                                     <div class="bg-image hover-overlay mt-3">
-                                        <img src="{{ asset('assets/img/cover.png') }}" alt="@lang('miscellaneous.admin.work.data.work_title')" class="other-user-image img-fluid rounded-4">
+                                        <img src="{{ asset('assets/img/ad.png') }}" alt="@lang('miscellaneous.admin.partner.data.name')" class="other-user-image img-fluid rounded-4">
                                         <div class="mask rounded-4" style="background-color: rgba(5, 5, 5, 0.5);">
                                             <label role="button" for="image_other" class="d-flex h-100 justify-content-center align-items-center">
                                                 <i class="fa-solid fa-pencil-alt text-white fs-2"></i>
@@ -221,76 +184,36 @@
                                 </div>
                             </div>
 
+                            <button class="btn btn-block btn-primary mt-3">@lang('miscellaneous.register')</button>
+
                             <div class="d-flex justify-content-center mt-5 text-center request-message"></div>
-                        </div>
+                        </form>
                     </div>
-                    <!-- /row -->
 
-                    <!-- row -->
-                    <div class="row mt-3">
-                        <div class="col-lg-4 col-sm-6 col-9 mx-auto">
-                            <button class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
-                        </div>
-                    </div>
-                    <!-- /row -->
-                </div>
-                <!-- /container -->
-            </form>
-        </div>
-
-        <div class="py-5">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-9 mx-auto">
+                    <div class="col-lg-7 col-sm-6">
                         <div class="card border">
                             <div class="card-header d-sm-flex justify-content-between align-items-center">
-                                <h3 class="m-sm-0 mb-1">{{ request()->has('type') ? request()->get('type') : __('miscellaneous.admin.work.list') }}</h3>
-
-                                <form class="input-group w-50 m-0" method="get">
-                                    <select name="type" class="form-select m-0">
-                                        <option class="small" disabled selected>@lang('miscellaneous.admin.work.data.choose_type')</option>
-                                        <option value="empty">@lang('miscellaneous.all_types')</option>
-@forelse ($types as $type)
-                                        <option>{{ $type->type_name }}</option>
-@empty
-@endforelse
-                                    </select>
-                                    <button type="submit" class="btn bng-btn-success m-0"><i class="fa-solid fa-search"></i></button>
-                                </form>
+                                <h3 class="m-sm-0 mb-1">@lang('miscellaneous.admin.partner.list')</h3>
                             </div>
-@if (count($works) > 0)
+@if (count($partners) > 0)
                             <ul class="list-group list-group-flush">
-    @foreach ($works as $item)
+    @foreach ($partners as $item)
                                 <li class="list-group-item py-3">
                                     <div class="d-lg-flex justify-content-between">
                                         <div class="mb-lg-0 mb-4">
-                                            <img src="{{ !empty($item->image_url) ? $item->image_url : asset('assets/img/cover.png') }}" alt="{{ $item->work_title }}" width="100" class="float-sm-start rounded-4 mb-3 me-3">
-                                            <h4 class="my-2 dktv-text-green fw-bold">{{ $item->work_title }}</h4>
-                                            <p class="mb-3 text-muted">{{ !empty($item->work_content) ? Str::limit($item->work_content, 50, '...') : '' }}</p>
-        @if (!empty($item->document_url))
-                                            <a href="{{ $item->document_url }}" target="_blank" class="px-4 py-3"><i class="fa-solid fa-file-pdf me-2 fs-4 bng-text-danger"></i></a>
-        @endif
-        @if (!empty($item->video_url))
-                                            <a href="{{ $item->video_url }}" target="_blank" class="px-4 py-3"><i class="fa-solid fa-play-circle me-2 fs-4 bng-text-primary"></i></a>
-        @endif
+                                            <img src="{{ !empty($item->image_url) ? $item->image_url : asset('assets/img/cover.png') }}" alt="{{ $item->name }}" width="100" class="float-sm-start rounded-4 mb-3 me-3">
+                                            <h4 class="my-2 dktv-text-green fw-bold">{{ $item->name }}</h4>
                                         </div>
-
-                                        <h5 class="w-25">
-        @forelse ($item->categories as $category)
-                                            <div class="badge badge-warning d-inline-block mb-2 me-2 text-black fw-normal">{{ $category->category_name }}</div>
-        @empty
-        @endforelse
-                                        </h5>
                                     </div>
                                 </li>
     @endforeach
                             </ul>
 
-    @if ($lastPage > 1)
+    {{-- @if ($lastPage > 1)
                             <div class="card-body pb-0 d-flex justify-content-center">
         @include('partials.pagination')
                             </div>
-    @endif
+    @endif --}}
 @else
                             <div class="card-body text-center">
                                 <p class="m-0 lead bng-text-primary">@lang('miscellaneous.empty_list')</p>
@@ -300,6 +223,9 @@
                     </div>
                 </div>
             </div>
+            {{-- <form action="{{ route('admin.work.home') }}" method="post" enctype="multipart/form-data"> --}}
+            <form id="partnerData">
+            </form>
         </div>
 
         <span id="btnBackTop" class="btn btn-floating btn-primary pb-0 d-none" style="position: fixed; bottom: 2rem; right: 2rem;"><i class="fa-solid fa-chevron-up"></i></span>
@@ -322,7 +248,7 @@
 		<script type="text/javascript">
             $(function () {
                 /* Register form-data */
-                $('form#workData').submit(function (e) {
+                $('form#partnerData').submit(function (e) {
 					e.preventDefault();
 
                     var formData = new FormData(this);
@@ -345,27 +271,27 @@
 						url: apiHost + '/work',
 						data: formData,
 						beforeSend: function () {
-							$('form#workData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
+							$('form#partnerData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
 						},
 						success: function (res) {
-                            if ($('form#workData .request-message').hasClass('text-danger')) {
-                                $('form#workData .request-message').removeClass('text-danger');
+                            if ($('form#partnerData .request-message').hasClass('text-danger')) {
+                                $('form#partnerData .request-message').removeClass('text-danger');
                             }
 
-							$('form#workData .request-message').addClass('text-success').html(res.message);
+							$('form#partnerData .request-message').addClass('text-success').html(res.message);
 
-                            document.getElementById('workData').reset();
+                            document.getElementById('partnerData').reset();
 							location.reload();
                         },
 						cache: false,
 						contentType: false,
 						processData: false,
 						error: function (xhr, error, status_description) {
-                            if ($('form#workData .request-message').hasClass('text-success')) {
-                                $('form#workData .request-message').removeClass('text-success');
+                            if ($('form#partnerData .request-message').hasClass('text-success')) {
+                                $('form#partnerData .request-message').removeClass('text-success');
                             }
 
-                            $('form#workData .request-message').addClass('text-danger').html(xhr.responseJSON.message);
+                            $('form#partnerData .request-message').addClass('text-danger').html(xhr.responseJSON.message);
 							console.log(xhr.responseJSON);
 							console.log(xhr.status);
 							console.log(error);

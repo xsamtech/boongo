@@ -142,7 +142,12 @@
         <div class="py-5">
             {{-- <form action="{{ route('admin.work.home') }}" method="post" enctype="multipart/form-data"> --}}
             <form id="workData">
-                <h1 class="text-center mb-4">@lang('miscellaneous.admin.work.add')</h1>
+                <div class="row">
+                    <div class="col-lg-7 d-flex justify-content-between align-items-center mx-auto mb-4">
+                        <h1 class="m-0">@lang('miscellaneous.admin.work.add')</h1>
+                        <p class="m-0"><a href="{{ route('admin.partners.home') }}">@lang('miscellaneous.admin.partner.link')</a></p>
+                    </div>
+                </div>
 
                 <input type="hidden" name="image_type_id" id="image_type_id" value="6">
                 <input type="hidden" name="file_type_id" id="file_type_id" value="7">

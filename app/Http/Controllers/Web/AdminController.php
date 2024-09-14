@@ -30,7 +30,7 @@ class AdminController extends Controller
     {
         $partners = $this::$api_client_manager::call('GET', getApiURL() . '/partner');
 
-        return view('partner', [
+        return view('partner-test', [
             'partners' => $partners->data,
         ]);
     }
@@ -45,7 +45,7 @@ class AdminController extends Controller
     {
         $partner = $this::$api_client_manager::call('GET', getApiURL() . '/partner/' . $id);
 
-        return view('partner', [
+        return view('partner-test', [
             'partner' => $partner->data,
         ]);
     }
