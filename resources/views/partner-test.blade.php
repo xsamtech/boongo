@@ -144,13 +144,13 @@
                 <img src="{{ asset('assets/img/brand-reverse.png') }}" alt="Boongo" width="200">
             </div>
 
-            <div class="container">
+            <div class="container-lg container-fluid">
                 <div class="row">
                     <div class="col-12">
                         <div class="row">
-                            <div class="col-lg-11 d-flex justify-content-between align-items-center mx-auto mb-4">
-                                <h1 class="m-0">@lang('miscellaneous.admin.partner.add')</h1>
-                                <p class="m-0"><a href="{{ route('home') }}">@lang('miscellaneous.admin.work.link')</a></p>
+                            <div class="col-lg-11 d-sm-flex justify-content-between align-items-center mx-auto mb-4">
+                                <h1 class="m-sm-0 mt-3 mb-1 text-sm-start text-center">@lang('miscellaneous.admin.partner.add')</h1>
+                                <p class="m-0 text-sm-start text-center"><a href="{{ route('home') }}">@lang('miscellaneous.admin.work.link')</a></p>
                             </div>
                         </div>
                     </div>
@@ -161,10 +161,15 @@
 @csrf
 
                             <div class="card mb-4">
-                                <div class="card-body pb-2">
+                                <div class="card-body pb-0">
                                     <div class="form-group">
                                         <label for="name" class="visually-hidden">@lang('miscellaneous.admin.partner.data.name')</label>
-                                        <input type="text" name="name" id="name" class="form-control" placeholder="@lang('miscellaneous.admin.partner.data.name')">
+                                        <input type="text" name="name" id="name" class="form-control" placeholder="@lang('miscellaneous.admin.partner.data.name')" autofocus>
+                                    </div>
+
+                                    <div class="form-group mt-2">
+                                        <label for="website_url" class="visually-hidden">@lang('miscellaneous.admin.partner.data.website_url')</label>
+                                        <input type="text" name="website_url" id="website_url" class="form-control" placeholder="@lang('miscellaneous.admin.partner.data.website_url')">
                                     </div>
                                 </div>
 
@@ -182,7 +187,7 @@
                                         </div>
                                     </div>
 
-                                    <p class="d-none mb-2 mb-0 small bng-text-primary fst-italic">@lang('miscellaneous.waiting_register')</p>
+                                    <p class="d-none mb-3 mb-0 small bng-text-primary fst-italic">@lang('miscellaneous.waiting_register')</p>
 
                                     <button class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
                                 </div>

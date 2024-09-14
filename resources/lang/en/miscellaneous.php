@@ -457,7 +457,8 @@ return [
             'list' => 'Sponsors list',
             'data' => [
                 'name' => 'Sponsor name',
-                'image_url' => 'Sponsor image'
+                'image_url' => 'Sponsor image',
+                'website_url' => 'Website URL'
             ],
         ],
 
