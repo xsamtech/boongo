@@ -57,6 +57,8 @@ Route::get('/subscription/{id}', [AdminController::class, 'subscriptionDatas'])-
 Route::get('/work', [AdminController::class, 'work'])->name('admin.work.home');
 Route::post('/work', [AdminController::class, 'addWork']);
 Route::get('/work/{id}', [AdminController::class, 'workDatas'])->whereNumber('id')->name('admin.work.datas');
+Route::get('/partners', [AdminController::class, 'partners'])->name('admin.partners.home');
+Route::get('/partners/{id}', [AdminController::class, 'partnerDatas'])->whereNumber('id')->name('admin.partners.datas');
 Route::get('/users', [AdminController::class, 'users'])->name('admin.users.home');
 Route::get('/users/{id}', [AdminController::class, 'usersDatas'])->whereNumber('id')->name('admin.users.datas');
 

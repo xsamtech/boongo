@@ -21,6 +21,34 @@ class AdminController extends Controller
     }
 
     // ==================================== HTTP GET METHODS ====================================
+    /**
+     * GET: Partners page
+     *
+     * @return \Illuminate\View\View
+     */
+    public function partners()
+    {
+        $partners = $this::$api_client_manager::call('GET', getApiURL() . '/partner');
+
+        return view('partner', [
+            'partners' => $partners->data,
+        ]);
+    }
+
+    /**
+     * GET: Partner datas
+     *
+     * @param  $id
+     * @return \Illuminate\View\View
+     */
+    public function partnersDatas($id)
+    {
+        $partner = $this::$api_client_manager::call('GET', getApiURL() . '/partner/' . $id);
+
+        return view('partner', [
+            'partner' => $partner->data,
+        ]);
+    }
 
     // ==================================== HTTP POST METHODS ====================================
 }

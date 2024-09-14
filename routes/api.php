@@ -29,6 +29,9 @@ Route::middleware(['auth:sanctum', 'localization'])->group(function () {
     Route::apiResource('payment', 'App\Http\Controllers\API\PaymentController')->except(['store', 'find_by_order_number', 'find_by_order_number_user', 'switch_status']);
     Route::apiResource('session', 'App\Http\Controllers\API\SessionController');
 });
+Route::middleware('localization')->group(function () {
+    Route::apiResource('partner', 'App\Http\Controllers\API\PartnerController');
+});
 /*
 |--------------------------------------------------------------------------
 | Custom API resource
