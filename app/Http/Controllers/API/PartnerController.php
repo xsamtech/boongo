@@ -19,7 +19,7 @@ class PartnerController extends BaseController
      */
     public function index()
     {
-        $partners = Partner::all();
+        $partners = Partner::orderByDesc('created_at')->get();
 
         return $this->handleResponse(ResourcesPartner::collection($partners), __('notifications.find_all_partners_success'));
     }

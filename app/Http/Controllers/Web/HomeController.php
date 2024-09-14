@@ -57,7 +57,7 @@ class HomeController extends Controller
             $works = $this::$api_client_manager::call('GET', getApiURL()  . '/work/find_all_by_type/fr/' . $request->get('type') . ($request->has('page') ? '?page=' . $request->get('page') : ''));
 
             if ($works->success) {
-                return view('form-test', [
+                return view('work-test', [
                     'types' => $types_by_group->data,
                     'categories' => $categories->data,
                     'works' => $works->data,
@@ -67,7 +67,7 @@ class HomeController extends Controller
             } else {
                 $all_works = $this::$api_client_manager::call('GET', getApiURL()  . '/work' . ($request->has('page') ? '?page=' . $request->get('page') : ''));
 
-                return view('form-test', [
+                return view('work-test', [
                     'types' => $types_by_group->data,
                     'categories' => $categories->data,
                     'works' => $all_works->data,
@@ -84,7 +84,7 @@ class HomeController extends Controller
             $categories = $this::$api_client_manager::call('GET', getApiURL() . '/category');
             $works = $this::$api_client_manager::call('GET', getApiURL()  . '/work' . ($request->has('page') ? '?page=' . $request->get('page') : ''));
 
-            return view('form-test', [
+            return view('work-test', [
                 'types' => $types_by_group->data,
                 'categories' => $categories->data,
                 'works' => $works->data,

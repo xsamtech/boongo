@@ -446,6 +446,20 @@ return [
             ],
         ],
 
+        // Partner
+        'partner' => [
+            'details' => 'Partner details',
+            'link' => 'Manage partners',
+            'add' => 'Add a partner',
+            'edit' => 'Edit the partner',
+            'search' => 'Search a partner',
+            'list' => 'Partners list',
+            'data' => [
+                'name' => 'Partner name',
+                'image_url' => 'Partner image'
+            ],
+        ],
+
         // Users
         'users' => [
             'details' => 'user details',
