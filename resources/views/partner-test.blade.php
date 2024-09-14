@@ -258,6 +258,8 @@
                 var _this_id = parseInt(_this.id.split('-')[1]);
 
                 if (_this_value == 1) {
+                    _this.setAttribute("data-value", 0);
+
                     $.ajax({
                         headers: { 'Accept': 'application/json', 'X-localization': navigator.language },
                         type: "PUT",
@@ -281,6 +283,8 @@
                     });
 
                 } else {
+                    _this.setAttribute("data-value", 1);
+
                     $.ajax({
                         headers: { 'Accept': 'application/json', 'X-localization': navigator.language },
                         type: "PUT",
