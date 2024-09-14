@@ -201,16 +201,17 @@
                         <div class="card border">
                             <div class="card-header d-sm-flex justify-content-between align-items-center">
                                 <h3 class="m-sm-0 mb-1">@lang('miscellaneous.admin.partner.list')</h3>
+                                <div id="loading" class="spinner-border text-primary d-none" role="status"><span class="visually-hidden">Loading...</span></div>
                             </div>
 @if (count($partners) > 0)
                             <ul class="list-group list-group-flush">
     @foreach ($partners as $item)
                                 <li class="list-group-item py-3">
-                                    <div class="d-lg-flex justify-content-between">
-                                        <div class="mb-lg-0 mb-4">
-                                            <img src="{{ !empty($item->image_url) ? $item->image_url : asset('assets/img/cover.png') }}" alt="{{ $item->name }}" width="100" class="float-sm-start rounded-4 mb-3 me-3">
-                                            <h4 class="my-2 dktv-text-green fw-bold">{{ $item->name }}</h4>
-                                        </div>
+                                    <img src="{{ !empty($item->image_url) ? $item->image_url : asset('assets/img/cover.png') }}" alt="{{ $item->name }}" width="160" class="float-sm-start rounded-2 mb-sm-0 mb-3 me-3">
+                                    <h4 class="m-0">{{ $item->name }}</h4>
+                                    <div class="form-check form-switch float-end">
+                                        <input class="form-check-input" type="checkbox" role="switch" data-value="{{ $item->is_active }}" id="is_active-{{ $item->id }}" onchange="changeStatus(this)" {{ $item->is_active == 1 ? 'checked' : '' }} />
+                                        <label class="form-check-label" for="is_active-{{ $item->id }}">{{ $item->is_active == 1 ? __('miscellaneous.active') : __('miscellaneous.inactive') }}</label>
                                     </div>
                                 </li>
     @endforeach
@@ -250,6 +251,34 @@
         <script src="{{ asset('assets/addons/custom/wysiwyg-editor-master/js/froala_editor.min.js') }}"></script>
 		<script src="{{ asset('assets/js/script.custom.js') }}"></script>
 		<script type="text/javascript">
+            /* Change status of an entity */
+            function changeStatus(element) {
+                var _this = document.getElementById(element.id);
+                var _this_value = parseInt(_this.getAttribute("data-value"));
+                var _this_id = parseInt(_this.id.split('-')[1]);
+
+                $.ajax({
+                    headers: { 'Accept': 'application/json', 'X-localization': navigator.language },
+                    type: "PUT",
+                    contentType: "application/json",
+                    url: apiHost + "/partner/" + _this_id,
+                    dataType: "json",
+                    data: JSON.stringify({ "id" : _this_id, "is_active" : (_this_value == '1' ? 0 : 1) }),
+					beforeSend: function () {
+						$('#loading').removeClass('d-none');
+					},
+					success: function (res) {
+						$('#loading').addClass('d-none');
+                    },
+                    error: function (xhr, error, status_description) {
+                        console.log(xhr.responseJSON);
+                        console.log(xhr.status);
+                        console.log(error);
+                        console.log(status_description);
+                    }
+                });
+            }
+
             $(function () {
                 /* Register form-data */
                 $('form#partnerData').submit(function (e) {

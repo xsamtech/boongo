@@ -22,6 +22,8 @@ return [
     'menu_toggle' => 'Menu',
     'description' => 'Description',
     'color' => 'Couleur',
+    'active' => 'Actif',
+    'inactive' => 'Inactif',
     'icon_font' => 'Icône font',
     'icon_svg' => 'Icône SVG',
     'image_url' => 'URL de l’image',
