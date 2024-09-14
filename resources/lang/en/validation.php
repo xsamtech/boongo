@@ -184,6 +184,7 @@ return [
             'exists' => 'This subject already exists'
         ],
         'title' => [
+            'required' => 'The "title" field is required',
             'exists' => 'This title already exists'
         ],
         'subtitle' => [

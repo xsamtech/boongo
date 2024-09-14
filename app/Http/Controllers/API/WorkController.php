@@ -53,6 +53,10 @@ class WorkController extends BaseController
         ];
 
         // Validate required fields
+        if ($inputs['work_title'] == null) {
+            return $this->handleError($inputs['work_title'], __('validation.custom.title.required'), 400);
+        }
+
         if ($inputs['type_id'] == null) {
             return $this->handleError($inputs['type_id'], __('validation.custom.type_name.required'), 400);
         }
@@ -65,7 +69,7 @@ class WorkController extends BaseController
 
         if ($request->hasFile('file_url')) {
             if ($request->file_type_id == null) {
-                return $this->handleError($inputs['type_id'], __('validation.required'), 400);
+                return $this->handleError($request->file_type_id, __('validation.required') . ' (' . __('miscellaneous.file_type') . ') ', 400);
             }
 
             $type = Type::find($request->file_type_id);

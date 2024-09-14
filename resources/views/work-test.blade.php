@@ -139,7 +139,11 @@
         <!-- ALERT END-->
 @endif
 
-        <div class="py-5">
+        <div class="py-4">
+            <div class="d-flex justify-content-center mb-1">
+                <img src="{{ asset('assets/img/brand-reverse.png') }}" alt="Boongo" width="200">
+            </div>
+
             {{-- <form action="{{ route('admin.work.home') }}" method="post" enctype="multipart/form-data"> --}}
             <form id="workData">
                 <div class="row">
@@ -298,7 +302,7 @@
     @endif
 @else
                             <div class="card-body text-center">
-                                <p class="m-0 lead bng-text-primary">@lang('miscellaneous.empty_list')</p>
+                                <p class="m-0 lead text-secondary fst-italic">@lang('miscellaneous.empty_list')</p>
                             </div>
 @endif
                         </div>

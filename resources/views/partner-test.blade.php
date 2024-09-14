@@ -139,12 +139,16 @@
         <!-- ALERT END-->
 @endif
 
-        <div class="py-5">
+        <div class="py-4">
+            <div class="d-flex justify-content-center mb-1">
+                <img src="{{ asset('assets/img/brand-reverse.png') }}" alt="Boongo" width="200">
+            </div>
+
             <div class="container">
                 <div class="row">
                     <div class="col-12">
                         <div class="row">
-                            <div class="col-lg-7 d-flex justify-content-between align-items-center mx-auto mb-4">
+                            <div class="col-lg-11 d-flex justify-content-between align-items-center mx-auto mb-4">
                                 <h1 class="m-0">@lang('miscellaneous.admin.partner.add')</h1>
                                 <p class="m-0"><a href="{{ route('home') }}">@lang('miscellaneous.admin.work.link')</a></p>
                             </div>
@@ -214,7 +218,7 @@
     @endif --}}
 @else
                             <div class="card-body text-center">
-                                <p class="m-0 lead bng-text-primary">@lang('miscellaneous.empty_list')</p>
+                                <p class="m-0 lead text-secondary fst-italic">@lang('miscellaneous.empty_list')</p>
                             </div>
 @endif
                         </div>

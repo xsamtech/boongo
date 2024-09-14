@@ -184,6 +184,7 @@ return [
             'exists' => 'Ce sujet existe déjà'
         ],
         'title' => [
+            'required' => 'Le champ "titre" est obligatoire',
             'exists' => 'Ce titre existe déjà'
         ],
         'subtitle' => [

@@ -25,6 +25,7 @@ return [
     'icon_font' => 'Icône font',
     'icon_svg' => 'Icône SVG',
     'image_url' => 'URL de l’image',
+    'file_type' => 'Type de fichier',
     'your_language' => 'Votre langue',
     'your_activation_code' => 'Votre code d’activation : ',
     'back_home' => 'Retour à l’accueil',
