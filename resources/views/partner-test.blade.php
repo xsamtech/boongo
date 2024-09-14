@@ -252,23 +252,12 @@
 					e.preventDefault();
 
                     var formData = new FormData(this);
-                    var categories = [];
-
-                    document.querySelectorAll('[name="categories_ids"]').forEach(item => {
-                        if (item.checked === true) {
-                            categories.push(parseInt(item.value));
-                        }
-                    });
-
-                    for (let i = 0; i < categories.length; i++) {
-                        formData.append('categories_ids[' + i + ']', categories[i]);
-                    }
 
                     $.ajax({
-						headers: { 'Authorization': 'Bearer 5|2DYESvYD3Sj89qWsyc45CtN0T81AYWqhzzJJ2yRG7349b165', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
+						headers: { 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
 						type: 'POST',
 						contentType: 'multipart/form-data',
-						url: apiHost + '/work',
+						url: apiHost + '/partner',
 						data: formData,
 						beforeSend: function () {
 							$('form#partnerData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');

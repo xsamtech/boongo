@@ -43,6 +43,7 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::resource('type', 'App\Http\Controllers\API\TypeController');
     Route::resource('category', 'App\Http\Controllers\API\CategoryController');
     Route::resource('work', 'App\Http\Controllers\API\WorkController');
+    Route::resource('partner', 'App\Http\Controllers\API\PartnerController');
     Route::resource('subscription', 'App\Http\Controllers\API\SubscriptionController');
     Route::resource('role', 'App\Http\Controllers\API\RoleController');
     Route::resource('user', 'App\Http\Controllers\API\UserController');
@@ -75,6 +76,9 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::get('work/find_all_by_type_status/{locale}/{type_name}/{status_name}', 'App\Http\Controllers\API\WorkController@findAllByTypeStatus')->name('work.api.find_all_by_type_status');
     Route::post('work/filter_by_categories', 'App\Http\Controllers\API\WorkController@filterByCategories')->name('work.api.filter_by_categories');
     Route::post('work/filter_by_categories_type_status/{locale}/{type_name}/{status_name}', 'App\Http\Controllers\API\WorkController@filterByCategoriesTypeStatus')->name('work.api.filter_by_categories_type_status');
+    // Partner
+    Route::get('partner/search/{data}', 'App\Http\Controllers\API\PartnerController@search')->name('partner.api.search');
+    Route::get('partner/find_by_active/{is_active}', 'App\Http\Controllers\API\PartnerController@findByActive')->name('partner.api.find_by_active');
     // Subscription
     Route::get('subscription', 'App\Http\Controllers\API\SubscriptionController@index')->name('subscription.api.index');
     // Role
