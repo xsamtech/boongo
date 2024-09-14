@@ -257,26 +257,52 @@
                 var _this_value = parseInt(_this.getAttribute("data-value"));
                 var _this_id = parseInt(_this.id.split('-')[1]);
 
-                $.ajax({
-                    headers: { 'Accept': 'application/json', 'X-localization': navigator.language },
-                    type: "PUT",
-                    contentType: "application/json",
-                    url: apiHost + "/partner/" + _this_id,
-                    dataType: "json",
-                    data: JSON.stringify({ "id" : _this_id, "is_active" : (_this_value == '1' ? 0 : 1) }),
-					beforeSend: function () {
-						$('#loading').removeClass('d-none');
-					},
-					success: function (res) {
-						$('#loading').addClass('d-none');
-                    },
-                    error: function (xhr, error, status_description) {
-                        console.log(xhr.responseJSON);
-                        console.log(xhr.status);
-                        console.log(error);
-                        console.log(status_description);
-                    }
-                });
+                if (_this_value == 1) {
+                    $.ajax({
+                        headers: { 'Accept': 'application/json', 'X-localization': navigator.language },
+                        type: "PUT",
+                        contentType: "application/json",
+                        url: apiHost + "/partner/" + _this_id,
+                        dataType: "json",
+                        data: JSON.stringify({ "id" : _this_id, "is_active" : 0 }),
+                        beforeSend: function () {
+                            $('#loading').removeClass('d-none');
+                        },
+                        success: function (res) {
+                            $('#loading').addClass('d-none');
+                            location.reload();
+                        },
+                        error: function (xhr, error, status_description) {
+                            console.log(xhr.responseJSON);
+                            console.log(xhr.status);
+                            console.log(error);
+                            console.log(status_description);
+                        }
+                    });
+
+                } else {
+                    $.ajax({
+                        headers: { 'Accept': 'application/json', 'X-localization': navigator.language },
+                        type: "PUT",
+                        contentType: "application/json",
+                        url: apiHost + "/partner/" + _this_id,
+                        dataType: "json",
+                        data: JSON.stringify({ "id" : _this_id, "is_active" : 1 }),
+                        beforeSend: function () {
+                            $('#loading').removeClass('d-none');
+                        },
+                        success: function (res) {
+                            $('#loading').addClass('d-none');
+                            location.reload();
+                        },
+                        error: function (xhr, error, status_description) {
+                            console.log(xhr.responseJSON);
+                            console.log(xhr.status);
+                            console.log(error);
+                            console.log(status_description);
+                        }
+                    });
+                }
             }
 
             $(function () {
