@@ -44,7 +44,7 @@ class PartnerController extends BaseController
 
         // Validate required fields
         if ($inputs['name'] == null OR $inputs['name'] == ' ') {
-            return $this->handleError($inputs['name'], __('validation.required'), 400);
+            return $this->handleError($inputs['name'], __('validation.required') . ' (' . __('miscellaneous.admin.partner.data.name') . ') ', 400);
         }
 
         if ($partners != null) {

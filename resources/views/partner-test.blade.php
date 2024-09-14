@@ -157,19 +157,17 @@
 @csrf
 
                             <div class="card mb-4">
-                                <div class="card-body">
-                                    <div class="form-group mb-3">
+                                <div class="card-body pb-2">
+                                    <div class="form-group">
                                         <label for="name" class="visually-hidden">@lang('miscellaneous.admin.partner.data.name')</label>
                                         <input type="text" name="name" id="name" class="form-control" placeholder="@lang('miscellaneous.admin.partner.data.name')">
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="card rounded-4">
                                 <div id="otherImageWrapper" class="card-body pb-4 text-center">
                                     <p class="card-text m-0">@lang('miscellaneous.account.personal_infos.click_to_change_picture')</p>
 
-                                    <div class="bg-image hover-overlay mt-3">
+                                    <div class="bg-image hover-overlay mt-2 mb-3">
                                         <img src="{{ asset('assets/img/ad.png') }}" alt="@lang('miscellaneous.admin.partner.data.name')" class="other-user-image img-fluid rounded-4">
                                         <div class="mask rounded-4" style="background-color: rgba(5, 5, 5, 0.5);">
                                             <label role="button" for="image_other" class="d-flex h-100 justify-content-center align-items-center">
@@ -180,11 +178,11 @@
                                         </div>
                                     </div>
 
-                                    <p class="d-none mt-2 mb-0 small bng-text-primary fst-italic">@lang('miscellaneous.waiting_register')</p>
+                                    <p class="d-none mb-2 mb-0 small bng-text-primary fst-italic">@lang('miscellaneous.waiting_register')</p>
+
+                                    <button class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
                                 </div>
                             </div>
-
-                            <button class="btn btn-block btn-primary mt-3">@lang('miscellaneous.register')</button>
 
                             <div class="d-flex justify-content-center mt-5 text-center request-message"></div>
                         </form>
