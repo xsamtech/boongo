@@ -261,9 +261,9 @@
                     var formData = new FormData(this);
 
                     $.ajax({
-						headers: { 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
+						headers: { 'Accept': 'application/json', 'X-localization': navigator.language },
 						type: 'POST',
-						contentType: 'multipart/form-data',
+						contentType: 'application/json',
 						url: apiHost + '/partner',
 						data: formData,
 						beforeSend: function () {
