@@ -448,15 +448,15 @@ return [
 
         // Partner
         'partner' => [
-            'details' => 'Partner details',
-            'link' => 'Manage partners',
-            'add' => 'Add a partner',
-            'edit' => 'Edit the partner',
-            'search' => 'Search a partner',
-            'list' => 'Partners list',
+            'details' => 'Sponsor details',
+            'link' => 'Manage sponsors',
+            'add' => 'Add a sponsor',
+            'edit' => 'Edit the sponsor',
+            'search' => 'Search a sponsor',
+            'list' => 'Sponsors list',
             'data' => [
-                'name' => 'Partner name',
-                'image_url' => 'Partner image'
+                'name' => 'Sponsor name',
+                'image_url' => 'Sponsor image'
             ],
         ],
 

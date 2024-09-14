@@ -448,15 +448,15 @@ return [
 
         // Partner
         'partner' => [
-            'details' => 'Détails de le partenaire',
-            'link' => 'Gérer les partenaires',
-            'add' => 'Ajouter un partenaire',
-            'edit' => 'Editer le partenaire',
-            'search' => 'Rechercher un partenaire',
-            'list' => 'Liste des partenaires',
+            'details' => 'Détails de le sponsor',
+            'link' => 'Gérer les sponsors',
+            'add' => 'Ajouter un sponsor',
+            'edit' => 'Editer le sponsor',
+            'search' => 'Rechercher un sponsor',
+            'list' => 'Liste des sponsors',
             'data' => [
-                'name' => 'Nom du partenaire',
-                'image_url' => 'Image du partenaire'
+                'name' => 'Nom du sponsor',
+                'image_url' => 'Image du sponsor'
             ],
         ],
 
