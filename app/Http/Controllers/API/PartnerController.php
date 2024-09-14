@@ -37,6 +37,7 @@ class PartnerController extends BaseController
         // Get inputs
         $inputs = [
             'name' => $request->name,
+            'website_url' => $request->website_url,
             'is_active' => 1
         ];
         // Select all partners to make them inactive
@@ -108,7 +109,8 @@ class PartnerController extends BaseController
         // Get inputs
         $inputs = [
             'name' => $request->name,
-            'image_url' => $request->image_url,
+            'image_64' => $request->image_64,
+            'website_url' => $request->website_url,
             'is_active' => $request->is_active
         ];
 
@@ -119,9 +121,27 @@ class PartnerController extends BaseController
             ]);
         }
 
-        if ($inputs['image_url'] != null) {
+        if ($inputs['image_64'] != null) {
+            // $extension = explode('/', explode(':', substr($inputs['image_64'], 0, strpos($inputs['image_64'], ';')))[1])[1];
+            $replace = substr($inputs['image_64'], 0, strpos($inputs['image_64'], ',') + 1);
+            // Find substring from replace here eg: data:image/png;base64,
+            $image = str_replace($replace, '', $inputs['image_64']);
+            $image = str_replace(' ', '+', $image);
+            // Create image URL
+            $image_url = 'images/partners/' . $partner->id . '/' . Str::random(50) . '.png';
+
+            // Upload image
+            Storage::url(Storage::disk('public')->put($image_url, base64_decode($image)));
+
             $partner->update([
-                'image_url' => $inputs['image_url'],
+                'image_url' => $image_url,
+                'updated_at' => now()
+            ]);
+        }
+
+        if ($inputs['website_url'] != null) {
+            $partner->update([
+                'website_url' => $inputs['website_url'],
                 'updated_at' => now(),
             ]);
         }
