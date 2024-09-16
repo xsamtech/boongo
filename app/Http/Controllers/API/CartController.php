@@ -323,8 +323,8 @@ class CartController extends BaseController
 
         if (is_null($cart)) {
             $cart = Cart::create([
-                'status_id', $ongoing_status->id, 
-                'user_id', $current_user->id
+                'status_id' => $ongoing_status->id, 
+                'user_id' => $current_user->id
             ]);
         }
 
