@@ -360,7 +360,8 @@ class CartController extends BaseController
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, Array(
                 'Content-Type: application/json',
-                'Authorization: Bearer ' . config('services.flexpay.api_token')
+                'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJcL2xvZ2luIiwicm9sZXMiOlsiTUVSQ0hBTlQiXSwiZXhwIjoxNzc3MjEyNjA5LCJzdWIiOiJmNmJjMWUzYTkxYTQzNTQzMjNmODc0YWY1NGZmNzUyMyJ9.n2VVIuubjSo1f5ZFB7UfR8K-ckT1cMPTN1saiY3NhLA'
+                // 'Authorization: Bearer ' . config('services.flexpay.api_token')
             ));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
