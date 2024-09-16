@@ -5,6 +5,10 @@ namespace App\Http\Controllers\API;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
 use App\Http\Resources\Subscription as ResourcesSubscription;
+use App\Models\Group;
+use App\Models\Status;
+use App\Models\User;
+use Carbon\Carbon;
 
 /**
  * @author Xanders
@@ -142,5 +146,53 @@ class SubscriptionController extends BaseController
         $subscriptions = Subscription::all();
 
         return $this->handleResponse(ResourcesSubscription::collection($subscriptions), __('notifications.delete_subscription_success'));
+    }
+
+    // ==================================== CUSTOM METHODS ====================================
+    /**
+     * Invalidate a user subscription.
+     *
+     * @param  int $user_id
+     */
+    public function invalidateSubscription($user_id)
+    {
+        // Groups
+        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
+        // Status
+        $valid_status = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
+        $expired_status = Status::where([['status_name->fr', 'Expiré'], ['group_id', $subscription_status_group->id]])->first();
+        // Requests
+        $user = User::find($user_id);
+
+        if (is_null($user)) {
+            return $this->handleError(__('notifications.find_user_404'));
+        }
+
+        $valide_subscription = Subscription::whereHas('users', function ($query) use ($valid_status, $user) {
+                                                $query->where('subscription_user.user_id', $user->id)
+                                                        ->where('subscription_user.status_id', $valid_status->id);
+                                            })->first();
+
+        if ($valide_subscription != null) {
+            // Create two date instances
+            $current_date = date('Y-m-d h:i:s');
+            $subscription_date = $valide_subscription->users()->first()->pivot->created_at->format('Y-m-d h:i:s');
+            $current_date_instance = Carbon::parse($current_date);
+            $subscription_date_instance = Carbon::parse($subscription_date);
+            // Determine the difference between dates
+            $diffInHours = $current_date_instance->diffInHours($subscription_date_instance);
+
+            if ($diffInHours < $valide_subscription->number_of_hours) {
+                return $this->handleError(new ResourcesSubscription($valide_subscription), __('notifications.invalidate_subscription_failed'), 401);
+
+            } else {
+                $user->subscriptions()->updateExistingPivot($valide_subscription->id, ['status_id' => $expired_status->id]);
+
+                return $this->handleResponse(new ResourcesSubscription($valide_subscription), __('notifications.update_subscription_success'));
+            }
+
+        } else {
+            return $this->handleError(__('notifications.find_subscription_404'));
+        }
     }
 }

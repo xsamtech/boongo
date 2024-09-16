@@ -786,6 +786,7 @@ class UserController extends BaseController
      */
     public function login(Request $request)
     {
+        $subscription_controller = new SubscriptionController();
         // Get inputs
         $inputs = [
             'username' => $request->username,
@@ -828,6 +829,9 @@ class UserController extends BaseController
                 'updated_at' => now(),
             ]);
 
+            // Try to invalidate the user subscription
+            $subscription_controller->invalidateSubscription($user->id);
+
             return $this->handleResponse(new ResourcesUser($user), __('notifications.login_user_success'));
 
         } else {
@@ -861,6 +865,9 @@ class UserController extends BaseController
                 'api_token' => $token,
                 'updated_at' => now(),
             ]);
+
+            // Try to invalidate the user subscription
+            $subscription_controller->invalidateSubscription($user->id);
 
             return $this->handleResponse(new ResourcesUser($user), __('notifications.login_user_success'));
         }

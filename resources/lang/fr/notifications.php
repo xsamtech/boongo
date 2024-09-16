@@ -46,7 +46,9 @@ return [
     'required_fields' => 'Veuillez vérifier les champs obligatoires',
     'transaction_waiting' => 'Veuillez valider le message de votre opérateur sur votre téléphone. Ensuite appuyez sur le bouton ci-dessous.',
     'transaction_done' => 'Votre opération est terminée !',
-    'transaction_failed' => 'L\'envoi de votre paiement a échoué',
+    'transaction_failed' => 'L’envoi de votre paiement a échoué',
+    'transaction_request_failed' => 'Une erreur lors du traitement de votre requête',
+    'transaction_push_failed' => 'Impossible de traiter la demande, veuillez réessayer. Echec envoie du push',
     'transaction_type_error' => 'Veuillez choisir le type de transaction',
     'new_partner_message' => 'Vous pouvez maintenant vous connecter en tant que partenaire avec votre n° de téléphone. Mot de passe temportaire :',
     // Group
@@ -112,6 +114,7 @@ return [
     'create_subscription_success' => 'Abonnement créé',
     'update_subscription_success' => 'Abonnement modifié',
     'delete_subscription_success' => 'Abonnement supprimé',
+    'invalidate_subscription_failed' => 'Abonnement toujours valide',
     // Cart
     'find_all_carts_success' => 'Paniers trouvés',
     'find_cart_success' => 'Panier trouvé',

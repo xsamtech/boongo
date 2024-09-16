@@ -47,6 +47,8 @@ return [
     'transaction_waiting' => 'Please confirm the message from your operator on your phone. Then press the button below.',
     'transaction_done' => 'Your transaction is complete!',
     'transaction_failed' => 'Failed to send your payment.',
+    'transaction_request_failed' => 'An error occurred while processing your request.',
+    'transaction_push_failed' => 'Unable to process request, please try again. Push sending failed',
     'transaction_type_error' => 'Please select transaction type',
     'new_partner_message' => 'You can now log in as a partner with your phone number. Temporary password:',
     // Group
@@ -112,6 +114,7 @@ return [
     'create_subscription_success' => 'Subscription created',
     'update_subscription_success' => 'Subscription updated',
     'delete_subscription_success' => 'Subscription deleted',
+    'invalidate_subscription_failed' => 'Subscription still valid',
     // Cart
     'find_all_carts_success' => 'Carts found',
     'find_cart_success' => 'Cart found',

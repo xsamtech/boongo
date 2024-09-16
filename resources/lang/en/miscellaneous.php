@@ -18,7 +18,7 @@ return [
     'all_right_reserved' => 'All right reserved',
     'follow_us' => 'Follow us:',
     'call_us' => 'Call us:',
-    'bank_transaction_description' => 'Bank transaction from the Kulisha application',
+    'bank_transaction_description' => 'Bank transaction from the Boongo app',
     'menu_toggle' => 'Menu',
     'description' => 'Description',
     'color' => 'Color',

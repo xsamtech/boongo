@@ -122,6 +122,154 @@ class HomeController extends Controller
         ]);
     }
 
-    // ==================================== HTTP POST METHODS ====================================
+    /**
+     * Display the message about transaction in waiting.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function transactionWaiting()
+    {
+        return view('transaction_message');
+    }
 
+    /**
+     * Display the message about transaction done.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function transactionMessage($order_number, $user_id)
+    {
+        if (is_numeric($user_id)) {
+            // Find payment by order number and user ID API
+            $payment2 = $this::$api_client_manager::call('GET', getApiURL() . '/payment/find_by_order_number_user/' . $order_number . '/' . $user_id);
+
+            return view('transaction_message', [
+                'message_content' => __('miscellaneous.transaction_done'),
+                'status_code' => (string) $payment2->data->status->id,
+                'payment' => $payment2->data,
+            ]);
+
+        } else {
+            // Find payment by order number API
+            $payment1 = $this::$api_client_manager::call('GET', getApiURL() . '/payment/find_by_order_number/' . $order_number);
+
+            return view('transaction_message', [
+                'message_content' => __('miscellaneous.transaction_done'),
+                'status_code' => (string) $payment1->data->status->id,
+                'payment' => $payment1->data,
+            ]);
+        }
+    }
+
+    /**
+     * GET: Current user account
+     *
+     * @param $amount
+     * @param $currency
+     * @param $code
+     * @param $user_id
+     * @return \Illuminate\View\View
+     */
+    public function subscribed($amount = null, $currency = null, $code, $user_id)
+    {
+        // Find status by name API
+        $failed_status_name = 'Echoué';
+        $failed_status = $this::$api_client_manager::call('GET', getApiURL() . '/status/search/fr/' . $failed_status_name);
+
+        if ($code == '0') {
+            return view('transaction_message', [
+                'status_code' => $code,
+                'message_content' => __('notifications.processing_succeed')
+            ]);
+        }
+
+        if ($code == '1') {
+            // Find payment by order number API
+            $payment = $this::$api_client_manager::call('GET', getApiURL() . '/payment/find_by_order_number/' . Session::get('order_number'));
+
+            if ($payment->success) {
+                // Update payment status API
+                $this::$api_client_manager::call('PUT', getApiURL() . '/payment/switch_status/' . $payment->data->id . '/' . $failed_status->data->id);
+            }
+
+            return view('transaction_message', [
+                'status_code' => $code,
+                'message_content' => __('notifications.process_canceled')
+            ]);
+        }
+
+        if ($code == '2') {
+            // Find payment by order number API
+            $payment = $this::$api_client_manager::call('GET', getApiURL() . '/payment/find_by_order_number/' . Session::get('order_number'));
+
+            if ($payment->success) {
+                // Update payment status API
+                $this::$api_client_manager::call('PUT', getApiURL() . '/payment/switch_status/' . $payment->data->id . '/' . $failed_status->data->id);
+            }
+
+            return view('transaction_message', [
+                'status_code' => $code,
+                'message_content' => __('notifications.process_failed')
+            ]);
+        }
+    }
+
+    // ==================================== HTTP POST METHODS ====================================
+    /**
+     * POST: Register subscription
+     *
+     * @param \Illuminate\Http\Request  $request
+     * @return \Illuminate\Support\Facades\Redirect
+     */
+    public function runSubscribe(Request $request)
+    {
+        $inputs = [
+            'subscription_id' => $request->subscription_id,
+            'transaction_type_id' => $request->transaction_type_id,
+            'other_phone' => $request->other_phone_code . $request->other_phone_number,
+            'app_url' => $request->app_url,
+            'user_id' => $request->user_id,
+        ];
+        // Find type by name API
+        // -- MOBILE MONEY
+        $mobile_money_type_name = 'Mobile money';
+        $mobile_money_type = $this::$api_client_manager::call('GET', getApiURL() . '/type/search/fr/' . $mobile_money_type_name);
+        // -- BANK CARD
+        $bank_card_type_name = 'Carte bancaire';
+        $bank_card_type = $this::$api_client_manager::call('GET', getApiURL() . '/type/search/fr/' . $bank_card_type_name);
+
+        if ($inputs['transaction_type_id'] == null) {
+            return redirect()->back()->with('error_message', __('notifications.transaction_type_error'));
+        }
+
+        if ($inputs['transaction_type_id'] != null) {
+            if ($inputs['transaction_type_id'] == $mobile_money_type->data->id) {
+                if ($request->other_phone_code == null or $request->other_phone_number == null) {
+                    return redirect()->back()->with('error_message', __('validation.custom.phone.incorrect'));
+                }
+
+                $cart = $this::$api_client_manager::call('POST', getApiURL() . '/cart/purchase/' . $inputs['user_id'], null, $inputs);
+
+                if ($cart->success) {
+                    return redirect()->route('transaction.waiting', [
+                        'success_message' => $cart->data->result_response->order_number . '-' . $inputs['user_id'],
+                    ]);
+
+                } else {
+                    return redirect()->back()->with('error_message', $cart->message);
+                }
+            }
+
+            if ($inputs['transaction_type_id'] == $bank_card_type->data->id) {
+                $cart = $this::$api_client_manager::call('POST', getApiURL() . '/cart/purchase/' . $inputs['user_id'], null, $inputs);
+
+                if ($cart->success) {
+                    return redirect($cart->data->result_response->url)->with('order_number', $cart->data->result_response->order_number);
+
+                } else {
+                    return redirect()->back()->with('error_message', $cart->message);
+                }
+            }
+        }
+    }
 }
