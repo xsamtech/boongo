@@ -18,6 +18,7 @@
 
         <!-- ============ Font Icons Files ============ -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/css/flag-icons.min.css">
 
  		<!-- ============ Google font ============ -->
@@ -361,7 +362,7 @@
 @yield('guest-content')
 
 		<!-- FOOTER -->
-		<footer id="footer" class="mt-5">
+		<footer id="footer" class="mt-5{{ Route::is('transaction.waiting') || Route::is('transaction.message') ? ' detect-webview' : '' }}">
 			<!-- top footer -->
 			<div class="section detect-webview">
 				<!-- container -->
