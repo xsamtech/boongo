@@ -345,7 +345,8 @@ class CartController extends BaseController
 
             // Create response by sending request to FlexPay
             $data = array(
-                'merchant' => config('services.flexpay.merchant'),
+                // 'merchant' => config('services.flexpay.merchant'),
+                'merchant' => 'DIKITIVI',
                 'type' => $request->transaction_type_id,
                 'phone' => $request->other_phone,
                 'reference' => $reference_code,
