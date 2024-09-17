@@ -355,8 +355,6 @@ class CartController extends BaseController
                 'callbackUrl' => getApiURL() . '/payment/store'
             );
             $data = json_encode($data);
-            return $this->handleError($data);
-            die();
             $ch = curl_init();
 
             curl_setopt($ch, CURLOPT_URL, $gateway_mobile);
@@ -380,6 +378,8 @@ class CartController extends BaseController
                 curl_close($ch); 
 
                 $jsonRes = json_decode($response);
+                return $this->handleError($jsonRes, config('services.flexpay.api_token'));
+                die();
                 $code = $jsonRes->code; // Push sending status
 
                 if ($code != '0') {
