@@ -346,8 +346,7 @@ class CartController extends BaseController
             // Create response by sending request to FlexPay
             $data = array(
                 'merchant' => config('services.flexpay.merchant'),
-                // 'merchant' => 'DIKITIVI',
-                'type' => $request->transaction_type_id,
+                'type' => 1,
                 'phone' => $request->other_phone,
                 'reference' => $reference_code,
                 'amount' => ((int) $subscription->price),
@@ -361,8 +360,7 @@ class CartController extends BaseController
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, Array(
                 'Content-Type: application/json',
-                'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJcL2xvZ2luIiwicm9sZXMiOlsiTUVSQ0hBTlQiXSwiZXhwIjoxNzc3MjEyNjA5LCJzdWIiOiJmNmJjMWUzYTkxYTQzNTQzMjNmODc0YWY1NGZmNzUyMyJ9.n2VVIuubjSo1f5ZFB7UfR8K-ckT1cMPTN1saiY3NhLA'
-                // 'Authorization: Bearer ' . config('services.flexpay.api_token')
+                'Authorization: Bearer ' . config('services.flexpay.api_token')
             ));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
@@ -378,8 +376,6 @@ class CartController extends BaseController
                 curl_close($ch); 
 
                 $jsonRes = json_decode($response);
-                return $this->handleError($jsonRes, config('services.flexpay.api_token'));
-                die();
                 $code = $jsonRes->code; // Push sending status
 
                 if ($code != '0') {
@@ -439,7 +435,7 @@ class CartController extends BaseController
                 'authorization' => 'Bearer ' . config('services.flexpay.api_token'),
                 'merchant' => config('services.flexpay.merchant'),
                 'reference' => $reference_code,
-                'amount' => $subscription->price,
+                'amount' => ((int) $subscription->price),
                 'currency' => 'USD',
                 'description' => __('miscellaneous.bank_transaction_description'),
                 'callback_url' => getApiURL() . '/payment/store',

@@ -6,6 +6,8 @@ use App\Models\Payment;
 use App\Models\Status;
 use Illuminate\Http\Request;
 use App\Http\Resources\Payment as ResourcesPayment;
+use App\Models\Group;
+use App\Models\Type;
 
 /**
  * @author Xanders
@@ -30,6 +32,11 @@ class PaymentController extends BaseController
      */
     public function store(Request $request)
     {
+        // Groups
+        $payment_type_group = Group::where('group_name', 'Type de paiement')->first();
+        // Types
+        $mobile_money_type = Type::where([['type_name->fr', 'Mobile money'], ['group_id', $payment_type_group->id]])->first();
+        $bank_card_type = Type::where([['type_name->fr', 'Carte bancaire'], ['group_id', $payment_type_group->id]])->first();
         $user_id = is_numeric(explode('-', $request->reference)[2]) ? (int) explode('-', $request->reference)[2] : null;
         // Check if payment already exists
         $payment = Payment::where('order_number', $request->orderNumber)->first();
@@ -45,7 +52,7 @@ class PaymentController extends BaseController
                 'phone' => $request->phone,
                 'currency' => $request->currency,
                 'channel' => $request->channel,
-                'type_id' => $request->type,
+                'type_id' => isset($request->type) ? ($request->type == 1 ? $mobile_money_type->id : $bank_card_type->id) : null,
                 'status_id' => $request->code,
                 'user_id' => $user_id,
                 'updated_at' => now()
@@ -65,7 +72,7 @@ class PaymentController extends BaseController
                 'currency' => $request->currency,
                 'channel' => $request->channel,
                 'created_at' => $request->createdAt,
-                'type_id' => $request->type,
+                'type_id' => isset($request->type) ? ($request->type == 1 ? $mobile_money_type->id : $bank_card_type->id) : null,
                 'status_id' => $request->code,
                 'user_id' => $user_id
             ]);

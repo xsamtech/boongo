@@ -32,7 +32,7 @@ return [
     ],
 
     'flexpay' => [
-        'merchant' => env('FLEXPAY_MERCHNAT'),
+        'merchant' => env('FLEXPAY_MERCHANT'),
         'gateway_mobile' => env('FLEXPAY_GATEWAY_MOBILE'),
         'gateway_card_v1' => env('FLEXPAY_GATEWAY_CARD_V1'),
         'gateway_card_v2' => env('FLEXPAY_GATEWAY_CARD_V2'),
