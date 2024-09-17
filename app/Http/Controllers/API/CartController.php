@@ -377,20 +377,20 @@ class CartController extends BaseController
             } else {
                 curl_close($ch); 
 
-                $jsonRes = json_decode($response, true);
-                $code = $jsonRes['code']; // Push sending status
+                $jsonRes = json_decode($response);
+                $code = $jsonRes->code; // Push sending status
 
                 if ($code != '0') {
                     return $this->handleError(__('miscellaneous.error_label'), __('notifications.transaction_push_failed'), 400);
 
                 } else {
                     // Register payment, even if FlexPay will
-                    $payment = Payment::where('order_number', $jsonRes['orderNumber'])->first();
+                    $payment = Payment::where('order_number', $jsonRes->orderNumber)->first();
 
                     if (is_null($payment)) {
                         Payment::create([
                             'reference' => $reference_code,
-                            'order_number' => $jsonRes['orderNumber'],
+                            'order_number' => $jsonRes->orderNumber,
                             'amount' => $subscription->price,
                             'phone' => $request->other_phone,
                             'currency' => 'USD',
@@ -418,8 +418,8 @@ class CartController extends BaseController
                     $object = new stdClass();
 
                     $object->result_response = [
-                        'message' => $jsonRes['message'],
-                        'order_number' => $jsonRes['orderNumber']
+                        'message' => $jsonRes->message,
+                        'order_number' => $jsonRes->orderNumber
                     ];
                     $object->cart = new ResourcesCart($cart);
 
