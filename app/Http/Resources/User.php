@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\User as ModelsUser;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -18,6 +19,17 @@ class User extends JsonResource
      */
     public function toArray($request)
     {
+        // Group
+        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
+        // Status
+        $valid_status = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
+        // Requests
+        $roles = Role::collection($this->roles)->sortByDesc('created_at')->toArray();
+        $isSubscribed = ModelsUser::whereHas('subscriptions', function ($q) use ($valid_status) {
+                                        $q->where('subscription_user.user_id', $this->id)
+                                            ->where('subscription_user.status_id', $valid_status->id);
+                                    })->exists();
+
         return [
             'id' => $this->id,
             'firstname' => $this->firstname,
@@ -41,7 +53,9 @@ class User extends JsonResource
             'avatar_url' => $this->avatar_url != null ? (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/public/storage/' . $this->avatar_url : (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/public/assets/img/user.png',
             'country' => Country::make($this->country),
             'status' => Status::make($this->status),
+            'is_partner' => inArrayR('Partenaire', $roles, 'role_name') ? true : false,
             'roles' => Role::collection($this->roles),
+            'is_subscribed' => $isSubscribed ? true : false,
             'subscriptions' => Subscription::collection($this->subscriptions)->sortByDesc('created_at')->toArray(),
             'carts' => Cart::collection($this->carts)->sortByDesc('created_at')->toArray(),
             'payments' => Payment::collection($this->payments)->sortByDesc('created_at')->toArray(),

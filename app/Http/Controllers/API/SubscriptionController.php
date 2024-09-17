@@ -157,7 +157,7 @@ class SubscriptionController extends BaseController
      */
     public function isSubscribed($user_id)
     {
-        // Groups
+        // Group
         $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
         // Status
         $valid_status = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
