@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Group as ModelsGroup;
+use App\Models\Status as ModelsStatus;
 use App\Models\User as ModelsUser;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,9 +22,9 @@ class User extends JsonResource
     public function toArray($request)
     {
         // Group
-        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
+        $subscription_status_group = ModelsGroup::where('group_name', 'Etat de l\'abonnement')->first();
         // Status
-        $valid_status = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
+        $valid_status = ModelsStatus::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
         // Requests
         $roles = Role::collection($this->roles)->sortByDesc('created_at')->toArray();
         $isSubscribed = ModelsUser::whereHas('subscriptions', function ($q) use ($valid_status) {
