@@ -400,7 +400,7 @@ class CartController extends BaseController
 
                     return $this->handleError($valid_status);
                     // The subscription is created only if the processing succeed
-                    $current_user->subscriptions()->syncWithPivotValues([$subscription->id], ['payment_id' => $payment->id, 'status_id' => $valid_status->id]);
+                    $current_user->subscriptions()->attach($subscription->id, ['payment_id' => $payment->id, 'status_id' => $valid_status->id]);
 
                     // The cart is updated only if the processing succeed
                     $random_string = (string) random_int(1000000, 9999999);
@@ -484,7 +484,8 @@ class CartController extends BaseController
                     }
 
                     // The subscription is created only if the processing succeed
-                    $current_user->subscriptions()->syncWithPivotValues([$subscription->id], ['payment_id' => $payment->id, 'status_id' => $valid_status->id]);
+                    // $current_user->subscriptions()->syncWithPivotValues([$subscription->id], ['payment_id' => $payment->id, 'status_id' => $valid_status->id]);
+                    $current_user->subscriptions()->attach($subscription->id, ['payment_id' => $payment->id, 'status_id' => $valid_status->id]);
 
                     // The cart is updated only if the processing succeed
                     $random_string = (string) random_int(1000000, 9999999);
