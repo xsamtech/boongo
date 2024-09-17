@@ -398,7 +398,6 @@ class CartController extends BaseController
                         ]);
                     }
 
-                    return $this->handleError($valid_status);
                     // The subscription is created only if the processing succeed
                     $current_user->subscriptions()->attach($subscription->id, ['payment_id' => $payment->id, 'status_id' => $valid_status->id]);
 
