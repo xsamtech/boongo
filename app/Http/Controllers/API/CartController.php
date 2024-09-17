@@ -343,8 +343,6 @@ class CartController extends BaseController
         if ($request->transaction_type_id == $mobile_money_type->id) {
             $reference_code = 'REF-' . ((string) random_int(10000000, 99999999)) . '-' . $current_user->id;
 
-            return $this->handleError($reference_code);
-            die();
             // Create response by sending request to FlexPay
             $data = array(
                 // 'merchant' => config('services.flexpay.merchant'),
@@ -357,6 +355,8 @@ class CartController extends BaseController
                 'callbackUrl' => getApiURL() . '/payment/store'
             );
             $data = json_encode($data);
+            return $this->handleError($data);
+            die();
             $ch = curl_init();
 
             curl_setopt($ch, CURLOPT_URL, $gateway_mobile);
