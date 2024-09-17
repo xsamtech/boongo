@@ -768,7 +768,33 @@ class UserController extends BaseController
     /**
      * Search all users having specific status.
      *
-     * @param  string $status_id
+     * @param  int $user_id
+     * @return \Illuminate\Http\Response
+     */
+    public function isPartner($user_id)
+    {
+        $user = User::find($user_id);
+
+        if (is_null($user)) {
+            return $this->handleError(__('notifications.find_user_404'));
+        }
+
+        $hasPivotPartner = User::where('users.id', $user->id)->whereHas('roles', function ($query) {
+                                    $query->where('roles.role_name', 'Partenaire');
+                                })->exists();
+
+        if ($hasPivotPartner) {
+            return $this->handleResponse(1, __('notifications.find_user_success'), null);
+
+        } else {
+            return $this->handleResponse(0, __('notifications.find_user_404'), null);
+        }
+    }
+
+    /**
+     * Search all users having specific status.
+     *
+     * @param  int $status_id
      * @return \Illuminate\Http\Response
      */
     public function findByStatus($status_id)
