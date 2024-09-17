@@ -339,6 +339,8 @@ class CartController extends BaseController
             return $this->handleError(__('miscellaneous.found_value') . ' ' . $request->transaction_type_id, __('validation.required', ['field_name' => __('miscellaneous.public.home.posts.boost.transaction_type.title')]), 400);
         }
 
+        return $this->handleError($subscription, __('notifications.transaction_request_failed'), 400);
+        die();
         // If the transaction is via mobile money
         if ($request->transaction_type_id == $mobile_money_type->id) {
             $reference_code = 'REF-' . ((string) random_int(10000000, 99999999)) . '-' . $current_user->id;
