@@ -150,6 +150,44 @@ class SubscriptionController extends BaseController
 
     // ==================================== CUSTOM METHODS ====================================
     /**
+     * Check if user is subscribed
+     *
+     * @param  int $user_id
+     * @return \Illuminate\Http\Response
+     */
+    public function isSubscribed($user_id)
+    {
+        // Groups
+        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
+        // Status
+        $valid_status = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
+        // Request
+        $user = User::find($user_id);
+
+        if (is_null($user)) {
+            return $this->handleError(__('notifications.find_user_404'));
+        }
+
+        $status = Status::where('status_name->fr', 'En cours')->first();
+
+        if (is_null($status)) {
+            return $this->handleError(__('notifications.find_status_404'));
+        }
+
+        $hasPivotValid = User::whereHas('subscriptions', function ($q) use ($user, $valid_status) {
+                        $q->where('subscription_user.user_id', $user->id)
+                            ->where('subscription_user.status_id', $valid_status->id);
+                    })->exists();
+
+        if ($hasPivotValid) {
+            return $this->handleResponse(1, __('notifications.find_user_success'), null);
+
+        } else {
+            return $this->handleResponse(0, __('notifications.find_user_404'), null);
+        }
+    }
+
+    /**
      * Invalidate a user subscription.
      *
      * @param  int $user_id
