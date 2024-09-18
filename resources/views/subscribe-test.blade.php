@@ -7,13 +7,13 @@
                     <!-- container -->
                     <div class="container" style="padding: 0 3rem;">
                         <!-- row -->
-                        <div id="subscribe" class="row" style="max-width: 40rem; min-height: 40rem;">
+                        <div id="subscribe" class="row">
                             <div class="col-12">
-                                <div style="display: flex; justify-content: center; margin-bottom: 4rem;">
+                                <div class="text-center">
                                     <img src="{{ asset('assets/img/logo.png') }}" alt="Boongo" width="60">
                                 </div>
 
-                                <div class="center-block">
+                                <div class="center-block" style="max-width: 40rem; min-height: 40rem;">
                                     <form method="POST" action="{{ route('subscribe') }}">
                                         <input type="hidden" name="app_url" value="{{ getWebURL() }}">
                                         <input type="hidden" name="user_id" value="{{ request()->get('user_id') }}">
