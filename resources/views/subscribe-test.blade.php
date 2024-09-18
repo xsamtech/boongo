@@ -17,6 +17,7 @@
                                     <form method="POST" action="{{ route('subscribe') }}">
                                         <input type="hidden" name="app_url" value="{{ getWebURL() }}">
                                         <input type="hidden" name="user_id" value="{{ request()->get('user_id') }}">
+                                        <input type="hidden" name="api_token" value="{{ request()->get('api_token') }}">
                                         <input type="hidden" name="subscription_id" value="{{ $subscription->id }}">
     @csrf
                                         <div class="text-center" style="margin: 2rem 0;">
