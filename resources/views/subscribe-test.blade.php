@@ -42,7 +42,7 @@
                                             </div>
                                         </div>
 
-                                        <div id="phoneNumberForMoney">
+                                        <div id="phoneNumberForMoney" class="d-none">
                                             <select name="select_country" id="select_country1" class="form-control" style="margin: 1rem 0;">
                                                 <option style="font-size: 0.6rem;" selected disabled>@lang('miscellaneous.choose_country')</option>
     @forelse ($countries as $country)

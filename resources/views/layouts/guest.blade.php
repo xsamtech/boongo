@@ -472,10 +472,10 @@
 				$('#paymentMethod .form-check-input').each(function () {
 					$(this).on('click', function () {
 						if ($('#bank_card').is(':checked')) {
-							$('#phoneNumberForMoney').css('display', 'none');
+							$('#phoneNumberForMoney').addClass('d-none');
 
 						} else {
-							$('#phoneNumberForMoney').css('display', 'block');
+							$('#phoneNumberForMoney').removeClass('d-none');
 						}
 					});
 				});
