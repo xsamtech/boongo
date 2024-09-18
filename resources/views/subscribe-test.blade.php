@@ -25,8 +25,8 @@
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input mt-2" type="radio" name="transaction_type_id" id="mobile_money" value="{{ $type['id'] }}" />
                                             <label class="form-check-label" for="mobile_money">
-                                                <img src="{{ asset('assets/img/payment-mobile-money.png') }}" alt="{{ __('miscellaneous.account.payment.send_money.mobile_money') }}" width="40">
-                                                @lang('miscellaneous.account.payment.send_money.mobile_money')
+                                                <img src="{{ asset('assets/img/payment-mobile-money.png') }}" alt="{{ __('miscellaneous.public.about.donate.send_money.mobile_money') }}" width="40">
+                                                @lang('miscellaneous.public.about.donate.send_money.mobile_money')
                                             </label>
                                         </div>
         @else
