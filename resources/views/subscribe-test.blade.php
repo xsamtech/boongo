@@ -31,10 +31,10 @@
                                                 <p class="lead" style="margin: 0; font-weight: 800;">{{ round($subscription->price) }} $</p>
                                             </div>
 
-                                            <div id="paymentMethod">
+                                            <div id="paymentMethod" class="text-left">
     @foreach ($transaction_types as $type)
         @if ($type['type_name'] == __('miscellaneous.public.about.subscribe.send_money.mobile_money'))
-                                                <label class="radio-inline">
+                                                <label class="radio-inline" style="margin-bottom: 0.5rem;">
                                                     <input type="radio" name="transaction_type_id" id="mobile_money" value="{{ $type['id'] }}" style="vertical-align: middle;">
                                                     <img src="{{ asset('assets/img/payment-mobile-money.png') }}" alt="{{ __('miscellaneous.public.about.subscribe.send_money.mobile_money') }}" width="40">
                                                     @lang('miscellaneous.public.about.subscribe.send_money.mobile_money')
