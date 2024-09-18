@@ -15,7 +15,7 @@
                                 </p>
                                 <p class="lead">@lang('notifications.transaction_waiting')</p>
                                 <p>
-                                    <a href="{{ route('transaction.message', ['orderNumber' => explode('-', request()->success_message)[0], 'userId' => explode('-', request()->success_message)[1]]) }}" class="btn bng-btn-primary py-3 px-5 rounded-pill">
+                                    <a href="{{ route('transaction.message', ['app_id' => '', 'orderNumber' => explode('-', request()->success_message)[0], 'userId' => explode('-', request()->success_message)[1]]) }}" class="btn bng-btn-primary py-3 px-5 rounded-pill">
                                         <i class="fa-regular fa-thumbs-up"></i> OK
                                     </a>
                                 </p>
