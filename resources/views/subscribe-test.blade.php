@@ -5,7 +5,7 @@
                 <!-- SECTION -->
                 <div class="section">
                     <!-- container -->
-                    <div class="container">
+                    <div class="container" style="padding: 0 2rem;">
                         <!-- row -->
                         <div id="subscribe" class="row" style="max-width: 40rem; min-height: 40rem;">
                             <div class="col-12">
@@ -43,7 +43,7 @@
                                         </div>
 
                                         <div id="phoneNumberForMoney">
-                                            <select name="select_country" id="select_country1" class="form-control" style="margin: 2rem 0;">
+                                            <select name="select_country" id="select_country1" class="form-control" style="margin: 1rem 0;">
                                                 <option style="font-size: 0.6rem;" selected disabled>@lang('miscellaneous.choose_country')</option>
     @forelse ($countries as $country)
                                                 <option value="{{ $country['country_phone_code'] . '-' . $country['id'] }}">{{ $country['country_name'] }}</option>
@@ -52,7 +52,7 @@
     @endforelse
                                             </select>
 
-                                            <div class="form-group">
+                                            <div class="form-group" style="margin-bottom: 2rem;">
                                                 <label class="sr-only" for="phone_number">@lang('miscellaneous.phone_code')</label>
                                                 <div id="phone_code_text1" class="input-group">
                                                     <div class="input-group-addon text-value">xxxx</div>
