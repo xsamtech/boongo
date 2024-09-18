@@ -450,5 +450,21 @@
         <script src="{{ asset('assets/addons/custom/jquery/scroll4ever/js/jquery.scroll4ever.js') }}"></script>
 		<script src="{{ asset('assets/js/script.electro.js') }}"></script>
 		<script src="{{ asset('assets/js/script.custom2.js') }}"></script>
-	</body>
+		<script type="text/javascript">
+			$(function () {
+				/* On check, show/hide some blocs */
+				// TRANSACTION TYPE
+				$('#paymentMethod .form-check-input').each(function () {
+					$(this).on('click', function () {
+						if ($('#bank_card').is(':checked')) {
+							$('#phoneNumberForMoney').addClass('d-none');
+
+						} else {
+							$('#phoneNumberForMoney').removeClass('d-none');
+						}
+					});
+				});
+			});
+		</script>
+</body>
 </html>
