@@ -13,7 +13,7 @@
                                     <img src="{{ asset('assets/img/logo.png') }}" alt="Boongo" width="60">
                                 </div>
 
-                                <div class="center-block" style="max-width: 40rem; min-height: 60rem;">
+                                <div class="center-block" style="max-width: 40rem; min-height: 50rem;">
                                     <form method="POST" action="{{ route('subscribe') }}">
                                         <input type="hidden" name="app_url" value="{{ getWebURL() }}">
                                         <input type="hidden" name="user_id" value="{{ request()->get('user_id') }}">
@@ -34,13 +34,13 @@
                                             <div id="paymentMethod" class="text-left">
     @foreach ($transaction_types as $type)
         @if ($type['type_name'] == __('miscellaneous.public.about.subscribe.send_money.mobile_money'))
-                                                <label class="radio-inline" style="margin-bottom: 0.5rem;">
+                                                <label class="radio" style="margin-bottom: 0.5rem;">
                                                     <input type="radio" name="transaction_type_id" id="mobile_money" value="{{ $type['id'] }}" style="vertical-align: middle;">
                                                     <img src="{{ asset('assets/img/payment-mobile-money.png') }}" alt="{{ __('miscellaneous.public.about.subscribe.send_money.mobile_money') }}" width="40">
                                                     @lang('miscellaneous.public.about.subscribe.send_money.mobile_money')
                                                 </label>
         @else
-                                                <label class="radio-inline">
+                                                <label class="radio">
                                                     <input type="radio" name="transaction_type_id" id="bank_card" value="{{ $type['id'] }}" style="vertical-align: middle;">
                                                     <img src="{{ asset('assets/img/payment-credit-card.png') }}" alt="{{ __('miscellaneous.public.about.subscribe.send_money.bank_card') }}" width="40">
                                                     @lang('miscellaneous.public.about.subscribe.send_money.bank_card')
