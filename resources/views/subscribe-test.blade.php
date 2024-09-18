@@ -10,7 +10,7 @@
                         <div id="subscribe" class="row" style="max-width: 40rem; min-height: 40rem;">
                             <div class="col-12">
                                 <div style="display: flex; justify-content: center; margin-bottom: 4rem;">
-                                    <img src="{{ asset('assets/img/logo.png') }}" alt="Boongo" width="100">
+                                    <img src="{{ asset('assets/img/logo.png') }}" alt="Boongo" width="60">
                                 </div>
 
                                 <div class="center-block">
@@ -27,14 +27,14 @@
     @foreach ($transaction_types as $type)
         @if ($type['type_name'] == __('miscellaneous.public.about.donate.send_money.mobile_money'))
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="transaction_type_id" id="mobile_money" value="{{ $type['id'] }}">
-                                                    <img src="{{ asset('assets/img/payment-mobile-money.png') }}" alt="{{ __('miscellaneous.public.about.donate.send_money.mobile_money') }}" width="40" style="display: inline-block; vertical-align: middle;">
+                                                    <input type="radio" name="transaction_type_id" id="mobile_money" value="{{ $type['id'] }}" style="vertical-align: middle;">
+                                                    <img src="{{ asset('assets/img/payment-mobile-money.png') }}" alt="{{ __('miscellaneous.public.about.donate.send_money.mobile_money') }}" width="40">
                                                     @lang('miscellaneous.public.about.donate.send_money.mobile_money')
                                                 </label>
         @else
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="transaction_type_id" id="bank_card" value="{{ $type['id'] }}">
-                                                    <img src="{{ asset('assets/img/payment-credit-card.png') }}" alt="{{ __('miscellaneous.public.about.donate.send_money.bank_card') }}" width="40" style="display: inline-block; vertical-align: middle;">
+                                                    <input type="radio" name="transaction_type_id" id="bank_card" value="{{ $type['id'] }}" style="vertical-align: middle;">
+                                                    <img src="{{ asset('assets/img/payment-credit-card.png') }}" alt="{{ __('miscellaneous.public.about.donate.send_money.bank_card') }}" width="40">
                                                     @lang('miscellaneous.public.about.donate.send_money.bank_card')
                                                 </label>
         @endif
