@@ -469,7 +469,7 @@
 				});
 				/* On check, show/hide some blocs */
 				// TRANSACTION TYPE
-				$('#paymentMethod .form-check-input').each(function () {
+				$('#paymentMethod .radio-inline').each(function () {
 					$(this).on('click', function () {
 						if ($('#bank_card').is(':checked')) {
 							$('#phoneNumberForMoney').addClass('d-none');
