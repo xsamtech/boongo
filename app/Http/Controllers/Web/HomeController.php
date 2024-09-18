@@ -164,7 +164,7 @@ class HomeController extends Controller
             $payment2 = $this::$api_client_manager::call('GET', getApiURL() . '/payment/find_by_order_number_user/' . $order_number . '/' . $user_id);
 
             return view('transaction_message', [
-                'message_content' => __('miscellaneous.transaction_done'),
+                'message_content' => __('notifications.transaction_done'),
                 'status_code' => (string) $payment2->data->status->id,
                 'payment' => $payment2->data,
             ]);
@@ -174,7 +174,7 @@ class HomeController extends Controller
             $payment1 = $this::$api_client_manager::call('GET', getApiURL() . '/payment/find_by_order_number/' . $order_number);
 
             return view('transaction_message', [
-                'message_content' => __('miscellaneous.transaction_done'),
+                'message_content' => __('notifications.transaction_done'),
                 'status_code' => (string) $payment1->data->status->id,
                 'payment' => $payment1->data,
             ]);
