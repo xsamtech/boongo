@@ -782,15 +782,16 @@ return [
                 'message_content' => 'Contenu du message'
             ],
 
-            // Donate
-            'donate' => [
-                'title' => 'Make a donation to support DikiTivi',
-                'description' => 'By supporting the DikiTivi ministry, you not only contribute to the improvement of life of the people of God, but also you contribute to the help that the ministry brings to the ophelines and the poor.',
-                'content1' => 'If it’s money you want to send, just select the payment method; then you send it directly online.',
-                'content2' => 'If you want to donate something other than money, just enter a description of your donation.',
-                'anonyme' => 'Make your donation',
-                'partner' => 'Become a partner',
-                'your_identity' => 'Your identity',
+            // Subscribe
+            'subscribe' => [
+                'title' => '',
+                'description' => '',
+                'content1' => '',
+                'content2' => '',
+                'anonyme' => 'Faites votre don',
+                'partner' => 'Devenir un partenaire',
+                'your_identity' => 'Votre identité',
+                'choosen_subscription' => 'Type d\'abonnement choisi :',
                 'period' => [
                     'title' => 'Period',
                     'choose' => 'Choose a period',

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\ApiClientManager;
 use App\Http\Controllers\Controller;
+use App\Models\Subscription;
+use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
 
@@ -130,7 +132,13 @@ class HomeController extends Controller
      */
     public function subscribe()
     {
-        return view('subscribe-test');
+        $subscription = Subscription::find(request()->get('subscription_id'));
+        $subscription_type = Type::find($subscription->type_id);
+
+        return view('subscribe-test', [
+            'subscription' => $subscription,
+            'subscription_type' => $subscription_type->getTranslation('type_name', str_replace('_', '-', app()->getLocale())),
+        ]);
     }
 
     /**

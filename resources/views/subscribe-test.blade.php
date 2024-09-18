@@ -17,32 +17,39 @@
                                     <form method="POST" action="{{ route('subscribe') }}">
                                         <input type="hidden" name="app_url" value="{{ getWebURL() }}">
                                         <input type="hidden" name="user_id" value="{{ request()->get('user_id') }}">
-                                        <input type="hidden" name="subscription_id" value="{{ request()->get('subscription_id') }}">
+                                        <input type="hidden" name="subscription_id" value="{{ $subscription->id }}">
     @csrf
                                         <div class="text-center" style="margin: 2rem 0;">
                                             <h3 class="text-uppercase fw-bolder">@lang('miscellaneous.menu.admin.subscription')</h3>
-                                            <h5 class="text-muted" style="font-weight: 600; margin-bottom: 5rem;">@lang('miscellaneous.public.about.donate.send_money.description')</h5>
+                                            <h5 class="text-muted" style="font-weight: 600; margin-bottom: 5rem;">@lang('miscellaneous.public.about.subscribe.send_money.description')</h5>
+
+                                            <div class="text-center" style="background-color: #fea; padding: 4rem;">
+                                                <p class="lead" style="margin: 0;">
+                                                    @lang('miscellaneous.public.about.donate.choosen_subscription') {{ $subscription_type }}
+                                                </p>
+                                                <p class="lead" style="margin: 0; font-weight: 800;">{{ $subscription->price }}</p>
+                                            </div>
 
                                             <div id="paymentMethod">
     @foreach ($transaction_types as $type)
-        @if ($type['type_name'] == __('miscellaneous.public.about.donate.send_money.mobile_money'))
+        @if ($type['type_name'] == __('miscellaneous.public.about.subscribe.send_money.mobile_money'))
                                                 <label class="radio-inline">
                                                     <input type="radio" name="transaction_type_id" id="mobile_money" value="{{ $type['id'] }}" style="vertical-align: middle;">
-                                                    <img src="{{ asset('assets/img/payment-mobile-money.png') }}" alt="{{ __('miscellaneous.public.about.donate.send_money.mobile_money') }}" width="40">
-                                                    @lang('miscellaneous.public.about.donate.send_money.mobile_money')
+                                                    <img src="{{ asset('assets/img/payment-mobile-money.png') }}" alt="{{ __('miscellaneous.public.about.subscribe.send_money.mobile_money') }}" width="40">
+                                                    @lang('miscellaneous.public.about.subscribe.send_money.mobile_money')
                                                 </label>
         @else
                                                 <label class="radio-inline">
                                                     <input type="radio" name="transaction_type_id" id="bank_card" value="{{ $type['id'] }}" style="vertical-align: middle;">
-                                                    <img src="{{ asset('assets/img/payment-credit-card.png') }}" alt="{{ __('miscellaneous.public.about.donate.send_money.bank_card') }}" width="40">
-                                                    @lang('miscellaneous.public.about.donate.send_money.bank_card')
+                                                    <img src="{{ asset('assets/img/payment-credit-card.png') }}" alt="{{ __('miscellaneous.public.about.subscribe.send_money.bank_card') }}" width="40">
+                                                    @lang('miscellaneous.public.about.subscribe.send_money.bank_card')
                                                 </label>
         @endif
     @endforeach
                                             </div>
                                         </div>
 
-                                        <div id="phoneNumberForMoney" class="d-none">
+                                        <div id="phoneNumberForMoney">
                                             <select name="select_country" id="select_country1" class="form-control" style="margin: 1rem 0;">
                                                 <option style="font-size: 0.6rem;" selected disabled>@lang('miscellaneous.choose_country')</option>
     @forelse ($countries as $country)
