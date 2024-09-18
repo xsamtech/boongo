@@ -42,10 +42,9 @@ Route::post('/account/{entity}/{id}', [AccountController::class, 'updateAccountE
 // Subscription
 Route::get('/subscribe', [HomeController::class, 'subscribe'])->name('subscribe');
 Route::post('/subscribe', [HomeController::class, 'runSubscribe']);
-// Route::get('/subscribed', [HomeController::class, 'subscribed'])->name('subscribed');
-Route::get('/subscribed/{amount}/{currency}/{code}/{user_id}', [HomeController::class, 'subscribed'])->whereNumber(['amount', 'code'])->name('subscribed.datas');
 Route::get('/transaction_waiting', [HomeController::class, 'transactionWaiting'])->name('transaction.waiting');
 Route::get('/transaction_message/{orderNumber}/{userId}', [HomeController::class, 'transactionMessage'])->name('transaction.message');
+Route::get('/subscribed/{amount}/{currency}/{code}/{user_id}', [HomeController::class, 'subscribed'])->whereNumber(['amount', 'code'])->name('subscribed');
 
 /*
 |--------------------------------------------------------------------------
