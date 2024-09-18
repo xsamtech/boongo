@@ -13,7 +13,7 @@
                                     <img src="{{ asset('assets/img/logo.png') }}" alt="Boongo" width="60">
                                 </div>
 
-                                <div class="center-block" style="max-width: 40rem; min-height: 40rem;">
+                                <div class="center-block" style="max-width: 40rem; min-height: 60rem;">
                                     <form method="POST" action="{{ route('subscribe') }}">
                                         <input type="hidden" name="app_url" value="{{ getWebURL() }}">
                                         <input type="hidden" name="user_id" value="{{ request()->get('user_id') }}">
