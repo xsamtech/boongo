@@ -268,7 +268,7 @@ class HomeController extends Controller
                     return redirect()->back()->with('error_message', __('validation.custom.phone.incorrect'));
                 }
 
-                $cart = $this::$api_client_manager::call('POST', getApiURL() . '/cart/purchase/' . $inputs['user_id'], null, $inputs);
+                $cart = $this::$api_client_manager::call('POST', getApiURL() . '/cart/purchase/' . $inputs['user_id'], $request->api_token, $inputs);
 
                 if ($cart->success) {
                     return redirect()->route('transaction.waiting', [
