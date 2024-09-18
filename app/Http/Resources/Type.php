@@ -20,7 +20,7 @@ class Type extends JsonResource
     {
         return [
             'id' => $this->id,
-            'type_name' => $this->type_name == 'Paiement unique' OR $this->type_name == 'Single payment' ? ($this->type_name . ' (24h)') : $this->type_name,
+            'type_name' => ($this->type_name == 'Paiement unique' OR $this->type_name == 'Single payment') ? ($this->type_name . ' (24h)') : $this->type_name,
             'type_name_fr' => $this->getTranslation('type_name', 'fr') == 'Paiement unique' ? ($this->getTranslation('type_name', 'fr') . ' (24h)') : $this->getTranslation('type_name', 'fr'),
             'type_name_en' => $this->getTranslation('type_name', 'en') == 'Single payment' ? ($this->getTranslation('type_name', 'en') . ' (24h)') : $this->getTranslation('type_name', 'en'),
             'type_description' => $this->type_description,
