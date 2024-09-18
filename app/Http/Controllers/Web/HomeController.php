@@ -269,6 +269,8 @@ class HomeController extends Controller
 
                 $cart = $this::$api_client_manager::call('POST', getApiURL() . '/cart/purchase/' . $inputs['user_id'], null, $inputs);
 
+                dd($cart);
+
                 if ($cart->success) {
                     return redirect()->route('transaction.waiting', [
                         'success_message' => $cart->data->result_response->order_number . '-' . $inputs['user_id'],
