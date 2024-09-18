@@ -56,6 +56,9 @@
             .detect-webview { display: none;!important }
         </style>
 @endif
+        <style>
+            .d-none { display: none;!important }
+        </style>
 
         <title>
 @if (!empty($exception))
