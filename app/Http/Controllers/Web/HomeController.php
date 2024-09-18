@@ -272,6 +272,7 @@ class HomeController extends Controller
 
                 if ($cart->success) {
                     return redirect()->route('transaction.waiting', [
+                        'app_id' => '-',
                         'success_message' => $cart->data->result_response->order_number . '-' . $inputs['user_id'],
                     ]);
 
