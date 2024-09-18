@@ -389,7 +389,7 @@ class CartController extends BaseController
                         $payment = Payment::create([
                             'reference' => $reference_code,
                             'order_number' => $jsonRes['orderNumber'],
-                            'amount' => $subscription->price,
+                            'amount' => ((int) $subscription->price),
                             'phone' => $request->other_phone,
                             'currency' => 'USD',
                             'type_id' => $request->transaction_type_id,
@@ -439,10 +439,10 @@ class CartController extends BaseController
                 'currency' => 'USD',
                 'description' => __('miscellaneous.bank_transaction_description'),
                 'callback_url' => getApiURL() . '/payment/store',
-                'approve_url' => $request->app_url . '/subscribed/' . $subscription->price . '/USD/0/' . $current_user->id,
-                'cancel_url' => $request->app_url . '/subscribed/' . $subscription->price . '/USD/1/' . $current_user->id,
-                'decline_url' => $request->app_url . '/subscribed/' . $subscription->price . '/USD/2/' . $current_user->id,
-                'home_url' => $request->app_url . '/subscribed',
+                'approve_url' => $request->app_url . '/subscribed/' . ((int) $subscription->price) . '/USD/0/' . $current_user->id . '?app_id=',
+                'cancel_url' => $request->app_url . '/subscribed/' . ((int) $subscription->price) . '/USD/1/' . $current_user->id . '?app_id=',
+                'decline_url' => $request->app_url . '/subscribed/' . ((int) $subscription->price) . '/USD/2/' . $current_user->id . '?app_id=',
+                'home_url' => $request->app_url . '/subscribe?app_id=&subscription_id=' . $subscription->id . '&user_id=' . $current_user->id . '&api_token=' . $current_user->api_token,
             ));
 
             $curl = curl_init($gateway_card);
@@ -473,7 +473,7 @@ class CartController extends BaseController
                         $payment = Payment::create([
                             'reference' => $reference_code,
                             'order_number' => $orderNumber,
-                            'amount' => $subscription->price,
+                            'amount' => ((int) $subscription->price),
                             'phone' => $request->other_phone,
                             'currency' => 'USD',
                             'type_id' => $request->transaction_type_id,
