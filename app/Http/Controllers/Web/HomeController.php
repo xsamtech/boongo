@@ -8,6 +8,7 @@ use App\Models\Subscription;
 use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Session;
 
 /**
  * @author Xanders
