@@ -797,10 +797,10 @@ return [
                     'unique' => 'One-time payment'
                 ],
                 'send_money' => [
-                    'title' => 'Send money',
-                    'description' => 'Choose payment method',
+                    'title' => 'Envoyer de l\'argent',
+                    'description' => 'Choisir le mode de paiement',
                     'mobile_money' => 'Mobile money',
-                    'bank_card' => 'Bank card',
+                    'bank_card' => 'Carte bancaire',
                 ],
                 'other_donation' => [
                     'title' => 'Other donation',

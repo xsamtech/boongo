@@ -13,10 +13,10 @@
                                 <input type="hidden" name="user_id" value="{{ request()->get('user_id') }}">
                                 <input type="hidden" name="subscription_id" value="{{ request()->get('subscription_id') }}">
     @csrf
-                                <div class="row g-3 mb-4">
-                                    <div class="col-12">
-                                        <h5 class="h5 m-0 text-uppercase fw-bolder">@lang('miscellaneous.public.about.donate.send_money.title')</h5>
-                                        <p class="small m-0 text-muted">@lang('miscellaneous.public.about.donate.send_money.description')</p>
+                                <div class="row" style="margin: 1rem 0;">
+                                    <div class="col-12 text-center">
+                                        <h3 class="text-uppercase fw-bolder">@lang('miscellaneous.menu.admin.subscription')</h3>
+                                        <h5 class="text-muted">@lang('miscellaneous.public.about.donate.send_money.description')</h5>
                                     </div>
 
                                     <div id="paymentMethod" class="text-center">
@@ -24,13 +24,13 @@
         @if ($type['type_name'] == __('miscellaneous.public.about.donate.send_money.mobile_money'))
                                         <label class="radio-inline">
                                             <input type="radio" name="transaction_type_id" id="mobile_money" value="{{ $type['id'] }}">
-                                            <img src="{{ asset('assets/img/payment-mobile-money.png') }}" alt="{{ __('miscellaneous.public.about.donate.send_money.mobile_money') }}" width="37">
+                                            <img src="{{ asset('assets/img/payment-mobile-money.png') }}" alt="{{ __('miscellaneous.public.about.donate.send_money.mobile_money') }}" width="40" style="vertical-align: middle;">
                                             @lang('miscellaneous.public.about.donate.send_money.mobile_money')
                                         </label>
         @else
                                         <label class="radio-inline">
                                             <input type="radio" name="transaction_type_id" id="bank_card" value="{{ $type['id'] }}">
-                                            <img src="{{ asset('assets/img/payment-credit-card.png') }}" alt="{{ __('miscellaneous.public.about.donate.send_money.bank_card') }}" width="37">
+                                            <img src="{{ asset('assets/img/payment-credit-card.png') }}" alt="{{ __('miscellaneous.public.about.donate.send_money.bank_card') }}" width="40" style="vertical-align: middle;">
                                             @lang('miscellaneous.public.about.donate.send_money.bank_card')
                                         </label>
         @endif
@@ -39,7 +39,7 @@
                                 </div>
 
                                 <div id="phoneNumberForMoney" class="row g-sm-2 g-3">
-                                    <div class="col-sm-5">
+                                    <div class="col-12">
                                         <div class="form-floating pt-0">
                                             <select name="select_country" id="select_country1" class="form-control">
                                                 <option style="font-size: 0.6rem;" selected disabled>@lang('miscellaneous.choose_country')</option>
@@ -52,7 +52,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-sm-7">
+                                    <div class="col-12" style="margin: 1rem 0;">
                                         <div class="form-group">
                                             <label class="sr-only" for="phone_number">@lang('miscellaneous.phone_code')</label>
                                             <div id="phone_code_text1" class="input-group">
@@ -64,7 +64,7 @@
                                     </div>
                                 </div>
 
-                                <button class="btn btn-block dktv-btn-green mt-4 py-3 px-5 rounded-pill shadow-0" type="submit">@lang('miscellaneous.send')</button>
+                                <button class="btn btn-block bng-btn-success" type="submit">@lang('miscellaneous.send')</button>
                             </form>
                         </div>
                         {{-- <div class="row">
