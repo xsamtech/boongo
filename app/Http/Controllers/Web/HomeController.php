@@ -108,6 +108,7 @@ class HomeController extends Controller
     /**
      * GET: About, inner pages
      *
+     * @param  int entity
      * @return \Illuminate\View\View
      */
     public function aboutEntity($entity)
@@ -120,6 +121,16 @@ class HomeController extends Controller
             'entity_title' => __('miscellaneous.public.about.' . $entity . '.title'),
             'entity_menu' => __('miscellaneous.menu.' . $entity),
         ]);
+    }
+
+    /**
+     * Display the subscription form.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function subscribe()
+    {
+        return view('subscribe-test');
     }
 
     /**
