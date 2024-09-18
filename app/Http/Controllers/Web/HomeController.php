@@ -269,8 +269,6 @@ class HomeController extends Controller
 
                 $cart = $this::$api_client_manager::call('POST', getApiURL() . '/cart/purchase/' . $inputs['user_id'], null, $inputs);
 
-                dd($cart);
-
                 if ($cart->success) {
                     return redirect()->route('transaction.waiting', [
                         'success_message' => $cart->data->result_response->order_number . '-' . $inputs['user_id'],
@@ -283,6 +281,8 @@ class HomeController extends Controller
 
             if ($inputs['transaction_type_id'] == $bank_card_type->data->id) {
                 $cart = $this::$api_client_manager::call('POST', getApiURL() . '/cart/purchase/' . $inputs['user_id'], null, $inputs);
+
+                dd($cart);
 
                 if ($cart->success) {
                     return redirect($cart->data->result_response->url)->with('order_number', $cart->data->result_response->order_number);
