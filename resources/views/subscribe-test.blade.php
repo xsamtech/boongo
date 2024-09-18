@@ -24,10 +24,10 @@
                                             <h5 class="text-muted" style="font-weight: 600; margin-bottom: 5rem;">@lang('miscellaneous.public.about.subscribe.send_money.description')</h5>
 
                                             <div class="text-center" style="background-color: #fea; margin-bottom: 2rem; padding: 1rem; border-radius: 2rem;">
-                                                <p style="margin: 0; font-size: 1rem;">
+                                                <p style="margin: 0; font-size: 1.2rem;">
                                                     @lang('miscellaneous.public.about.subscribe.choosen_subscription') <strong>{{ $subscription_type }}</strong>
                                                 </p>
-                                                <p class="lead" style="margin: 0; font-weight: 800;">{{ $subscription->price }} $</p>
+                                                <p class="lead" style="margin: 0; font-weight: 800;">{{ round($subscription->price) }} $</p>
                                             </div>
 
                                             <div id="paymentMethod">
