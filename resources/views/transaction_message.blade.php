@@ -57,7 +57,7 @@
                             </div>
     @endif
 
-                            <a href="{{ route('about.entity', ['entity' => 'terms_of_use', 'app_id' => request()->get('app_id')]) }}" class="btn bng-btn-warning rounded-pill">{{ __('miscellaneous.public.about.terms_of_use.title') }}</a>
+                            <a href="{{ getWebURL() }}/about/terms_of_use?app_id=" class="btn bng-btn-warning rounded-pill">{{ __('miscellaneous.public.about.terms_of_use.title') }}</a>
 @endif
                         </div>
                         {{-- <div class="row">
