@@ -31,7 +31,7 @@
                                                 <p class="lead" style="margin: 0; font-weight: 800;">{{ round($subscription->price) }} $</p>
                                             </div>
 
-                                            <div id="paymentMethod" style="padding-left: 5rem;">
+                                            <div id="paymentMethod" style="padding-left: 1rem;">
     @foreach ($transaction_types as $type)
         @if ($type['type_name'] == __('miscellaneous.public.about.subscribe.send_money.mobile_money'))
                                                 <label class="radio" style="margin-bottom: 1rem;">
