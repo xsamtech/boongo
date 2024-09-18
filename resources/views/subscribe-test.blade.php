@@ -23,11 +23,11 @@
                                             <h3 class="text-uppercase fw-bolder">@lang('miscellaneous.menu.admin.subscription')</h3>
                                             <h5 class="text-muted" style="font-weight: 600; margin-bottom: 5rem;">@lang('miscellaneous.public.about.subscribe.send_money.description')</h5>
 
-                                            <div class="text-center" style="background-color: #fea; padding: 4rem;">
-                                                <p class="lead" style="margin: 0;">
-                                                    @lang('miscellaneous.public.about.donate.choosen_subscription') {{ $subscription_type }}
+                                            <div class="text-center" style="background-color: #fea; margin-bottom: 2rem; padding: 1rem; border-radius: 2rem;">
+                                                <p style="margin: 0; font-size: 1rem;">
+                                                    @lang('miscellaneous.public.about.subscribe.choosen_subscription') <strong>{{ $subscription_type }}</strong>
                                                 </p>
-                                                <p class="lead" style="margin: 0; font-weight: 800;">{{ $subscription->price }}</p>
+                                                <p class="lead" style="margin: 0; font-weight: 800;">{{ $subscription->price }} $</p>
                                             </div>
 
                                             <div id="paymentMethod">
