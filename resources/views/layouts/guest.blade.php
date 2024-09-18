@@ -452,6 +452,18 @@
 		<script src="{{ asset('assets/js/script.custom2.js') }}"></script>
 		<script type="text/javascript">
 			$(function () {
+				/* On select change, update de country phone code */
+				$('#select_country1').on('change', function () {
+					var countryData = $(this).val();
+					var countryDataArray = countryData.split('-');
+					// Get ID and Phone code from splitted data
+					var countryId = countryDataArray[1];
+					var countryPhoneCode = countryDataArray[0];
+
+					$('#phone_code_text1 .text-value').text(countryPhoneCode);
+					$('#country_id1').val(countryId);
+					$('#phone_code1').val(countryPhoneCode);
+				});
 				/* On check, show/hide some blocs */
 				// TRANSACTION TYPE
 				$('#paymentMethod .form-check-input').each(function () {
