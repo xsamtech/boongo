@@ -5,7 +5,7 @@
                 <!-- SECTION -->
                 <div class="section">
                     <!-- container -->
-                    <div class="container" style="padding: 0 2rem;">
+                    <div class="container" style="padding: 0 3rem;">
                         <!-- row -->
                         <div id="subscribe" class="row" style="max-width: 40rem; min-height: 40rem;">
                             <div class="col-12">
