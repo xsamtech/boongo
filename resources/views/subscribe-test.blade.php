@@ -52,7 +52,7 @@
 
                                         <div id="phoneNumberForMoney">
                                             <select name="select_country" id="select_country1" class="form-control" style="margin: 1rem 0;">
-                                                <option style="font-size: 0.6rem;" selected disabled>@lang('miscellaneous.choose_country')</option>
+                                                <option style="font-size: 0.9rem;" selected disabled>@lang('miscellaneous.choose_country')</option>
     @forelse ($countries as $country)
                                                 <option value="{{ $country['country_phone_code'] . '-' . $country['id'] }}">{{ $country['country_name'] }}</option>
     @empty
