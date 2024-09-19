@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Group as ModelsGroup;
 use App\Models\Status as ModelsStatus;
+use App\Models\Subscription as ModelsSubscription;
 use App\Models\User as ModelsUser;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,12 +26,21 @@ class User extends JsonResource
         $subscription_status_group = ModelsGroup::where('group_name', 'Etat de l\'abonnement')->first();
         // Status
         $valid_status = ModelsStatus::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
+        $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
         // Requests
         $roles = Role::collection($this->roles)->sortByDesc('created_at')->toArray();
-        $isSubscribed = ModelsUser::whereHas('subscriptions', function ($q) use ($valid_status) {
+        $is_subscribed = ModelsUser::whereHas('subscriptions', function ($q) use ($valid_status) {
                                         $q->where('subscription_user.user_id', $this->id)
                                             ->where('subscription_user.status_id', $valid_status->id);
                                     })->exists();
+        $pending_subscription = ModelsSubscription::whereHas('users', function ($q) use ($pending_status) {
+                                                        $q->where('subscription_user.user_id', $this->id)
+                                                            ->where('subscription_user.status_id', $pending_status->id);
+                                                    })->orderByDesc('updated_at')->first();
+        $valid_subscription = ModelsSubscription::whereHas('users', function ($q) use ($valid_status) {
+                                                        $q->where('subscription_user.user_id', $this->id)
+                                                            ->where('subscription_user.status_id', $valid_status->id);
+                                                    })->orderByDesc('updated_at')->first();
 
         return [
             'id' => $this->id,
@@ -57,8 +67,10 @@ class User extends JsonResource
             'status' => Status::make($this->status),
             'is_partner' => inArrayR('Partenaire', $roles, 'role_name') ? true : false,
             'roles' => Role::collection($this->roles),
-            'is_subscribed' => $isSubscribed ? true : false,
-            'subscriptions' => Subscription::collection($this->subscriptions)->sortByDesc('created_at')->toArray(),
+            'is_subscribed' => $is_subscribed ? true : false,
+            'pending_subscription' => $pending_subscription,
+            'valid_subscription' => $valid_subscription,
+            // 'subscriptions' => Subscription::collection($this->subscriptions)->sortByDesc('created_at')->toArray(),
             'carts' => Cart::collection($this->carts)->sortByDesc('created_at')->toArray(),
             'payments' => Payment::collection($this->payments)->sortByDesc('created_at')->toArray(),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),

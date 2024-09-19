@@ -188,6 +188,40 @@ class SubscriptionController extends BaseController
     }
 
     /**
+     * Validate a user subscription.
+     *
+     * @param  int $user_id
+     */
+    public function validateSubscription($user_id)
+    {
+        // Groups
+        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
+        // Status
+        $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
+        $valid_status = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
+        // Requests
+        $user = User::find($user_id);
+
+        if (is_null($user)) {
+            return $this->handleError(__('notifications.find_user_404'));
+        }
+
+        $pending_subscription = Subscription::whereHas('users', function ($query) use ($pending_status, $user) {
+                                                $query->where('subscription_user.user_id', $user->id)
+                                                        ->where('subscription_user.status_id', $pending_status->id);
+                                            })->first();
+
+        if ($pending_subscription != null) {
+            $user->subscriptions()->updateExistingPivot($pending_subscription->id, ['status_id' => $valid_status->id]);
+
+            return $this->handleResponse(new ResourcesSubscription($pending_subscription), __('notifications.update_subscription_success'));
+
+        } else {
+            return $this->handleError(__('notifications.find_subscription_404'));
+        }
+    }
+
+    /**
      * Invalidate a user subscription.
      *
      * @param  int $user_id
@@ -206,27 +240,27 @@ class SubscriptionController extends BaseController
             return $this->handleError(__('notifications.find_user_404'));
         }
 
-        $valide_subscription = Subscription::whereHas('users', function ($query) use ($valid_status, $user) {
+        $valid_subscription = Subscription::whereHas('users', function ($query) use ($valid_status, $user) {
                                                 $query->where('subscription_user.user_id', $user->id)
                                                         ->where('subscription_user.status_id', $valid_status->id);
-                                            })->first();
+                                            })->orderByDesc('updated_at')->first();
 
-        if ($valide_subscription != null) {
+        if ($valid_subscription != null) {
             // Create two date instances
             $current_date = date('Y-m-d h:i:s');
-            $subscription_date = $valide_subscription->users()->first()->pivot->created_at->format('Y-m-d h:i:s');
+            $subscription_date = $valid_subscription->users()->first()->pivot->created_at->format('Y-m-d h:i:s');
             $current_date_instance = Carbon::parse($current_date);
             $subscription_date_instance = Carbon::parse($subscription_date);
             // Determine the difference between dates
             $diffInHours = $current_date_instance->diffInHours($subscription_date_instance);
 
-            if ($diffInHours < $valide_subscription->number_of_hours) {
-                return $this->handleError(new ResourcesSubscription($valide_subscription), __('notifications.invalidate_subscription_failed'), 401);
+            if ($diffInHours < $valid_subscription->number_of_hours) {
+                return $this->handleError(new ResourcesSubscription($valid_subscription), __('notifications.invalidate_subscription_failed'), 401);
 
             } else {
-                $user->subscriptions()->updateExistingPivot($valide_subscription->id, ['status_id' => $expired_status->id]);
+                $user->subscriptions()->updateExistingPivot($valid_subscription->id, ['status_id' => $expired_status->id]);
 
-                return $this->handleResponse(new ResourcesSubscription($valide_subscription), __('notifications.update_subscription_success'));
+                return $this->handleResponse(new ResourcesSubscription($valid_subscription), __('notifications.update_subscription_success'));
             }
 
         } else {

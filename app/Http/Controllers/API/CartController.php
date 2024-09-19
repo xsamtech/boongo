@@ -299,7 +299,7 @@ class CartController extends BaseController
         // Status
         $ongoing_status = Status::where([['status_name->fr', 'En cours'], ['group_id', $cart_status_group->id]])->first();
         $paid_status = Status::where([['status_name->fr', 'Payé'], ['group_id', $cart_status_group->id]])->first();
-        $valid_status = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
+        $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
         // Types
         $mobile_money_type = Type::where([['type_name->fr', 'Mobile money'], ['group_id', $payment_type_group->id]])->first();
         $bank_card_type = Type::where([['type_name->fr', 'Carte bancaire'], ['group_id', $payment_type_group->id]])->first();
@@ -399,7 +399,7 @@ class CartController extends BaseController
                     }
 
                     // The subscription is created only if the processing succeed
-                    $current_user->subscriptions()->attach($subscription->id, ['payment_id' => $payment->id, 'status_id' => $valid_status->id]);
+                    $current_user->subscriptions()->attach($subscription->id, ['payment_id' => $payment->id, 'status_id' => $pending_status->id]);
 
                     // The cart is updated only if the processing succeed
                     $random_string = (string) random_int(1000000, 9999999);
@@ -483,7 +483,7 @@ class CartController extends BaseController
                     }
 
                     // The subscription is created only if the processing succeed
-                    $current_user->subscriptions()->attach($subscription->id, ['payment_id' => $payment->id, 'status_id' => $valid_status->id]);
+                    $current_user->subscriptions()->attach($subscription->id, ['payment_id' => $payment->id, 'status_id' => $pending_status->id]);
 
                     // The cart is updated only if the processing succeed
                     $random_string = (string) random_int(1000000, 9999999);
