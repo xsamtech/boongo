@@ -26,7 +26,7 @@ class User extends JsonResource
         $subscription_status_group = ModelsGroup::where('group_name', 'Etat de l\'abonnement')->first();
         // Status
         $valid_status = ModelsStatus::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
-        $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
+        $pending_status = ModelsStatus::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
         // Requests
         $roles = Role::collection($this->roles)->sortByDesc('created_at')->toArray();
         $is_subscribed = ModelsUser::whereHas('subscriptions', function ($q) use ($valid_status) {
