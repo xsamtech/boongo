@@ -919,6 +919,7 @@ class UserController extends BaseController
         */
         $status_activated = Status::where('status_name->fr', 'Activé')->first();
         $status_disabled = Status::where('status_name->fr', 'Désactivé')->first();
+        $status_blocked = Status::where('status_name->fr', 'Bloqué')->first();
         $status_unread = Status::where('status_name->fr', 'Non lue')->first();
         $type_user_return = Type::where('type_name->fr', 'Utilisateur de retour')->first();
 
@@ -940,6 +941,14 @@ class UserController extends BaseController
             // update "status_id" column
             $user->update([
                 'status_id' => $status_disabled->id,
+                'updated_at' => now()
+            ]);
+        }
+
+        if ($status_id == $status_blocked->id) {
+            // update "status_id" column
+            $user->update([
+                'status_id' => $status_blocked->id,
                 'updated_at' => now()
             ]);
         }

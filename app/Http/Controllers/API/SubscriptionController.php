@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Subscription;
-use Illuminate\Http\Request;
-use App\Http\Resources\Subscription as ResourcesSubscription;
 use App\Models\Group;
 use App\Models\Payment;
 use App\Models\Status;
+use App\Models\Subscription;
 use App\Models\User;
+use Illuminate\Http\Request;
+use App\Http\Resources\Subscription as ResourcesSubscription;
+use App\Http\Resources\User as ResourcesUser;
 use Carbon\Carbon;
 
 /**
@@ -222,12 +223,12 @@ class SubscriptionController extends BaseController
                 if ($user_payment->status_id == $done_status->id) {
                     $user->subscriptions()->updateExistingPivot($pending_subscription->id, ['status_id' => $valid_status->id]);
 
-                    return $this->handleResponse(new ResourcesSubscription($pending_subscription), __('notifications.update_subscription_success'));
+                    return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
                 }
             }
 
         } else {
-            return $this->handleError(__('notifications.find_subscription_404'));
+            return $this->handleError(new ResourcesUser($user), __('notifications.find_subscription_404'), 404);
         }
     }
 
@@ -265,16 +266,16 @@ class SubscriptionController extends BaseController
             $diffInHours = $current_date_instance->diffInHours($subscription_date_instance);
 
             if ($diffInHours < $valid_subscription->number_of_hours) {
-                return $this->handleError(new ResourcesSubscription($valid_subscription), __('notifications.invalidate_subscription_failed'), 401);
+                return $this->handleError(new ResourcesUser($user), __('notifications.invalidate_subscription_failed'), 400);
 
             } else {
                 $user->subscriptions()->updateExistingPivot($valid_subscription->id, ['status_id' => $expired_status->id]);
 
-                return $this->handleResponse(new ResourcesSubscription($valid_subscription), __('notifications.update_subscription_success'));
+                return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
             }
 
         } else {
-            return $this->handleError(__('notifications.find_subscription_404'));
+            return $this->handleError(new ResourcesUser($user), __('notifications.find_subscription_404'), 404);
         }
     }
 }
