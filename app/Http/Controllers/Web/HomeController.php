@@ -284,8 +284,6 @@ class HomeController extends Controller
             if ($inputs['transaction_type_id'] == $bank_card_type->data->id) {
                 $cart = $this::$api_client_manager::call('POST', getApiURL() . '/cart/purchase/' . $inputs['user_id'], $request->api_token, $inputs);
 
-                dd($cart);
-
                 if ($cart->success) {
                     return redirect($cart->data->result_response->url)->with('order_number', $cart->data->result_response->order_number);
 
