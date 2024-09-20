@@ -6,6 +6,7 @@ use App\Models\Subscription;
 use Illuminate\Http\Request;
 use App\Http\Resources\Subscription as ResourcesSubscription;
 use App\Models\Group;
+use App\Models\Payment;
 use App\Models\Status;
 use App\Models\User;
 use Carbon\Carbon;
@@ -196,9 +197,11 @@ class SubscriptionController extends BaseController
     {
         // Groups
         $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
+        $payment_status_group = Group::where('group_name', 'Etat du paiement')->first();
         // Status
         $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
         $valid_status = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
+        $done_status = Status::where([['status_name->fr', 'Effectué'], ['group_id', $payment_status_group->id]])->first();
         // Requests
         $user = User::find($user_id);
 
@@ -212,9 +215,16 @@ class SubscriptionController extends BaseController
                                             })->first();
 
         if ($pending_subscription != null) {
-            $user->subscriptions()->updateExistingPivot($pending_subscription->id, ['status_id' => $valid_status->id]);
+            $subscription_pivot = $pending_subscription->users()->find($user->id)->pivot;
+            $user_payment = Payment::where([['user_id', $user->id], ['created_at', $subscription_pivot->created_at]])->first();
 
-            return $this->handleResponse(new ResourcesSubscription($pending_subscription), __('notifications.update_subscription_success'));
+            if ($user_payment != null) {
+                if ($user_payment->status_id == $done_status->id) {
+                    $user->subscriptions()->updateExistingPivot($pending_subscription->id, ['status_id' => $valid_status->id]);
+
+                    return $this->handleResponse(new ResourcesSubscription($pending_subscription), __('notifications.update_subscription_success'));
+                }
+            }
 
         } else {
             return $this->handleError(__('notifications.find_subscription_404'));
