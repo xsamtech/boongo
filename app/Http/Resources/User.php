@@ -29,6 +29,7 @@ class User extends JsonResource
         $valid_status = ModelsStatus::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
         $pending_status = ModelsStatus::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
         // Requests
+        $current_user = ModelsUser::find($this->id);
         $roles = Role::collection($this->roles)->sortByDesc('created_at')->toArray();
         $is_subscribed = ModelsUser::whereHas('subscriptions', function ($q) use ($valid_status) {
                                         $q->where('subscription_user.user_id', $this->id)
@@ -43,6 +44,7 @@ class User extends JsonResource
                                                             ->where('subscription_user.status_id', $valid_status->id);
                                                     })->orderByDesc('updated_at')->first();
         $recent_payment = ModelsPayment::where('user_id', $this->id)->orderByDesc('updated_at')->first();
+        // $payment = ModelsPayment::find($current_user->subscriptions()->orderByDesc('updated_at')->first()->pivot->payment_id);
 
         return [
             'id' => $this->id,
