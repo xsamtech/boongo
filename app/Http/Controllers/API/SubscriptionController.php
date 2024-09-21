@@ -211,18 +211,20 @@ class SubscriptionController extends BaseController
             return $this->handleError(__('notifications.find_user_404'));
         }
 
-        $pending_subscription = Subscription::whereHas('users', function ($query) use ($pending_status, $user) {
-                                                $query->where('subscription_user.user_id', $user->id)
-                                                        ->where('subscription_user.status_id', $pending_status->id);
-                                            })->orderBy('updated_at', 'desc')->first();
+        // $pending_subscription = Subscription::whereHas('users', function ($query) use ($pending_status, $user) {
+        //                                         $query->where('subscription_user.user_id', $user->id)
+        //                                                 ->where('subscription_user.status_id', $pending_status->id);
+        //                                     })->orderBy('updated_at', 'desc')->first();
+        $pending_subscription_user = DB::table('subscription_user')->where([['user_id', $user->id], ['status_id', $pending_status->id]])->latest()->first();
 
-        if ($pending_subscription != null) {
-            $subscription_pivot = $pending_subscription->users()->find($user->id)->pivot;
-            $user_payment = Payment::where([['user_id', $user->id], ['created_at', $subscription_pivot->created_at]])->first();
+        if ($pending_subscription_user != null) {
+            // $subscription_pivot = $pending_subscription->users()->find($user->id)->pivot;
+            $user_payment = Payment::find($pending_subscription_user->payment_id);
 
             if ($user_payment != null) {
                 if ($user_payment->status_id == $done_status->id) {
-                    $user->subscriptions()->updateExistingPivot($pending_subscription->id, ['status_id' => $valid_status->id]);
+                    // $user->subscriptions()->updateExistingPivot($pending_subscription->id, ['status_id' => $valid_status->id]);
+                    $pending_subscription_user->update(['status_id' => $valid_status->id]);
 
                     return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
                 }
@@ -270,7 +272,7 @@ class SubscriptionController extends BaseController
             $diffInHours = $current_date_instance->diffInHours($subscription_user_date_instance);
 
             if ($diffInHours < $subscription->number_of_hours) {
-                return $this->handleError(new ResourcesUser($user), __('notifications.invalidate_subscription_failed' . '(TimeRemaining: '. $diffInHours .')'), 400);
+                return $this->handleError(new ResourcesUser($user), __('notifications.invalidate_subscription_failed' . ' (TimeRemaining: '. $diffInHours .')'), 400);
 
             } else {
                 // $user->subscriptions()->updateExistingPivot($valid_subscription->id, ['status_id' => $expired_status->id]);
