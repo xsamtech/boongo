@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Group as ModelsGroup;
+use App\Models\Payment as ModelsPayment;
 use App\Models\Status as ModelsStatus;
 use App\Models\Subscription as ModelsSubscription;
 use App\Models\User as ModelsUser;
@@ -41,6 +42,7 @@ class User extends JsonResource
                                                         $q->where('subscription_user.user_id', $this->id)
                                                             ->where('subscription_user.status_id', $valid_status->id);
                                                     })->orderByDesc('updated_at')->first();
+        $recent_payment = ModelsPayment::where('user_id', $this->id)->orderByDesc('updated_at')->first();
 
         return [
             'id' => $this->id,
@@ -72,7 +74,8 @@ class User extends JsonResource
             'valid_subscription' => $valid_subscription,
             // 'subscriptions' => Subscription::collection($this->subscriptions)->sortByDesc('created_at')->toArray(),
             'carts' => Cart::collection($this->carts)->sortByDesc('created_at')->toArray(),
-            'payments' => Payment::collection($this->payments)->sortByDesc('created_at')->toArray(),
+            'recent_payment' => $recent_payment,
+            // 'payments' => Payment::collection($this->payments)->sortByDesc('created_at')->toArray(),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s')
         ];
