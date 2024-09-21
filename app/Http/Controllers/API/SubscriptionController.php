@@ -256,23 +256,25 @@ class SubscriptionController extends BaseController
         //                                         $query->where('subscription_user.user_id', $user->id)
         //                                                 ->where('subscription_user.status_id', $valid_status->id);
         //                                     })->orderBy('updated_at', 'desc')->first();
-        $valid_subscription = DB::table('subscription_user')->where([['user_id', $user->id], ['status_id', $valid_status->id]])->latest()->first();
+        $valid_subscription_user = DB::table('subscription_user')->where([['user_id', $user->id], ['status_id', $valid_status->id]])->latest()->first();
 
-        if ($valid_subscription != null) {
+        if ($valid_subscription_user != null) {
+            $subscription = Subscription::find($valid_subscription_user->subscription_id);
             // Create two date instances
             $current_date = date('Y-m-d h:i:s');
             // $subscription_date = $valid_subscription->users()->pivot->created_at->format('Y-m-d h:i:s');
-            $subscription_date = $valid_subscription->created_at;
+            $subscription_user_date = $valid_subscription_user->created_at;
             $current_date_instance = Carbon::parse($current_date);
-            $subscription_date_instance = Carbon::parse($subscription_date);
+            $subscription_user_date_instance = Carbon::parse($subscription_user_date);
             // Determine the difference between dates
-            $diffInHours = $current_date_instance->diffInHours($subscription_date_instance);
+            $diffInHours = $current_date_instance->diffInHours($subscription_user_date_instance);
 
-            if ($diffInHours < $valid_subscription->number_of_hours) {
-                return $this->handleError(new ResourcesUser($user), __('notifications.invalidate_subscription_failed' . '(< $diffInHours)'), 400);
+            if ($diffInHours < $subscription->number_of_hours) {
+                return $this->handleError(new ResourcesUser($user), __('notifications.invalidate_subscription_failed' . '(TimeRemaining: '. $diffInHours .')'), 400);
 
             } else {
-                $user->subscriptions()->updateExistingPivot($valid_subscription->id, ['status_id' => $expired_status->id]);
+                // $user->subscriptions()->updateExistingPivot($valid_subscription->id, ['status_id' => $expired_status->id]);
+                $valid_subscription_user->update(['status_id' => $expired_status->id]);
 
                 return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
             }
