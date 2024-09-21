@@ -262,7 +262,7 @@ class SubscriptionController extends BaseController
             // Create two date instances
             $current_date = date('Y-m-d h:i:s');
             // $subscription_date = $valid_subscription->users()->pivot->created_at->format('Y-m-d h:i:s');
-            $subscription_date = $valid_subscription->created_at->format('Y-m-d h:i:s');
+            $subscription_date = $valid_subscription->created_at;
             $current_date_instance = Carbon::parse($current_date);
             $subscription_date_instance = Carbon::parse($subscription_date);
             // Determine the difference between dates
