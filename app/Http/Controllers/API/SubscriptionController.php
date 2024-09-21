@@ -213,7 +213,7 @@ class SubscriptionController extends BaseController
         $pending_subscription = Subscription::whereHas('users', function ($query) use ($pending_status, $user) {
                                                 $query->where('subscription_user.user_id', $user->id)
                                                         ->where('subscription_user.status_id', $pending_status->id);
-                                            })->latest()->first();
+                                            })->orderBy('updated_at', 'desc')->first();
 
         if ($pending_subscription != null) {
             $subscription_pivot = $pending_subscription->users()->find($user->id)->pivot;
@@ -254,7 +254,7 @@ class SubscriptionController extends BaseController
         $valid_subscription = Subscription::whereHas('users', function ($query) use ($valid_status, $user) {
                                                 $query->where('subscription_user.user_id', $user->id)
                                                         ->where('subscription_user.status_id', $valid_status->id);
-                                            })->latest()->first();
+                                            })->orderBy('updated_at', 'desc')->first();
 
         if ($valid_subscription != null) {
             // Create two date instances
