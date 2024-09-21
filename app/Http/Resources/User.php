@@ -44,6 +44,7 @@ class User extends JsonResource
                                                             ->where('subscription_user.status_id', $valid_status->id);
                                                     })->orderByDesc('updated_at')->first();
         $recent_payment = ModelsPayment::where('user_id', $this->id)->orderByDesc('updated_at')->first();
+        $payment = new Payment($recent_payment);
         // $payment = ModelsPayment::find($current_user->subscriptions()->orderByDesc('updated_at')->first()->pivot->payment_id);
 
         return [
@@ -76,7 +77,7 @@ class User extends JsonResource
             'valid_subscription' => $valid_subscription,
             // 'subscriptions' => Subscription::collection($this->subscriptions)->sortByDesc('created_at')->toArray(),
             'carts' => Cart::collection($this->carts)->sortByDesc('created_at')->toArray(),
-            'recent_payment' => $recent_payment,
+            'recent_payment' => $payment,
             // 'payments' => Payment::collection($this->payments)->sortByDesc('created_at')->toArray(),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s')
