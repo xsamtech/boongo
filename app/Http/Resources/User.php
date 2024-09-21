@@ -38,14 +38,14 @@ class User extends JsonResource
         $pending_subscription = ModelsSubscription::whereHas('users', function ($q) use ($pending_status) {
                                                         $q->where('subscription_user.user_id', $this->id)
                                                             ->where('subscription_user.status_id', $pending_status->id);
-                                                    })->orderByDesc('updated_at')->first();
+                                                    })->latest()->first();
         $valid_subscription = ModelsSubscription::whereHas('users', function ($q) use ($valid_status) {
                                                         $q->where('subscription_user.user_id', $this->id)
                                                             ->where('subscription_user.status_id', $valid_status->id);
-                                                    })->orderByDesc('updated_at')->first();
-        $recent_payment = ModelsPayment::where('user_id', $this->id)->orderByDesc('updated_at')->first();
+                                                    })->latest()->first();
+        $recent_payment = ModelsPayment::where('user_id', $this->id)->latest()->first();
         $payment = new Payment($recent_payment);
-        // $payment = ModelsPayment::find($current_user->subscriptions()->orderByDesc('updated_at')->first()->pivot->payment_id);
+        // $payment = ModelsPayment::find($current_user->subscriptions()->latest()->first()->pivot->payment_id);
 
         return [
             'id' => $this->id,
