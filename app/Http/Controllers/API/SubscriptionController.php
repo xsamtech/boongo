@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\Subscription as ResourcesSubscription;
 use App\Http\Resources\User as ResourcesUser;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @author Xanders
@@ -251,22 +252,24 @@ class SubscriptionController extends BaseController
             return $this->handleError(__('notifications.find_user_404'));
         }
 
-        $valid_subscription = Subscription::whereHas('users', function ($query) use ($valid_status, $user) {
-                                                $query->where('subscription_user.user_id', $user->id)
-                                                        ->where('subscription_user.status_id', $valid_status->id);
-                                            })->orderBy('updated_at', 'desc')->first();
+        // $valid_subscription = Subscription::whereHas('users', function ($query) use ($valid_status, $user) {
+        //                                         $query->where('subscription_user.user_id', $user->id)
+        //                                                 ->where('subscription_user.status_id', $valid_status->id);
+        //                                     })->orderBy('updated_at', 'desc')->first();
+        $valid_subscription = DB::table('subscription_user')->where([['user_id', $user->id], ['status_id', $valid_status->id]])->latest()->first();
 
         if ($valid_subscription != null) {
             // Create two date instances
             $current_date = date('Y-m-d h:i:s');
-            $subscription_date = $valid_subscription->users()->where('user_id', $user->id)->orderBy('created_at', 'desc')->pivot->created_at->format('Y-m-d h:i:s');
+            // $subscription_date = $valid_subscription->users()->pivot->created_at->format('Y-m-d h:i:s');
+            $subscription_date = $valid_subscription->created_at->format('Y-m-d h:i:s');
             $current_date_instance = Carbon::parse($current_date);
             $subscription_date_instance = Carbon::parse($subscription_date);
             // Determine the difference between dates
             $diffInHours = $current_date_instance->diffInHours($subscription_date_instance);
 
             if ($diffInHours < $valid_subscription->number_of_hours) {
-                return $this->handleError(new ResourcesUser($user), __('notifications.invalidate_subscription_failed'), 400);
+                return $this->handleError(new ResourcesUser($user), __('notifications.invalidate_subscription_failed' . '(< $diffInHours)'), 400);
 
             } else {
                 $user->subscriptions()->updateExistingPivot($valid_subscription->id, ['status_id' => $expired_status->id]);
