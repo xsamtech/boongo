@@ -278,7 +278,7 @@ class SubscriptionController extends BaseController
                 $user_payment = Payment::find($valid_subscription_user->payment_id);
 
                 // $user->subscriptions()->updateExistingPivot($valid_subscription->id, ['status_id' => $expired_status->id]);
-                DB::table('subscription_user')->where('user_id', $user->id)->where('payment_id', $user_payment->id)->update(['status_id' => $valid_status->id]);
+                DB::table('subscription_user')->where('user_id', $user->id)->where('payment_id', $user_payment->id)->update(['status_id' => $expired_status->id]);
 
                 return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
             }
