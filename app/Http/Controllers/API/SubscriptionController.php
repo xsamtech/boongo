@@ -270,7 +270,7 @@ class SubscriptionController extends BaseController
             $subscription_user_date_instance = Carbon::parse($subscription_user_date);
             // Determine the difference between dates
             $diff = $current_date_instance->diff($subscription_user_date_instance);
-            $diffInHours = $diff->days * 24 + $diff->i / 60;
+            $diffInHours = $diff->days * 24 + $diff->h + $diff->i / 60;
 
             if ($diffInHours < $subscription->number_of_hours) {
                 return $this->handleError(new ResourcesUser($user), __('notifications.invalidate_subscription_failed') . ' (TimeRemaining: '. $diffInHours .')', 400);
