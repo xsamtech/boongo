@@ -272,7 +272,7 @@ class SubscriptionController extends BaseController
             $diff = $current_date_instance->diff($subscription_user_date_instance);
             $diffInHours = $diff->days * 24 + $diff->h + $diff->i / 60;
 
-            if ($diffInHours < $subscription->number_of_hours) {
+            if (($subscription->number_of_hours - $diffInHours) > 0) {
                 return $this->handleError(new ResourcesUser($user), __('notifications.invalidate_subscription_failed') . ' (TimeRemaining: '. $diffInHours .')', 400);
 
             } else {
