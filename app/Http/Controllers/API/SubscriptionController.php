@@ -224,7 +224,7 @@ class SubscriptionController extends BaseController
             if ($user_payment != null) {
                 if ($user_payment->status_id == $done_status->id) {
                     // $user->subscriptions()->updateExistingPivot($pending_subscription->id, ['status_id' => $valid_status->id]);
-                    $pending_subscription_user->update(['status_id' => $valid_status->id]);
+                    DB::table('subscription_user')->where('user_id', $user->id)->where('payment_id', $user_payment->id)->update(['status_id' => $valid_status->id]);
 
                     return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
                 }
@@ -275,8 +275,10 @@ class SubscriptionController extends BaseController
                 return $this->handleError(new ResourcesUser($user), __('notifications.invalidate_subscription_failed' . ' (TimeRemaining: '. $diffInHours .')'), 400);
 
             } else {
+                $user_payment = Payment::find($valid_subscription_user->payment_id);
+
                 // $user->subscriptions()->updateExistingPivot($valid_subscription->id, ['status_id' => $expired_status->id]);
-                $valid_subscription_user->update(['status_id' => $expired_status->id]);
+                DB::table('subscription_user')->where('user_id', $user->id)->where('payment_id', $user_payment->id)->update(['status_id' => $valid_status->id]);
 
                 return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
             }
