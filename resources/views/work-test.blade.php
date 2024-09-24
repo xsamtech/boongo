@@ -8,7 +8,6 @@
         <meta name="bng-visitor" content="{{ !empty(Auth::user()) ? Auth::user()->id : null }}">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <meta name="bng-ref" content="{{ !empty(Auth::user()) ? Auth::user()->api_token : null }}">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <!-- ============ Favicon ============ -->
         <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/img/favicon/apple-touch-icon.png') }}">
@@ -52,7 +51,7 @@
         <title>@lang('miscellaneous.admin.work.add')</title>
     </head>
 	<body>
-        <span class="menu-sidebar2__content d-none"></span>
+        <span class="menu-sidebar2__content perfect-scrollbar d-none"></span>
         <!-- MODALS-->
         <!-- ### Crop user image ### -->
         <div class="modal fade" id="cropModalUser" tabindex="-1" aria-labelledby="cropModalUserLabel" aria-hidden="true">

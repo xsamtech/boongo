@@ -54,7 +54,7 @@ class UserController extends BaseController
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
             'surname' => $request->surname,
-            'gender' => $request->gender,
+            'gender' => isset($request->gender) ? $request->password : 'M',
             'birthdate' => $request->birthdate,
             'city' => $request->city,
             'address_1' => $request->address_1,
