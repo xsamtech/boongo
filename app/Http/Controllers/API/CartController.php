@@ -295,11 +295,13 @@ class CartController extends BaseController
         // Groups
         $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
         $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
+        $payment_status_group = Group::where('group_name', 'Etat du paiement')->first();
         $payment_type_group = Group::where('group_name', 'Type de paiement')->first();
         // Status
         $ongoing_status = Status::where([['status_name->fr', 'En cours'], ['group_id', $cart_status_group->id]])->first();
         $paid_status = Status::where([['status_name->fr', 'Payé'], ['group_id', $cart_status_group->id]])->first();
         $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
+        $in_progress_status = Status::where([['status_name->fr', 'En cours'], ['group_id', $payment_status_group->id]])->first();
         // Types
         $mobile_money_type = Type::where([['type_name->fr', 'Mobile money'], ['group_id', $payment_type_group->id]])->first();
         $bank_card_type = Type::where([['type_name->fr', 'Carte bancaire'], ['group_id', $payment_type_group->id]])->first();
@@ -393,7 +395,7 @@ class CartController extends BaseController
                             'phone' => $request->other_phone,
                             'currency' => 'USD',
                             'type_id' => $request->transaction_type_id,
-                            'status_id' => $code,
+                            'status_id' => $in_progress_status->id,
                             'user_id' => $current_user->id
                         ]);
                     }
@@ -477,7 +479,7 @@ class CartController extends BaseController
                             'phone' => $request->other_phone,
                             'currency' => 'USD',
                             'type_id' => $request->transaction_type_id,
-                            'status_id' => $code,
+                            'status_id' => $in_progress_status->id,
                             'user_id' => $current_user->id
                         ]);
                     }
