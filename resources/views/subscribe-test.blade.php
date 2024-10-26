@@ -70,7 +70,11 @@
                                             </div>
                                         </div>
 
-                                        <button class="btn btn-block bng-btn-success" type="submit">@lang('miscellaneous.send')</button>
+                                        <button class="btn btn-block bng-btn-success" type="submit" onclick="document.getElementById('loading').style.display = 'block';">@lang('miscellaneous.send')</button>
+
+                                        <div id="loading" class="d-flex justify-content-center text-center" style="display: none;">
+                                            <img src="{{ asset('assets/img/ajax-loading.gif') }}" alt="" width="70">
+                                        </div>
                                     </form>
 
                                 </div>
