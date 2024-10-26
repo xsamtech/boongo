@@ -70,7 +70,7 @@
                                             </div>
                                         </div>
 
-                                        <button class="btn btn-block bng-btn-success" type="submit" onclick="event.preventDefault(); this.setAttribute('disabled', 'disabled')">@lang('miscellaneous.send')</button>
+                                        <button class="btn btn-block bng-btn-success" type="submit">@lang('miscellaneous.send')</button>
                                     </form>
 
                                 </div>
