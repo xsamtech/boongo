@@ -51,7 +51,7 @@
 
         <!-- ============ Custom CSS ============ -->
         <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/style.custom.css') }}">
-@if (request()->has('app_id'))
+@if (request()->has('app_id') || !empty($exception))
         <style>
             .detect-webview { display: none;!important }
         </style>
@@ -365,7 +365,7 @@
 @yield('guest-content')
 
 		<!-- FOOTER -->
-		<footer id="footer" class="mt-5{{ Route::is('transaction.waiting') || Route::is('transaction.message') ? ' detect-webview' : '' }}">
+		<footer id="footer" class="mt-5{{ Route::is('transaction.waiting') || Route::is('transaction.message') || !empty($exception) ? ' detect-webview' : '' }}">
 			<!-- top footer -->
 			<div class="section detect-webview">
 				<!-- container -->
