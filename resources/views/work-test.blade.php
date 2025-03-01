@@ -54,7 +54,7 @@
         <span class="menu-sidebar2__content perfect-scrollbar d-none"></span>
         <!-- MODALS-->
         <!-- ### Crop user image ### -->
-        <div class="modal fade" id="cropModalUser" tabindex="-1" aria-labelledby="cropModalUserLabel" aria-hidden="true">
+        <div class="modal fade" id="cropModalUser" tabindex="-1" aria-labelledby="cropModalUserLabel"> <!-- aria-hidden="true"-->
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -80,8 +80,8 @@
             </div>
         </div>
 
-        <!-- ### Crop other image ### -->
-        <div class="modal fade" id="cropModalOther" tabindex="-1" aria-labelledby="cropModalOtherLabel" aria-hidden="true" data-bs-backdrop="{{ Route::is('branch.home') ? 'static' : 'true' }}">
+        <!-- ### Crop other image ###  aria-hidden="true" -->
+        <div class="modal fade" id="cropModalOther" tabindex="-1" aria-labelledby="cropModalOtherLabel" data-bs-backdrop="{{ Route::is('branch.home') ? 'static' : 'true' }}">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
