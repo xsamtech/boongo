@@ -374,7 +374,7 @@
                             }
 
                             $('form#workData .request-message').addClass('text-danger').html((xhr.responseJSON ? xhr.responseJSON.message : 'Error'));
-							console.log((xhr.responseJSON ? xhr.responseJSON.message : `Error: ${xhr}`));
+							console.log((xhr.responseJSON ? xhr.responseJSON.message : `Error: ${JSON.stringify(xhr)}`));
 							console.log(xhr.status);
 							console.log(error);
 							console.log(status_description);
