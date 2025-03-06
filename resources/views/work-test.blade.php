@@ -347,7 +347,7 @@
                     }
 
                     $.ajax({
-						headers: { 'Authorization': 'Bearer 4|9dQHWw3Jzh4BAsm5sBjMtH8Fz4oWlcvVQYQqLyru8b38b0a9', 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
+						headers: { 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
 						type: 'POST',
 						contentType: 'multipart/form-data',
 						url: apiHost + '/work',
