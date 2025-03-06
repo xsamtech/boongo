@@ -373,8 +373,8 @@
                                 $('form#workData .request-message').removeClass('text-success');
                             }
 
-                            $('form#workData .request-message').addClass('text-danger').html(xhr.responseJSON.message);
-							console.log(xhr.responseJSON);
+                            $('form#workData .request-message').addClass('text-danger').html((xhr.responseJSON ? xhr.responseJSON.message : 'Error'));
+							console.log((xhr.responseJSON ? xhr.responseJSON.message : `Error: ${xhr}`));
 							console.log(xhr.status);
 							console.log(error);
 							console.log(status_description);
