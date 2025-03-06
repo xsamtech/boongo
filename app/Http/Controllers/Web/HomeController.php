@@ -46,53 +46,55 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('type')) {
-            if ($request->get('type') == 'empty') {
-                return redirect('/');
-            }
+        if ($request->has('admin')) {
+            if ($request->has('type')) {
+                if ($request->get('type') == 'empty') {
+                    return redirect('/');
+                }
 
-            // Group names
-            $work_type_group = 'Type d\'œuvre';
-            // All types by group
-            $types_by_group = $this::$api_client_manager::call('GET', getApiURL() . '/type/find_by_group/' . $work_type_group);
-            // All categories by group
-            $categories = $this::$api_client_manager::call('GET', getApiURL() . '/category');
-            $works = $this::$api_client_manager::call('GET', getApiURL()  . '/work/find_all_by_type/fr/' . $request->get('type') . ($request->has('page') ? '?page=' . $request->get('page') : ''));
+                // Group names
+                $work_type_group = 'Type d\'œuvre';
+                // All types by group
+                $types_by_group = $this::$api_client_manager::call('GET', getApiURL() . '/type/find_by_group/' . $work_type_group);
+                // All categories by group
+                $categories = $this::$api_client_manager::call('GET', getApiURL() . '/category');
+                $works = $this::$api_client_manager::call('GET', getApiURL()  . '/work/find_all_by_type/fr/' . $request->get('type') . ($request->has('page') ? '?page=' . $request->get('page') : ''));
 
-            if ($works->success) {
+                if ($works->success) {
+                    return view('work-test', [
+                        'types' => $types_by_group->data,
+                        'categories' => $categories->data,
+                        'works' => $works->data,
+                        'lastPage' => $works->lastPage,
+                    ]);
+
+                } else {
+                    $all_works = $this::$api_client_manager::call('GET', getApiURL()  . '/work' . ($request->has('page') ? '?page=' . $request->get('page') : ''));
+
+                    return view('work-test', [
+                        'types' => $types_by_group->data,
+                        'categories' => $categories->data,
+                        'works' => $all_works->data,
+                        'lastPage' => $all_works->lastPage,
+                    ]);
+                }
+
+            } else {
+                // Group names
+                $work_type_group = 'Type d\'œuvre';
+                // All types by group
+                $types_by_group = $this::$api_client_manager::call('GET', getApiURL() . '/type/find_by_group/' . $work_type_group);
+                // All categories by group
+                $categories = $this::$api_client_manager::call('GET', getApiURL() . '/category');
+                $works = $this::$api_client_manager::call('GET', getApiURL()  . '/work' . ($request->has('page') ? '?page=' . $request->get('page') : ''));
+
                 return view('work-test', [
                     'types' => $types_by_group->data,
                     'categories' => $categories->data,
                     'works' => $works->data,
                     'lastPage' => $works->lastPage,
                 ]);
-
-            } else {
-                $all_works = $this::$api_client_manager::call('GET', getApiURL()  . '/work' . ($request->has('page') ? '?page=' . $request->get('page') : ''));
-
-                return view('work-test', [
-                    'types' => $types_by_group->data,
-                    'categories' => $categories->data,
-                    'works' => $all_works->data,
-                    'lastPage' => $all_works->lastPage,
-                ]);
             }
-
-        } else {
-            // Group names
-            $work_type_group = 'Type d\'œuvre';
-            // All types by group
-            $types_by_group = $this::$api_client_manager::call('GET', getApiURL() . '/type/find_by_group/' . $work_type_group);
-            // All categories by group
-            $categories = $this::$api_client_manager::call('GET', getApiURL() . '/category');
-            $works = $this::$api_client_manager::call('GET', getApiURL()  . '/work' . ($request->has('page') ? '?page=' . $request->get('page') : ''));
-
-            return view('work-test', [
-                'types' => $types_by_group->data,
-                'categories' => $categories->data,
-                'works' => $works->data,
-                'lastPage' => $works->lastPage,
-            ]);
         }
     }
 
