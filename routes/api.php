@@ -17,7 +17,7 @@ Route::middleware(['auth:sanctum', 'localization'])->group(function () {
     Route::apiResource('status', 'App\Http\Controllers\API\StatusController')->except(['search', 'findByGroup']);
     Route::apiResource('type', 'App\Http\Controllers\API\TypeController')->except(['search', 'findByGroup']);
     Route::apiResource('category', 'App\Http\Controllers\API\CategoryController')->except(['search', 'findByGroup', 'allUsedInWorks', 'allUsedInWorksType']);
-    Route::apiResource('work', 'App\Http\Controllers\API\WorkController')->except(['index', 'show', 'trends', 'search', 'findAllByUser', 'findAllByType', 'findAllByTypeStatus', 'findViews', 'filterByCategories']);
+    Route::apiResource('work', 'App\Http\Controllers\API\WorkController')->except(['index', 'store', 'show', 'trends', 'search', 'findAllByUser', 'findAllByType', 'findAllByTypeStatus', 'findViews', 'filterByCategories']);
     Route::apiResource('file', 'App\Http\Controllers\API\FileController')->except(['index']);
     Route::apiResource('subscription', 'App\Http\Controllers\API\SubscriptionController')->except(['index']);
     Route::apiResource('cart', 'App\Http\Controllers\API\CartController')->except(['index']);
@@ -100,7 +100,7 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::put('payment/switch_status/{status_id}/{id}', 'App\Http\Controllers\API\PaymentController@switchStatus')->name('payment.api.switch_status');
 });
 Route::group(['middleware' => ['api', 'auth:sanctum', 'localization']], function () {
-    Route::resource('work', 'App\Http\Controllers\API\WorkController')->except(['index', 'show', 'trends', 'search', 'findAllByUser', 'findAllByType', 'findAllByTypeStatus', 'findViews', 'filterByCategories']);
+    Route::resource('work', 'App\Http\Controllers\API\WorkController')->except(['index', 'store', 'show', 'trends', 'search', 'findAllByUser', 'findAllByType', 'findAllByTypeStatus', 'findViews', 'filterByCategories']);
     Route::resource('cart', 'App\Http\Controllers\API\CartController')->except(['index']);
     Route::resource('subscription', 'App\Http\Controllers\API\SubscriptionController')->except(['index']);
     Route::resource('user', 'App\Http\Controllers\API\UserController')->except(['store', 'show', 'login']);
