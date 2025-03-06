@@ -31,7 +31,7 @@ class Work extends JsonResource
             'work_title' => $this->work_title,
             'work_content' => $this->work_content,
             'video_url' => $this->work_url,
-            'image_url' => !empty($files) ? (inArrayR($img_type->id, $files, 'type_id') ? getWebURL() . '/public' . $img->file_url : null) : null,
+            'image_url' => !empty($files) ? (inArrayR($img_type->id, $files, 'type_id') ? getWebURL() . '/public' . $img->file_url : null) : getWebURL() . '/assets/img/cover.png',
             'document_url' => !empty($files) ? (inArrayR($doc_type->id, $files, 'type_id') ? getWebURL() . '/public' . $doc->file_url : null) : null,
             // 'image_url' => !empty($files) ? (inArrayR($img_type->id, $files, 'type_id') ? getWebURL() . '/boongo/public' . $img->file_url : null) : null,
             // 'document_url' => !empty($files) ? (inArrayR($doc_type->id, $files, 'type_id') ? getWebURL() . '/boongo/public' . $doc->file_url : null) : null,
