@@ -347,7 +347,7 @@
                     }
 
                     $.ajax({
-						headers: { 'Accept': 'multipart/form-data', 'X-localization': navigator.language },
+						headers: { 'Accept': 'multipart/form-data', 'X-localization': navigator.language, 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
 						type: 'POST',
 						contentType: 'multipart/form-data',
 						url: apiHost + '/work',
