@@ -346,8 +346,10 @@
                         formData.append('categories_ids[' + i + ']', categories[i]);
                     }
 
+                    formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+
                     $.ajax({
-						headers: { 'Accept': 'multipart/form-data', 'X-localization': navigator.language, 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+						headers: { 'Accept': 'multipart/form-data', 'X-localization': navigator.language/*, 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')*/ },
 						type: 'POST',
 						contentType: 'multipart/form-data',
 						url: apiHost + '/work',
