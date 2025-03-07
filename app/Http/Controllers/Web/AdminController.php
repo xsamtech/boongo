@@ -68,7 +68,7 @@ class AdminController extends Controller
             'status_id' => $request->status_id,
             'user_id' => $request->user_id,
             'file_type_id' => $request->file_type_id,
-            'file_type_id' => $request->file_url,
+            'file_url' => $request->file('file_url'),
             'image_type_id' => $request->image_type_id,
             'image_64' => $request->image_64,
         ]);
