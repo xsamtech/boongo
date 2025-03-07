@@ -137,6 +137,6 @@ class AdminController extends Controller
             ]);
         }
 
-        return Redirect::back()->with('success_message', $work->message);
+        return Redirect::back()->with('success_message', __('notifications.create_work_success'));
     }
 }
