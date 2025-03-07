@@ -129,22 +129,23 @@
             <div class="row position-absolute w-100" style="top: 0; opacity: 0.9; z-index: 9999;">
                 <div class="col-lg-5 col-sm-6 mx-auto mt-lg-0 mt-5">
                     <div class="alert alert-danger alert-dismissible fade show rounded-0" role="alert">
-                        <i class="fa-solid fa-exclamation-triangle me-2 fs-4" style="vertical-align: -3px;"></i> {{ explode('~', \Session::get('error_message'))[3]  }}
+                        <i class="fa-solid fa-exclamation-triangle me-2 fs-4" style="vertical-align: -3px;"></i> {{ \Session::get('error_message') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- ALERT END-->
+        <!-- ALERT END -->
 @endif
 
+        <!-- FORM START -->
         <div class="py-4">
             <div class="d-flex justify-content-center mb-1">
                 <img src="{{ asset('assets/img/brand-reverse.png') }}" alt="Boongo" width="200">
             </div>
 
-            {{-- <form action="{{ route('admin.work.home') }}" method="post" enctype="multipart/form-data"> --}}
-            <form id="workData">
+            <form action="{{ route('admin.work.home') }}" method="POST" enctype="multipart/form-data">
+            {{-- <form id="workData"> --}}
                 <div class="row">
                     <div class="col-lg-7 d-flex justify-content-between align-items-center mx-auto mb-4">
                         <h1 class="m-0">@lang('miscellaneous.admin.work.add')</h1>
@@ -237,7 +238,7 @@
                     <!-- row -->
                     <div class="row mt-3">
                         <div class="col-lg-4 col-sm-6 col-9 mx-auto">
-                            <button class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
+                            <button type="submit" class="btn btn-block btn-primary">@lang('miscellaneous.register')</button>
                         </div>
                     </div>
                     <!-- /row -->
@@ -245,7 +246,9 @@
                 <!-- /container -->
             </form>
         </div>
+        <!-- FORM END -->
 
+        <!-- LIST START -->
         <div class="py-5">
             <div class="container">
                 <div class="row">
@@ -309,6 +312,7 @@
                 </div>
             </div>
         </div>
+        <!-- LIST END -->
 
         <span id="btnBackTop" class="btn btn-floating btn-primary pb-0 d-none" style="position: fixed; bottom: 2rem; right: 2rem;"><i class="fa-solid fa-chevron-up"></i></span>
 
@@ -328,62 +332,62 @@
         <script src="{{ asset('assets/addons/custom/wysiwyg-editor-master/js/froala_editor.min.js') }}"></script>
 		<script src="{{ asset('assets/js/script.custom.js') }}"></script>
 		<script type="text/javascript">
-            $(function () {
-                /* Register form-data */
-                $('form#workData').submit(function (e) {
-					e.preventDefault();
+            // $(function () {
+            //     /* Register form-data */
+            //     $('form#workData').submit(function (e) {
+			// 		e.preventDefault();
 
-                    var formData = new FormData(this);
-                    var categories = [];
+            //         var formData = new FormData(this);
+            //         var categories = [];
 
-                    document.querySelectorAll('[name="categories_ids"]').forEach(item => {
-                        if (item.checked === true) {
-                            categories.push(parseInt(item.value));
-                        }
-                    });
+            //         document.querySelectorAll('[name="categories_ids"]').forEach(item => {
+            //             if (item.checked === true) {
+            //                 categories.push(parseInt(item.value));
+            //             }
+            //         });
 
-                    for (let i = 0; i < categories.length; i++) {
-                        formData.append('categories_ids[' + i + ']', categories[i]);
-                    }
+            //         for (let i = 0; i < categories.length; i++) {
+            //             formData.append('categories_ids[' + i + ']', categories[i]);
+            //         }
 
-                    formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+            //         formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
 
-                    $.ajax({
-						headers: { 'Accept': 'multipart/form-data', 'X-localization': navigator.language/*, 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')*/ },
-						type: 'POST',
-						contentType: 'multipart/form-data',
-						url: apiHost + '/work',
-						data: formData,
-						beforeSend: function () {
-							$('form#workData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
-						},
-						success: function (res) {
-                            if ($('form#workData .request-message').hasClass('text-danger')) {
-                                $('form#workData .request-message').removeClass('text-danger');
-                            }
+            //         $.ajax({
+			// 			headers: { 'Accept': 'multipart/form-data', 'X-localization': navigator.language/*, 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')*/ },
+			// 			type: 'POST',
+			// 			contentType: 'multipart/form-data',
+			// 			url: apiHost + '/work',
+			// 			data: formData,
+			// 			beforeSend: function () {
+			// 				$('form#workData .request-message').html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>');
+			// 			},
+			// 			success: function (res) {
+            //                 if ($('form#workData .request-message').hasClass('text-danger')) {
+            //                     $('form#workData .request-message').removeClass('text-danger');
+            //                 }
 
-							$('form#workData .request-message').addClass('text-success').html(res.message);
+			// 				$('form#workData .request-message').addClass('text-success').html(res.message);
 
-                            document.getElementById('workData').reset();
-							location.reload();
-                        },
-						cache: false,
-						contentType: false,
-						processData: false,
-						error: function (xhr, error, status_description) {
-                            if ($('form#workData .request-message').hasClass('text-success')) {
-                                $('form#workData .request-message').removeClass('text-success');
-                            }
+            //                 document.getElementById('workData').reset();
+			// 				location.reload();
+            //             },
+			// 			cache: false,
+			// 			contentType: false,
+			// 			processData: false,
+			// 			error: function (xhr, error, status_description) {
+            //                 if ($('form#workData .request-message').hasClass('text-success')) {
+            //                     $('form#workData .request-message').removeClass('text-success');
+            //                 }
 
-                            $('form#workData .request-message').addClass('text-danger').html((xhr.responseJSON ? xhr.responseJSON.message : `${xhr.status} ${xhr.responseText}`));
-							console.log((xhr.responseJSON ? xhr.responseJSON.message : `${xhr.status} ${xhr.responseText}`));
-							console.log(xhr.status);
-							console.log(error);
-							console.log(status_description && status_description);
-						}
-					});
-				});
-            });
+            //                 $('form#workData .request-message').addClass('text-danger').html((xhr.responseJSON ? xhr.responseJSON.message : `${xhr.status} ${xhr.responseText}`));
+			// 				console.log((xhr.responseJSON ? xhr.responseJSON.message : `${xhr.status} ${xhr.responseText}`));
+			// 				console.log(xhr.status);
+			// 				console.log(error);
+			// 				console.log(status_description && status_description);
+			// 			}
+			// 		});
+			// 	});
+            // });
         </script>
 	</body>
 </html>
