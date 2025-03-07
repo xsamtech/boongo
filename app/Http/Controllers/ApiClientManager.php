@@ -194,7 +194,7 @@ class ApiClientManager
                         $response = $client->request($method, $url, [
                             'headers' => [
                                 'Authorization' => 'Bearer ' . $api_token,
-                                'Accept' => 'application/json',
+                                'Accept' => 'multipart/form-data',
                                 'X-localization' => !empty(Session::get('locale')) ? Session::get('locale') : App::getLocale(),
                             ],
                             'form_params' => $data_to_send,
