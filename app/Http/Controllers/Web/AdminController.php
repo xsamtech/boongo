@@ -81,9 +81,7 @@ class AdminController extends Controller
             ];
         }
 
-        $work = $this::$api_client_manager::call('POST', getApiURL() . '/work', null, [
-            'multipart' => $data,
-        ]);
+        $work = $this::$api_client_manager::call('POST', getApiURL() . '/work', null, ['multipart' => $data], null, null, false);
 
         if ($work->success) {
             return Redirect::back()->with('success_message', $work->message);
