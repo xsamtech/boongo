@@ -150,7 +150,7 @@
                         <div class="row">
                             <div class="col-lg-11 d-sm-flex justify-content-between align-items-center mx-auto mb-4">
                                 <h1 class="m-sm-0 mt-3 mb-1 text-sm-start text-center">@lang('miscellaneous.admin.partner.add')</h1>
-                                <p class="m-0 text-sm-start text-center"><a href="{{ route('home') }}">@lang('miscellaneous.admin.work.link')</a></p>
+                                <p class="m-0 text-sm-start text-center"><a href="{{ route('home', ['admin' => 'y']) }}">@lang('miscellaneous.admin.work.link')</a></p>
                             </div>
                         </div>
                     </div>
