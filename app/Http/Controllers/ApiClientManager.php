@@ -129,7 +129,7 @@ class ApiClientManager
                             'X-ip-address' => $current_ip_address,
                             'X-user-id' => $current_user_id,
                         ],
-                        'multipart' => $data_to_send,
+                        'form_params' => $data_to_send,
                         'verify' => false,
                     ]);
                     $result = json_decode($response->getBody(), false);
@@ -152,7 +152,7 @@ class ApiClientManager
                                 'X-localization' => !empty(Session::get('locale')) ? Session::get('locale') : App::getLocale(),
                                 'X-ip-address' => $current_ip_address,
                             ],
-                            'multipart' => $data_to_send,
+                            'form_params' => $data_to_send,
                             'verify' => false,
                         ]);
                         $result = json_decode($response->getBody(), false);
@@ -175,7 +175,7 @@ class ApiClientManager
                                 'X-localization' => !empty(Session::get('locale')) ? Session::get('locale') : App::getLocale(),
                                 'X-user-id' => $current_user_id,
                             ],
-                            'multipart' => $data_to_send,
+                            'form_params' => $data_to_send,
                             'verify' => false,
                         ]);
                         $result = json_decode($response->getBody(), false);
@@ -197,7 +197,7 @@ class ApiClientManager
                                 'Accept' => 'application/json',
                                 'X-localization' => !empty(Session::get('locale')) ? Session::get('locale') : App::getLocale(),
                             ],
-                            'multipart' => $data_to_send,
+                            'form_params' => $data_to_send,
                             'verify' => false,
                         ]);
                         $result = json_decode($response->getBody(), false);

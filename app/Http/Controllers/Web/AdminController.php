@@ -60,28 +60,41 @@ class AdminController extends Controller
     public function addWork(Request $request)
     {
         // Prepare the data to send
-        $data = [
-            ['name' => 'work_title', 'contents' => $request->work_title],
-            ['name' => 'work_content', 'contents' => $request->work_content],
-            ['name' => 'work_url', 'contents' => $request->work_url],
-            ['name' => 'type_id', 'contents' => $request->type_id],
-            ['name' => 'status_id', 'contents' => $request->status_id],
-            ['name' => 'user_id', 'contents' => $request->user_id],
-            ['name' => 'file_type_id', 'contents' => $request->file_type_id],
-            ['name' => 'image_type_id', 'contents' => $request->image_type_id],
-            ['name' => 'image_64', 'contents' => $request->image_64],
+        // $data = [
+        //     ['name' => 'work_title', 'contents' => $request->work_title],
+        //     ['name' => 'work_content', 'contents' => $request->work_content],
+        //     ['name' => 'work_url', 'contents' => $request->work_url],
+        //     ['name' => 'type_id', 'contents' => $request->type_id],
+        //     ['name' => 'status_id', 'contents' => $request->status_id],
+        //     ['name' => 'user_id', 'contents' => $request->user_id],
+        //     ['name' => 'file_type_id', 'contents' => $request->file_type_id],
+        //     ['name' => 'image_type_id', 'contents' => $request->image_type_id],
+        //     ['name' => 'image_64', 'contents' => $request->image_64],
+        // ];
+
+        // // Add the file if present
+        // if ($request->hasFile('file_url')) {
+        //     $data[] = [
+        //         'name' => 'file_url',
+        //         'contents' => fopen($request->file('file_url')->getPathname(), 'r'),
+        //         'filename' => $request->file('file_url')->getClientOriginalName()
+        //     ];
+        // }
+
+        $inputs = [
+            'work_title' => $request->work_title,
+            'work_content' => $request->work_content,
+            'work_url' => $request->work_url,
+            'type_id' => $request->type_id,
+            'status_id' => $request->status_id,
+            'user_id' => $request->user_id,
+            'file_type_id' => $request->file_type_id,
+            'file_url' => $request->file('file_url'),
+            'image_type_id' => $request->image_type_id,
+            'image_64' => $request->image_64,
         ];
-
-        // Add the file if present
-        if ($request->hasFile('file_url')) {
-            $data[] = [
-                'name' => 'file_url',
-                'contents' => fopen($request->file('file_url')->getPathname(), 'r'),
-                'filename' => $request->file('file_url')->getClientOriginalName()
-            ];
-        }
-
-        $work = $this::$api_client_manager::call('POST', getApiURL() . '/work', null, ['multipart' => $data], null, null, false);
+        // Add a work
+        $work = $this::$api_client_manager::call('POST', getApiURL() . '/work', null, $inputs, null, null, false);
 
         if ($work->success) {
             return Redirect::back()->with('success_message', $work->message);
