@@ -93,6 +93,8 @@ return [
     'create_partner_success' => 'Partner created',
     'update_partner_success' => 'Partner updated',
     'delete_partner_success' => 'Partner deleted',
+    'partnership_terminated' => 'Partnership terminated',
+    'partnership_still_active' => 'Partnership is still active. Remaining days: :remainingDays',
     // Work
     'find_all_works_success' => 'Works found',
     'find_work_success' => 'Work found',

@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Resources\Partner as ResourcesPartner;
+use App\Models\Group;
+use App\Models\Status;
+use Carbon\Carbon;
 
 /**
  * @author Xanders
@@ -37,24 +40,12 @@ class PartnerController extends BaseController
         // Get inputs
         $inputs = [
             'name' => $request->name,
-            'website_url' => $request->website_url,
-            'is_active' => 1
+            'message' => $request->message,
+            'website_url' => $request->website_url
         ];
-        // Select all partners to make them inactive
-        $partners = Partner::where('is_active', 1)->get();
-
         // Validate required fields
         if ($inputs['name'] == null OR $inputs['name'] == ' ') {
             return $this->handleError($inputs['name'], __('validation.required') . ' (' . __('miscellaneous.admin.partner.data.name') . ') ', 400);
-        }
-
-        if ($partners != null) {
-            foreach ($partners as $another_partner):
-                $another_partner->update([
-                    'is_active' => 0,
-                    'updated_at' => now(),
-                ]);
-            endforeach;
         }
 
         $partner = Partner::create($inputs);
@@ -109,14 +100,21 @@ class PartnerController extends BaseController
         // Get inputs
         $inputs = [
             'name' => $request->name,
+            'message' => $request->message,
             'image_64' => $request->image_64,
-            'website_url' => $request->website_url,
-            'is_active' => $request->is_active
+            'website_url' => $request->website_url
         ];
 
         if ($inputs['name'] != null) {
             $partner->update([
                 'name' => $inputs['name'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['message'] != null) {
+            $partner->update([
+                'message' => $inputs['message'],
                 'updated_at' => now(),
             ]);
         }
@@ -142,13 +140,6 @@ class PartnerController extends BaseController
         if ($inputs['website_url'] != null) {
             $partner->update([
                 'website_url' => $inputs['website_url'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['is_active'] != null) {
-            $partner->update([
-                'is_active' => $inputs['is_active'],
                 'updated_at' => now(),
             ]);
         }
@@ -186,15 +177,66 @@ class PartnerController extends BaseController
     }
 
     /**
-     * Find by (in)active
+     * All partnerships according to status
      *
-     * @param  int $is_active
+     * @param  string $locale
+     * @param  string $status_name
      * @return \Illuminate\Http\Response
      */
-    public function findByActive($is_active)
+    public function partnershipsByStatus($locale, $status_name)
     {
-        $partners = Partner::where('is_active', $is_active)->get();
+        $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
+        $status = Status::where([['status_name->' . $locale, $status_name], ['group_id', $partnership_status_group->id]])->first();
+
+        if (is_null($status)) {
+            return $this->handleError(__('notifications.find_status_404'));
+        }
+
+        $partners = Partner::whereHas('categories', function ($query) use ($status) {
+                                $query->where('category_partner.status_id', $status->id);
+                            })->with(['categories' => function ($query) use ($status) {
+                                $query->where('category_partner.status_id', $status->id);
+                            }])->get();
 
         return $this->handleResponse(ResourcesPartner::collection($partners), __('notifications.find_all_partners_success'));
+    }
+
+    /**
+     * Terminate partnership
+     *
+     * @param  int $partner_id
+     * @return \Illuminate\Http\Response
+     */
+    public function terminatePartnership($partner_id)
+    {
+        $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
+        $terminated_status = Status::where([['status_name->fr', 'Terminé'], ['group_id', $partnership_status_group->id]])->first();
+
+        if (is_null($terminated_status)) {
+            return $this->handleError(__('notifications.find_status_404'));
+        }
+
+        $partner = Partner::find($partner_id);
+
+        if (is_null($partner)) {
+            return $this->handleError(__('notifications.find_partner_404'));
+        }
+
+        // Calculate the remaining days for the partnership
+        $remainingDays = $partner->remainingDays(Carbon::now());
+
+        // If the remaining days are 0, we end the partnership
+        if ($remainingDays <= 0) {
+            // Update all records in the "category_partner" table for this partner
+            $partner->categories()->updateExistingPivot($partner->categories()->pluck('id')->toArray(), [
+                'status_id' => $terminated_status->id
+            ]);
+
+            return $this->handleResponse(new ResourcesPartner($partner), __('notifications.partnership_terminated'));
+
+        // If days remaining are > 0, return a message indicating that it is not yet finished
+        } else {
+            return $this->handleError(__('notifications.partnership_still_active', ['remainingDays' => $remainingDays]));
+        }
     }
 }

@@ -23,7 +23,7 @@ class Cart extends Model
     protected $guarded = [];
 
     /**
-     * MANY-TO-ONE
+     * MANY-TO-MANY
      * Several works for several carts
      */
     public function works(): BelongsToMany

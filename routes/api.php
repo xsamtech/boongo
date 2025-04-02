@@ -43,7 +43,6 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::resource('type', 'App\Http\Controllers\API\TypeController');
     Route::resource('category', 'App\Http\Controllers\API\CategoryController');
     Route::resource('work', 'App\Http\Controllers\API\WorkController');
-    Route::resource('partner', 'App\Http\Controllers\API\PartnerController');
     Route::resource('subscription', 'App\Http\Controllers\API\SubscriptionController');
     Route::resource('role', 'App\Http\Controllers\API\RoleController');
     Route::resource('user', 'App\Http\Controllers\API\UserController');
@@ -76,9 +75,6 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::get('work/find_all_by_type_status/{locale}/{type_name}/{status_name}', 'App\Http\Controllers\API\WorkController@findAllByTypeStatus')->name('work.api.find_all_by_type_status');
     Route::post('work/filter_by_categories', 'App\Http\Controllers\API\WorkController@filterByCategories')->name('work.api.filter_by_categories');
     Route::post('work/filter_by_categories_type_status/{locale}/{type_name}/{status_name}', 'App\Http\Controllers\API\WorkController@filterByCategoriesTypeStatus')->name('work.api.filter_by_categories_type_status');
-    // Partner
-    Route::get('partner/search/{data}', 'App\Http\Controllers\API\PartnerController@search')->name('partner.api.search');
-    Route::get('partner/find_by_active/{is_active}', 'App\Http\Controllers\API\PartnerController@findByActive')->name('partner.api.find_by_active');
     // Subscription
     Route::get('subscription', 'App\Http\Controllers\API\SubscriptionController@index')->name('subscription.api.index');
     // Role
@@ -101,6 +97,7 @@ Route::group(['middleware' => ['api', 'localization']], function () {
 });
 Route::group(['middleware' => ['api', 'auth:sanctum', 'localization']], function () {
     Route::resource('work', 'App\Http\Controllers\API\WorkController')->except(['index', 'store', 'show', 'trends', 'search', 'findAllByUser', 'findAllByType', 'findAllByTypeStatus', 'findViews', 'filterByCategories']);
+    Route::resource('partner', 'App\Http\Controllers\API\PartnerController');
     Route::resource('cart', 'App\Http\Controllers\API\CartController')->except(['index']);
     Route::resource('subscription', 'App\Http\Controllers\API\SubscriptionController')->except(['index']);
     Route::resource('user', 'App\Http\Controllers\API\UserController')->except(['store', 'show', 'login']);
@@ -111,6 +108,10 @@ Route::group(['middleware' => ['api', 'auth:sanctum', 'localization']], function
     Route::put('work/switch_view/{work_id}', 'App\Http\Controllers\API\WorkController@switchView')->name('work.api.switch_view');
     Route::post('work/upload_files', 'App\Http\Controllers\API\WorkController@uploadFiles')->name('work.api.upload_files');
     Route::put('work/add_image/{id}', 'App\Http\Controllers\API\WorkController@addImage')->name('work.api.add_image');
+    // Partner
+    Route::get('partner/search/{data}', 'App\Http\Controllers\API\PartnerController@search')->name('partner.api.search');
+    Route::get('partner/partnerships_by_status/{locale}/{status_name}', 'App\Http\Controllers\API\PartnerController@partnershipsByStatus')->name('partner.api.partnerships_by_status');
+    Route::put('partner/terminate_partnership/{partner_id}', 'App\Http\Controllers\API\PartnerController@terminatePartnership')->name('partner.api.terminate_partnership');
     // Cart
     Route::get('cart/is_inside/{work_id}/{user_id}', 'App\Http\Controllers\API\CartController@isInside')->name('cart.api.is_inside');
     Route::put('cart/add_to_cart/{work_id}/{user_id}', 'App\Http\Controllers\API\CartController@addToCart')->name('cart.api.add_to_cart');

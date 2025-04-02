@@ -39,6 +39,15 @@ class Category extends Model
     }
 
     /**
+     * MANY-TO-MANY
+     * Several partners for several categories
+     */
+    public function partners(): BelongsToMany
+    {
+        return $this->belongsToMany(Partner::class, 'category_partner')->orderByPivot('created_at', 'desc')->withTimestamps()->withPivot(['number_of_days']);
+    }
+
+    /**
      * ONE-TO-MANY
      * One group for several categories
      */
