@@ -21,16 +21,18 @@ Route::middleware(['auth:sanctum', 'localization'])->group(function () {
     Route::apiResource('file', 'App\Http\Controllers\API\FileController')->except(['index']);
     Route::apiResource('subscription', 'App\Http\Controllers\API\SubscriptionController')->except(['index']);
     Route::apiResource('cart', 'App\Http\Controllers\API\CartController')->except(['index']);
+    Route::apiResource('partner', 'App\Http\Controllers\API\PartnerController');
     Route::apiResource('role', 'App\Http\Controllers\API\RoleController')->except(['search']);
     Route::apiResource('user', 'App\Http\Controllers\API\UserController')->except(['store', 'show', 'login']);
+    Route::apiResource('organization', 'App\Http\Controllers\API\OrganizationController');
+    Route::apiResource('circle', 'App\Http\Controllers\API\CircleController');
+    Route::apiResource('event', 'App\Http\Controllers\API\EventController');
     Route::apiResource('password_reset', 'App\Http\Controllers\API\PasswordResetController')->except(['searchByEmailOrPhone', 'searchByEmail', 'searchByPhone', 'checkToken']);
     Route::apiResource('personal_access_token', 'App\Http\Controllers\API\PersonalAccessTokenController');
+    Route::apiResource('message', 'App\Http\Controllers\API\MessageController');
     Route::apiResource('notification', 'App\Http\Controllers\API\NotificationController');
     Route::apiResource('payment', 'App\Http\Controllers\API\PaymentController')->except(['store', 'find_by_order_number', 'find_by_order_number_user', 'switch_status']);
     Route::apiResource('session', 'App\Http\Controllers\API\SessionController');
-});
-Route::middleware('localization')->group(function () {
-    Route::apiResource('partner', 'App\Http\Controllers\API\PartnerController');
 });
 /*
 |--------------------------------------------------------------------------
@@ -101,6 +103,7 @@ Route::group(['middleware' => ['api', 'auth:sanctum', 'localization']], function
     Route::resource('cart', 'App\Http\Controllers\API\CartController')->except(['index']);
     Route::resource('subscription', 'App\Http\Controllers\API\SubscriptionController')->except(['index']);
     Route::resource('user', 'App\Http\Controllers\API\UserController')->except(['store', 'show', 'login']);
+    Route::resource('organization', 'App\Http\Controllers\API\OrganizationController');
     Route::resource('notification', 'App\Http\Controllers\API\NotificationController');
 
     // Work
@@ -125,12 +128,21 @@ Route::group(['middleware' => ['api', 'auth:sanctum', 'localization']], function
     Route::get('user/profile/{username}', 'App\Http\Controllers\API\UserController@profile')->name('user.api.profile');
     Route::get('user/find_by_role/{locale}/{role_name}', 'App\Http\Controllers\API\UserController@findByRole')->name('user.api.find_by_role');
     Route::get('user/find_by_not_role/{locale}/{role_name}', 'App\Http\Controllers\API\UserController@findByNotRole')->name('user.api.find_by_not_role');
+    Route::get('user/organization_members/{organization_id}/{role_name}', 'App\Http\Controllers\API\UserController@organizationMembers')->name('user.api.organization_members');
+    Route::get('user/group_members/{entity}/{entity_id}', 'App\Http\Controllers\API\UserController@groupMembers')->name('user.api.group_members');
+    Route::get('user/member_groups/{entity}/{user_id}/{status_id}', 'App\Http\Controllers\API\UserController@memberGroups')->name('user.api.member_groups');
+    Route::get('user/is_main_member/{entity}/{entity_id}/{user_id}', 'App\Http\Controllers\API\UserController@isMainMember')->name('user.api.is_main_member');
     Route::get('user/is_partner/{user_id}', 'App\Http\Controllers\API\UserController@isPartner')->name('user.api.is_partner');
     Route::get('user/find_by_status/{status_id}', 'App\Http\Controllers\API\UserController@findByStatus')->name('user.api.find_by_status');
+    Route::put('user/subscribe_to_group/{user_id}/{addressee_id}', 'App\Http\Controllers\API\UserController@subscribeToGroup')->name('user.api.subscribe_to_group');
+    Route::put('user/unsubscribe_to_group/{user_id}/{addressee_id}', 'App\Http\Controllers\API\UserController@unsubscribeToGroup')->name('user.api.unsubscribe_to_group');
     Route::put('user/switch_status/{id}/{status_id}', 'App\Http\Controllers\API\UserController@switchStatus')->name('user.api.switch_status');
     Route::put('user/update_role/{id}', 'App\Http\Controllers\API\UserController@updateRole')->name('user.api.update_role');
     Route::put('user/update_password/{id}', 'App\Http\Controllers\API\UserController@updatePassword')->name('user.api.update_password');
     Route::put('user/update_avatar_picture/{id}', 'App\Http\Controllers\API\UserController@updateAvatarPicture')->name('user.api.update_avatar_picture');
+    // Organization
+    Route::get('organization/search/{data}', 'App\Http\Controllers\API\OrganizationController@search')->name('organization.api.search');
+    Route::get('organization/find_all_by_owner/{data}', 'App\Http\Controllers\API\OrganizationController@findAllByOwner')->name('organization.api.find_all_by_owner');
     // Notification
     Route::get('notification/select_by_user/{user_id}', 'App\Http\Controllers\API\NotificationController@selectByUser')->name('notification.api.select_by_user');
     Route::get('notification/select_by_status_user/{status_id}/{user_id}', 'App\Http\Controllers\API\NotificationController@selectByStatusUser')->name('notification.api.select_by_status_user');

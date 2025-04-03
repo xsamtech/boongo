@@ -451,15 +451,15 @@ return [
 
         // Partner
         'partner' => [
-            'details' => 'Sponsor details',
-            'link' => 'Manage sponsors',
-            'add' => 'Add a sponsor',
-            'edit' => 'Edit the sponsor',
-            'search' => 'Search a sponsor',
-            'list' => 'Sponsors list',
+            'details' => 'Partner details',
+            'link' => 'Manage partners',
+            'add' => 'Add a partner',
+            'edit' => 'Edit the partner',
+            'search' => 'Search a partner',
+            'list' => 'Partners list',
             'data' => [
-                'name' => 'Sponsor name',
-                'image_url' => 'Sponsor image',
+                'name' => 'Partner name',
+                'image_url' => 'Partner image',
                 'website_url' => 'Website URL'
             ],
         ],
@@ -472,6 +472,30 @@ return [
             'edit' => 'Edit the user',
             'search' => 'Search a user',
             'list' => 'Users list'
+        ],
+
+        // Organization
+        'organization' => [
+            'details' => 'Organization details',
+            'link' => 'Manage organizations',
+            'add' => 'Add a organization',
+            'edit' => 'Edit the organization',
+            'search' => 'Search an organization',
+            'list' => 'Organizations list',
+            'data' => [
+                'org_name' => 'Organization name',
+                'org_description' => 'Description',
+                'id_number' => 'ID number',
+                'phone' => 'Phone number',
+                'email' => 'Email',
+                'address' => 'Head office address',
+                'p_o_box' => 'P.O. Box',
+                'legal_status' => 'Legal status',
+                'year_of_creation' => 'Year of creation',
+                'website_url' => 'Website URL',
+                'choose_type' => 'Choose type',
+                'choose_status' => 'Choose status',
+            ],
         ],
     ],
 

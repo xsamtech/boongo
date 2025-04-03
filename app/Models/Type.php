@@ -39,6 +39,15 @@ class Type extends Model
 
     /**
      * MANY-TO-ONE
+     * Several organizations for a type
+     */
+    public function organizations(): HasMany
+    {
+        return $this->hasMany(Organization::class);
+    }
+
+    /**
+     * MANY-TO-ONE
      * Several works for a type
      */
     public function works(): HasMany

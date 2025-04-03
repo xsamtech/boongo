@@ -66,6 +66,33 @@ class User extends Authenticatable
 
     /**
      * MANY-TO-MANY
+     * Several organizations for several users
+     */
+    public function organizations(): BelongsToMany
+    {
+        return $this->belongsToMany(Organization::class)->withTimestamps();
+    }
+
+    /**
+     * MANY-TO-MANY
+     * Several events for several users
+     */
+    public function events(): BelongsToMany
+    {
+        return $this->belongsToMany(Event::class)->withTimestamps()->withPivot(['is_speaker', 'status_id']);
+    }
+
+    /**
+     * MANY-TO-MANY
+     * Several circles for several users
+     */
+    public function circles(): BelongsToMany
+    {
+        return $this->belongsToMany(Circle::class)->withTimestamps()->withPivot(['is_admin', 'status_id']);
+    }
+
+    /**
+     * MANY-TO-MANY
      * Several subscriptions for several users
      */
     public function subscriptions(): BelongsToMany
@@ -89,6 +116,15 @@ class User extends Authenticatable
     public function status(): BelongsTo
     {
         return $this->belongsTo(Status::class);
+    }
+
+    /**
+     * MANY-TO-ONE
+     * Several organizations_owned for a user
+     */
+    public function organizations_owned(): HasMany
+    {
+        return $this->hasMany(Organization::class);
     }
 
     /**

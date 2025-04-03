@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Translatable\HasTranslations;
 
 /**
@@ -30,7 +32,7 @@ class Status extends Model
      * ONE-TO-MANY
      * One group for several statuses
      */
-    public function group()
+    public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);
     }
@@ -39,16 +41,25 @@ class Status extends Model
      * MANY-TO-ONE
      * Several users for a status
      */
-    public function users()
+    public function users(): HasMany
     {
         return $this->hasMany(User::class);
     }
 
     /**
      * MANY-TO-ONE
+     * Several organizations for a status
+     */
+    public function organizations(): HasMany
+    {
+        return $this->hasMany(Organization::class);
+    }
+
+    /**
+     * MANY-TO-ONE
      * Several payments for a status
      */
-    public function payments()
+    public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
     }
@@ -57,7 +68,7 @@ class Status extends Model
      * MANY-TO-ONE
      * Several notifications for a status
      */
-    public function notifications()
+    public function notifications(): HasMany
     {
         return $this->hasMany(Notification::class);
     }

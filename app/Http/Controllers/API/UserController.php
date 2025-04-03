@@ -4,7 +4,11 @@ namespace App\Http\Controllers\API;
 
 use stdClass;
 use App\Mail\OTPCode;
+use App\Models\Circle;
+use App\Models\Event;
+use App\Models\Group;
 use App\Models\Notification;
+use App\Models\Organization;
 use App\Models\PasswordReset;
 use App\Models\PersonalAccessToken;
 use App\Models\Status;
@@ -19,6 +23,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\User as ResourcesUser;
 use App\Http\Resources\PasswordReset as ResourcesPasswordReset;
+use App\Http\Resources\Circle as ResourcesCircle;
+use App\Http\Resources\Event as ResourcesEvent;
 
 /**
  * @author Xanders
@@ -141,7 +147,7 @@ class UserController extends BaseController
                     'former_password' => $request->password
                 ]);
 
-                // Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
+                Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
                 // try {
                 //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
@@ -158,7 +164,7 @@ class UserController extends BaseController
                         'former_password' => $request->password
                     ]);
 
-                    // Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
+                    Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
                 }
 
                 if ($inputs['email'] == null AND $inputs['phone'] != null) {
@@ -191,7 +197,7 @@ class UserController extends BaseController
 
                 $inputs['password'] = Hash::make($password_reset->former_password);
 
-                // Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
+                Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
                 // try {
                 //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
@@ -208,7 +214,7 @@ class UserController extends BaseController
                         'former_password' => Random::generate(10, 'a-zA-Z')
                     ]);
 
-                    // Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
+                    Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
                     $inputs['password'] = Hash::make($password_reset->former_password);
                 }
@@ -236,6 +242,10 @@ class UserController extends BaseController
 
         if ($request->role_id != null) {
             $user->roles()->attach([$request->role_id]);
+        }
+
+        if ($request->organization_id != null) {
+            $user->organizations()->attach([$request->organization_id]);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -766,6 +776,159 @@ class UserController extends BaseController
     }
 
     /**
+     * Retrieves users in an organization with a specific role.
+     *
+     * @param  int  $organization_id
+     * @param  string  $role_name
+     * @return \Illuminate\Http\Response
+     */
+    public function organizationMembers($organization_id, $role_name)
+    {
+        // Get the organization
+        $organization = Organization::find($organization_id);
+
+        if (is_null($organization)) {
+            return $this->handleError(__('notifications.find_organization_404'));
+        }
+
+        // Creates the query to retrieve users with a specific role
+        $usersQuery = $organization->users()->whereHas('roles', function ($query) use ($role_name) {
+                                                    $query->where('role_name', $role_name);
+                                                });
+        // Executes the query to retrieve users
+        $users = $usersQuery->get();
+
+        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'));
+    }
+
+    /**
+     * Retrieves users in an organization with a specific role.
+     *
+     * @param  string  $entity
+     * @param  int  $entity_id
+     * @return \Illuminate\Http\Response
+     */
+    public function groupMembers($entity, $entity_id)
+    {
+        if ($entity == 'circle') {
+            $circle = Circle::find($entity_id);
+
+            if (is_null($circle)) {
+                return $this->handleError(__('notifications.find_circle_404'));
+            }
+
+            $users = $circle->users;
+
+            return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'));
+        }
+
+        if ($entity == 'event') {
+            $event = Event::find($entity_id);
+
+            if (is_null($event)) {
+                return $this->handleError(__('notifications.find_event_404'));
+            }
+
+            $users = $event->users;
+
+            return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'));
+        }
+    }
+
+    /**
+     * Find all user circles / events.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string $entity
+     * @param  int $id
+     * @param  int $status_id
+     * @return \Illuminate\Http\Response
+     */
+    public function memberGroups($entity, $id, $status_id)
+    {
+        $user = User::find($id);
+
+        if (is_null($user)) {
+            return $this->handleError(__('notifications.find_user_404'));
+        }
+
+        $status = Status::find($status_id);
+
+        if (is_null($status)) {
+            return $this->handleError(__('notifications.find_status_404'));
+        }
+
+        if ($entity == 'circle') {
+            $circles = $user->circles()->wherePivot('status_id', $status->id)->orderByDesc('created_at')->paginate(10);
+            $count_circles = $user->circles()->wherePivot('status_id', $status->id)->count();
+
+            return $this->handleResponse(ResourcesCircle::collection($circles), __('notifications.find_all_circles_success'), $circles->lastPage(), $count_circles);
+        }
+
+        if ($entity == 'event') {
+            $events = $user->events()->wherePivot('status_id', $status->id)->orderByDesc('created_at')->paginate(10);
+            $count_events = $user->events()->wherePivot('status_id', $status->id)->count();
+
+            return $this->handleResponse(ResourcesEvent::collection($events), __('notifications.find_all_events_success'), $events->lastPage(), $count_events);
+        }
+    }
+
+    /**
+     * Check if user is circle admin or event speaker.
+     *
+     * @param  string $entity
+     * @param  int $entity_id
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function isMainMember($entity, $entity_id, $id)
+    {
+        $user = User::find($id);
+
+        if (is_null($user)) {
+            return $this->handleError(__('notifications.find_user_404'));
+        }
+
+        if ($entity == 'circle') {
+            $circle = Circle::find($entity_id);
+
+            if (is_null($circle)) {
+                return $this->handleError(__('notifications.find_circle_404'));
+            }
+
+            $users = $circle->users()->wherePivot('is_admin', 1)->get();
+            // Check user presence
+            $isUserPresent = $users->contains('id', $user->id);
+
+            if ($isUserPresent) {
+                return $this->handleResponse(true, __('notifications.find_user_success'));
+
+            } else {
+                return $this->handleResponse(false, __('notifications.find_user_404'));
+            }
+        }
+
+        if ($entity == 'event') {
+            $event = Event::find($entity_id);
+
+            if (is_null($event)) {
+                return $this->handleError(__('notifications.find_event_404'));
+            }
+
+            $users = $event->users()->wherePivot('is_speaker', 1)->get();
+            // Check user presence
+            $isUserPresent = $users->contains('id', $user->id);
+
+            if ($isUserPresent) {
+                return $this->handleResponse(true, __('notifications.find_user_success'));
+
+            } else {
+                return $this->handleResponse(false, __('notifications.find_user_404'));
+            }
+        }
+    }
+
+    /**
      * Search all users having specific status.
      *
      * @param  int $user_id
@@ -802,6 +965,260 @@ class UserController extends BaseController
         $users = User::where('status_id', $status_id)->orderByDesc('created_at')->get();
 
         return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'));
+    }
+
+    /**
+     * Ask subscription to an event or a talk circle.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @param  int  $addressee_id
+     * @return \Illuminate\Http\Response
+     */
+    public function subscribeToGroup(Request $request, $id, $addressee_id)
+    {
+        // Groups
+        $invitation_status_group = Group::where('group_name->fr', 'Etat de l\'invitation')->first();
+        $notification_status_group = Group::where('group_name->fr', 'Etat de la notification')->first();
+        $access_type_group = Group::where('group_name->fr', 'Type d\'accès')->first();
+        $notification_type_group = Group::where('group_name->fr', 'Type de notification')->first();
+        // Statuses
+        $on_hold_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $invitation_status_group->id]])->first();
+        $accepted_status = Status::where([['status_name->fr', 'Acceptée'], ['group_id', $invitation_status_group->id]])->first();
+        $unread_notification_status = Status::where([['status_name->fr', 'Non lue'], ['group_id', $notification_status_group->id]])->first();
+        // Types
+        $public_type = Type::where([['type_name->fr', 'Public'], ['group_id' => $access_type_group->id]])->first();
+        $private_type = Type::where([['type_name->fr', 'Privé'], ['group_id' => $access_type_group->id]])->first();
+        $invitation_type = Type::where([['type_name->fr', 'Invitation'], ['group_id' => $notification_type_group->id]])->first();
+        $membership_request_type = Type::where([['type_name->fr', 'Demande d\'adhésion'], ['group_id' => $notification_type_group->id]])->first();
+        // Requests
+        $user = User::find($id);
+
+        if (is_null($user)) {
+            return $this->handleError(__('notifications.find_user_404'));
+        }
+
+        $addressee = User::find($addressee_id);
+
+        if (is_null($addressee)) {
+            return $this->handleError(__('notifications.find_addressee_404'));
+        }
+
+        if (isset($request->circle_id)) {
+            $circle = Circle::find($request->circle_id);
+
+            if (is_null($circle)) {
+                return $this->handleError(__('notifications.find_circle_404'));
+            }
+
+            // If it's the current user who subscribed
+            if ($user->id == $addressee->id) {
+                // If the circle is public, accept the user
+                if ($circle->type_id == $public_type->id) {
+                    $circle->users()->attach($user->id, [
+                        'status_id' => $accepted_status->id
+                    ]);
+                }
+
+                // If the circle is private, put the user on hold
+                if ($circle->type_id == $private_type->id) {
+                    $circle->users()->attach($user->id, [
+                        'status_id' => $on_hold_status->id
+                    ]);
+                }
+
+                $admin_users = $circle->users()->where('is_admin', 1)->get();
+
+                /*
+                    HISTORY AND/OR NOTIFICATION MANAGEMENT
+                */
+                foreach ($admin_users as $admin) {
+                    Notification::create([
+                        'type_id' => $membership_request_type->id,
+                        'status_id' => $unread_notification_status->id,
+                        'from_user_id' => $user->id,
+                        'to_user_id' => $admin->pivot->user_id,
+                        'circle_id' => $circle->id,
+                    ]);
+                }
+            }
+
+            // If it's a circle member who sent an invitation to another member
+            if ($user->id != $addressee->id) {
+                $circle->users()->attach($addressee->id, ['status_id' => $accepted_status->id]);
+
+                /*
+                    HISTORY AND/OR NOTIFICATION MANAGEMENT
+                */
+                Notification::create([
+                    'type_id' => $invitation_type->id,
+                    'status_id' => $unread_notification_status->id,
+                    'from_user_id' => $user->id,
+                    'to_user_id' => $addressee->id,
+                    'circle_id' => $circle->id
+                ]);
+            }
+        }
+
+        if (isset($request->event_id)) {
+            $event = Event::find($request->event_id);
+
+            if (is_null($event)) {
+                return $this->handleError(__('notifications.find_event_404'));
+            }
+
+            // If it's the current user who subscribed
+            if ($user->id == $addressee->id) {
+                // If the event is public, accept the user
+                if ($event->type_id == $public_type->id) {
+                    $event->users()->attach($user->id, [
+                        'status_id' => $accepted_status->id
+                    ]);
+                }
+
+                // If the event is private, put the user on hold
+                if ($event->type_id == $private_type->id) {
+                    $event->users()->attach($user->id, [
+                        'status_id' => $on_hold_status->id
+                    ]);
+                }
+
+                /*
+                    HISTORY AND/OR NOTIFICATION MANAGEMENT
+                */
+                Notification::create([
+                    'type_id' => $membership_request_type->id,
+                    'status_id' => $unread_notification_status->id,
+                    'from_user_id' => $user->id,
+                    'to_user_id' => $event->user_id,
+                    'event_id' => $event->id
+                ]);
+            }
+
+            // If it's a event member who sent an invitation to another member
+            if ($user->id != $addressee->id) {
+                $event->users()->attach($addressee->id, ['status_id' => $accepted_status->id]);
+
+                /*
+                    HISTORY AND/OR NOTIFICATION MANAGEMENT
+                */
+                Notification::create([
+                    'type_id' => $invitation_type->id,
+                    'status_id' => $unread_notification_status->id,
+                    'from_user_id' => $user->id,
+                    'to_user_id' => $addressee->id,
+                    'event_id' => $event->id
+                ]);
+            }
+        }
+
+        return $this->handleResponse(new ResourcesUser($user), __('notifications.subscribe_user_success'));
+    }
+
+    /**
+     * Unsubscribe to an event or a talk circle.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @param  int  $addressee_id
+     * @return \Illuminate\Http\Response
+     */
+    public function unsubscribeToGroup(Request $request, $id, $addressee_id)
+    {
+        // Groups
+        $notification_status_group = Group::where('group_name->fr', 'Etat de la notification')->first();
+        $notification_type_group = Group::where('group_name->fr', 'Type de notification')->first();
+        // Statuses
+        $unread_notification_status = Status::where([['status_name->fr', 'Non lue'], ['group_id', $notification_status_group->id]])->first();
+        // Types
+        $separation_type = Type::where([['type_name->fr', 'Séparation'], ['group_id', $notification_type_group->id]])->first();
+        $expulsion_type = Type::where([['type_name->fr', 'Expulsion'], ['group_id', $notification_type_group->id]])->first();
+        // Requests
+        $user = User::find($id);
+
+        if (is_null($user)) {
+            return $this->handleError(__('notifications.find_user_404'));
+        }
+
+        $addressee = User::find($addressee_id);
+
+        if (is_null($addressee)) {
+            return $this->handleError(__('notifications.find_addressee_404'));
+        }
+
+        if (isset($request->circle_id)) {
+            $circle = Circle::find($request->circle_id);
+
+            if (is_null($circle)) {
+                return $this->handleError(__('notifications.circle_404'));
+            }
+
+            $circle->users()->detach([$user->id]);
+
+            /*
+                HISTORY AND/OR NOTIFICATION MANAGEMENT
+            */
+            // If it's the current user who has left
+            if ($user->id == $addressee_id) {
+                foreach ($circle->users as $member) {
+                    Notification::create([
+                        'type_id' => $separation_type->id,
+                        'status_id' => $unread_notification_status->id,
+                        'from_user_id' => $user->id,
+                        'to_user_id' => $member->id,
+                        'circle_id' => $circle->id,
+                    ]);
+                }
+            }
+
+            // If it's a circle admin who has withdrawn the current user
+            if ($user->id != $addressee_id) {
+                Notification::create([
+                    'type_id' => $expulsion_type->id,
+                    'status_id' => $unread_notification_status->id,
+                    'from_user_id' => $user->id,
+                    'to_user_id' => $addressee->id,
+                    'circle_id' => $circle->id
+                ]);
+            }
+        }
+
+        if (isset($request->event_id)) {
+            $event = Event::find($request->event_id);
+
+            if (is_null($event)) {
+                return $this->handleError(__('notifications.event_404'));
+            }
+
+            $event->users()->detach([$user->id]);
+
+            /*
+                HISTORY AND/OR NOTIFICATION MANAGEMENT
+            */
+            // If it's the current user who has left
+            if ($user->id == $addressee_id) {
+                Notification::create([
+                    'type_id' => $separation_type->id,
+                    'status_id' => $unread_notification_status->id,
+                    'from_user_id' => $user->id,
+                    'to_user_id' => $event->user_id,
+                    'event_id' => $event->id
+                ]);
+            }
+
+            // If it's a event member who has withdrawn the current user
+            if ($user->id != $addressee_id) {
+                Notification::create([
+                    'type_id' => $expulsion_type->id,
+                    'status_id' => $unread_notification_status->id,
+                    'from_user_id' => $user->id,
+                    'to_user_id' => $addressee->id,
+                    'event_id' => $event->id
+                ]);
+            }
+        }
+
+        return $this->handleResponse(new ResourcesUser($user), __('notifications.unsubscribe_user_success'));
     }
 
     /**
@@ -968,6 +1385,22 @@ class UserController extends BaseController
         $user = User::find($id);
 
         $user->roles()->syncWithoutDetaching([$request->role_id]);
+
+        return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
+    }
+
+    /**
+     * Update user organization in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateOrganization(Request $request, $id)
+    {
+        $user = User::find($id);
+
+        $user->organizations()->syncWithoutDetaching([$request->organization_id]);
 
         return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
     }

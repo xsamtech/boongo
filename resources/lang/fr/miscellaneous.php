@@ -451,15 +451,15 @@ return [
 
         // Partner
         'partner' => [
-            'details' => 'Détails de le sponsor',
-            'link' => 'Gérer les sponsors',
-            'add' => 'Ajouter un sponsor',
-            'edit' => 'Editer le sponsor',
-            'search' => 'Rechercher un sponsor',
-            'list' => 'Liste des sponsors',
+            'details' => 'Détails du partenaire',
+            'link' => 'Gérer les partenaires',
+            'add' => 'Ajouter un partenaire',
+            'edit' => 'Editer le partenaire',
+            'search' => 'Rechercher un partenaire',
+            'list' => 'Liste des partenaires',
             'data' => [
-                'name' => 'Nom du sponsor',
-                'image_url' => 'Image du sponsor',
+                'name' => 'Nom du partenaire',
+                'image_url' => 'Image du partenaire',
                 'website_url' => 'URL du site web'
             ],
         ],
@@ -472,6 +472,30 @@ return [
             'edit' => 'Editer l’utilisateur',
             'search' => 'Rechercher un utilisateur',
             'list' => 'Liste des utilisateurs'
+        ],
+
+        // Organization
+        'organization' => [
+            'details' => 'Détails sur l’organisation',
+            'link' => 'Gérer les organisations',
+            'add' => 'Ajouter une organisation',
+            'edit' => 'Editer l’organisation',
+            'search' => 'Rechercher une organisation',
+            'list' => 'Liste des organisations',
+            'data' => [
+                'org_name' => 'Nom de l’organisation',
+                'org_description' => 'Description',
+                'id_number' => 'Matricule',
+                'phone' => 'N° de téléphone',
+                'email' => 'E-mail',
+                'address' => 'Adresse du siège social',
+                'p_o_box' => 'Boîte postale',
+                'legal_status' => 'Statut juridique',
+                'year_of_creation' => 'Année de création',
+                'website_url' => 'URL site web',
+                'choose_type' => 'Choisir le type',
+                'choose_status' => 'Choisir l’état',
+            ],
         ],
     ],
 

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Group;
 use App\Models\Partner;
+use App\Models\Status;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Resources\Partner as ResourcesPartner;
-use App\Models\Group;
-use App\Models\Status;
 use Carbon\Carbon;
 
 /**
@@ -43,10 +43,19 @@ class PartnerController extends BaseController
             'message' => $request->message,
             'website_url' => $request->website_url
         ];
+        $partners = Partner::all();
+
         // Validate required fields
         if ($inputs['name'] == null OR $inputs['name'] == ' ') {
             return $this->handleError($inputs['name'], __('validation.required') . ' (' . __('miscellaneous.admin.partner.data.name') . ') ', 400);
         }
+
+        // Check if partner name already exists
+        foreach ($partners as $another_partner):
+            if ($another_partner->name == $inputs['name']) {
+                return $this->handleError($inputs['name'], __('validation.custom.name.exists'), 400);
+            }
+        endforeach;
 
         $partner = Partner::create($inputs);
 
@@ -99,6 +108,7 @@ class PartnerController extends BaseController
     {
         // Get inputs
         $inputs = [
+            'id' => $request->id,
             'name' => $request->name,
             'message' => $request->message,
             'image_64' => $request->image_64,
@@ -106,6 +116,21 @@ class PartnerController extends BaseController
         ];
 
         if ($inputs['name'] != null) {
+            $partners = Partner::all();
+            $current_partner = Partner::find($inputs['id']);
+
+            if (is_null($current_partner)) {
+                return $this->handleError(__('notifications.find_partner_404'));
+            }
+    
+            foreach ($partners as $another_partner):
+                if ($current_partner->name != $inputs['name']) {
+                    if ($another_partner->name == $inputs['name']) {
+                        return $this->handleError($inputs['name'], __('validation.custom.name.exists'), 400);
+                    }
+                }
+            endforeach;
+
             $partner->update([
                 'name' => $inputs['name'],
                 'updated_at' => now(),
@@ -120,13 +145,19 @@ class PartnerController extends BaseController
         }
 
         if ($inputs['image_64'] != null) {
+            $current_partner = Partner::find($inputs['id']);
+
+            if (is_null($current_partner)) {
+                return $this->handleError(__('notifications.find_partner_404'));
+            }
+
             // $extension = explode('/', explode(':', substr($inputs['image_64'], 0, strpos($inputs['image_64'], ';')))[1])[1];
             $replace = substr($inputs['image_64'], 0, strpos($inputs['image_64'], ',') + 1);
             // Find substring from replace here eg: data:image/png;base64,
             $image = str_replace($replace, '', $inputs['image_64']);
             $image = str_replace(' ', '+', $image);
             // Create image URL
-            $image_url = 'images/partners/' . $partner->id . '/' . Str::random(50) . '.png';
+            $image_url = 'images/partners/' . $current_partner->id . '/' . Str::random(50) . '.png';
 
             // Upload image
             Storage::url(Storage::disk('public')->put($image_url, base64_decode($image)));

@@ -162,8 +162,11 @@ return [
         'email_or_phone' => [
             'required' => 'L\'adresse e-mail ou le n° de téléphone doit être défini'
         ],
+        'name' => [
+            'exists' => 'Ce nom existe déjà'
+        ],
         'group_name' => [
-            'exists' => 'Ce nom de groupe already exists'
+            'exists' => 'Ce nom de groupe existe déjà'
         ],
         'role_name' => [
             'exists' => 'Ce nom de rôle existe déjà'

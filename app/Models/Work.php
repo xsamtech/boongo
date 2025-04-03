@@ -78,6 +78,15 @@ class Work extends Model
     }
 
     /**
+     * ONE-TO-MANY
+     * One organization_owner for several works
+     */
+    public function organization_owner(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
+    }
+
+    /**
      * MANY-TO-ONE
      * Several notifications for a work
      */
