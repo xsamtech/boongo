@@ -13,6 +13,8 @@ class Country extends Model
 {
     use HasFactory;
 
+    protected $table = 'countries';
+
     /**
      * The attributes that are mass assignable.
      *

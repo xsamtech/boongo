@@ -288,9 +288,10 @@ class OrganizationController extends BaseController
         });
 
         // Retrieves the query results
-        $organizations = $query->get();
+        $organizations = $query->orderByDesc('updated_at')->paginate(12);
+        $count_organizations = $query->count();
 
-        return $this->handleResponse(ResourcesOrganization::collection($organizations), __('notifications.find_all_organizations_success'));
+        return $this->handleResponse(ResourcesOrganization::collection($organizations), __('notifications.find_all_organizations_success'), $organizations->lastPage(), $count_organizations);
     }
 
     /**
@@ -318,8 +319,9 @@ class OrganizationController extends BaseController
             return $query->where('type_id', $request->type_id);
         });
 
-        $organizations = $query->get();
+        $organizations = $query->orderByDesc('updated_at')->paginate(12);
+        $count_organizations = $query->count();
 
-        return $this->handleResponse(ResourcesOrganization::collection($organizations), __('notifications.find_all_organizations_success'));
+        return $this->handleResponse(ResourcesOrganization::collection($organizations), __('notifications.find_all_organizations_success'), $organizations->lastPage(), $count_organizations);
     }
 }

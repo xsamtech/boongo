@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\File;
+use App\Models\Group;
+use App\Models\Like;
 use App\Models\Notification;
+use App\Models\Organization;
 use App\Models\Session;
 use App\Models\Status;
 use App\Models\Type;
@@ -12,6 +15,7 @@ use App\Models\Work;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Http\Resources\Like as ResourcesLike;
 use App\Http\Resources\Session as ResourcesSession;
 use App\Http\Resources\Work as ResourcesWork;
 
@@ -47,9 +51,13 @@ class WorkController extends BaseController
             'work_title' => $request->work_title,
             'work_content' => $request->work_content,
             'work_url' => $request->work_url,
+            'video_source' => $request->video_source,
+            'media_length' => $request->media_length,
+            'is_public' => $request->is_public,
             'type_id' => $request->type_id,
             'status_id' => $request->status_id,
-            'user_id' => $request->user_id
+            'user_id' => $request->user_id,
+            'organization_id' => $request->organization_id
         ];
 
         // Validate required fields
@@ -78,7 +86,19 @@ class WorkController extends BaseController
                 return $this->handleError(__('notifications.find_type_404'));
             }
 
-            $file_url = ($request->file_type_id == 7 ? 'documents/works/' : ($request->file_type_id == 8 ? 'audios/works/' : 'images/works/')) . $work->id . '/' . Str::random(50) . '.' . $request->file('file_url')->extension();
+            // Group
+            $file_type_group = Group::where('group_name', 'Type de fichier')->first();
+            // Types
+            $image_type = Type::where([['type_name', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
+            $document_type = Type::where([['type_name', 'Document'], ['group_id', $file_type_group->id]])->first();
+            $audio_type = Type::where([['type_name', 'Audio'], ['group_id', $file_type_group->id]])->first();
+
+            if ($type->id == $image_type->id AND $type->id == $document_type->id AND $type->id == $audio_type->id) {
+                return $this->handleError(__('notifications.type_is_not_file'));
+            }
+
+            $custom_path = ($type->id == $document_type->id ? 'documents/works' : ($type->id == $audio_type->id ? 'audios/works' : 'images/works'));
+            $file_url =  $custom_path . '/' . $work->id . '/' . Str::random(50) . '.' . $request->file('file_url')->extension();
 
             // Upload file
             $dir_result = Storage::url(Storage::disk('public')->put($file_url, $request->file('file_url')));
@@ -86,7 +106,7 @@ class WorkController extends BaseController
             File::create([
                 'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
                 'file_url' => $dir_result,
-                'type_id' => $request->file_type_id,
+                'type_id' => $type->id,
                 'work_id' => $work->id
             ]);
         }
@@ -198,9 +218,13 @@ class WorkController extends BaseController
             'work_title' => $request->work_title,
             'work_content' => $request->work_content,
             'work_url' => $request->work_url,
+            'video_source' => $request->video_source,
+            'media_length' => $request->media_length,
+            'is_public' => $request->is_public,
             'type_id' => $request->type_id,
             'status_id' => $request->status_id,
-            'user_id' => $request->user_id
+            'user_id' => $request->user_id,
+            'organization_id' => $request->organization_id
         ];
         // $current_work = Work::find($inputs['id']);
 
@@ -225,6 +249,27 @@ class WorkController extends BaseController
             ]);
         }
 
+        if ($inputs['video_source'] != null) {
+            $work->update([
+                'video_source' => $inputs['video_source'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['media_length'] != null) {
+            $work->update([
+                'media_length' => $inputs['media_length'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['is_public'] != null) {
+            $work->update([
+                'is_public' => $inputs['is_public'],
+                'updated_at' => now(),
+            ]);
+        }
+
         if ($inputs['type_id'] != null) {
             $work->update([
                 'type_id' => $inputs['type_id'],
@@ -242,6 +287,13 @@ class WorkController extends BaseController
         if ($inputs['user_id'] != null) {
             $work->update([
                 'user_id' => $inputs['user_id'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['organization_id'] != null) {
+            $work->update([
+                'organization_id' => $inputs['organization_id'],
                 'updated_at' => now(),
             ]);
         }
@@ -336,33 +388,79 @@ class WorkController extends BaseController
     }
 
     /**
-     * Get by user.
+     * Get by user entity.
      *
-     * @param  int $user_id
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string $entity
+     * @param  int $entity_id
      * @return \Illuminate\Http\Response
      */
-    public function findAllByUser($user_id)
+    public function findAllByEntity(Request $request, $entity, $entity_id)
     {
-        $user = User::find($user_id);
+        if ($entity == 'user') {
+            $user = User::find($entity_id);
 
-        if (is_null($user)) {
-            return $this->handleError(__('notifications.find_user_404'));
+            if (is_null($user)) {
+                return $this->handleError(__('notifications.find_user_404'));
+            }
+
+            $query = Work::query();
+
+            $query->where('user_id', $user->id);
+
+            // Add dynamic conditions
+            $query->when($request->type_id, function ($query) use ($request) {
+                return $query->where('type_id', $request->type_id);
+            });
+
+            $query->when($request->status_id, function ($query) use ($request) {
+                return $query->where('status_id', $request->status_id);
+            });
+
+            // Retrieves the query results
+            $works = $query->orderByDesc('updated_at')->paginate(12);
+            $count_all = $query->count();
+
+            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
         }
 
-        $works = Work::where('user_id', $user->id)->orderByDesc('updated_at')->paginate(12);
-        $count_all = Work::where('user_id', $user->id)->count();
+        if ($entity == 'organization') {
+            $organization = Organization::find($entity_id);
 
-        return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
+            if (is_null($organization)) {
+                return $this->handleError(__('notifications.find_organization_404'));
+            }
+
+            $query = Work::query();
+
+            $query->where('organization_id', $organization->id);
+
+            // Add dynamic conditions
+            $query->when($request->type_id, function ($query) use ($request) {
+                return $query->where('type_id', $request->type_id);
+            });
+
+            $query->when($request->status_id, function ($query) use ($request) {
+                return $query->where('status_id', $request->status_id);
+            });
+
+            // Retrieves the query results
+            $works = $query->orderByDesc('updated_at')->paginate(12);
+            $count_all = $query->count();
+
+            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
+        }
     }
 
     /**
      * Get by type.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  string $locale
      * @param  string $type_name
      * @return \Illuminate\Http\Response
      */
-    public function findAllByType($locale, $type_name)
+    public function findAllByType(Request $request, $locale, $type_name)
     {
         $type = Type::where('type_name->' . $locale, $type_name)->first();
 
@@ -370,36 +468,17 @@ class WorkController extends BaseController
             return $this->handleError(__('notifications.find_type_404'));
         }
 
-        $works = Work::where('type_id', $type->id)->orderByDesc('created_at')->paginate(12);
-        $count_all = Work::where('type_id', $type->id)->count();
+        $query = Work::query();
 
-        return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
-    }
+        $query->where('type_id', $type->id);
 
-    /**
-     * Get by type and status.
-     *
-     * @param  string $locale
-     * @param  string $type_name
-     * @param  string $status_name
-     * @return \Illuminate\Http\Response
-     */
-    public function findAllByTypeStatus($locale, $type_name, $status_name)
-    {
-        $type = Type::where('type_name->' . $locale, $type_name)->first();
+        // Add dynamic conditions
+        $query->when($request->status_id, function ($query) use ($request) {
+            return $query->where('status_id', $request->status_id);
+        });
 
-        if (is_null($type)) {
-            return $this->handleError(__('notifications.find_type_404'));
-        }
-
-        $status = Status::where('status_name->' . $locale, $status_name)->first();
-
-        if (is_null($status)) {
-            return $this->handleError(__('notifications.find_status_404'));
-        }
-
-        $works = Work::where([['type_id', $type->id], ['status_id', $status->id]])->orderByDesc('created_at')->paginate(12);
-        $count_all = Work::where([['type_id', $type->id], ['status_id', $status->id]])->count();
+        $works = $query->orderByDesc('created_at')->paginate(12);
+        $count_all = $query->count();
 
         return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
     }
@@ -419,17 +498,37 @@ class WorkController extends BaseController
         }
 
         $sessions = Session::whereHas('works', function ($query) use ($work) {
-                        // $query->where('work_session.read', 1)
-                        $query->where('work_session.work_id', $work->id)
-                            ->orderByDesc('work_session.created_at');
-                    })->get();
+                                    // $query->where('work_session.read', 1)
+                                    $query->where('work_session.work_id', $work->id)
+                                        ->orderByDesc('work_session.created_at');
+                                })->paginate(12);
         $count_all = Session::whereHas('works', function ($query) use ($work) {
-                        // $query->where('work_session.read', 1)
-                        $query->where('work_session.work_id', $work->id)
-                            ->orderByDesc('work_session.created_at');
-                    })->count();
+                                    // $query->where('work_session.read', 1)
+                                    $query->where('work_session.work_id', $work->id)
+                                        ->orderByDesc('work_session.created_at');
+                                })->count();
 
-        return $this->handleResponse(ResourcesSession::collection($sessions), __('notifications.find_all_sessions_success'), null, $count_all);
+        return $this->handleResponse(ResourcesSession::collection($sessions), __('notifications.find_all_sessions_success'), $sessions->lastPage(), $count_all);
+    }
+
+    /**
+     * Find work likes.
+     *
+     * @param  int  $work_id
+     * @return \Illuminate\Http\Response
+     */
+    public function findLikes($work_id)
+    {
+        $work = Work::find($work_id);
+
+        if (is_null($work)) {
+            return $this->handleError(__('notifications.find_work_404'));
+        }
+
+        $likes = Like::where('for_work_id', $work->id)->orderByDesc('created_at')->paginate(12);
+        $count_all = Like::where('for_work_id', $work->id)->count();
+
+        return $this->handleResponse(ResourcesLike::collection($likes), __('notifications.find_all_likes_success'), $likes->lastPage(), $count_all);
     }
 
     /**
@@ -440,55 +539,25 @@ class WorkController extends BaseController
      */
     public function filterByCategories(Request $request)
     {
-        $works = Work::whereHas('categories', function ($query) use ($request) {
-                        $query->whereIn('categories.id', $request->categories_ids);
-                    })->orderByDesc('works.created_at')->paginate(12);
-        $count_all = Work::whereHas('categories', function ($query) use ($request) {
-                        $query->whereIn('categories.id', $request->categories_ids);
-                    })->count();
+        $query = Work::query();
+
+        $query->whereHas('categories', function ($q) use ($request) {
+                    $q->whereIn('categories.id', $request->categories_ids);
+                });
+
+        // Add dynamic conditions
+        $query->when($request->type_id, function ($query) use ($request) {
+            return $query->where('type_id', $request->type_id);
+        });
+
+        $query->when($request->status_id, function ($query) use ($request) {
+            return $query->where('status_id', $request->status_id);
+        });
+
+        $works = $query->orderByDesc('works.created_at')->paginate(12);
+        $count_all = $query->count();
 
         return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
-    }
-
-    /**
-     * Filter works by categories.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string $locale
-     * @param  string $type_name
-     * @param  string $status_name
-     * @return \Illuminate\Http\Response
-     */
-    public function filterByCategoriesTypeStatus(Request $request, $locale, $type_name, $status_name)
-    {
-        $type = Type::where('type_name->' . $locale, $type_name)->first();
-
-        if (is_null($type)) {
-            return $this->handleError(__('notifications.find_type_404'));
-        }
-
-        $status = Status::where('status_name->' . $locale, $status_name)->first();
-
-        if (is_null($status)) {
-            return $this->handleError(__('notifications.find_status_404'));
-        }
-
-        if ($request->categories_ids[0] == 0) {
-            $works = Work::where([['type_id', $type->id], ['status_id', $status->id]])->orderByDesc('created_at')->get();
-            $count_all = Work::where([['type_id', $type->id], ['status_id', $status->id]])->count();
-
-            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all);
-
-        } else {
-            $works = Work::whereHas('categories', function ($query) use ($request) {
-                            $query->whereIn('categories.id', $request->categories_ids);
-                        })->where([['works.type_id', $type->id], ['works.status_id', $status->id]])->orderByDesc('works.created_at')->get();
-            $count_all = Work::whereHas('categories', function ($query) use ($request) {
-                            $query->whereIn('categories.id', $request->categories_ids);
-                        })->where([['works.type_id', $type->id], ['works.status_id', $status->id]])->count();
-
-            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all);
-        }
     }
 
     /**
@@ -525,8 +594,13 @@ class WorkController extends BaseController
                 }
 
                 if ($work->user_id != null) {
-                    $status_unread = Status::where('status_name->fr', 'Non lue')->first();
-                    $type_consulting = Type::where('type_name->fr', 'Consultation d\'œuvre')->first();
+                    // Groups
+                    $notification_status_group = Group::where('group_name', 'Etat de la notification')->first();
+                    $notification_type_group = Group::where('group_name', 'Type de notification')->first();
+                    // Status
+                    $status_unread = Status::where([['status_name->fr', 'Non lue'], ['group_id', $notification_status_group->id]])->first();
+                    // Type
+                    $type_consulting = Type::where([['type_name->fr', 'Consultation d\'œuvre'], ['group_id', $notification_type_group->id]])->first();
                     $visitor = User::find($request->header('X-user-id'));
 
                     if (is_null($visitor)) {
@@ -589,7 +663,19 @@ class WorkController extends BaseController
         }
 
         if ($request->hasFile('file_url')) {
-            $file_url = ($type->id == 7 ? 'documents/works/' : ($type->id == 8 ? 'audios/works/' : 'images/works/')) . $work->id . '/' . Str::random(50) . '.' . $request->file('file_url')->extension();
+            // Group
+            $file_type_group = Group::where('group_name', 'Type de fichier')->first();
+            // Types
+            $image_type = Type::where([['type_name', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
+            $document_type = Type::where([['type_name', 'Document'], ['group_id', $file_type_group->id]])->first();
+            $audio_type = Type::where([['type_name', 'Audio'], ['group_id', $file_type_group->id]])->first();
+
+            if ($type->id == $image_type->id AND $type->id == $document_type->id AND $type->id == $audio_type->id) {
+                return $this->handleError(__('notifications.type_is_not_file'));
+            }
+
+            $custom_path = ($type->id == $document_type->id ? 'documents/works' : ($type->id == $audio_type->id ? 'audios/works' : 'images/works'));
+            $file_url =  $custom_path . '/' . $work->id . '/' . Str::random(50) . '.' . $request->file('file_url')->extension();
 
             // Upload file
             Storage::url(Storage::disk('public')->put($file_url, $request->file('file_url')));
@@ -614,7 +700,8 @@ class WorkController extends BaseController
      */
     public function addImage(Request $request, $id)
     {
-        $type = Type::where('type_name->fr', 'Image (Photo/Vidéo)')->first();
+        $file_type_group = Group::where('group_name', 'Type de fichier')->first();
+        $type = Type::where([['type_name->fr', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
         $inputs = [
             'work_id' => $request->work_id,
             'image_64' => $request->image_64

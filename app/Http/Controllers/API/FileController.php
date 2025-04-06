@@ -37,8 +37,11 @@ class FileController extends BaseController
         $inputs = [
             'file_name' => $request->file_name,
             'file_url' => $request->file_url,
+            'media_length' => $request->media_length,
             'type_id' => $request->type_id,
-            'work_id' => $request->work_id
+            'work_id' => $request->work_id,
+            'program_id' => $request->program_id,
+            'message_id' => $request->message_id
         ];
 
         // Validate required fields
@@ -101,8 +104,11 @@ class FileController extends BaseController
             'id' => $request->id,
             'file_name' => $request->file_name,
             'file_url' => $request->file_url,
+            'media_length' => $request->media_length,
             'type_id' => $request->type_id,
-            'work_id' => $request->work_id
+            'work_id' => $request->work_id,
+            'program_id' => $request->program_id,
+            'message_id' => $request->message_id
         ];
 
         if (trim($inputs['file_name']) != null) {
@@ -147,6 +153,13 @@ class FileController extends BaseController
             ]);
         }
 
+        if ($inputs['media_length'] != null) {
+            $file->update([
+                'media_length' => $inputs['media_length'],
+                'updated_at' => now()
+            ]);
+        }
+
         if ($inputs['type_id'] != null) {
             $file->update([
                 'type_id' => $inputs['type_id'],
@@ -157,6 +170,20 @@ class FileController extends BaseController
         if ($inputs['work_id'] != null) {
             $file->update([
                 'work_id' => $inputs['work_id'],
+                'updated_at' => now()
+            ]);
+        }
+
+        if ($inputs['program_id'] != null) {
+            $file->update([
+                'program_id' => $inputs['program_id'],
+                'updated_at' => now()
+            ]);
+        }
+
+        if ($inputs['message_id'] != null) {
+            $file->update([
+                'message_id' => $inputs['message_id'],
                 'updated_at' => now()
             ]);
         }

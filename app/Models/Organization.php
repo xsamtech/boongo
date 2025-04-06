@@ -67,7 +67,7 @@ class Organization extends Model
      */
     public function messages(): HasMany
     {
-        return $this->hasMany(Message::class);
+        return $this->hasMany(Message::class, 'addressee_organization_id');
     }
 
     /**
@@ -77,6 +77,15 @@ class Organization extends Model
     public function programs(): HasMany
     {
         return $this->hasMany(Program::class);
+    }
+
+    /**
+     * MANY-TO-ONE
+     * Several events for an organization
+     */
+    public function events(): HasMany
+    {
+        return $this->hasMany(Event::class);
     }
 
     /**

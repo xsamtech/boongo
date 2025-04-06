@@ -48,6 +48,15 @@ class Type extends Model
 
     /**
      * MANY-TO-ONE
+     * Several events for a type
+     */
+    public function events(): HasMany
+    {
+        return $this->hasMany(Event::class);
+    }
+
+    /**
+     * MANY-TO-ONE
      * Several works for a type
      */
     public function works(): HasMany

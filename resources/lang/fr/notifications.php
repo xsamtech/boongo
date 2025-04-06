@@ -72,6 +72,7 @@ return [
     'create_type_success' => 'Type créé',
     'update_type_success' => 'Type modifié',
     'delete_type_success' => 'Type supprimé',
+    'type_is_not_file' => 'Le type que vous avez choisi n\'est pas un fichier',
     // Category
     'find_all_categories_success' => 'Catégories trouvées',
     'find_category_success' => 'Catégorie trouvée',
@@ -102,6 +103,13 @@ return [
     'create_work_success' => 'Œuvre créée',
     'update_work_success' => 'Œuvre modifiée',
     'delete_work_success' => 'Œuvre supprimée',
+    // Like
+    'find_all_likes_success' => 'J\'aimes trouvés',
+    'find_like_success' => 'J\'aime trouvé',
+    'find_like_404' => 'J\'aime non trouvé',
+    'create_like_success' => 'J\'aime créé',
+    'update_like_success' => 'J\'aime modifié',
+    'delete_like_success' => 'J\'aime supprimé',
     // File
     'find_all_files_success' => 'Fichiers trouvés',
     'find_file_success' => 'Fichier trouvé',
@@ -154,6 +162,20 @@ return [
     'create_organization_success' => 'Organisation créée',
     'update_organization_success' => 'Organisation modifiée',
     'delete_organization_success' => 'Organisation supprimée',
+    // CourseYear
+    'find_all_course_years_success' => 'Années d\'étude trouvées',
+    'find_course_year_success' => 'Année d\'étude trouvée',
+    'find_course_year_404' => 'Année d\'étude non trouvée',
+    'create_course_year_success' => 'Année d\'étude créée',
+    'update_course_year_success' => 'Année d\'étude modifiée',
+    'delete_course_year_success' => 'Année d\'étude supprimée',
+    // Program
+    'find_all_programs_success' => 'Programmes trouvés',
+    'find_program_success' => 'Programme trouvé',
+    'find_program_404' => 'Programme non trouvé',
+    'create_program_success' => 'Programme créé',
+    'update_program_success' => 'Programme modifié',
+    'delete_program_success' => 'Programme supprimé',
     // Circle
     'find_all_circles_success' => 'Cercles de discussion trouvés',
     'find_circle_success' => 'Cercle de discussion trouvé',

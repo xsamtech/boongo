@@ -13,6 +13,8 @@ class Group extends Model
 {
     use HasFactory;
 
+    protected $table = 'groups';
+
     /**
      * The attributes that are mass assignable.
      *

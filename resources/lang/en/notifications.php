@@ -72,6 +72,7 @@ return [
     'create_type_success' => 'Type created',
     'update_type_success' => 'Type updated',
     'delete_type_success' => 'Type deleted',
+    'type_is_not_file' => 'The type you chose is not a file',
     // Category
     'find_all_categories_success' => 'Categories found',
     'find_category_success' => 'Category found',
@@ -102,6 +103,13 @@ return [
     'create_work_success' => 'Work created',
     'update_work_success' => 'Work updated',
     'delete_work_success' => 'Work deleted',
+    // Like
+    'find_all_likes_success' => 'Likes found',
+    'find_like_success' => 'Like found',
+    'find_like_404' => 'Like not found',
+    'create_like_success' => 'Like created',
+    'update_like_success' => 'Like updated',
+    'delete_like_success' => 'Like deleted',
     // File
     'find_all_files_success' => 'Files found',
     'find_file_success' => 'File found',
@@ -154,6 +162,20 @@ return [
     'create_organization_success' => 'Organization created',
     'update_organization_success' => 'Organization updated',
     'delete_organization_success' => 'Organization deleted',
+    // CourseYear
+    'find_all_course_years_success' => 'Course years found',
+    'find_course_year_success' => 'Course year found',
+    'find_course_year_404' => 'Course year not found',
+    'create_course_year_success' => 'Course year created',
+    'update_course_year_success' => 'Course year updated',
+    'delete_course_year_success' => 'Course year deleted',
+    // Program
+    'find_all_programs_success' => 'Programs found',
+    'find_program_success' => 'Program found',
+    'find_program_404' => 'Program not found',
+    'create_program_success' => 'Program created',
+    'update_program_success' => 'Program updated',
+    'delete_program_success' => 'Program deleted',
     // Circle
     'find_all_circles_success' => 'Talk circles found',
     'find_circle_success' => 'Talk circle found',

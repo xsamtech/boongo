@@ -859,14 +859,14 @@ class UserController extends BaseController
         }
 
         if ($entity == 'circle') {
-            $circles = $user->circles()->wherePivot('status_id', $status->id)->orderByDesc('created_at')->paginate(10);
+            $circles = $user->circles()->wherePivot('status_id', $status->id)->orderByDesc('created_at')->paginate(12);
             $count_circles = $user->circles()->wherePivot('status_id', $status->id)->count();
 
             return $this->handleResponse(ResourcesCircle::collection($circles), __('notifications.find_all_circles_success'), $circles->lastPage(), $count_circles);
         }
 
         if ($entity == 'event') {
-            $events = $user->events()->wherePivot('status_id', $status->id)->orderByDesc('created_at')->paginate(10);
+            $events = $user->events()->wherePivot('status_id', $status->id)->orderByDesc('created_at')->paginate(12);
             $count_events = $user->events()->wherePivot('status_id', $status->id)->count();
 
             return $this->handleResponse(ResourcesEvent::collection($events), __('notifications.find_all_events_success'), $events->lastPage(), $count_events);

@@ -177,6 +177,9 @@ return [
         'code' => [
             'exists' => 'Ce code existe déjà'
         ],
+        'course_year' => [
+            'exists' => 'Cette année d\'étude existe déjà'
+        ],
         'token' => [
             'exists' => 'Ce jeton existe déjà'
         ],

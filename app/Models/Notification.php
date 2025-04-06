@@ -14,6 +14,8 @@ class Notification extends Model
 {
     use HasFactory;
 
+    protected $table = 'notifications';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -74,5 +76,38 @@ class Notification extends Model
     public function work(): BelongsTo
     {
         return $this->belongsTo(Work::class);
+    }
+
+    /**
+     * ONE-TO-MANY
+     * One like for several notifications
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function like(): BelongsTo
+    {
+        return $this->belongsTo(Like::class);
+    }
+
+    /**
+     * ONE-TO-MANY
+     * One event for several notifications
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function event(): BelongsTo
+    {
+        return $this->belongsTo(Event::class);
+    }
+
+    /**
+     * ONE-TO-MANY
+     * One circle for several notifications
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function circle(): BelongsTo
+    {
+        return $this->belongsTo(Circle::class);
     }
 }

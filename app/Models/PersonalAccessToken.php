@@ -13,6 +13,8 @@ class PersonalAccessToken extends Model
 {
     use HasFactory;
 
+    protected $table = 'personal_access_tokens';
+
     /**
      * The attributes that are mass assignable.
      *

@@ -17,7 +17,7 @@ Route::middleware(['auth:sanctum', 'localization'])->group(function () {
     Route::apiResource('status', 'App\Http\Controllers\API\StatusController')->except(['search', 'findByGroup']);
     Route::apiResource('type', 'App\Http\Controllers\API\TypeController')->except(['search', 'findByGroup']);
     Route::apiResource('category', 'App\Http\Controllers\API\CategoryController')->except(['search', 'findByGroup', 'allUsedInWorks', 'allUsedInWorksType']);
-    Route::apiResource('work', 'App\Http\Controllers\API\WorkController')->except(['index', 'store', 'show', 'trends', 'search', 'findAllByUser', 'findAllByType', 'findAllByTypeStatus', 'findViews', 'filterByCategories']);
+    Route::apiResource('work', 'App\Http\Controllers\API\WorkController');
     Route::apiResource('file', 'App\Http\Controllers\API\FileController')->except(['index']);
     Route::apiResource('subscription', 'App\Http\Controllers\API\SubscriptionController')->except(['index']);
     Route::apiResource('cart', 'App\Http\Controllers\API\CartController')->except(['index']);
@@ -25,6 +25,8 @@ Route::middleware(['auth:sanctum', 'localization'])->group(function () {
     Route::apiResource('role', 'App\Http\Controllers\API\RoleController')->except(['search']);
     Route::apiResource('user', 'App\Http\Controllers\API\UserController')->except(['store', 'show', 'login']);
     Route::apiResource('organization', 'App\Http\Controllers\API\OrganizationController');
+    Route::apiResource('course_year', 'App\Http\Controllers\API\CourseYearController');
+    Route::apiResource('program', 'App\Http\Controllers\API\ProgramController');
     Route::apiResource('circle', 'App\Http\Controllers\API\CircleController');
     Route::apiResource('event', 'App\Http\Controllers\API\EventController');
     Route::apiResource('password_reset', 'App\Http\Controllers\API\PasswordResetController')->except(['searchByEmailOrPhone', 'searchByEmail', 'searchByPhone', 'checkToken']);
@@ -44,7 +46,6 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::resource('status', 'App\Http\Controllers\API\StatusController');
     Route::resource('type', 'App\Http\Controllers\API\TypeController');
     Route::resource('category', 'App\Http\Controllers\API\CategoryController');
-    Route::resource('work', 'App\Http\Controllers\API\WorkController');
     Route::resource('subscription', 'App\Http\Controllers\API\SubscriptionController');
     Route::resource('role', 'App\Http\Controllers\API\RoleController');
     Route::resource('user', 'App\Http\Controllers\API\UserController');
@@ -66,17 +67,6 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::get('category/find_by_group/{group_name}', 'App\Http\Controllers\API\CategoryController@findByGroup')->name('category.api.find_by_group');
     Route::get('category/all_used_in_works', 'App\Http\Controllers\API\CategoryController@allUsedInWorks')->name('category.api.all_used_in_works');
     Route::get('category/all_used_in_works_type/{type_id}', 'App\Http\Controllers\API\CategoryController@allUsedInWorksType')->name('category.api.all_used_in_works_type');
-    // Work
-    Route::get('work', 'App\Http\Controllers\API\WorkController@index')->name('work.api.index');
-    Route::post('work', 'App\Http\Controllers\API\WorkController@store')->name('work.api.store');
-    Route::get('work/{id}', 'App\Http\Controllers\API\WorkController@show')->name('work.api.show');
-    Route::get('work/trends/{year}', 'App\Http\Controllers\API\WorkController@trends')->name('work.api.trends');
-    Route::get('work/search/{data}', 'App\Http\Controllers\API\WorkController@search')->name('work.api.search');
-    Route::get('work/find_views/{work_id}', 'App\Http\Controllers\API\WorkController@findViews')->name('work.api.find_views');
-    Route::get('work/find_all_by_type/{locale}/{type_name}', 'App\Http\Controllers\API\WorkController@findAllByType')->name('work.api.find_all_by_type');
-    Route::get('work/find_all_by_type_status/{locale}/{type_name}/{status_name}', 'App\Http\Controllers\API\WorkController@findAllByTypeStatus')->name('work.api.find_all_by_type_status');
-    Route::post('work/filter_by_categories', 'App\Http\Controllers\API\WorkController@filterByCategories')->name('work.api.filter_by_categories');
-    Route::post('work/filter_by_categories_type_status/{locale}/{type_name}/{status_name}', 'App\Http\Controllers\API\WorkController@filterByCategoriesTypeStatus')->name('work.api.filter_by_categories_type_status');
     // Subscription
     Route::get('subscription', 'App\Http\Controllers\API\SubscriptionController@index')->name('subscription.api.index');
     // Role
@@ -98,19 +88,26 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::put('payment/switch_status/{status_id}/{id}', 'App\Http\Controllers\API\PaymentController@switchStatus')->name('payment.api.switch_status');
 });
 Route::group(['middleware' => ['api', 'auth:sanctum', 'localization']], function () {
-    Route::resource('work', 'App\Http\Controllers\API\WorkController')->except(['index', 'store', 'show', 'trends', 'search', 'findAllByUser', 'findAllByType', 'findAllByTypeStatus', 'findViews', 'filterByCategories']);
+    Route::resource('work', 'App\Http\Controllers\API\WorkController');
     Route::resource('partner', 'App\Http\Controllers\API\PartnerController');
     Route::resource('cart', 'App\Http\Controllers\API\CartController')->except(['index']);
     Route::resource('subscription', 'App\Http\Controllers\API\SubscriptionController')->except(['index']);
     Route::resource('user', 'App\Http\Controllers\API\UserController')->except(['store', 'show', 'login']);
     Route::resource('organization', 'App\Http\Controllers\API\OrganizationController');
+    Route::resource('event', 'App\Http\Controllers\API\EventController');
     Route::resource('notification', 'App\Http\Controllers\API\NotificationController');
 
     // Work
-    Route::get('work/find_all_by_user/{user_id}', 'App\Http\Controllers\API\WorkController@findAllByUser')->name('work.api.find_all_by_user');
+    Route::get('work/trends/{year}', 'App\Http\Controllers\API\WorkController@trends')->name('work.api.trends');
+    Route::get('work/search/{data}', 'App\Http\Controllers\API\WorkController@search')->name('work.api.search');
+    Route::get('work/find_all_by_entity/{entity}/{entity_id}', 'App\Http\Controllers\API\WorkController@findAllByEntity')->name('work.api.find_all_by_entity');
+    Route::get('work/find_all_by_type/{locale}/{type_name}', 'App\Http\Controllers\API\WorkController@findAllByType')->name('work.api.find_all_by_type');
+    Route::get('work/find_views/{work_id}', 'App\Http\Controllers\API\WorkController@findViews')->name('work.api.find_views');
+    Route::get('work/find_likes/{work_id}', 'App\Http\Controllers\API\WorkController@findLikes')->name('work.api.find_likes');
     Route::put('work/switch_view/{work_id}', 'App\Http\Controllers\API\WorkController@switchView')->name('work.api.switch_view');
-    Route::post('work/upload_files', 'App\Http\Controllers\API\WorkController@uploadFiles')->name('work.api.upload_files');
     Route::put('work/add_image/{id}', 'App\Http\Controllers\API\WorkController@addImage')->name('work.api.add_image');
+    Route::post('work/upload_files', 'App\Http\Controllers\API\WorkController@uploadFiles')->name('work.api.upload_files');
+    Route::post('work/filter_by_categories', 'App\Http\Controllers\API\WorkController@filterByCategories')->name('work.api.filter_by_categories');
     // Partner
     Route::get('partner/search/{data}', 'App\Http\Controllers\API\PartnerController@search')->name('partner.api.search');
     Route::get('partner/partnerships_by_status/{locale}/{status_name}', 'App\Http\Controllers\API\PartnerController@partnershipsByStatus')->name('partner.api.partnerships_by_status');
@@ -143,6 +140,15 @@ Route::group(['middleware' => ['api', 'auth:sanctum', 'localization']], function
     // Organization
     Route::get('organization/search/{data}', 'App\Http\Controllers\API\OrganizationController@search')->name('organization.api.search');
     Route::get('organization/find_all_by_owner/{data}', 'App\Http\Controllers\API\OrganizationController@findAllByOwner')->name('organization.api.find_all_by_owner');
+    // Event
+    Route::get('event/search/{data}/{date_from}/{date_to}', 'App\Http\Controllers\API\EventController@search')->name('event.api.search');
+    Route::get('event/find_by_type/{locale}/{type_name}', 'App\Http\Controllers\API\EventController@findByType')->name('event.api.find_by_type');
+    Route::get('event/find_by_status/{locale}/{status_name}', 'App\Http\Controllers\API\EventController@findByStatus')->name('event.api.find_by_status');
+    Route::get('event/find_by_organization/{organization_id}', 'App\Http\Controllers\API\EventController@findByOrganization')->name('event.api.find_by_organization');
+    Route::get('event/find_speakers/{event_id}', 'App\Http\Controllers\API\EventController@findSpeakers')->name('event.api.find_speakers');
+    Route::put('event/update_cover/{event_id}', 'App\Http\Controllers\API\EventController@update_cover')->name('event.api.update_cover');
+    Route::post('event/filter_for_organization/{organization_id}', 'App\Http\Controllers\API\EventController@filterForOrganization')->name('event.api.filter_for_organization');
+    Route::post('event/filter_for_everybody', 'App\Http\Controllers\API\EventController@filterForEverybody')->name('event.api.filter_for_everybody');
     // Notification
     Route::get('notification/select_by_user/{user_id}', 'App\Http\Controllers\API\NotificationController@selectByUser')->name('notification.api.select_by_user');
     Route::get('notification/select_by_status_user/{status_id}/{user_id}', 'App\Http\Controllers\API\NotificationController@selectByStatusUser')->name('notification.api.select_by_status_user');

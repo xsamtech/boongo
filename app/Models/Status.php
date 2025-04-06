@@ -57,6 +57,15 @@ class Status extends Model
 
     /**
      * MANY-TO-ONE
+     * Several events for a status
+     */
+    public function events(): HasMany
+    {
+        return $this->hasMany(Event::class);
+    }
+
+    /**
+     * MANY-TO-ONE
      * Several payments for a status
      */
     public function payments(): HasMany

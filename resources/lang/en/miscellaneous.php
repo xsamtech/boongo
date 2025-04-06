@@ -853,5 +853,22 @@ return [
         'medias' => [
             'description' => 'Educational and informative photos/videos',
         ],
+
+        // Event
+        'event' => [
+            'details' => 'Event details',
+            'link' => 'Manage events',
+            'add' => 'Add an event',
+            'edit' => 'Edit the event',
+            'search' => 'Search an event',
+            'list' => 'Events list',
+            'data' => [
+                'event_title' => 'Events title',
+                'event_description' => 'Description',
+                'start_at' => 'Start time',
+                'end_at' => 'End time',
+                'access_type' => 'Access type (Public or Private)'
+            ],
+        ],
     ],
 ];

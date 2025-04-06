@@ -26,7 +26,7 @@ class Partner extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'message' => $this->message,
-            'image_url' => $this->image_url != null ? (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/public/storage/' . $this->image_url : (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/public/assets/img/ad.png',
+            'image_url' => $this->image_url != null ? getWebURL() . '/public/storage/' . $this->image_url : getWebURL() . '/public/assets/img/ad.png',
             'website_url' => $this->website_url,
             'remaining_days' => $remainingDays,
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),

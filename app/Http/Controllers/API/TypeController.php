@@ -40,8 +40,8 @@ class TypeController extends BaseController
                 'fr' => $request->type_name_fr
             ],
             'type_description' => $request->type_description,
+            'alias' => $request->alias,
             'icon' => $request->icon,
-            'color' => $request->color,
             'group_id' => $request->group_id
         ];
         // Select all group types to check unique constraint
@@ -102,8 +102,8 @@ class TypeController extends BaseController
                 'fr' => $request->type_name_fr
             ],
             'type_description' => $request->type_description,
+            'alias' => $request->alias,
             'icon' => $request->icon,
-            'color' => $request->color,
             'group_id' => $request->group_id
         ];
         // Select all group types and specific type to check unique constraint
@@ -135,16 +135,16 @@ class TypeController extends BaseController
             ]);
         }
 
-        if ($inputs['icon'] != null) {
+        if ($inputs['alias'] != null) {
             $type->update([
-                'icon' => $request->icon,
+                'alias' => $request->alias,
                 'updated_at' => now(),
             ]);
         }
 
-        if ($inputs['color'] != null) {
+        if ($inputs['icon'] != null) {
             $type->update([
-                'color' => $request->color,
+                'icon' => $request->icon,
                 'updated_at' => now(),
             ]);
         }
