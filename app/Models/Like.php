@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -15,6 +16,33 @@ class Like extends Model
     use HasFactory;
 
     protected $table = 'likes';
+
+    /**
+     * ONE-TO-MANY
+     * One user for several likes
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * ONE-TO-MANY
+     * One work for several likes
+     */
+    public function for_work(): BelongsTo
+    {
+        return $this->belongsTo(Work::class, 'for_work_id');
+    }
+
+    /**
+     * ONE-TO-MANY
+     * One message for several likes
+     */
+    public function for_message(): BelongsTo
+    {
+        return $this->belongsTo(Message::class, 'for_message_id');
+    }
 
     /**
      * MANY-TO-ONE

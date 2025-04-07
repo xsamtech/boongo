@@ -111,6 +111,17 @@ class Message extends Model
 
     /**
      * MANY-TO-ONE
+     * Several likes for a message
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function likes(): HasMany
+    {
+        return $this->hasMany(Like::class, 'for_message_id');
+    }
+
+    /**
+     * MANY-TO-ONE
      * Several files for a message
      * 
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

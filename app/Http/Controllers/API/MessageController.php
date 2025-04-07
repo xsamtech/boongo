@@ -44,10 +44,10 @@ class MessageController extends BaseController
     public function store(Request $request)
     {
         // Groups
-        $message_status_group = Group::where('group_name->fr', 'Etat du message')->first();
-        $notification_status_group = Group::where('group_name->fr', 'Etat de la notification')->first();
-        $notification_type_group = Group::where('group_name->fr', 'Type de notification')->first();
-        $message_type_group = Group::where('group_name->fr', 'Type de message')->first();
+        $message_status_group = Group::where('group_name', 'Etat du message')->first();
+        $notification_status_group = Group::where('group_name', 'Etat de la notification')->first();
+        $notification_type_group = Group::where('group_name', 'Type de notification')->first();
+        $message_type_group = Group::where('group_name', 'Type de message')->first();
         // Statuses
         $unread_message_status = Status::where([['status_name->fr', 'Non lu'], ['group_id', $message_status_group->id]])->first();
         $unread_notification_status = Status::where([['status_name->fr', 'Non lue'], ['group_id', $notification_status_group->id]])->first();
@@ -161,7 +161,7 @@ class MessageController extends BaseController
     public function show(Request $request, $id)
     {
         // Group
-        $message_status_group = Group::where('group_name->fr', 'Etat du message')->first();
+        $message_status_group = Group::where('group_name', 'Etat du message')->first();
         // Status
         $read_message_status = Status::where([['status_name->fr', 'Lu'], ['group_id', $message_status_group->id]])->first();
         // Request
@@ -465,7 +465,7 @@ class MessageController extends BaseController
     public function membersWithMessageStatus($locale, $status_name, $message_id)
     {
         // Group
-        $group = Group::where('group_name->fr', 'Etat du message')->first();
+        $group = Group::where('group_name', 'Etat du message')->first();
         // Status
         $status = Status::where([['status_name->' . $locale, $status_name], ['group_id', $group->id]])->first();
 
@@ -495,7 +495,7 @@ class MessageController extends BaseController
      */
     public function deleteForMyself($user_id, $message_id, $entity)
     {
-        $message_status_group = Group::where('group_name->fr', 'Etat du message')->first();
+        $message_status_group = Group::where('group_name', 'Etat du message')->first();
         $deleted_message_status = Status::where([['status_name->fr', 'Supprimé'], ['group_id', $message_status_group->id]])->first();
         $user = User::find($user_id);
 
@@ -555,7 +555,7 @@ class MessageController extends BaseController
     public function markAllReadUser($locale, $type_name, $sender_id, $addressee_user_id)
     {
         // Group
-        $message_status_group = Group::where('group_name->fr', 'Etat du message')->first();
+        $message_status_group = Group::where('group_name', 'Etat du message')->first();
         // Status
         $read_message_status = Status::where([['status_name->fr', 'Lu'], ['group_id', $message_status_group->id]])->first();
         // Requests
@@ -602,7 +602,7 @@ class MessageController extends BaseController
     public function markAllReadGroup($user_id, $entity, $entity_id)
     {
         // Group
-        $message_status_group = Group::where('group_name->fr', 'Etat du message')->first();
+        $message_status_group = Group::where('group_name', 'Etat du message')->first();
         // Status
         $read_message_status = Status::where([['status_name->fr', 'Lu'], ['group_id', $message_status_group->id]])->first();
         // Requests

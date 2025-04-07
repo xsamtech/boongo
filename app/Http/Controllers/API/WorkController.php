@@ -318,6 +318,14 @@ class WorkController extends BaseController
      */
     public function destroy(Work $work)
     {
+        $notifications = Notification::where('work_id', $work->id)->get();
+
+        if ($notifications != null) {
+            foreach ($notifications as $notification) {
+                $notification->delete();
+            }
+        }
+
         $work->delete();
 
         $works = Work::all();

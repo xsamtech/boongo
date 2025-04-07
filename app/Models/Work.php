@@ -88,6 +88,15 @@ class Work extends Model
 
     /**
      * MANY-TO-ONE
+     * Several likes for a work
+     */
+    public function likes(): HasMany
+    {
+        return $this->hasMany(Like::class, 'for_work_id');
+    }
+
+    /**
+     * MANY-TO-ONE
      * Several notifications for a work
      */
     public function notifications(): HasMany

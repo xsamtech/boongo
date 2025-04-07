@@ -13,14 +13,15 @@ use Illuminate\Support\Facades\Route;
 */
 Route::middleware(['auth:sanctum', 'localization'])->group(function () {
     Route::apiResource('country', 'App\Http\Controllers\API\CountryController')->except(['index', 'store', 'search']);
-    Route::apiResource('group', 'App\Http\Controllers\API\GroupController')->except(['search']);
+    Route::apiResource('group', 'App\Http\Controllers\API\GroupController');
     Route::apiResource('status', 'App\Http\Controllers\API\StatusController')->except(['search', 'findByGroup']);
     Route::apiResource('type', 'App\Http\Controllers\API\TypeController')->except(['search', 'findByGroup']);
     Route::apiResource('category', 'App\Http\Controllers\API\CategoryController')->except(['search', 'findByGroup', 'allUsedInWorks', 'allUsedInWorksType']);
     Route::apiResource('work', 'App\Http\Controllers\API\WorkController');
-    Route::apiResource('file', 'App\Http\Controllers\API\FileController')->except(['index']);
+    Route::apiResource('like', 'App\Http\Controllers\API\LikeController');
+    Route::apiResource('file', 'App\Http\Controllers\API\FileController');
     Route::apiResource('subscription', 'App\Http\Controllers\API\SubscriptionController')->except(['index']);
-    Route::apiResource('cart', 'App\Http\Controllers\API\CartController')->except(['index']);
+    Route::apiResource('cart', 'App\Http\Controllers\API\CartController');
     Route::apiResource('partner', 'App\Http\Controllers\API\PartnerController');
     Route::apiResource('role', 'App\Http\Controllers\API\RoleController')->except(['search']);
     Route::apiResource('user', 'App\Http\Controllers\API\UserController')->except(['store', 'show', 'login']);
@@ -90,7 +91,7 @@ Route::group(['middleware' => ['api', 'localization']], function () {
 Route::group(['middleware' => ['api', 'auth:sanctum', 'localization']], function () {
     Route::resource('work', 'App\Http\Controllers\API\WorkController');
     Route::resource('partner', 'App\Http\Controllers\API\PartnerController');
-    Route::resource('cart', 'App\Http\Controllers\API\CartController')->except(['index']);
+    Route::resource('cart', 'App\Http\Controllers\API\CartController');
     Route::resource('subscription', 'App\Http\Controllers\API\SubscriptionController')->except(['index']);
     Route::resource('user', 'App\Http\Controllers\API\UserController')->except(['store', 'show', 'login']);
     Route::resource('organization', 'App\Http\Controllers\API\OrganizationController');

@@ -49,6 +49,7 @@ class Work extends JsonResource
             'user_owner' => User::make($this->user_owner),
             'organization_owner' => User::make($this->organization_owner),
             'categories' => Category::collection($this->categories),
+            'likes' => Like::collection($this->likes),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'type_id' => $this->type_id,

@@ -978,10 +978,10 @@ class UserController extends BaseController
     public function subscribeToGroup(Request $request, $id, $addressee_id)
     {
         // Groups
-        $invitation_status_group = Group::where('group_name->fr', 'Etat de l\'invitation')->first();
-        $notification_status_group = Group::where('group_name->fr', 'Etat de la notification')->first();
-        $access_type_group = Group::where('group_name->fr', 'Type d\'accès')->first();
-        $notification_type_group = Group::where('group_name->fr', 'Type de notification')->first();
+        $invitation_status_group = Group::where('group_name', 'Etat de l\'invitation')->first();
+        $notification_status_group = Group::where('group_name', 'Etat de la notification')->first();
+        $access_type_group = Group::where('group_name', 'Type d\'accès')->first();
+        $notification_type_group = Group::where('group_name', 'Type de notification')->first();
         // Statuses
         $on_hold_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $invitation_status_group->id]])->first();
         $accepted_status = Status::where([['status_name->fr', 'Acceptée'], ['group_id', $invitation_status_group->id]])->first();
@@ -1126,8 +1126,8 @@ class UserController extends BaseController
     public function unsubscribeToGroup(Request $request, $id, $addressee_id)
     {
         // Groups
-        $notification_status_group = Group::where('group_name->fr', 'Etat de la notification')->first();
-        $notification_type_group = Group::where('group_name->fr', 'Type de notification')->first();
+        $notification_status_group = Group::where('group_name', 'Etat de la notification')->first();
+        $notification_type_group = Group::where('group_name', 'Type de notification')->first();
         // Statuses
         $unread_notification_status = Status::where([['status_name->fr', 'Non lue'], ['group_id', $notification_status_group->id]])->first();
         // Types

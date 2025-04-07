@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\Circle;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -147,6 +148,14 @@ class CircleController extends BaseController
      */
     public function destroy(Circle $circle)
     {
+        $notifications = Notification::where('circle_id', $circle->id)->get();
+
+        if ($notifications != null) {
+            foreach ($notifications as $notification) {
+                $notification->delete();
+            }
+        }
+
         $circle->delete();
 
         $circles = Circle::all();

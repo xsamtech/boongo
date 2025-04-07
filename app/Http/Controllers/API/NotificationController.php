@@ -40,7 +40,10 @@ class NotificationController extends BaseController
             'status_id' => $request->status_id,
             'from_user_id' => $request->from_user_id,
             'to_user_id' => $request->to_user_id,
-            'work_id' => $request->work_id
+            'work_id' => $request->work_id,
+            'like_id' => $request->like_id,
+            'event_id' => $request->event_id,
+            'circle_id' => $request->circle_id
         ];
 
         $validator = Validator::make($inputs, [
@@ -91,6 +94,9 @@ class NotificationController extends BaseController
             'from_user_id' => $request->from_user_id,
             'to_user_id' => $request->to_user_id,
             'work_id' => $request->work_id,
+            'like_id' => $request->like_id,
+            'event_id' => $request->event_id,
+            'circle_id' => $request->circle_id,
             'updated_at' => now()
         ];
 

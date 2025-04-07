@@ -42,10 +42,10 @@ class EventController extends BaseController
     public function store(Request $request)
     {
         // Groups
-        $notification_status_group = Group::where('group_name->fr', 'Etat de la notification')->first();
-        $event_status_group = Group::where('group_name->fr', 'Etat de l\'événement')->first();
-        $notification_type_group = Group::where('group_name->fr', 'Type de notification')->first();
-        $access_type_group = Group::where('group_name->fr', 'Type d\'accès')->first();
+        $notification_status_group = Group::where('group_name', 'Etat de la notification')->first();
+        $event_status_group = Group::where('group_name', 'Etat de l\'événement')->first();
+        $notification_type_group = Group::where('group_name', 'Type de notification')->first();
+        $access_type_group = Group::where('group_name', 'Type d\'accès')->first();
         // Status
         $created_status = Status::where([['status_name->fr', 'Créé'], ['group_id', $event_status_group->id]])->first();
         $unread_notification_status = Status::where([['status_name->fr', 'Non lue'], ['group_id', $notification_status_group->id]])->first();
@@ -171,8 +171,8 @@ class EventController extends BaseController
     public function update(Request $request, Event $event)
     {
         // Groups
-        $notification_status_group = Group::where('group_name->fr', 'Etat de la notification')->first();
-        $notification_type_group = Group::where('group_name->fr', 'Type de notification')->first();
+        $notification_status_group = Group::where('group_name', 'Etat de la notification')->first();
+        $notification_type_group = Group::where('group_name', 'Type de notification')->first();
         // Statuses
         $unread_notification_status = Status::where([['status_name->fr', 'Non lue'], ['group_id', $notification_status_group->id]])->first();
         // Types
@@ -302,6 +302,14 @@ class EventController extends BaseController
      */
     public function destroy(Event $event)
     {
+        $notifications = Notification::where('event_id', $event->id)->get();
+
+        if ($notifications != null) {
+            foreach ($notifications as $notification) {
+                $notification->delete();
+            }
+        }
+
         $event->delete();
 
         $events = Event::orderByDesc('created_at')->paginate(12);
@@ -322,7 +330,7 @@ class EventController extends BaseController
     public function search($data, $date_from = null, $date_to = null)
     {
         // Group
-        $access_type_group = Group::where('group_name->fr', 'Type d\'accès')->first();
+        $access_type_group = Group::where('group_name', 'Type d\'accès')->first();
         // Type
         $public_type = Type::where([['type_name->fr', 'Public'], ['group_id', $access_type_group->id]])->first();
 
