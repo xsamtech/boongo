@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
         $countries = Country::all();
         // Select all types by group (Type de transaction)
         $group = Group::where('group_name', 'Type de paiement')->first();
-        $transaction_types = Type::where('group_id', $group->id)->get();
+        $transaction_types = !empty($group) ? Type::where('group_id', $group->id)->get() : Type::all();
 
         view()->composer('*', function ($view) use ($countries, $transaction_types) {
             $view->with('current_locale', app()->getLocale());
