@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Circle;
 use App\Models\File;
 use App\Models\Group;
 use App\Models\Message;
 use App\Models\Notification;
+use App\Models\Organization;
 use App\Models\Status;
 use App\Models\Type;
 use App\Models\User;
@@ -13,10 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Resources\Message as ResourcesMessage;
-use App\Http\Resources\Organization as ResourcesOrganization;
 use App\Http\Resources\User as ResourcesUser;
-use App\Models\Circle;
-use App\Models\Organization;
 
 /**
  * @author Xanders
