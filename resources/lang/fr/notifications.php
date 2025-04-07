@@ -211,6 +211,7 @@ return [
     'find_all_messages_success' => 'Messages trouvés',
     'find_message_success' => 'Message trouvé',
     'find_message_404' => 'Message non trouvé',
+    'find_sender_404' => 'Expéditeur non trouvé',
     'create_message_success' => 'Message créé',
     'update_message_success' => 'Message modifié',
     'delete_message_success' => 'Message supprimé',
