@@ -37,7 +37,8 @@ class TypeController extends BaseController
         $inputs = [
             'type_name' => [
                 'en' => $request->type_name_en,
-                'fr' => $request->type_name_fr
+                'fr' => $request->type_name_fr,
+                'ln' => $request->type_name_ln
             ],
             'type_description' => $request->type_description,
             'alias' => $request->alias,
@@ -99,7 +100,8 @@ class TypeController extends BaseController
             'id' => $request->id,
             'type_name' => [
                 'en' => $request->type_name_en,
-                'fr' => $request->type_name_fr
+                'fr' => $request->type_name_fr,
+                'ln' => $request->type_name_ln
             ],
             'type_description' => $request->type_description,
             'alias' => $request->alias,
@@ -122,7 +124,8 @@ class TypeController extends BaseController
             $type->update([
                 'type_name' => [
                     'en' => $request->type_name_en,
-                    'fr' => $request->type_name_fr
+                    'fr' => $request->type_name_fr,
+                    'ln' => $request->type_name_ln
                 ],
                 'updated_at' => now()
             ]);

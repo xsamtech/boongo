@@ -37,7 +37,8 @@ class CategoryController extends BaseController
         $inputs = [
             'category_name' => [
                 'en' => $request->category_name_en,
-                'fr' => $request->category_name_fr
+                'fr' => $request->category_name_fr,
+                'ln' => $request->category_name_ln
             ],
             'category_description' => $request->category_description,
             'icon' => $request->icon,
@@ -95,7 +96,8 @@ class CategoryController extends BaseController
             'id' => $request->id,
             'category_name' => [
                 'en' => $request->category_name_en,
-                'fr' => $request->category_name_fr
+                'fr' => $request->category_name_fr,
+                'ln' => $request->category_name_ln
             ],
             'category_description' => $request->category_description,
             'icon' => $request->icon,
@@ -118,7 +120,8 @@ class CategoryController extends BaseController
             $category->update([
                 'category_name' => [
                     'en' => $request->category_name_en,
-                    'fr' => $request->category_name_fr
+                    'fr' => $request->category_name_fr,
+                    'ln' => $request->category_name_ln
                 ],
                 'updated_at' => now()
             ]);

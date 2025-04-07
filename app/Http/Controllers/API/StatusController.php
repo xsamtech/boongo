@@ -37,7 +37,8 @@ class StatusController extends BaseController
         $inputs = [
             'status_name' => [
                 'en' => $request->status_name_en,
-                'fr' => $request->status_name_fr
+                'fr' => $request->status_name_fr,
+                'ln' => $request->status_name_ln
             ],
             'status_description' => $request->status_description,
             'icon' => $request->icon,
@@ -99,7 +100,8 @@ class StatusController extends BaseController
             'id' => $request->id,
             'status_name' => [
                 'en' => $request->status_name_en,
-                'fr' => $request->status_name_fr
+                'fr' => $request->status_name_fr,
+                'ln' => $request->status_name_ln
             ],
             'status_description' => $request->status_description,
             'icon' => $request->icon,
@@ -122,7 +124,8 @@ class StatusController extends BaseController
             $status->update([
                 'status_name' => [
                     'en' => $request->status_name_en,
-                    'fr' => $request->status_name_fr
+                    'fr' => $request->status_name_fr,
+                    'ln' => $request->status_name_ln
                 ],
                 'updated_at' => now()
             ]);

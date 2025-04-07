@@ -21,8 +21,9 @@ class Category extends JsonResource
         return [
             'id' => $this->id,
             'category_name' => $this->category_name,
-            'category_name_fr' => $this->getTranslation('category_name', 'fr'),
             'category_name_en' => $this->getTranslation('category_name', 'en'),
+            'category_name_fr' => $this->getTranslation('category_name', 'fr'),
+            'category_name_ln' => $this->getTranslation('category_name', 'ln'),
             'category_description' => $this->category_description,
             'icon' => $this->icon,
             'color' => $this->color,
