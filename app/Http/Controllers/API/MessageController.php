@@ -331,7 +331,7 @@ class MessageController extends BaseController
     }
 
     /**
-     * Search a message in group (community or team).
+     * Search a message in group (organization or circle).
      *
      * @param  string $entity
      * @param  int $entity_id
@@ -592,7 +592,7 @@ class MessageController extends BaseController
     }
 
     /**
-     * GET: Mark all organization/team messages as read.
+     * GET: Mark all organization/circle messages as read.
      *
      * @param  int $user_id
      * @param  string $entity

@@ -95,6 +95,7 @@ Route::group(['middleware' => ['api', 'auth:sanctum', 'localization']], function
     Route::resource('user', 'App\Http\Controllers\API\UserController')->except(['store', 'show', 'login']);
     Route::resource('organization', 'App\Http\Controllers\API\OrganizationController');
     Route::resource('event', 'App\Http\Controllers\API\EventController');
+    Route::resource('message', 'App\Http\Controllers\API\MessageController');
     Route::resource('notification', 'App\Http\Controllers\API\NotificationController');
 
     // Work
@@ -149,6 +150,16 @@ Route::group(['middleware' => ['api', 'auth:sanctum', 'localization']], function
     Route::put('event/update_cover/{event_id}', 'App\Http\Controllers\API\EventController@update_cover')->name('event.api.update_cover');
     Route::post('event/filter_for_organization/{organization_id}', 'App\Http\Controllers\API\EventController@filterForOrganization')->name('event.api.filter_for_organization');
     Route::post('event/filter_for_everybody', 'App\Http\Controllers\API\EventController@filterForEverybody')->name('event.api.filter_for_everybody');
+    // Message
+    Route::get('message/search_in_chat/{locale}/{type_name}/{data}/{sender_id}/{addressee_id}', 'App\Http\Controllers\API\MessageController@searchInChat')->name('message.api.search_in_chat');
+    Route::get('message/search_in_group/{entity}/{entity_id}/{member_id}/{data}', 'App\Http\Controllers\API\MessageController@searchInGroup')->name('message.api.search_in_group');
+    Route::get('message/chat_with_user/{locale}/{type_name}/{sender_id}/{addressee_user_id}', 'App\Http\Controllers\API\MessageController@chatWithUser')->name('message.api.chat_with_user');
+    Route::get('message/chat_with_group/{locale}/{type_name}/{sender_id}/{addressee_user_id}', 'App\Http\Controllers\API\MessageController@chatWithGroup')->name('message.api.chat_with_group');
+    Route::get('message/members_with_message_status/{locale}/{status_name}/{message_id}', 'App\Http\Controllers\API\MessageController@membersWithMessageStatus')->name('message.api.members_with_message_status');
+    Route::get('message/delete_for_myself/{user_id}/{message_id}/{entity}', 'App\Http\Controllers\API\MessageController@deleteForMyself')->name('message.api.delete_for_myself');
+    Route::get('message/delete_for_everybody/{message_id}', 'App\Http\Controllers\API\MessageController@deleteForEverybody')->name('message.api.delete_for_everybody');
+    Route::get('message/mark_all_read_user/{locale}/{type_name}/{sender_id}/{addressee_user_id}', 'App\Http\Controllers\API\MessageController@markAllReadUser')->name('message.api.mark_all_read_user');
+    Route::get('message/mark_all_read_group/{user_id}/{entity}/{entity_id}', 'App\Http\Controllers\API\MessageController@markAllReadGroup')->name('message.api.mark_all_read_group');
     // Notification
     Route::get('notification/select_by_user/{user_id}', 'App\Http\Controllers\API\NotificationController@selectByUser')->name('notification.api.select_by_user');
     Route::get('notification/select_by_status_user/{status_id}/{user_id}', 'App\Http\Controllers\API\NotificationController@selectByStatusUser')->name('notification.api.select_by_status_user');
