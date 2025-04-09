@@ -92,7 +92,7 @@ Route::group(['middleware' => ['api', 'auth:sanctum', 'localization']], function
     Route::resource('work', 'App\Http\Controllers\API\WorkController');
     Route::resource('partner', 'App\Http\Controllers\API\PartnerController');
     Route::resource('cart', 'App\Http\Controllers\API\CartController');
-    Route::resource('subscription', 'App\Http\Controllers\API\SubscriptionController')->except(['index']);
+    Route::resource('subscription', 'App\Http\Controllers\API\SubscriptionController');
     Route::resource('user', 'App\Http\Controllers\API\UserController')->except(['store', 'show', 'login']);
     Route::resource('organization', 'App\Http\Controllers\API\OrganizationController');
     Route::resource('event', 'App\Http\Controllers\API\EventController');
