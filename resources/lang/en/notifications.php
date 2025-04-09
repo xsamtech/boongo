@@ -101,6 +101,7 @@ return [
     'find_work_success' => 'Work found',
     'find_work_404' => 'Work not found',
     'create_work_success' => 'Work created',
+    'create_work_file_500' => 'The work file could not be created',
     'update_work_success' => 'Work updated',
     'delete_work_success' => 'Work deleted',
     // Like

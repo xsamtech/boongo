@@ -101,6 +101,7 @@ return [
     'find_work_success' => 'Œuvre trouvée',
     'find_work_404' => 'Œuvre non trouvée',
     'create_work_success' => 'Œuvre créée',
+    'create_work_file_500' => 'Le fichier de l\'œuvre n\'a pas pu être créé',
     'update_work_success' => 'Œuvre modifiée',
     'delete_work_success' => 'Œuvre supprimée',
     // Like

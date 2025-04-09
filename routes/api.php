@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 | Default API Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth:sanctum', 'localization'])->group(function () {
+Route::middleware(['localization'])->group(function () {
     Route::apiResource('country', 'App\Http\Controllers\API\CountryController')->except(['index', 'store', 'search']);
     Route::apiResource('group', 'App\Http\Controllers\API\GroupController');
     Route::apiResource('status', 'App\Http\Controllers\API\StatusController')->except(['search', 'findByGroup']);

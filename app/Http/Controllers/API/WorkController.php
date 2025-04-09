@@ -97,15 +97,23 @@ class WorkController extends BaseController
                 return $this->handleError(__('notifications.type_is_not_file'));
             }
 
+            $file = $request->file('file_url');
             $custom_path = ($type->id == $document_type->id ? 'documents/works' : ($type->id == $audio_type->id ? 'audios/works' : 'images/works'));
-            $file_url =  $custom_path . '/' . $work->id . '/' . Str::random(50) . '.' . $request->file('file_url')->extension();
+            $filename = $file->getClientOriginalName();
+            $file_url =  $custom_path . '/' . $work->id . '/' . $filename;
 
             // Upload file
-            $dir_result = Storage::url(Storage::disk('public')->put($file_url, $request->file('file_url')));
+            // $dir_result = Storage::url(Storage::disk('public')->put($file_url, $file));
+            try {
+                $file->storeAs($custom_path . '/' . $work->id, $filename, 's3');
+
+            } catch (\Throwable $th) {
+                return $this->handleError($th, __('notifications.create_work_file_500'), 500);
+            }
 
             File::create([
                 'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
-                'file_url' => $dir_result,
+                'file_url' => config('filesystems.disks.s3.url') . $file_url, // $dir_result
                 'type_id' => $type->id,
                 'work_id' => $work->id
             ]);
