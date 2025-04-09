@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 | Default API Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['localization'])->group(function () {
+Route::middleware(['auth:sanctum', 'localization'])->group(function () {
     Route::apiResource('country', 'App\Http\Controllers\API\CountryController')->except(['index', 'store', 'search']);
     Route::apiResource('group', 'App\Http\Controllers\API\GroupController');
     Route::apiResource('status', 'App\Http\Controllers\API\StatusController')->except(['search', 'findByGroup']);
@@ -20,7 +20,7 @@ Route::middleware(['localization'])->group(function () {
     Route::apiResource('work', 'App\Http\Controllers\API\WorkController');
     Route::apiResource('like', 'App\Http\Controllers\API\LikeController');
     Route::apiResource('file', 'App\Http\Controllers\API\FileController');
-    Route::apiResource('subscription', 'App\Http\Controllers\API\SubscriptionController');
+    Route::apiResource('subscription', 'App\Http\Controllers\API\SubscriptionController')->except(['index']);
     Route::apiResource('cart', 'App\Http\Controllers\API\CartController');
     Route::apiResource('partner', 'App\Http\Controllers\API\PartnerController');
     Route::apiResource('role', 'App\Http\Controllers\API\RoleController')->except(['search']);
@@ -88,11 +88,11 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::get('payment/find_by_order_number_user/{order_number}/{user_id}', 'App\Http\Controllers\API\PaymentController@findByOrderNumberUser')->name('payment.api.find_by_order_number_user');
     Route::put('payment/switch_status/{status_id}/{id}', 'App\Http\Controllers\API\PaymentController@switchStatus')->name('payment.api.switch_status');
 });
-Route::group(['middleware' => ['api', 'localization']], function () {
+Route::group(['middleware' => ['api', 'auth:sanctum', 'localization']], function () {
     Route::resource('work', 'App\Http\Controllers\API\WorkController');
     Route::resource('partner', 'App\Http\Controllers\API\PartnerController');
     Route::resource('cart', 'App\Http\Controllers\API\CartController');
-    Route::resource('subscription', 'App\Http\Controllers\API\SubscriptionController');
+    Route::resource('subscription', 'App\Http\Controllers\API\SubscriptionController')->except(['index']);
     Route::resource('user', 'App\Http\Controllers\API\UserController')->except(['store', 'show', 'login']);
     Route::resource('organization', 'App\Http\Controllers\API\OrganizationController');
     Route::resource('event', 'App\Http\Controllers\API\EventController');
