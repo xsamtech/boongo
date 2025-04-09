@@ -20,10 +20,10 @@ class Type extends JsonResource
     {
         return [
             'id' => $this->id,
-            'type_name' => $this->alias == 'unique_subscriptio' ? ($this->type_name . ' (24h)') : $this->type_name,
-            'type_name_en' => $this->getTranslation('type_name', 'en') == 'Single payment' ? ($this->getTranslation('type_name', 'en') . ' (24h)') : $this->getTranslation('type_name', 'en'),
-            'type_name_fr' => $this->getTranslation('type_name', 'fr') == 'Paiement unique' ? ($this->getTranslation('type_name', 'fr') . ' (24h)') : $this->getTranslation('type_name', 'fr'),
-            'type_name_ln' => $this->getTranslation('type_name', 'ln') == 'Futa mbala moko' ? ($this->getTranslation('type_name', 'ln') . ' (24h)') : $this->getTranslation('type_name', 'ln'),
+            'type_name' => $this->alias == 'unique_subscription' ? ($this->type_name . ' (24h)') : $this->type_name,
+            'type_name_en' => $this->alias == 'unique_subscription' ? ($this->getTranslation('type_name', 'en') . ' (24h)') : $this->getTranslation('type_name', 'en'),
+            'type_name_fr' => $this->alias == 'unique_subscription' ? ($this->getTranslation('type_name', 'fr') . ' (24h)') : $this->getTranslation('type_name', 'fr'),
+            'type_name_ln' => $this->alias == 'unique_subscription' ? ($this->getTranslation('type_name', 'ln') . ' (24h)') : $this->getTranslation('type_name', 'ln'),
             'type_description' => $this->type_description,
             'alias' => $this->alias,
             'icon' => $this->icon,
