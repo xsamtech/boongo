@@ -20,8 +20,8 @@ class Subscription extends JsonResource
     {
         return [
             'id' => $this->id,
-            'number_of_hours' => formatIntegerNumber($this->number_of_hours),
-            'price' => formatDecimalNumber($this->price) . ' USD',
+            'number_of_hours' => $this->number_of_hours,
+            'price' => formatDecimalNumber($this->price) . ' $',
             'type' => Type::make($this->type),
             'category' => Category::make($this->category),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
