@@ -20,7 +20,7 @@ Route::middleware(['localization'])->group(function () {
     Route::apiResource('work', 'App\Http\Controllers\API\WorkController');
     Route::apiResource('like', 'App\Http\Controllers\API\LikeController');
     Route::apiResource('file', 'App\Http\Controllers\API\FileController');
-    Route::apiResource('subscription', 'App\Http\Controllers\API\SubscriptionController')->except(['index']);
+    Route::apiResource('subscription', 'App\Http\Controllers\API\SubscriptionController');
     Route::apiResource('cart', 'App\Http\Controllers\API\CartController');
     Route::apiResource('partner', 'App\Http\Controllers\API\PartnerController');
     Route::apiResource('role', 'App\Http\Controllers\API\RoleController')->except(['search']);
