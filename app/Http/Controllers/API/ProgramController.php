@@ -59,9 +59,9 @@ class ProgramController extends BaseController
             // Group
             $file_type_group = Group::where('group_name', 'Type de fichier')->first();
             // Types
-            $image_type = Type::where([['type_name', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
-            $document_type = Type::where([['type_name', 'Document'], ['group_id', $file_type_group->id]])->first();
-            $audio_type = Type::where([['type_name', 'Audio'], ['group_id', $file_type_group->id]])->first();
+            $image_type = Type::where([['type_name->fr', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
+            $document_type = Type::where([['type_name->fr', 'Document'], ['group_id', $file_type_group->id]])->first();
+            $audio_type = Type::where([['type_name->fr', 'Audio'], ['group_id', $file_type_group->id]])->first();
 
             if ($type->id == $image_type->id AND $type->id == $document_type->id AND $type->id == $audio_type->id) {
                 return $this->handleError(__('notifications.type_is_not_file'));

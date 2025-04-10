@@ -25,9 +25,9 @@ class Work extends JsonResource
         // Group
         $file_type_group = ModelsGroup::where('group_name', 'Type de fichier')->first();
         // Types
-        $img_type = ModelType::where([['type_name', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
-        $doc_type = ModelType::where([['type_name', 'Document'], ['group_id', $file_type_group->id]])->first();
-        $audio_type = ModelType::where([['type_name', 'Audio'], ['group_id', $file_type_group->id]])->first();
+        $img_type = ModelType::where([['type_name->fr', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
+        $doc_type = ModelType::where([['type_name->fr', 'Document'], ['group_id', $file_type_group->id]])->first();
+        $audio_type = ModelType::where([['type_name->fr', 'Audio'], ['group_id', $file_type_group->id]])->first();
         // Requests
         $img = ModelFile::where([['type_id', $img_type->id], ['work_id', $this->id]])->first();
         $doc = ModelFile::where([['type_id', $doc_type->id], ['work_id', $this->id]])->first();
