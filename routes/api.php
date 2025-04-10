@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 | Default API Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['localization'])->group(function () {
+Route::middleware(['auth:sanctum', 'localization'])->group(function () {
     Route::apiResource('country', 'App\Http\Controllers\API\CountryController')->except(['index', 'store', 'search']);
     Route::apiResource('group', 'App\Http\Controllers\API\GroupController');
     Route::apiResource('status', 'App\Http\Controllers\API\StatusController')->except(['search', 'findByGroup']);
@@ -88,7 +88,7 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::get('payment/find_by_order_number_user/{order_number}/{user_id}', 'App\Http\Controllers\API\PaymentController@findByOrderNumberUser')->name('payment.api.find_by_order_number_user');
     Route::put('payment/switch_status/{status_id}/{id}', 'App\Http\Controllers\API\PaymentController@switchStatus')->name('payment.api.switch_status');
 });
-Route::group(['middleware' => ['api', 'localization']], function () {
+Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function () {
     Route::resource('work', 'App\Http\Controllers\API\WorkController');
     Route::resource('partner', 'App\Http\Controllers\API\PartnerController');
     Route::resource('cart', 'App\Http\Controllers\API\CartController');
