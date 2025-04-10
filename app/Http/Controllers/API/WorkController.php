@@ -60,7 +60,7 @@ class WorkController extends BaseController
             'video_source' => $request->hasFile('image_file_url') ? 'AWS' : 'YouTube',
             'media_length' => $request->media_length,
             'is_public' => $request->is_public,
-            'type_id' => $request->type_id,
+            'type_id' => !empty($request->type_id) ? $request->type_id : 0,
             'status_id' => $request->status_id,
             'user_id' => $request->user_id,
             'organization_id' => $request->organization_id
