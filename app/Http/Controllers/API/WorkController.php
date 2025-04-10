@@ -57,7 +57,7 @@ class WorkController extends BaseController
             'work_title' => $request->work_title,
             'work_content' => $request->work_content,
             'work_url' => $request->work_url,
-            'video_source' => $request->hasFile('image_file_url') ? 'AWS' : $request->video_source,
+            'video_source' => $request->hasFile('image_file_url') ? 'AWS' : 'YouTube',
             'media_length' => $request->media_length,
             'is_public' => $request->is_public,
             'type_id' => $request->type_id,
