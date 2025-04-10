@@ -75,7 +75,6 @@ class WorkController extends BaseController
             return $this->handleError($inputs['type_id'], __('validation.custom.type_name.required'), 400);
         }
 
-        return $image_type;
         // $work = Work::create($inputs);
 
         // if ($request->categories_ids != null) {
@@ -215,6 +214,7 @@ class WorkController extends BaseController
         // }
 
         // return $this->handleResponse(new ResourcesWork($work), __('notifications.create_work_success'));
+        return $this->handleResponse($image_type, __('notifications.find_type_success'));
     }
 
     /**
