@@ -46,12 +46,18 @@ class WorkController extends BaseController
      */
     public function store(Request $request)
     {
+        // Group
+        $file_type_group = Group::where('group_name', 'Type de fichier')->first();
+        // Types
+        $image_type = Type::where([['type_name', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
+        $document_type = Type::where([['type_name', 'Document'], ['group_id', $file_type_group->id]])->first();
+        $audio_type = Type::where([['type_name', 'Audio'], ['group_id', $file_type_group->id]])->first();
         // Get inputs
         $inputs = [
             'work_title' => $request->work_title,
             'work_content' => $request->work_content,
             'work_url' => $request->work_url,
-            'video_source' => $request->video_source,
+            'video_source' => $request->hasFile('image_file_url') ? 'AWS' : $request->video_source,
             'media_length' => $request->media_length,
             'is_public' => $request->is_public,
             'type_id' => $request->type_id,
@@ -75,37 +81,101 @@ class WorkController extends BaseController
             $work->categories()->sync($request->categories_ids);
         }
 
-        if ($request->hasFile('file_url')) {
-            if ($request->file_type_id == null) {
-                return $this->handleError($request->file_type_id, __('validation.required') . ' (' . __('miscellaneous.file_type') . ') ', 400);
+        if ($request->hasFile('video_file_url')) {
+            if ($request->image_file_type_id == null) {
+                return $this->handleError($request->image_file_type_id, __('validation.required') . ' (' . __('miscellaneous.file_type') . ') ', 400);
             }
 
-            $type = Type::find($request->file_type_id);
+            $type = Type::find($request->image_file_type_id);
 
             if (is_null($type)) {
                 return $this->handleError(__('notifications.find_type_404'));
             }
 
-            // Group
-            $file_type_group = Group::where('group_name', 'Type de fichier')->first();
-            // Types
-            $image_type = Type::where([['type_name', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
-            $document_type = Type::where([['type_name', 'Document'], ['group_id', $file_type_group->id]])->first();
-            $audio_type = Type::where([['type_name', 'Audio'], ['group_id', $file_type_group->id]])->first();
-
-            if ($type->id == $image_type->id AND $type->id == $document_type->id AND $type->id == $audio_type->id) {
-                return $this->handleError(__('notifications.type_is_not_file'));
+            if ($type->id != $image_type->id) {
+                return $this->handleError(__('notifications.type_is_not_file') . ' ' . $image_type->type_name);
             }
 
-            $file = $request->file('file_url');
-            $custom_path = ($type->id == $document_type->id ? 'documents/works' : ($type->id == $audio_type->id ? 'audios/works' : 'images/works'));
+            $file = $request->file('video_file_url');
             $filename = $file->getClientOriginalName();
-            $file_url =  $custom_path . '/' . $work->id . '/' . $filename;
+            $file_url =  'images/works/' . $work->id . '/' . $filename;
 
             // Upload file
             // $dir_result = Storage::url(Storage::disk('public')->put($file_url, $file));
             try {
-                $file->storeAs($custom_path . '/' . $work->id, $filename, 's3');
+                $file->storeAs('images/works/' . $work->id, $filename, 's3');
+
+            } catch (\Throwable $th) {
+                return $this->handleError($th, __('notifications.create_work_file_500'), 500);
+            }
+
+            File::create([
+                'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
+                'file_url' => config('filesystems.disks.s3.url') . $file_url, // $dir_result
+                'type_id' => $type->id,
+                'work_id' => $work->id
+            ]);
+        }
+
+        if ($request->hasFile('document_file_url')) {
+            if ($request->document_file_type_id == null) {
+                return $this->handleError($request->document_file_type_id, __('validation.required') . ' (' . __('miscellaneous.file_type') . ') ', 400);
+            }
+
+            $type = Type::find($request->document_file_type_id);
+
+            if (is_null($type)) {
+                return $this->handleError(__('notifications.find_type_404'));
+            }
+
+            if ($type->id != $document_type->id) {
+                return $this->handleError(__('notifications.type_is_not_file') . ' ' . $document_type->type_name);
+            }
+
+            $file = $request->file('document_file_url');
+            $filename = $file->getClientOriginalName();
+            $file_url =  'documents/works/' . $work->id . '/' . $filename;
+
+            // Upload file
+            // $dir_result = Storage::url(Storage::disk('public')->put($file_url, $file));
+            try {
+                $file->storeAs('documents/works/' . $work->id, $filename, 's3');
+
+            } catch (\Throwable $th) {
+                return $this->handleError($th, __('notifications.create_work_file_500'), 500);
+            }
+
+            File::create([
+                'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
+                'file_url' => config('filesystems.disks.s3.url') . $file_url, // $dir_result
+                'type_id' => $type->id,
+                'work_id' => $work->id
+            ]);
+        }
+
+        if ($request->hasFile('audio_file_url')) {
+            if ($request->audio_file_type_id == null) {
+                return $this->handleError($request->audio_file_type_id, __('validation.required') . ' (' . __('miscellaneous.file_type') . ') ', 400);
+            }
+
+            $type = Type::find($request->audio_file_type_id);
+
+            if (is_null($type)) {
+                return $this->handleError(__('notifications.find_type_404'));
+            }
+
+            if ($type->id != $audio_type->id) {
+                return $this->handleError(__('notifications.type_is_not_file') . ' ' . $audio_type->type_name);
+            }
+
+            $file = $request->file('audio_file_url');
+            $filename = $file->getClientOriginalName();
+            $file_url =  'audios/works/' . $work->id . '/' . $filename;
+
+            // Upload file
+            // $dir_result = Storage::url(Storage::disk('public')->put($file_url, $file));
+            try {
+                $file->storeAs('audios/works/' . $work->id, $filename, 's3');
 
             } catch (\Throwable $th) {
                 return $this->handleError($th, __('notifications.create_work_file_500'), 500);
@@ -686,7 +756,7 @@ class WorkController extends BaseController
             $document_type = Type::where([['type_name', 'Document'], ['group_id', $file_type_group->id]])->first();
             $audio_type = Type::where([['type_name', 'Audio'], ['group_id', $file_type_group->id]])->first();
 
-            if ($type->id == $image_type->id AND $type->id == $document_type->id AND $type->id == $audio_type->id) {
+            if ($type->id != $image_type->id AND $type->id != $document_type->id AND $type->id != $audio_type->id) {
                 return $this->handleError(__('notifications.type_is_not_file'));
             }
 
