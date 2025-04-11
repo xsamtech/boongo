@@ -75,6 +75,7 @@ class UserController extends BaseController
         ];
         $users = User::all();
         $password_resets = PasswordReset::all();
+        $object = new stdClass();
         // $basic  = new \Vonage\Client\Credentials\Basic(config('vonage.api_key'), config('vonage.api_secret'));
         // $client = new \Vonage\Client($basic);
 
@@ -156,6 +157,8 @@ class UserController extends BaseController
                 //     return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
                 // }
 
+                $object->password_reset = new ResourcesPasswordReset($password_reset);
+
             } else {
                 if ($inputs['email'] != null AND $inputs['phone'] == null) {
                     $password_reset = PasswordReset::create([
@@ -165,6 +168,8 @@ class UserController extends BaseController
                     ]);
 
                     Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
+
+                    $object->password_reset = new ResourcesPasswordReset($password_reset);
                 }
 
                 if ($inputs['email'] == null AND $inputs['phone'] != null) {
@@ -180,6 +185,8 @@ class UserController extends BaseController
                     // } catch (\Throwable $th) {
                     //     return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
                     // }
+
+                    $object->password_reset = new ResourcesPasswordReset($password_reset);
                 }
             }
         }
@@ -206,6 +213,8 @@ class UserController extends BaseController
                 //     return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
                 // }
 
+                $object->password_reset = new ResourcesPasswordReset($password_reset);
+
             } else {
                 if ($inputs['email'] != null AND $inputs['phone'] == null) {
                     $password_reset = PasswordReset::create([
@@ -215,6 +224,8 @@ class UserController extends BaseController
                     ]);
 
                     Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
+
+                    $object->password_reset = new ResourcesPasswordReset($password_reset);
 
                     $inputs['password'] = Hash::make($password_reset->former_password);
                 }
@@ -232,6 +243,8 @@ class UserController extends BaseController
                     // } catch (\Throwable $th) {
                     //     return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
                     // }
+
+                    $object->password_reset = new ResourcesPasswordReset($password_reset);
 
                     $inputs['password'] = Hash::make($password_reset->former_password);
                 }
@@ -264,8 +277,6 @@ class UserController extends BaseController
             'to_user_id' => $user->id
         ]);
 
-        $object = new stdClass();
-        $object->password_reset = new ResourcesPasswordReset($password_reset);
         $object->user = new ResourcesUser($user);
 
         return $this->handleResponse($object, __('notifications.create_user_success'));
