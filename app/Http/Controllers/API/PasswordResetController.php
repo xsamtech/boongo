@@ -352,10 +352,10 @@ class PasswordResetController extends BaseController
         }
 
         if ($inputs['email'] != null AND $inputs['phone'] != null) {
-            $user_by_email = User::where('email', 'email')->first();
-            $user_by_phone = User::where('phone', 'phone')->first();
-            $password_reset_by_email = PasswordReset::where('email', 'email')->first();
-            $password_reset_by_phone = PasswordReset::where('phone', 'phone')->first();
+            $user_by_email = User::where('email', $inputs['email'])->first();
+            $user_by_phone = User::where('phone', $inputs['phone'])->first();
+            $password_reset_by_email = PasswordReset::where('email', $inputs['email'])->first();
+            $password_reset_by_phone = PasswordReset::where('phone', $inputs['phone'])->first();
 
             if ($user_by_email != null) {
                 if (is_null($password_reset_by_email)) {
@@ -391,7 +391,7 @@ class PasswordResetController extends BaseController
             $object->user = new ResourcesUser(($user_by_phone != null ? $user_by_phone : $user_by_email));
             $object->password_reset = new ResourcesPasswordReset(($password_reset_by_phone != null ? $password_reset_by_phone : $password_reset_by_email));
 
-            return $this->handleResponse($user_by_phone, __('notifications.update_user_success'));
+            return $this->handleResponse($object, __('notifications.update_user_success'));
 
         } else {
 			if ($inputs['email'] != null) {
