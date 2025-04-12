@@ -30,6 +30,7 @@ class User extends JsonResource
         $pending_status = ModelsStatus::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
         // Requests
         // $current_user = ModelsUser::find($this->id);
+        $roles = Role::collection($this->roles)->sortByDesc('created_at')->toArray();
         $is_subscribed = ModelsUser::whereHas('subscriptions', function ($q) use ($valid_status) {
                                         $q->where('subscription_user.user_id', $this->id)
                                             ->where('subscription_user.status_id', $valid_status->id);
@@ -70,6 +71,7 @@ class User extends JsonResource
                 'avatar_url' => $this->avatar_url != null ? getWebURL() . '/public/storage/' . $this->avatar_url : getWebURL() . '/assets/img/avatar-' . $this->gender . '.png',
                 'country' => Country::make($this->country),
                 'status' => Status::make($this->status),
+                'is_partner' => inArrayR('Partenaire', $roles, 'role_name') ? true : false,
                 'roles' => Role::collection($this->roles),
                 'is_subscribed' => $is_subscribed ? true : false,
                 'pending_subscription' => $pending_subscription,
@@ -105,6 +107,7 @@ class User extends JsonResource
                 'avatar_url' => $this->avatar_url != null ? getWebURL() . '/public/storage/' . $this->avatar_url : getWebURL() . '/assets/img/avatar-' . $this->gender . '.png',
                 'country' => Country::make($this->country),
                 'status' => Status::make($this->status),
+                'is_partner' => inArrayR('Partenaire', $roles, 'role_name') ? true : false,
                 'roles' => Role::collection($this->roles),
                 'is_subscribed' => $is_subscribed ? true : false,
                 'valid_subscription' => $valid_subscription,
@@ -140,6 +143,7 @@ class User extends JsonResource
                 'avatar_url' => $this->avatar_url != null ? getWebURL() . '/public/storage/' . $this->avatar_url : getWebURL() . '/assets/img/avatar-' . $this->gender . '.png',
                 'country' => Country::make($this->country),
                 'status' => Status::make($this->status),
+                'is_partner' => inArrayR('Partenaire', $roles, 'role_name') ? true : false,
                 'roles' => Role::collection($this->roles),
                 'is_subscribed' => $is_subscribed ? true : false,
                 // 'subscriptions' => Subscription::collection($this->subscriptions)->sortByDesc('created_at')->toArray(),
