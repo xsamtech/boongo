@@ -405,8 +405,8 @@ class PasswordResetController extends BaseController
 				if (is_null($password_reset)) {
 					return $this->handleError(__('notifications.find_password_reset_404'));
 				}
-		
-				if ($password_reset->token != $inputs['token']) {
+
+                if ($password_reset->token != $inputs['token']) {
 					return $this->handleError($inputs['token'], __('notifications.bad_token'), 400);
 				}
 
