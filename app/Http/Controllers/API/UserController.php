@@ -636,37 +636,6 @@ class UserController extends BaseController
                 'password' => Hash::make($inputs['password']),
                 'updated_at' => now(),
             ]);
-
-            // If the user is a parent, change its children's password according to its own
-            if (!empty($user->parental_code)) {
-                $children = User::where('belongs_to', $user->id)->get();
-
-                foreach ($children as $child):
-                    $child->update([
-                        'password' => $user->password,
-                        'updated_at' => now(),
-                    ]);
-
-                    if (!empty($child->email)) {
-                        $child_password_reset = PasswordReset::where('email', $child->email)->first();
-
-                        $child_password_reset->update([
-                            'former_password' => $inputs['password'],
-                            'updated_at' => now(),
-                        ]);
-
-                    } else {
-                        if (!empty($child->phone)) {
-                            $child_password_reset = PasswordReset::where('phone', $child->phone)->first();
-
-                            $child_password_reset->update([
-                                'former_password' => $inputs['password'],
-                                'updated_at' => now(),
-                            ]);
-                        }
-                    }
-                endforeach;
-            }
         }
 
         if ($inputs['country_id'] != null) {
@@ -681,6 +650,14 @@ class UserController extends BaseController
                 'status_id' => $inputs['status_id'],
                 'updated_at' => now(),
             ]);
+        }
+
+        if ($request->role_id != null) {
+            $user->roles()->syncWithoutDetaching([$request->role_id]);
+        }
+
+        if ($request->organization_id != null) {
+            $user->organizations()->syncWithoutDetaching([$request->organization_id]);
         }
 
         return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
@@ -979,6 +956,319 @@ class UserController extends BaseController
     }
 
     /**
+     * Handle an incoming authentication request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function login(Request $request)
+    {
+        // Get inputs
+        $inputs = [
+            'username' => $request->username,
+            'password' => $request->password
+        ];
+
+        if ($inputs['username'] == null OR $inputs['username'] == ' ') {
+            return $this->handleError($inputs['username'], __('validation.required'), 400);
+        }
+
+        if ($inputs['password'] == null) {
+            return $this->handleError($inputs['password'], __('validation.required'), 400);
+        }
+
+        if (is_numeric($inputs['username'])) {
+            $user = User::where('phone', $inputs['username'])->first();
+
+            if (!$user) {
+                return $this->handleError($inputs['username'], __('auth.username'), 400);
+            }
+
+            if (!Hash::check($inputs['password'], $user->password)) {
+                return $this->handleError($inputs['password'], __('auth.password'), 400);
+            }
+
+            // if ($user->phone_verified_at == null) {
+            //     $password_reset = PasswordReset::where('phone', $user->phone)->first();
+			// 	$object = new stdClass();
+
+			// 	$object->password_reset = new ResourcesPasswordReset($password_reset);
+			// 	$object->user = new ResourcesUser($user);
+
+            //     return $this->handleError($object, __('notifications.unverified_token_phone'), 400);
+            // }
+
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            $user->update([
+                'api_token' => $token,
+                'updated_at' => now(),
+            ]);
+
+            return $this->handleResponse(new ResourcesUser($user), __('notifications.login_user_success'));
+
+        } else {
+            $user = User::where('email', $inputs['username'])->orWhere('username', $inputs['username'])->first();
+
+            if (!$user) {
+                return $this->handleError($inputs['username'], __('auth.username'), 400);
+            }
+
+            if (!Hash::check($inputs['password'], $user->password)) {
+                return $this->handleError($inputs['password'], __('auth.password'), 400);
+            }
+
+            // if (!empty($user->email)) {
+            //     if ($inputs['username'] == $user->email) {
+            //         if ($user->email_verified_at == null) {
+            //             $password_reset = PasswordReset::where('email', $user->email)->first();
+            //             $object = new stdClass();
+
+            //             $object->password_reset = new ResourcesPasswordReset($password_reset);
+            //             $object->user = new ResourcesUser($user);
+
+            //             return $this->handleError($object, __('notifications.unverified_token_email'), 400);
+            //         }
+            //     }
+            // }
+
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            $user->update([
+                'api_token' => $token,
+                'updated_at' => now(),
+            ]);
+
+            return $this->handleResponse(new ResourcesUser($user), __('notifications.login_user_success'));
+        }
+    }
+
+    /**
+     * Switch between user statuses.
+     *
+     * @param  $id
+     * @param  $status_id
+     * @return \Illuminate\Http\Response
+     */
+    public function switchStatus($id, $status_id)
+    {
+        $user = User::find($id);
+
+        if (is_null($user)) {
+            return $this->handleError(__('notifications.find_user_404'));
+        }
+
+        /*
+            HISTORY AND/OR NOTIFICATION MANAGEMENT
+        */
+        $status_activated = Status::where('status_name->fr', 'Activé')->first();
+        $status_disabled = Status::where('status_name->fr', 'Désactivé')->first();
+        $status_blocked = Status::where('status_name->fr', 'Bloqué')->first();
+        $status_unread = Status::where('status_name->fr', 'Non lue')->first();
+        $type_user_return = Type::where('type_name->fr', 'Utilisateur de retour')->first();
+
+        if ($status_id == $status_activated->id) {
+            Notification::create([
+                'type_id' => $type_user_return->id,
+                'status_id' => $status_unread->id,
+                'to_user_id' => $user->id,
+            ]);
+
+            // update "status_id" column
+            $user->update([
+                'status_id' => $status_activated->id,
+                'updated_at' => now()
+            ]);
+        }
+
+        if ($status_id == $status_disabled->id) {
+            // update "status_id" column
+            $user->update([
+                'status_id' => $status_disabled->id,
+                'updated_at' => now()
+            ]);
+        }
+
+        if ($status_id == $status_blocked->id) {
+            // update "status_id" column
+            $user->update([
+                'status_id' => $status_blocked->id,
+                'updated_at' => now()
+            ]);
+        }
+
+        return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
+    }
+
+    /**
+     * Update user role in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $action
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateRole(Request $request, $action, $id)
+    {
+        $user = User::find($id);
+
+        if ($action == 'add') {
+            $user->roles()->syncWithoutDetaching([$request->role_id]);
+        }
+
+        if ($action == 'remove') {
+            $user->roles()->detach([$request->role_id]);
+        }
+
+        return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
+    }
+
+    /**
+     * Update user organization in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $action
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateOrganization(Request $request, $action, $id)
+    {
+        $user = User::find($id);
+
+        if ($action == 'add') {
+            $user->organizations()->syncWithoutDetaching([$request->organization_id]);
+        }
+
+        if ($action == 'remove') {
+            $user->organizations()->detach([$request->organization_id]);
+        }
+
+        return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
+    }
+
+    /**
+     * Update user password in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updatePassword(Request $request, $id)
+    {
+        // Get inputs
+        $inputs = [
+            'former_password' => $request->former_password,
+            'new_password' => $request->new_password,
+            'confirm_new_password' => $request->confirm_new_password
+        ];
+        $user = User::find($id);
+
+        if ($inputs['former_password'] == null) {
+            return $this->handleError($inputs['former_password'], __('validation.custom.former_password.empty'), 400);
+        }
+
+        if ($inputs['new_password'] == null) {
+            return $this->handleError($inputs['new_password'], __('validation.custom.new_password.empty'), 400);
+        }
+
+        if ($inputs['confirm_new_password'] == null) {
+            return $this->handleError($inputs['confirm_new_password'], __('notifications.confirm_new_password'), 400);
+        }
+
+        if (Hash::check($inputs['former_password'], $user->password) == false) {
+            return $this->handleError($inputs['former_password'], __('auth.password'), 400);
+        }
+
+        if ($inputs['confirm_new_password'] != $inputs['new_password']) {
+            return $this->handleError($inputs['confirm_new_password'], __('notifications.confirm_new_password'), 400);
+        }
+
+        // if (preg_match('#^\S*(?=\S{8,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])\S*$#', $inputs['new_password']) == 0) {
+        //     return $this->handleError($inputs['new_password'], __('validation.custom.new_password.incorrect'), 400);
+        // }
+
+        // Update password reset
+        if (!empty($user->email) AND !empty($user->phone)) {
+            $password_reset = PasswordReset::where([['email', $user->email], ['phone', $user->phone]])->first();
+            $random_int_stringified = (string) random_int(1000000, 9999999);
+
+            // If password_reset doesn't exist, create it.
+            if ($password_reset == null) {
+                PasswordReset::create([
+                    'email' => $user->email,
+                    'phone' => $user->phone,
+                    'token' => $random_int_stringified,
+                    'former_password' => $inputs['new_password'],
+                ]);
+            }
+
+            // If password_reset exists, update it
+            if ($password_reset != null) {
+                $password_reset->update([
+                    'token' => $random_int_stringified,
+                    'former_password' => $inputs['new_password'],
+                    'updated_at' => now(),
+                ]);
+            }
+
+        } else {
+            if (!empty($user->email)) {
+                $password_reset = PasswordReset::where('email', $user->email)->first();
+                $random_int_stringified = (string) random_int(1000000, 9999999);
+
+                // If password_reset doesn't exist, create it.
+                if ($password_reset == null) {
+                    PasswordReset::create([
+                        'email' => $user->email,
+                        'token' => $random_int_stringified,
+                        'former_password' => $inputs['new_password'],
+                    ]);
+                }
+
+                // If password_reset exists, update it
+                if ($password_reset != null) {
+                    $password_reset->update([
+                        'token' => $random_int_stringified,
+                        'former_password' => $inputs['new_password'],
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
+
+            if (!empty($user->phone)) {
+                $password_reset = PasswordReset::where('phone', $user->phone)->first();
+                $random_int_stringified = (string) random_int(1000000, 9999999);
+
+                // If password_reset doesn't exist, create it.
+                if ($password_reset == null) {
+                    PasswordReset::create([
+                        'phone' => $user->phone,
+                        'token' => $random_int_stringified,
+                        'former_password' => $inputs['new_password'],
+                    ]);
+                }
+
+                // If password_reset exists, update it
+                if ($password_reset != null) {
+                    $password_reset->update([
+                        'token' => $random_int_stringified,
+                        'former_password' => $inputs['new_password'],
+                        'updated_at' => now(),
+                    ]);
+                }
+            }
+        }
+
+        // update "password" and "password_visible" column
+        $user->update([
+            'password' => Hash::make($inputs['new_password']),
+            'updated_at' => now()
+        ]);
+
+        return $this->handleResponse(new ResourcesUser($user), __('notifications.update_password_success'));
+    }
+
+    /**
      * Ask subscription to an event or a talk circle.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -1230,305 +1520,6 @@ class UserController extends BaseController
         }
 
         return $this->handleResponse(new ResourcesUser($user), __('notifications.unsubscribe_user_success'));
-    }
-
-    /**
-     * Handle an incoming authentication request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function login(Request $request)
-    {
-        // Get inputs
-        $inputs = [
-            'username' => $request->username,
-            'password' => $request->password
-        ];
-
-        if ($inputs['username'] == null OR $inputs['username'] == ' ') {
-            return $this->handleError($inputs['username'], __('validation.required'), 400);
-        }
-
-        if ($inputs['password'] == null) {
-            return $this->handleError($inputs['password'], __('validation.required'), 400);
-        }
-
-        if (is_numeric($inputs['username'])) {
-            $user = User::where('phone', $inputs['username'])->first();
-
-            if (!$user) {
-                return $this->handleError($inputs['username'], __('auth.username'), 400);
-            }
-
-            if (!Hash::check($inputs['password'], $user->password)) {
-                return $this->handleError($inputs['password'], __('auth.password'), 400);
-            }
-
-            // if ($user->phone_verified_at == null) {
-            //     $password_reset = PasswordReset::where('phone', $user->phone)->first();
-			// 	$object = new stdClass();
-
-			// 	$object->password_reset = new ResourcesPasswordReset($password_reset);
-			// 	$object->user = new ResourcesUser($user);
-
-            //     return $this->handleError($object, __('notifications.unverified_token_phone'), 400);
-            // }
-
-            $token = $user->createToken('auth_token')->plainTextToken;
-
-            $user->update([
-                'api_token' => $token,
-                'updated_at' => now(),
-            ]);
-
-            return $this->handleResponse(new ResourcesUser($user), __('notifications.login_user_success'));
-
-        } else {
-            $user = User::where('email', $inputs['username'])->orWhere('username', $inputs['username'])->first();
-
-            if (!$user) {
-                return $this->handleError($inputs['username'], __('auth.username'), 400);
-            }
-
-            if (!Hash::check($inputs['password'], $user->password)) {
-                return $this->handleError($inputs['password'], __('auth.password'), 400);
-            }
-
-            // if (!empty($user->email)) {
-            //     if ($inputs['username'] == $user->email) {
-            //         if ($user->email_verified_at == null) {
-            //             $password_reset = PasswordReset::where('email', $user->email)->first();
-            //             $object = new stdClass();
-
-            //             $object->password_reset = new ResourcesPasswordReset($password_reset);
-            //             $object->user = new ResourcesUser($user);
-
-            //             return $this->handleError($object, __('notifications.unverified_token_email'), 400);
-            //         }
-            //     }
-            // }
-
-            $token = $user->createToken('auth_token')->plainTextToken;
-
-            $user->update([
-                'api_token' => $token,
-                'updated_at' => now(),
-            ]);
-
-            return $this->handleResponse(new ResourcesUser($user), __('notifications.login_user_success'));
-        }
-    }
-
-    /**
-     * Switch between user statuses.
-     *
-     * @param  $id
-     * @param  $status_id
-     * @return \Illuminate\Http\Response
-     */
-    public function switchStatus($id, $status_id)
-    {
-        $user = User::find($id);
-
-        if (is_null($user)) {
-            return $this->handleError(__('notifications.find_user_404'));
-        }
-
-        /*
-            HISTORY AND/OR NOTIFICATION MANAGEMENT
-        */
-        $status_activated = Status::where('status_name->fr', 'Activé')->first();
-        $status_disabled = Status::where('status_name->fr', 'Désactivé')->first();
-        $status_blocked = Status::where('status_name->fr', 'Bloqué')->first();
-        $status_unread = Status::where('status_name->fr', 'Non lue')->first();
-        $type_user_return = Type::where('type_name->fr', 'Utilisateur de retour')->first();
-
-        if ($status_id == $status_activated->id) {
-            Notification::create([
-                'type_id' => $type_user_return->id,
-                'status_id' => $status_unread->id,
-                'to_user_id' => $user->id,
-            ]);
-
-            // update "status_id" column
-            $user->update([
-                'status_id' => $status_activated->id,
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($status_id == $status_disabled->id) {
-            // update "status_id" column
-            $user->update([
-                'status_id' => $status_disabled->id,
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($status_id == $status_blocked->id) {
-            // update "status_id" column
-            $user->update([
-                'status_id' => $status_blocked->id,
-                'updated_at' => now()
-            ]);
-        }
-
-        return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
-    }
-
-    /**
-     * Update user role in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function updateRole(Request $request, $id)
-    {
-        $user = User::find($id);
-
-        $user->roles()->syncWithoutDetaching([$request->role_id]);
-
-        return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
-    }
-
-    /**
-     * Update user organization in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function updateOrganization(Request $request, $id)
-    {
-        $user = User::find($id);
-
-        $user->organizations()->syncWithoutDetaching([$request->organization_id]);
-
-        return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
-    }
-
-    /**
-     * Update user password in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function updatePassword(Request $request, $id)
-    {
-        // Get inputs
-        $inputs = [
-            'former_password' => $request->former_password,
-            'new_password' => $request->new_password,
-            'confirm_new_password' => $request->confirm_new_password
-        ];
-        $user = User::find($id);
-
-        if ($inputs['former_password'] == null) {
-            return $this->handleError($inputs['former_password'], __('validation.custom.former_password.empty'), 400);
-        }
-
-        if ($inputs['new_password'] == null) {
-            return $this->handleError($inputs['new_password'], __('validation.custom.new_password.empty'), 400);
-        }
-
-        if ($inputs['confirm_new_password'] == null) {
-            return $this->handleError($inputs['confirm_new_password'], __('notifications.confirm_new_password'), 400);
-        }
-
-        if (Hash::check($inputs['former_password'], $user->password) == false) {
-            return $this->handleError($inputs['former_password'], __('auth.password'), 400);
-        }
-
-        if ($inputs['confirm_new_password'] != $inputs['new_password']) {
-            return $this->handleError($inputs['confirm_new_password'], __('notifications.confirm_new_password'), 400);
-        }
-
-        // if (preg_match('#^\S*(?=\S{8,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])\S*$#', $inputs['new_password']) == 0) {
-        //     return $this->handleError($inputs['new_password'], __('validation.custom.new_password.incorrect'), 400);
-        // }
-
-        // Update password reset
-        if (!empty($user->email) AND !empty($user->phone)) {
-            $password_reset = PasswordReset::where([['email', $user->email], ['phone', $user->phone]])->first();
-            $random_int_stringified = (string) random_int(1000000, 9999999);
-
-            // If password_reset doesn't exist, create it.
-            if ($password_reset == null) {
-                PasswordReset::create([
-                    'email' => $user->email,
-                    'phone' => $user->phone,
-                    'token' => $random_int_stringified,
-                    'former_password' => $inputs['new_password'],
-                ]);
-            }
-
-            // If password_reset exists, update it
-            if ($password_reset != null) {
-                $password_reset->update([
-                    'token' => $random_int_stringified,
-                    'former_password' => $inputs['new_password'],
-                    'updated_at' => now(),
-                ]);
-            }
-
-        } else {
-            if (!empty($user->email)) {
-                $password_reset = PasswordReset::where('email', $user->email)->first();
-                $random_int_stringified = (string) random_int(1000000, 9999999);
-
-                // If password_reset doesn't exist, create it.
-                if ($password_reset == null) {
-                    PasswordReset::create([
-                        'email' => $user->email,
-                        'token' => $random_int_stringified,
-                        'former_password' => $inputs['new_password'],
-                    ]);
-                }
-
-                // If password_reset exists, update it
-                if ($password_reset != null) {
-                    $password_reset->update([
-                        'token' => $random_int_stringified,
-                        'former_password' => $inputs['new_password'],
-                        'updated_at' => now(),
-                    ]);
-                }
-            }
-
-            if (!empty($user->phone)) {
-                $password_reset = PasswordReset::where('phone', $user->phone)->first();
-                $random_int_stringified = (string) random_int(1000000, 9999999);
-
-                // If password_reset doesn't exist, create it.
-                if ($password_reset == null) {
-                    PasswordReset::create([
-                        'phone' => $user->phone,
-                        'token' => $random_int_stringified,
-                        'former_password' => $inputs['new_password'],
-                    ]);
-                }
-
-                // If password_reset exists, update it
-                if ($password_reset != null) {
-                    $password_reset->update([
-                        'token' => $random_int_stringified,
-                        'former_password' => $inputs['new_password'],
-                        'updated_at' => now(),
-                    ]);
-                }
-            }
-        }
-
-        // update "password" and "password_visible" column
-        $user->update([
-            'password' => Hash::make($inputs['new_password']),
-            'updated_at' => now()
-        ]);
-
-        return $this->handleResponse(new ResourcesUser($user), __('notifications.update_password_success'));
     }
 
     /**
