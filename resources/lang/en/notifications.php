@@ -198,6 +198,7 @@ return [
     'create_password_reset_success' => 'Password reset created',
     'update_password_reset_success' => 'Password reset updated',
     'delete_password_reset_success' => 'Password reset deleted',
+    'verified_token' => 'OTP code verified',
     'unverified_token' => 'The OTP code is not yet verified',
     'bad_token' => 'The OTP code does not match',
     'token_label' => 'Your OTP code:',

@@ -198,6 +198,7 @@ return [
     'create_password_reset_success' => 'Réinitialisation de mot de passe créée',
     'update_password_reset_success' => 'Réinitialisation de mot de passe modifiée',
     'delete_password_reset_success' => 'Réinitialisation de mot de passe supprimée',
+    'verified_token' => 'Code OTP vérifié',
     'unverified_token' => 'Le code OTP n\'est pas encore vérifié',
     'bad_token' => 'Le code OTP ne correspond pas',
     'token_label' => 'Votre code OTP :',

@@ -391,7 +391,7 @@ class PasswordResetController extends BaseController
             $object->user = new ResourcesUser(($user_by_phone != null ? $user_by_phone : $user_by_email));
             $object->password_reset = new ResourcesPasswordReset(($password_reset_by_phone != null ? $password_reset_by_phone : $password_reset_by_email));
 
-            return $this->handleResponse($object, __('notifications.update_user_success'));
+            return $this->handleResponse($object, __('notifications.verified_token'));
 
         } else {
 			if ($inputs['email'] != null) {
@@ -419,7 +419,7 @@ class PasswordResetController extends BaseController
 				$object->user = new ResourcesUser($user);
 				$object->password_reset = new ResourcesPasswordReset($password_reset);
 
-				return $this->handleResponse($object, __('notifications.update_user_success'));
+				return $this->handleResponse($object, __('notifications.verified_token'));
 			}
 
 			if ($inputs['phone'] != null) {
@@ -447,7 +447,7 @@ class PasswordResetController extends BaseController
 				$object->user = new ResourcesUser($user);
 				$object->password_reset = new ResourcesPasswordReset($password_reset);
 
-				return $this->handleResponse($object, __('notifications.update_user_success'));
+				return $this->handleResponse($object, __('notifications.verified_token'));
 			}
 		}
     }
