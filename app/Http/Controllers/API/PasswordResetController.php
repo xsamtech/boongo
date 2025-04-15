@@ -342,6 +342,7 @@ class PasswordResetController extends BaseController
             'phone' => $request->phone,
             'token' => $request->token
         ];
+        $random_int_stringified = (string) random_int(1000000, 9999999);
 
         if (trim($inputs['email']) == null AND trim($inputs['phone']) == null) {
             return $this->handleError(__('validation.custom.email_or_phone.required'));
@@ -370,6 +371,11 @@ class PasswordResetController extends BaseController
                     'email_verified_at' => now(),
                     'updated_at' => now(),
                 ]);    
+
+                $password_reset_by_email->update([
+                    'token' => $random_int_stringified,
+                    'updated_at' => now()
+                ]);
             }
 
             if ($user_by_phone != null) {
@@ -385,6 +391,11 @@ class PasswordResetController extends BaseController
                     'phone_verified_at' => now(),
                     'updated_at' => now(),
                 ]);    
+
+                $password_reset_by_phone->update([
+                    'token' => $random_int_stringified,
+                    'updated_at' => now()
+                ]);
             }
 
             $object = new stdClass();
@@ -415,6 +426,11 @@ class PasswordResetController extends BaseController
 					'updated_at' => now(),
 				]);
 
+                $password_reset->update([
+                    'token' => $random_int_stringified,
+                    'updated_at' => now()
+                ]);
+
 				$object = new stdClass();
 				$object->user = new ResourcesUser($user);
 				$object->password_reset = new ResourcesPasswordReset($password_reset);
@@ -442,6 +458,11 @@ class PasswordResetController extends BaseController
 					'phone_verified_at' => now(),
 					'updated_at' => now(),
 				]);
+
+                $password_reset->update([
+                    'token' => $random_int_stringified,
+                    'updated_at' => now()
+                ]);
 
 				$object = new stdClass();
 				$object->user = new ResourcesUser($user);
