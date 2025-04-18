@@ -151,6 +151,9 @@ return [
             'incorrect' => 'Write a valid phone number please',
             'exists' => 'The provided phone number already exists',
         ],
+        'code' => [
+            'incorrect' => 'Write a valid code please'
+        ],
         'former_password' => [
             'empty' => 'Please enter your old password!',
             'incorrect' => 'The former password is incorrect',

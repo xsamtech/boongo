@@ -151,6 +151,9 @@ return [
             'incorrect' => 'Ecrivez un n° de téléphone valide s\'il vous plait',
             'exists' => 'Le n° de téléphone fourni existe déjà',
         ],
+        'code' => [
+            'incorrect' => 'Ecrivez un code valide s\'il vous plait',
+        ],
         'former_password' => [
             'empty' => 'Veuillez mettre votre ancien mot de passe !',
             'incorrect' => 'L\'ancien mot de passe est incorrect',
