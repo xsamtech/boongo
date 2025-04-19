@@ -391,8 +391,8 @@ class PasswordResetController extends BaseController
                 'token' => $request->token
             ];
 
-            if (trim($inputs['email']) == null AND trim($inputs['phone']) == null) {
-                return $this->handleError(__('validation.custom.email_or_phone.required'));
+            if (trim($inputs['phone']) == null) {
+                return $this->handleError(__('validation.custom.phone.incorrect'));
             }
 
             if (trim($inputs['token']) == null) {
