@@ -45,7 +45,7 @@
 </head>
 <body>
 	<main role="main" class="container-fluid my-5" style="background-image: url(../../public/assets/img/drc-map.png); background-size: cover; background-repeat: no-repeat; background-attachment: fixed;">
-		<div class="row">
+		<div class="row bg-primary">
 			<div class="col-lg-8" style="margin: 0 auto;">
 				<div style="width: 555px; margin: 0 auto;">
 					<img src="{{ asset('assets/img/brand-reborn.png') }}" alt="" width="300">
