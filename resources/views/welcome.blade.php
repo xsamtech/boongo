@@ -37,11 +37,11 @@
 					line-height: 60px; /* Vertically center the text there */
 					background-color: #f5f5f5; }
 		@media screen and (min-width: 500px) {
-			.footer .copyright { display: inline-block; margin-right: 300px; }
-			.footer .copyright .desined-by { display: inline-block; margin-left: 100px; }
+			.footer .copyright { display: inline-block; }
+			.footer .desined-by { display: inline-block; margin-left: 100px; }
 		}
 		@media screen and (max-width: 500px) {
-			.footer .copyright .desined-by { display: block; }
+			.footer .desined-by { display: block; }
 		}
 		/* Custom page CSS
 		-------------------------------------------------- */
