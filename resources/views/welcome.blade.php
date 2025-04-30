@@ -36,6 +36,9 @@
 					height: 60px; /* Set the fixed height of the footer here */
 					line-height: 60px; /* Vertically center the text there */
 					background-color: #f5f5f5; }
+		@media screen and (min-width: 500px) {
+			.footer .copyright { display: inline-block; margin-right: 300px; }
+		}
 		/* Custom page CSS
 		-------------------------------------------------- */
 		/* Not required for template or sticky footer method. */
@@ -77,7 +80,7 @@
 
 	<footer class="footer">
 		<div class="container" style="text-align: center;">
-			<span class="=text-muted" style="display: inline-block; margin-right: 300px;">&copy; {{ date('Y') }} Reborn Tous droits réservés.</span> <span class="d-inline-block text-muted">Designed by <a style="display: inline;" href="https://xsamtech.com">Xsam Technologies</a></span>
+			<span class="copyright text-muted">&copy; {{ date('Y') }} Reborn Tous droits réservés.</span> <span class="text-muted">Designed by <a style="display: inline;" href="https://xsamtech.com">Xsam Technologies</a></span>
 		</div>
 	</footer>
 </body>
