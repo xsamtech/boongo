@@ -44,7 +44,6 @@
 	<title>Bibliothèque numérique</title>
 </head>
 <body>
-	<div class="container-fluid">
 		<main role="main" class="container">
 			<h1 class="mt-5">Annonce du lancement d’une bibliothèque numérique au standard industriel</h1>
 			<p class="lead">
@@ -73,6 +72,5 @@
 				<span class="d-inline-block me-5 text-muted">&copy; {{ date('Y') }} Reborn Tous droits réservés.</span> <span class="d-inline-block text-muted">Designed by <a href="https://xsamtech.com">Xsam Technologies</a></span>
 			</div>
 		</footer>
-	</div>
 </body>
 </html>
