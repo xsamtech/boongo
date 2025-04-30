@@ -80,15 +80,15 @@ class HomeController extends Controller
                 }
 
             } else {
+                // User by "username"
+                $user_profile = $this::$api_client_manager::call('GET', getApiURL() . '/user/profile/xanderssamoth');
                 // Group names
                 $work_type_group = 'Type d\'œuvre';
                 // All types by group
                 $types_by_group = $this::$api_client_manager::call('GET', getApiURL() . '/type/find_by_group/' . $work_type_group);
                 // All categories by group
-                $categories = $this::$api_client_manager::call('GET', getApiURL() . '/category');
-                $works = $this::$api_client_manager::call('GET', getApiURL()  . '/work' . ($request->has('page') ? '?page=' . $request->get('page') : ''));
-
-                dd($works);
+                $categories = $this::$api_client_manager::call('GET', getApiURL() . '/category', $user_profile->data->api_token);
+                $works = $this::$api_client_manager::call('GET', getApiURL()  . '/work' . ($request->has('page') ? '?page=' . $request->get('page') : ''), $user_profile->data->api_token);
 
                 return view('work-test', [
                     'types' => $types_by_group->data,

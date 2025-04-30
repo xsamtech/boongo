@@ -75,6 +75,7 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     // User
     Route::post('user', 'App\Http\Controllers\API\UserController@store')->name('user.api.store');
     Route::get('user/{id}', 'App\Http\Controllers\API\UserController@show')->name('user.api.show');
+    Route::get('user/profile/{username}', 'App\Http\Controllers\API\UserController@profile')->name('user.api.profile');
     Route::post('user/login', 'App\Http\Controllers\API\UserController@login')->name('user.api.login');
     // PasswordReset
     Route::get('password_reset/search_by_email_or_phone/{data}', 'App\Http\Controllers\API\PasswordResetController@searchByEmailOrPhone')->name('password_reset.api.search_by_email_or_phone');
@@ -124,7 +125,6 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::put('subscription/validate_subscription/{user_id}', 'App\Http\Controllers\API\SubscriptionController@validateSubscription')->name('subscription.api.validate_subscription');
     Route::put('subscription/invalidate_subscription/{user_id}', 'App\Http\Controllers\API\SubscriptionController@invalidateSubscription')->name('subscription.api.invalidate_subscription');
     // User
-    Route::get('user/profile/{username}', 'App\Http\Controllers\API\UserController@profile')->name('user.api.profile');
     Route::get('user/find_by_role/{locale}/{role_name}', 'App\Http\Controllers\API\UserController@findByRole')->name('user.api.find_by_role');
     Route::get('user/find_by_not_role/{locale}/{role_name}', 'App\Http\Controllers\API\UserController@findByNotRole')->name('user.api.find_by_not_role');
     Route::get('user/organization_members/{organization_id}/{role_name}', 'App\Http\Controllers\API\UserController@organizationMembers')->name('user.api.organization_members');
