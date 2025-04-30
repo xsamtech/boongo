@@ -39,6 +39,9 @@
 		@media screen and (min-width: 500px) {
 			.footer .copyright { display: inline-block; margin-right: 300px; }
 		}
+		@media screen and (max-width: 500px) {
+			.footer .copyright br { display: block; }
+		}
 		/* Custom page CSS
 		-------------------------------------------------- */
 		/* Not required for template or sticky footer method. */
@@ -80,7 +83,7 @@
 
 	<footer class="footer">
 		<div class="container" style="text-align: center;">
-			<span class="copyright text-muted">&copy; {{ date('Y') }} Reborn Tous droits réservés.</span> <span class="text-muted">Designed by <a style="display: inline;" href="https://xsamtech.com">Xsam Technologies</a></span>
+			<span class="copyright text-muted">&copy; {{ date('Y') }} Reborn Tous droits réservés.</span><br><span class="text-muted">Designed by <a style="display: inline;" href="https://xsamtech.com">Xsam Technologies</a></span>
 		</div>
 	</footer>
 </body>
