@@ -46,9 +46,9 @@
 <body>
 	<main role="main" class="container-fluid">
 		<div class="row">
-			<div class="col-lg-8 mx-auto">
+			<div class="col-lg-8" style="margin: 0 auto;">
 				<div class="view text-center">
-					<img src="{{ asset('assets/img/brand-reborn.png') }}" alt="" class="img-fluid">
+					<img src="{{ asset('assets/img/brand-reborn.png') }}" alt="" width="100" style="margin: 0 auto;">
 					<div class="mask"></div>
 				</div>
 				<h1 class="mt-5 text-center">Annonce du lancement d’une Bibliothèque Numérique au standard industriel</h1>
