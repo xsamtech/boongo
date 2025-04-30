@@ -44,12 +44,13 @@
 	<title>Bibliothèque numérique</title>
 </head>
 <body>
-	<main role="main" class="container-fluid my-5">
+	<main role="main" class="container-fluid my-5" style="background-image: url(../../public/assets/img/drc-map.png); background-size: cover; background-repeat: no-repeat; background-attachment: fixed;">
 		<div class="row">
 			<div class="col-lg-8" style="margin: 0 auto;">
-				<img src="{{ asset('assets/img/brand-reborn.png') }}" alt="" width="300" style="margin: 0 auto;">
-				<img src="{{ asset('assets/img/animated-flag-drc.gif') }}" alt="" width="150" style="margin: 0 auto;">
-
+				<div style="width: 555px; margin: 0 auto;">
+					<img src="{{ asset('assets/img/brand-reborn.png') }}" alt="" width="300">
+					<img src="{{ asset('assets/img/animated-flag-drc.gif') }}" alt="" width="150" style="margin-left: 100px;">
+				</div>
 				<h1 class="mt-5 text-center">Annonce du lancement d’une Bibliothèque Numérique au standard industriel</h1>
 				<p style="text-align: justify;">Nous avons le plaisir de vous annoncer le lancement officiel de notre <strong>bibliothèque numérique de nouvelle génération, conçue selon les standards industriels les plus avancés. Cette plateforme innovante a pour vocation de rendre accessibles, à un large public, des contenus de haute valeur documentaire dans un objectif de <span class="text-danger">vulgarisation des données</span></strong>.</p>
 				<p style="text-align: justify;">Notre bibliothèque propose un vaste catalogue comprenant :</p>
