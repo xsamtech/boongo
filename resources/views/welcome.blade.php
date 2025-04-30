@@ -77,7 +77,7 @@
 
 	<footer class="footer">
 		<div class="container" style="text-align: center;">
-			<span class="mr-5 text-muted" style="display: inline-block;">&copy; {{ date('Y') }} Reborn Tous droits réservés.</span> <span class="d-inline-block text-muted">Designed by <a style="display: inline;" href="https://xsamtech.com">Xsam Technologies</a></span>
+			<span class="=text-muted" style="display: inline-block; margin-right: 300px;">&copy; {{ date('Y') }} Reborn Tous droits réservés.</span> <span class="d-inline-block text-muted">Designed by <a style="display: inline;" href="https://xsamtech.com">Xsam Technologies</a></span>
 		</div>
 	</footer>
 </body>
