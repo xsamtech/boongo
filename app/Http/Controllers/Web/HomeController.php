@@ -97,6 +97,9 @@ class HomeController extends Controller
                     'lastPage' => $works->lastPage,
                 ]);
             }
+
+        } else {
+            return view('welcome');
         }
     }
 
