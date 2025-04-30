@@ -46,7 +46,7 @@
 <body>
 	<main role="main" class="container-fluid my-5" style="background-image: url(../../public/assets/img/drc-map.png); background-size: cover; background-repeat: no-repeat; background-attachment: fixed;">
 		<div class="row">
-			<div class="col-lg-8 bg-primary" style="margin: 0 auto;">
+			<div class="col-lg-8 ml-auto mr-auto bg-primary">
 				<div style="width: 555px; margin: 0 auto;">
 					<img src="{{ asset('assets/img/brand-reborn.png') }}" alt="" width="300">
 					<img src="{{ asset('assets/img/animated-flag-drc.gif') }}" alt="" width="150" style="margin-left: 100px;">
