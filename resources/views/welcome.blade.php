@@ -44,7 +44,7 @@
 	<title>Bibliothèque numérique</title>
 </head>
 <body>
-	<div class="container">
+	<div class="container-fluid">
 		<main role="main" class="container">
 			<h1 class="mt-5">Annonce du lancement d’une bibliothèque numérique au standard industriel</h1>
 			<p class="lead">
