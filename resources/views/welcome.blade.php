@@ -47,16 +47,15 @@
 	<main role="main" class="container-fluid my-5">
 		<div class="row">
 			<div class="col-lg-8" style="margin: 0 auto;">
-				<div class="view text-center">
-					<img src="{{ asset('assets/img/brand-reborn.png') }}" alt="" width="300" style="margin: 0 auto;">
-					<div class="mask"></div>
-				</div>
+				<img src="{{ asset('assets/img/brand-reborn.png') }}" alt="" width="300" style="margin: 0 auto;">
+				<img src="{{ asset('assets/img/animated-flag-drc.gif') }}" alt="" width="150" style="margin: 0 auto;">
+
 				<h1 class="mt-5 text-center">Annonce du lancement d’une Bibliothèque Numérique au standard industriel</h1>
 				<p style="text-align: justify;">Nous avons le plaisir de vous annoncer le lancement officiel de notre <strong>bibliothèque numérique de nouvelle génération, conçue selon les standards industriels les plus avancés. Cette plateforme innovante a pour vocation de rendre accessibles, à un large public, des contenus de haute valeur documentaire dans un objectif de <span class="text-danger">vulgarisation des données</span></strong>.</p>
 				<p style="text-align: justify;">Notre bibliothèque propose un vaste catalogue comprenant :</p>
 				<ul class="list-group-flush">
 					<li class="list-group-item"><strong>Ouvrages</strong> de référence et de culture générale</li>
-					<li class="list-group-item"><strong>Médias</strong> audios, vidéo et photos</li>
+					<li class="list-group-item"><strong>Médias</strong> audios, vidéos et photos</li>
 					<li class="list-group-item"><strong>Journaux</strong> historiques et contemporains</li>
 					<li class="list-group-item"><strong>Magazines</strong> spécialisés et grand public</li>
 					<li class="list-group-item"><strong>Revues</strong> scientifiques et techniques</li>
