@@ -39,7 +39,7 @@
 		/* Custom page CSS
 		-------------------------------------------------- */
 		/* Not required for template or sticky footer method. */
-		.container { width: auto; max-width: 680px; padding: 0 15px; }
+		.container { padding: 0 15px; }
 	</style>
 	<title>Bibliothèque numérique</title>
 </head>
