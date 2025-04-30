@@ -60,8 +60,6 @@ class HomeController extends Controller
                 $categories = $this::$api_client_manager::call('GET', getApiURL() . '/category');
                 $works = $this::$api_client_manager::call('GET', getApiURL()  . '/work/find_all_by_type/fr/' . $request->get('type') . ($request->has('page') ? '?page=' . $request->get('page') : ''));
 
-                dd($works);
-
                 if ($works->success) {
                     return view('work-test', [
                         'types' => $types_by_group->data,
@@ -89,6 +87,8 @@ class HomeController extends Controller
                 // All categories by group
                 $categories = $this::$api_client_manager::call('GET', getApiURL() . '/category');
                 $works = $this::$api_client_manager::call('GET', getApiURL()  . '/work' . ($request->has('page') ? '?page=' . $request->get('page') : ''));
+
+                dd($works);
 
                 return view('work-test', [
                     'types' => $types_by_group->data,
