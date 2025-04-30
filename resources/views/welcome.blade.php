@@ -38,6 +38,7 @@
 					background-color: #f5f5f5; }
 		@media screen and (min-width: 500px) {
 			.footer .copyright { display: inline-block; margin-right: 300px; }
+			.footer .copyright br { display: none; }
 		}
 		@media screen and (max-width: 500px) {
 			.footer .copyright br { display: block; }
