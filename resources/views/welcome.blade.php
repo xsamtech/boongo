@@ -32,7 +32,7 @@
 <body>
 	<div class="container">
 		<div class="row">
-			<div class="col-lg-8 mx-auto d-flex align-items-center" style="height: 50rem;">
+			<div class="col-lg-8 mx-auto d-flex justify-content-center align-items-center" style="height: 50rem;">
 				<h1 class="h1 display-1 text-center text-uppercase">Bibliothèque numérique</h1>
 			</div>
 		</div>
