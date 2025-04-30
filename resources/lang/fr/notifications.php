@@ -94,6 +94,7 @@ return [
     'create_partner_success' => 'Partenaire créé',
     'update_partner_success' => 'Partenaire modifié',
     'delete_partner_success' => 'Partenaire supprimé',
+    'how_long_partnership' => 'Combien de temps durera ce partenariat ?',
     'partnership_terminated' => 'Partenariat terminé',
     'partnership_still_active' => 'Le partenariat est toujours actif. Jours restants : :remainingDays',
     // Work

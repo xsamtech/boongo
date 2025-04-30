@@ -345,6 +345,7 @@ class UserController extends BaseController
             'confirm_password' => $request->confirm_password,
             'email_verified_at' => $request->email_verified_at,
             'phone_verified_at' => $request->phone_verified_at,
+            'promo_code' => $request->promo_code,
             'country_id' => $request->country_id,
             'status_id' => $request->status_id
         ];
@@ -634,6 +635,13 @@ class UserController extends BaseController
 
             $user->update([
                 'password' => Hash::make($inputs['password']),
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['promo_code'] != null) {
+            $user->update([
+                'promo_code' => $inputs['promo_code'],
                 'updated_at' => now(),
             ]);
         }

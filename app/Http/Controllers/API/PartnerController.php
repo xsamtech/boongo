@@ -41,6 +41,8 @@ class PartnerController extends BaseController
         $inputs = [
             'name' => $request->name,
             'message' => $request->message,
+            'from_user_id' => $request->from_user_id,
+            'from_organization_id' => $request->from_organization_id,
             'website_url' => $request->website_url
         ];
         $partners = Partner::all();
@@ -77,6 +79,16 @@ class PartnerController extends BaseController
             ]);
         }
 
+        if ($request->category_id != null) {
+            if ($request->number_of_days == null) {
+                return $this->handleError(__('notifications.how_long_partnership'));
+            }
+
+            $random_int = random_int(1000, 9999);
+
+            $partner->categories()->attach($request->category_id, ['promo_code' => $random_int, 'number_of_days' => $request->number_of_days]);
+        }
+
         return $this->handleResponse(new ResourcesPartner($partner), __('notifications.create_partner_success'));
     }
 
@@ -111,6 +123,8 @@ class PartnerController extends BaseController
             'id' => $request->id,
             'name' => $request->name,
             'message' => $request->message,
+            'from_user_id' => $request->from_user_id,
+            'from_organization_id' => $request->from_organization_id,
             'image_64' => $request->image_64,
             'website_url' => $request->website_url
         ];
@@ -144,6 +158,20 @@ class PartnerController extends BaseController
             ]);
         }
 
+        if ($inputs['from_user_id'] != null) {
+            $partner->update([
+                'from_user_id' => $inputs['from_user_id'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['from_organization_id'] != null) {
+            $partner->update([
+                'from_organization_id' => $inputs['from_organization_id'],
+                'updated_at' => now(),
+            ]);
+        }
+
         if ($inputs['image_64'] != null) {
             $current_partner = Partner::find($inputs['id']);
 
@@ -173,6 +201,32 @@ class PartnerController extends BaseController
                 'website_url' => $inputs['website_url'],
                 'updated_at' => now(),
             ]);
+        }
+
+        if ($request->category_id != null) {
+            $pivot_exists = $partner->categories()->where('category_id', $request->category_id)->exists();
+
+            // If the relationship already exists, we update the pivot based on the data sent
+            if ($pivot_exists) {
+                if ($request->number_of_days != null AND $request->number_of_registrations != null) {
+                    $partner->categories()->syncWithoutDetaching([$request->category_id => ['number_of_days' => $request->number_of_days, 'number_of_registrations' => $request->number_of_registrations]]);
+
+                } elseif ($request->number_of_days != null AND $request->number_of_registrations == null) {
+                    $partner->categories()->syncWithoutDetaching([$request->category_id => ['number_of_days' => $request->number_of_days]]);
+
+                } elseif ($request->number_of_days == null AND $request->number_of_registrations != null) {
+                    $partner->categories()->syncWithoutDetaching([$request->category_id => ['number_of_registrations' => $request->number_of_registrations]]);
+                }
+
+            // If the relationship doesn't exist, we create the relationship by adding the necessary attributes
+            } else {
+                if ($request->number_of_days == null) {
+                    return $this->handleError(__('notifications.how_long_partnership'));
+                }
+
+                $random_int = random_int(1000, 9999);
+                $partner->categories()->attach($request->category_id, ['promo_code' => $random_int, 'number_of_days' => $request->number_of_days]);
+            }
         }
 
         return $this->handleResponse(new ResourcesPartner($partner), __('notifications.update_partner_success'));
