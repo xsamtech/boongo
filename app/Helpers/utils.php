@@ -70,6 +70,14 @@ if (!function_exists('inArrayR')) {
     }
 }
 
+// Get array of columns from a keys/values object
+if (!function_exists('getArrayKeys')) {
+    function getArrayKeys($haystack, $ref)
+    {
+        return collect($haystack)->pluck($ref)->toArray();
+    }
+}
+
 // Month fully readable
 if (!function_exists('explicitMonth')) {
     function explicitMonth($month)

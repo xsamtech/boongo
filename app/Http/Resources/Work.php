@@ -29,9 +29,13 @@ class Work extends JsonResource
         $doc_type = ModelType::where([['type_name->fr', 'Document'], ['group_id', $file_type_group->id]])->first();
         $audio_type = ModelType::where([['type_name->fr', 'Audio'], ['group_id', $file_type_group->id]])->first();
         // Requests
-        $img = ModelFile::where([['type_id', $img_type->id], ['work_id', $this->id]])->first();
         $doc = ModelFile::where([['type_id', $doc_type->id], ['work_id', $this->id]])->first();
+        $docs = ModelFile::where([['type_id', $doc_type->id], ['work_id', $this->id]])->get();
         $audio = ModelFile::where([['type_id', $audio_type->id], ['work_id', $this->id]])->first();
+        $audios = ModelFile::where([['type_id', $audio_type->id], ['work_id', $this->id]])->get();
+        $imgs = ModelFile::where([['type_id', $img_type->id], ['work_id', $this->id]])->get();
+        $photo = $imgs->first(fn($file) => isPhotoFile($file->file_url));
+        $video = $imgs->first(fn($file) => isVideoFile($file->file_url));
 
         return [
             'id' => $this->id,
@@ -42,10 +46,13 @@ class Work extends JsonResource
             'video_source' => $this->video_source,
             'media_length' => $this->media_length,
             'is_public' => $this->is_public,
-            'photo_url' => !empty($files) ? (inArrayR($img_type->id, $files, 'type_id')  ? (isPhotoFile($img->file_url) ? getWebURL() . $img->file_url : null)  : null)  : getWebURL() . '/assets/img/cover.png',
-            'video_url' => !empty($files) ? (inArrayR($img_type->id, $files, 'type_id') ? (isVideoFile($img->file_url) ? $img->file_url : null) : null) : getWebURL() . '/assets/img/cover.png',
+            'photo_url' => $photo ? getWebURL() . $photo->file_url : getWebURL() . '/assets/img/cover.png',
+            'video_url' => $video ? $photo->file_url : getWebURL() . '/assets/img/cover.png',
             'document_url' => !empty($files) ? (inArrayR($doc_type->id, $files, 'type_id') ? $doc->file_url : null) : null,
             'audio_url' => !empty($files) ? (inArrayR($audio_type->id, $files, 'type_id') ? $audio->file_url : null) : null,
+            'images' => !empty($imgs) ? getArrayKeys($imgs, 'file_url') : null,
+            'audios' => !empty($audios) ? getArrayKeys($audios, 'file_url') : null,
+            'documents' => !empty($docs) ? getArrayKeys($docs, 'file_url') : null,
             'type' => Type::make($this->type),
             'status' => Status::make($this->status),
             'user_owner' => User::make($this->user_owner),
