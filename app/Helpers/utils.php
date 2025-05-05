@@ -30,7 +30,23 @@ if (!function_exists('getApiToken')) {
     }
 }
 
-// Check file type
+// Check if file is photo
+if (!function_exists('isPhotoFile')) {
+    function isPhotoFile($url)
+    {
+        // Extract file extension
+        $pathInfo = pathinfo($url);
+        $extension = strtolower($pathInfo['extension'] ?? '');
+
+        // List of recognized photo extensions
+        $photoExtensions = ['jpg', 'jpeg', 'png', 'webp', 'heic', 'bmp', 'tiff', 'tif', 'raw', 'cr2', 'nef', 'arw'];
+
+        // Check if the extension is in the list
+        return in_array($extension, $photoExtensions);
+    }
+}
+
+// Check if file is video
 if (!function_exists('isVideoFile')) {
     function isVideoFile($url)
     {
