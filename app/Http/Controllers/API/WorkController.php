@@ -632,23 +632,37 @@ class WorkController extends BaseController
                 $q->whereIn('categories.id', $request->categories_ids);
             })->orderByDesc('works.created_at');
 
+            // Add dynamic conditions
+            $query->when($request->type_id, function ($query) use ($request) {
+                return $query->where('type_id', $request->type_id);
+            });
+
+            $query->when($request->status_id, function ($query) use ($request) {
+                return $query->where('status_id', $request->status_id);
+            });
+
+            $works = $query->paginate(12);
+            $count_all = $query->count();
+
+            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
+
         } else {
             $query->orderByDesc('works.created_at');
+
+            // Add dynamic conditions
+            $query->when($request->type_id, function ($query) use ($request) {
+                return $query->where('type_id', $request->type_id);
+            });
+
+            $query->when($request->status_id, function ($query) use ($request) {
+                return $query->where('status_id', $request->status_id);
+            });
+
+            $works = $query->paginate(12);
+            $count_all = $query->count();
+
+            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
         }
-
-        // Add dynamic conditions
-        $query->when($request->type_id, function ($query) use ($request) {
-            return $query->where('type_id', $request->type_id);
-        });
-
-        $query->when($request->status_id, function ($query) use ($request) {
-            return $query->where('status_id', $request->status_id);
-        });
-
-        $works = $query->paginate(12);
-        $count_all = $query->count();
-
-        return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
     }
 
     /**
