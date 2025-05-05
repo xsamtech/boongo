@@ -629,13 +629,14 @@ class WorkController extends BaseController
         $categories = $request->input('categories_ids', []);
 
         if (is_array($categories) && count($categories) > 0) {
+            // Filter works having at least one of the specified categories
             $query->whereHas('categories', function ($q) use ($categories) {
                 $q->whereIn('categories.id', $categories);
-            })->orderByDesc('works.created_at');
-
-        } else {
-            $query->orderByDesc('works.created_at');
+            });
         }
+    
+        // Include uncategorized works if no category is specified
+        $query->orderByDesc('works.created_at');
 
         // Add dynamic conditions
         $query->when($request->type_id, function ($query) use ($request) {
