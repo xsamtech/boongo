@@ -46,7 +46,7 @@ class Work extends JsonResource
             'video_source' => $this->video_source,
             'media_length' => $this->media_length,
             'is_public' => $this->is_public,
-            'photo_url' => $photo ? getWebURL() . $photo->file_url : getWebURL() . '/assets/img/cover.png',
+            'photo_url' => $photo ? $photo->file_url : getWebURL() . '/assets/img/cover.png',
             'video_url' => $video ? $photo->file_url : getWebURL() . '/assets/img/cover.png',
             'document_url' => !empty($files) ? (inArrayR($doc_type->id, $files, 'type_id') ? $doc->file_url : null) : null,
             'audio_url' => !empty($files) ? (inArrayR($audio_type->id, $files, 'type_id') ? $audio->file_url : null) : null,
