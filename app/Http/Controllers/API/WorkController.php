@@ -627,9 +627,14 @@ class WorkController extends BaseController
     {
         $query = Work::query();
 
-        $query->whereHas('categories', function ($q) use ($request) {
-                    $q->whereIn('categories.id', $request->categories_ids);
-                });
+        if (count($request->categories_ids) > 0) {
+            $query->whereHas('categories', function ($q) use ($request) {
+                $q->whereIn('categories.id', $request->categories_ids);
+            })->orderByDesc('works.created_at');
+
+        } else {
+            $query->orderByDesc('works.created_at');
+        }
 
         // Add dynamic conditions
         $query->when($request->type_id, function ($query) use ($request) {
@@ -640,7 +645,7 @@ class WorkController extends BaseController
             return $query->where('status_id', $request->status_id);
         });
 
-        $works = $query->orderByDesc('works.created_at')->paginate(12);
+        $works = $query->paginate(12);
         $count_all = $query->count();
 
         return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
