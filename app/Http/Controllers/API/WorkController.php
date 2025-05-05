@@ -626,7 +626,7 @@ class WorkController extends BaseController
     public function filterByCategories(Request $request)
     {
         $query = Work::query();
-        $categories = $request->input('categories_ids', []);
+        $categories = array_filter($request->input('categories_ids', []));
 
         if (is_array($categories) && count($categories) > 0) {
             // Filter works having at least one of the specified categories
@@ -634,7 +634,7 @@ class WorkController extends BaseController
                 $q->whereIn('categories.id', $categories);
             });
         }
-    
+
         // Include uncategorized works if no category is specified
         $query->orderByDesc('works.created_at');
 
