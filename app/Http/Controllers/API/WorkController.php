@@ -207,7 +207,7 @@ class WorkController extends BaseController
 
             File::create([
                 'file_name' => trim($request->image_name) != null ? $request->image_name : $work->work_title,
-                'file_url' => '/storage/' . $image_url,
+                'file_url' => getWebURL() . '/storage/' . $image_url,
                 'type_id' => $request->image_type_id,
                 'work_id' => $work->id
             ]);
@@ -775,7 +775,7 @@ class WorkController extends BaseController
 
             File::create([
                 'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
-                'file_url' => $file_url,
+                'file_url' => getWebURL() . '/storage/' . $file_url,
                 'type_id' => $type->id,
                 'work_id' => $work->id
             ]);
@@ -814,7 +814,7 @@ class WorkController extends BaseController
 
         File::create([
             'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
-            'file_url' => $image_url,
+            'file_url' => getWebURL() . '/storage/' . $image_url,
             'type_id' => $type->id,
             'work_id' => $work->id
         ]);
