@@ -15,48 +15,35 @@ class BaseController extends Controller
      *
      * @param  $result
      * @param  $msg
+     * @param  $lastPage
+     * @param  $count
+     * @param  $ad
      * @return \Illuminate\Http\Response
      */
-    public function handleResponse($result, $msg, $lastPage = null, $count = null)
+    public function handleResponse($result, $msg, $lastPage = null, $count = null, $ad = null)
     {
-        if ($lastPage != null && $count != null) {
-            $res = [
-                'success'   => true,
-                'message'   => $msg,
-                'data'      => $result,
-                'lastPage'  => $lastPage,
-                'count'     => $count
-            ];
+        // Building the basic response
+        $res = [
+            'success' => true,
+            'message' => $msg,
+            'data'    => $result,
+        ];
 
-            return response()->json($res, 200);
-
-        } else {
-            if ($lastPage != null && $count == null) {
-                $res = [
-                    'success'   => true,
-                    'message'   => $msg,
-                    'data'      => $result,
-                    'lastPage'  => $lastPage
-                ];
-
-            } else if ($lastPage == null && $count != null) {
-                $res = [
-                    'success'   => true,
-                    'message'   => $msg,
-                    'data'      => $result,
-                    'count'     => $count
-                ];
-
-            } else {
-                $res = [
-                    'success' => true,
-                    'message' => $msg,
-                    'data'    => $result
-                ];
-            }
-
-            return response()->json($res, 200);
+        // Add conditional keys only if they are defined
+        if ($lastPage !== null) {
+            $res['lastPage'] = $lastPage;
         }
+
+        if ($count !== null) {
+            $res['count'] = $count;
+        }
+
+        if ($ad !== null) {
+            $res['ad'] = $ad;
+        }
+
+        // Return JSON response
+        return response()->json($res, 200);
     }
 
     /**
@@ -70,23 +57,23 @@ class BaseController extends Controller
     public function handleError($error, $errorMsg = [], $code = 404)
     {
         if (empty($errorMsg)) {
-			$res = [
-				'success' => false,
-				'message' => $error
-			];
+            $res = [
+                'success' => false,
+                'message' => $error
+            ];
 
-			return response()->json($res, $code);
+            return response()->json($res, $code);
         }
 
         if (!empty($errorMsg)) {
-			$res = [
-				'success' => false,
-				'data' => $error
-			];
+            $res = [
+                'success' => false,
+                'data' => $error
+            ];
 
             $res['message'] = $errorMsg;
 
-			return response()->json($res, $code);
+            return response()->json($res, $code);
         }
     }
 }

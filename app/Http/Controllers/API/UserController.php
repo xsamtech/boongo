@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use stdClass;
 use App\Mail\OTPCode;
 use App\Models\Circle;
+use App\Models\Currency;
 use App\Models\Event;
 use App\Models\Group;
 use App\Models\Notification;
@@ -12,6 +13,7 @@ use App\Models\Organization;
 use App\Models\PasswordReset;
 use App\Models\PersonalAccessToken;
 use App\Models\Status;
+use App\Models\ToxicContent;
 use App\Models\Type;
 use App\Models\User;
 use Nette\Utils\Random;
@@ -19,12 +21,13 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
-use App\Http\Resources\User as ResourcesUser;
-use App\Http\Resources\PasswordReset as ResourcesPasswordReset;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\Circle as ResourcesCircle;
 use App\Http\Resources\Event as ResourcesEvent;
+use App\Http\Resources\PasswordReset as ResourcesPasswordReset;
+use App\Http\Resources\ToxicContent as ResourcesToxicContent;
+use App\Http\Resources\User as ResourcesUser;
 
 /**
  * @author Xanders
@@ -52,9 +55,17 @@ class UserController extends BaseController
      */
     public function store(Request $request)
     {
-        $status_activated = Status::where('status_name->fr', 'Activé')->first();
-        $status_unread = Status::where('status_name->fr', 'Non lue')->first();
-        $type_new_user = Type::where('type_name->fr', 'Nouvel utilisateur')->first();
+        // Groups
+        $user_status_group = Group::where('group_name', 'Etat de l\'utilisateur')->first();
+        $notification_status_group = Group::where('group_name', 'Etat de la notification')->first();
+        $notification_type_group = Group::where('group_name', 'Type de notification')->first();
+        // Statuses
+        $status_activated = Status::where([['status_name->fr', 'Activé'], ['group_id', $user_status_group->id]])->first();
+        $status_unread = Status::where([['status_name->fr', 'Non lue'], ['group_id', $notification_status_group->id]])->first();
+        // Type
+        $type_new_user = Type::where([['type_name->fr', 'Nouvel utilisateur'], ['group_id', $notification_type_group->id]])->first();
+        // Currency
+        $currency_american_dollar = Currency::where('currency_acronym', 'USD')->first();
         // Get inputs
         $inputs = [
             'firstname' => $request->firstname,
@@ -71,6 +82,7 @@ class UserController extends BaseController
             'username' => $request->username,
             'password' => empty($request->password) ? null : Hash::make($request->password),
             'country_id' => $request->country_id,
+            'currency_id' => !empty($request->currency_id) ? $request->currency_id : $currency_american_dollar->id,
             'status_id' => is_null($status_activated) ? null : $status_activated->id
         ];
         $users = User::all();
@@ -346,7 +358,14 @@ class UserController extends BaseController
             'email_verified_at' => $request->email_verified_at,
             'phone_verified_at' => $request->phone_verified_at,
             'promo_code' => $request->promo_code,
+            'email_frequency' => $request->email_frequency,
+            'two_factor_secret' => $request->two_factor_secret,
+            'two_factor_recovery_codes' => $request->two_factor_recovery_codes,
+            'two_factor_confirmed_at' => $request->two_factor_confirmed_at,
+            'two_factor_phone_confirmed_at' => $request->two_factor_phone_confirmed_at,
+            'is_incognito' => $request->is_incognito,
             'country_id' => $request->country_id,
+            'currency_id' => $request->currency_id,
             'status_id' => $request->status_id
         ];
         $users = User::all();
@@ -646,9 +665,58 @@ class UserController extends BaseController
             ]);
         }
 
+        if ($inputs['email_frequency'] != null) {
+            $user->update([
+                'email_frequency' => $inputs['email_frequency'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['two_factor_secret'] != null) {
+            $user->update([
+                'two_factor_secret' => $inputs['two_factor_secret'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['two_factor_recovery_codes'] != null) {
+            $user->update([
+                'two_factor_recovery_codes' => $inputs['two_factor_recovery_codes'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['two_factor_confirmed_at'] != null) {
+            $user->update([
+                'two_factor_confirmed_at' => $inputs['two_factor_confirmed_at'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['two_factor_phone_confirmed_at'] != null) {
+            $user->update([
+                'two_factor_phone_confirmed_at' => $inputs['two_factor_phone_confirmed_at'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['is_incognito'] != null) {
+            $user->update([
+                'is_incognito' => $inputs['is_incognito'],
+                'updated_at' => now(),
+            ]);
+        }
+
         if ($inputs['country_id'] != null) {
             $user->update([
                 'country_id' => $inputs['country_id'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['currency_id'] != null) {
+            $user->update([
+                'currency_id' => $inputs['currency_id'],
                 'updated_at' => now(),
             ]);
         }
@@ -798,7 +866,7 @@ class UserController extends BaseController
     }
 
     /**
-     * Retrieves users in an organization with a specific role.
+     * Retrieves users in a circle / event.
      *
      * @param  string  $entity
      * @param  int  $entity_id
@@ -832,7 +900,7 @@ class UserController extends BaseController
     }
 
     /**
-     * Find all user circles / events.
+     * Find all circles / events of a specific user.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string $entity
@@ -855,14 +923,14 @@ class UserController extends BaseController
         }
 
         if ($entity == 'circle') {
-            $circles = $user->circles()->wherePivot('status_id', $status->id)->orderByDesc('created_at')->paginate(12);
+            $circles = $user->circles()->wherePivot('status_id', $status->id)->orderByDesc('created_at')->paginate(4);
             $count_circles = $user->circles()->wherePivot('status_id', $status->id)->count();
 
             return $this->handleResponse(ResourcesCircle::collection($circles), __('notifications.find_all_circles_success'), $circles->lastPage(), $count_circles);
         }
 
         if ($entity == 'event') {
-            $events = $user->events()->wherePivot('status_id', $status->id)->orderByDesc('created_at')->paginate(12);
+            $events = $user->events()->wherePivot('status_id', $status->id)->orderByDesc('created_at')->paginate(4);
             $count_events = $user->events()->wherePivot('status_id', $status->id)->count();
 
             return $this->handleResponse(ResourcesEvent::collection($events), __('notifications.find_all_events_success'), $events->lastPage(), $count_events);
@@ -925,7 +993,7 @@ class UserController extends BaseController
     }
 
     /**
-     * Search all users having specific status.
+     * Check if user is partner.
      *
      * @param  int $user_id
      * @return \Illuminate\Http\Response
@@ -943,10 +1011,10 @@ class UserController extends BaseController
                                 })->exists();
 
         if ($hasPivotPartner) {
-            return $this->handleResponse(1, __('notifications.find_user_success'), null);
+            return $this->handleResponse(true, __('notifications.find_user_success'), null);
 
         } else {
-            return $this->handleResponse(0, __('notifications.find_user_404'), null);
+            return $this->handleResponse(false, __('notifications.find_user_404'), null);
         }
     }
 
@@ -996,15 +1064,29 @@ class UserController extends BaseController
                 return $this->handleError($inputs['password'], __('auth.password'), 400);
             }
 
-            // if ($user->phone_verified_at == null) {
-            //     $password_reset = PasswordReset::where('phone', $user->phone)->first();
-			// 	$object = new stdClass();
+            // Check if phone is verified
+            if ($user->phone_verified_at == null) {
+                $password_reset = PasswordReset::where('phone', $user->phone)->first();
+				$object = new stdClass();
 
-			// 	$object->password_reset = new ResourcesPasswordReset($password_reset);
-			// 	$object->user = new ResourcesUser($user);
+				$object->password_reset = new ResourcesPasswordReset($password_reset);
+				$object->user = new ResourcesUser($user);
 
-            //     return $this->handleError($object, __('notifications.unverified_token_phone'), 400);
-            // }
+                return $this->handleError($object, __('notifications.unverified_token_phone'), 400);
+            }
+
+            // Check if user is blocked
+            $is_toxic = ToxicContent::where([['for_user_id', $user->id], ['is_unlocked', 0]])->exists();
+
+            if ($is_toxic) {
+                $toxic_content = ToxicContent::where([['for_user_id', $user->id], ['is_unlocked', 0]])->first();
+                $object = new stdClass();
+
+                $object->toxic_content = new ResourcesToxicContent($toxic_content);
+                $object->user = new ResourcesUser($user);
+
+                return $this->handleError($object, __('notifications.blocked_user'), 400);
+            }
 
             $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -1026,19 +1108,33 @@ class UserController extends BaseController
                 return $this->handleError($inputs['password'], __('auth.password'), 400);
             }
 
-            // if (!empty($user->email)) {
-            //     if ($inputs['username'] == $user->email) {
-            //         if ($user->email_verified_at == null) {
-            //             $password_reset = PasswordReset::where('email', $user->email)->first();
-            //             $object = new stdClass();
+            // Check if email is verified
+            if (!empty($user->email)) {
+                if ($inputs['username'] == $user->email) {
+                    if ($user->email_verified_at == null) {
+                        $password_reset = PasswordReset::where('email', $user->email)->first();
+                        $object = new stdClass();
 
-            //             $object->password_reset = new ResourcesPasswordReset($password_reset);
-            //             $object->user = new ResourcesUser($user);
+                        $object->password_reset = new ResourcesPasswordReset($password_reset);
+                        $object->user = new ResourcesUser($user);
 
-            //             return $this->handleError($object, __('notifications.unverified_token_email'), 400);
-            //         }
-            //     }
-            // }
+                        return $this->handleError($object, __('notifications.unverified_token_email'), 400);
+                    }
+                }
+            }
+
+            // Check if user is blocked
+            $is_toxic = ToxicContent::where([['for_user_id', $user->id], ['is_unlocked', 0]])->exists();
+
+            if ($is_toxic) {
+                $toxic_content = ToxicContent::where([['for_user_id', $user->id], ['is_unlocked', 0]])->first();
+                $object = new stdClass();
+
+                $object->toxic_content = new ResourcesToxicContent($toxic_content);
+                $object->user = new ResourcesUser($user);
+
+                return $this->handleError($object, __('notifications.blocked_user'), 400);
+            }
 
             $token = $user->createToken('auth_token')->plainTextToken;
 

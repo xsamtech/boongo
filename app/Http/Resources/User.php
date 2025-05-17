@@ -55,6 +55,7 @@ class User extends JsonResource
                 'surname' => $this->surname,
                 'gender' => $this->gender,
                 'birthdate' => $this->birthdate,
+                'birthdate_explicit' => explicitDate($this->birthdate),
                 'age' => !empty($this->birthdate) ? $this->age() : null,
                 'city' => $this->city,
                 'address_1' => $this->address_1,
@@ -69,7 +70,15 @@ class User extends JsonResource
                 'remember_token' => $this->remember_token,
                 'api_token' => $this->api_token,
                 'avatar_url' => $this->avatar_url != null ? getWebURL() . '/public/storage/' . $this->avatar_url : getWebURL() . '/assets/img/avatar-' . $this->gender . '.png',
+                'promo_code' => $this->promo_code,
+                'email_frequency' => $this->email_frequency,
+                'two_factor_secret' => $this->two_factor_secret,
+                'two_factor_recovery_codes' => $this->two_factor_recovery_codes,
+                'two_factor_confirmed_at' => $this->two_factor_confirmed_at,
+                'two_factor_phone_confirmed_at' => $this->two_factor_phone_confirmed_at,
+                'is_incognito' => $this->is_incognito,
                 'country' => Country::make($this->country),
+                'currency' => Currency::make($this->currency),
                 'status' => Status::make($this->status),
                 'is_partner' => inArrayR('Partenaire', $roles, 'role_name') ? true : false,
                 'roles' => Role::collection($this->roles),
@@ -80,7 +89,10 @@ class User extends JsonResource
                 'recent_payment' => $payment,
                 // 'payments' => Payment::collection($this->payments)->sortByDesc('created_at')->toArray(),
                 'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-                'updated_at' => $this->updated_at->format('Y-m-d H:i:s')
+                'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+                'country_id' => $this->country_id,
+                'currency_id' => $this->currency_id,
+                'status_id' => $this->status_id
             ];
 
         } else if ($valid_subscription != null) {
@@ -91,6 +103,7 @@ class User extends JsonResource
                 'surname' => $this->surname,
                 'gender' => $this->gender,
                 'birthdate' => $this->birthdate,
+                'birthdate_explicit' => explicitDate($this->birthdate),
                 'age' => !empty($this->birthdate) ? $this->age() : null,
                 'city' => $this->city,
                 'address_1' => $this->address_1,
@@ -105,7 +118,15 @@ class User extends JsonResource
                 'remember_token' => $this->remember_token,
                 'api_token' => $this->api_token,
                 'avatar_url' => $this->avatar_url != null ? getWebURL() . '/public/storage/' . $this->avatar_url : getWebURL() . '/assets/img/avatar-' . $this->gender . '.png',
+                'promo_code' => $this->promo_code,
+                'email_frequency' => $this->email_frequency,
+                'two_factor_secret' => $this->two_factor_secret,
+                'two_factor_recovery_codes' => $this->two_factor_recovery_codes,
+                'two_factor_confirmed_at' => $this->two_factor_confirmed_at,
+                'two_factor_phone_confirmed_at' => $this->two_factor_phone_confirmed_at,
+                'is_incognito' => $this->is_incognito,
                 'country' => Country::make($this->country),
+                'currency' => Currency::make($this->currency),
                 'status' => Status::make($this->status),
                 'is_partner' => inArrayR('Partenaire', $roles, 'role_name') ? true : false,
                 'roles' => Role::collection($this->roles),
@@ -116,7 +137,10 @@ class User extends JsonResource
                 'recent_payment' => $payment,
                 // 'payments' => Payment::collection($this->payments)->sortByDesc('created_at')->toArray(),
                 'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-                'updated_at' => $this->updated_at->format('Y-m-d H:i:s')
+                'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+                'country_id' => $this->country_id,
+                'currency_id' => $this->currency_id,
+                'status_id' => $this->status_id
             ];
 
         } else {
@@ -127,6 +151,7 @@ class User extends JsonResource
                 'surname' => $this->surname,
                 'gender' => $this->gender,
                 'birthdate' => $this->birthdate,
+                'birthdate_explicit' => explicitDate($this->birthdate),
                 'age' => !empty($this->birthdate) ? $this->age() : null,
                 'city' => $this->city,
                 'address_1' => $this->address_1,
@@ -141,7 +166,15 @@ class User extends JsonResource
                 'remember_token' => $this->remember_token,
                 'api_token' => $this->api_token,
                 'avatar_url' => $this->avatar_url != null ? getWebURL() . '/public/storage/' . $this->avatar_url : getWebURL() . '/assets/img/avatar-' . $this->gender . '.png',
+                'promo_code' => $this->promo_code,
+                'email_frequency' => $this->email_frequency,
+                'two_factor_secret' => $this->two_factor_secret,
+                'two_factor_recovery_codes' => $this->two_factor_recovery_codes,
+                'two_factor_confirmed_at' => $this->two_factor_confirmed_at,
+                'two_factor_phone_confirmed_at' => $this->two_factor_phone_confirmed_at,
+                'is_incognito' => $this->is_incognito,
                 'country' => Country::make($this->country),
+                'currency' => Currency::make($this->currency),
                 'status' => Status::make($this->status),
                 'is_partner' => inArrayR('Partenaire', $roles, 'role_name') ? true : false,
                 'roles' => Role::collection($this->roles),
@@ -151,7 +184,10 @@ class User extends JsonResource
                 'recent_payment' => $payment,
                 // 'payments' => Payment::collection($this->payments)->sortByDesc('created_at')->toArray(),
                 'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-                'updated_at' => $this->updated_at->format('Y-m-d H:i:s')
+                'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+                'country_id' => $this->country_id,
+                'currency_id' => $this->currency_id,
+                'status_id' => $this->status_id
             ];
         }
     }

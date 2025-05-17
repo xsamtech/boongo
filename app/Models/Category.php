@@ -33,9 +33,9 @@ class Category extends Model
 
     /**
      * MANY-TO-ONE
-     * Several works for several categories
+     * Several belonging_works for several categories
      */
-    public function works(): BelongsToMany
+    public function belonging_works(): BelongsToMany
     {
         return $this->belongsToMany(Work::class);
     }
@@ -46,7 +46,7 @@ class Category extends Model
      */
     public function partners(): BelongsToMany
     {
-        return $this->belongsToMany(Partner::class, 'category_partner')->orderByPivot('created_at', 'desc')->withTimestamps()->withPivot(['promo_code', 'number_of_days', 'number_of_registrations']);
+        return $this->belongsToMany(Partner::class, 'category_partner')->orderByPivot('created_at', 'desc')->withTimestamps()->withPivot(['promo_code', 'number_of_days', 'number_of_registrations', 'status_id']);
     }
 
     /**
@@ -65,5 +65,14 @@ class Category extends Model
     public function subscriptions(): HasMany
     {
         return $this->HasMany(Subscription::class);
+    }
+
+    /**
+     * MANY-TO-ONE
+     * Several works for a category
+     */
+    public function works(): HasMany
+    {
+        return $this->HasMany(Work::class);
     }
 }

@@ -17,7 +17,7 @@ class TerminateExpiredPartnership extends Command
     // The name of the artisan command
     protected $signature = 'partnerships:terminate';
 
-    // Description de la commande
+    // Command description
     protected $description = 'Terminate partnerships whose remaining days have reached 0';
 
     /**

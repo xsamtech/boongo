@@ -33,6 +33,15 @@ class Subscription extends Model
 
     /**
      * ONE-TO-MANY
+     * One currency for several subscriptions
+     */
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(Currency::class);
+    }
+
+    /**
+     * ONE-TO-MANY
      * One type for several subscriptions
      */
     public function type(): BelongsTo

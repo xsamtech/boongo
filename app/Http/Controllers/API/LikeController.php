@@ -25,7 +25,7 @@ class LikeController extends BaseController
      */
     public function index()
     {
-        $likes = Like::orderByDesc('created_at')->paginate(12);
+        $likes = Like::orderByDesc('created_at')->paginate(4);
         $count_likes = Like::count();
 
         return $this->handleResponse(ResourcesLike::collection($likes), __('notifications.find_all_likes_success'), $likes->lastPage(), $count_likes);

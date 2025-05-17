@@ -80,6 +80,13 @@ return [
     'create_category_success' => 'Catégorie créée',
     'update_category_success' => 'Catégorie modifiée',
     'delete_category_success' => 'Catégorie supprimée',
+    // ReportReason
+    'find_all_report_reasons_success' => 'Motifs des signalements trouvés',
+    'find_report_reason_success' => 'Motif du signalement trouvé',
+    'find_report_reason_404' => 'Motif du signalement non trouvé',
+    'create_report_reason_success' => 'Motif du signalement créé',
+    'update_report_reason_success' => 'Motif du signalement modifié',
+    'delete_report_reason_success' => 'Motif du signalement supprimé',
     // Country
     'find_all_countries_success' => 'Pays trouvés',
     'find_country_success' => 'Pays trouvé',
@@ -87,6 +94,20 @@ return [
     'create_country_success' => 'Pays créé',
     'update_country_success' => 'Pays modifié',
     'delete_country_success' => 'Pays supprimé',
+    // Currency
+    'find_all_currencies_success' => 'Devises trouvées',
+    'find_currency_success' => 'Devise trouvée',
+    'find_currency_404' => 'Devise non trouvée',
+    'create_currency_success' => 'Devise créée',
+    'update_currency_success' => 'Devise modifiée',
+    'delete_currency_success' => 'Devise supprimée',
+    // CurrenciesRate
+    'find_all_currencies_rates_success' => 'Taux interdevises trouvés',
+    'find_currencies_rate_success' => 'Taux interdevises trouvé',
+    'find_currencies_rate_404' => 'Taux interdevises non trouvé',
+    'create_currencies_rate_success' => 'Taux interdevises créé',
+    'update_currencies_rate_success' => 'Taux interdevises modifié',
+    'delete_currencies_rate_success' => 'Taux interdevises supprimé',
     // Partner
     'find_all_partners_success' => 'Partenaires trouvés',
     'find_partner_success' => 'Partenaire trouvé',
@@ -151,6 +172,7 @@ return [
     'find_visitor_404' => 'Visiteur non trouvé',
     'create_user_success' => 'Utilisateur créé',
     'login_user_success' => 'Vous êtes connecté(e)',
+    'blocked_user' => 'Ce compte est encore bloqué',
     'create_user_SMS_failed' => 'Il y a un problème avec le service des SMS',
     'update_user_success' => 'Utilisateur modifié',
     'update_password_success' => 'Mot de passe modifié',
@@ -201,6 +223,8 @@ return [
     'delete_password_reset_success' => 'Réinitialisation de mot de passe supprimée',
     'verified_token' => 'Code OTP vérifié',
     'unverified_token' => 'Le code OTP n\'est pas encore vérifié',
+    'unverified_token_email' => 'Votre adresse e-mail n’est pas encore vérifiée',
+    'unverified_token_phone' => 'Votre n° de téléphone n’est pas encore vérifié',
     'bad_token' => 'Le code OTP ne correspond pas',
     'token_label' => 'Votre code OTP :',
     // PersonalAccessToken
@@ -225,6 +249,13 @@ return [
     'create_notification_success' => 'Notification créée',
     'update_notification_success' => 'Notification modifiée',
     'delete_notification_success' => 'Notification supprimée',
+    // ToxicContent
+    'find_all_toxic_contents_success' => 'Contenus toxiques trouvés',
+    'find_toxic_content_success' => 'Contenu toxique trouvé',
+    'find_toxic_content_404' => 'Contenu toxique non trouvé',
+    'create_toxic_content_success' => 'Contenu toxique créé',
+    'update_toxic_content_success' => 'Contenu toxique modifié',
+    'delete_toxic_content_success' => 'Contenu toxique supprimé',
     // Session
     'find_all_sessions_success' => 'Sessions trouvées',
     'find_session_success' => 'Session trouvée',

@@ -87,6 +87,15 @@ class Work extends Model
     }
 
     /**
+     * ONE-TO-MANY
+     * One category for several works
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    /**
      * MANY-TO-ONE
      * Several likes for a work
      */

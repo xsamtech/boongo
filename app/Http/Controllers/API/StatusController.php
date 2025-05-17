@@ -108,11 +108,12 @@ class StatusController extends BaseController
             'color' => $request->color,
             'group_id' => $request->group_id
         ];
-        // Select all statuses and specific status to check unique constraint
-        $statuses = Status::where('group_id', $inputs['group_id'])->get();
-        $current_status = Status::find($inputs['id']);
 
         if ($inputs['status_name'] != null) {
+            // Select all statuses and specific status to check unique constraint
+            $statuses = Status::where('group_id', $inputs['group_id'])->get();
+            $current_status = Status::find($inputs['id']);
+
             foreach ($statuses as $another_status):
                 if ($current_status->status_name != $inputs['status_name']) {
                     if ($another_status->status_name == $inputs['status_name']) {

@@ -108,11 +108,12 @@ class TypeController extends BaseController
             'icon' => $request->icon,
             'group_id' => $request->group_id
         ];
-        // Select all group types and specific type to check unique constraint
-        $types = Type::where('group_id', $inputs['group_id'])->get();
-        $current_type = Type::find($inputs['id']);
 
         if ($inputs['type_name'] != null) {
+            // Select all group types and specific type to check unique constraint
+            $types = Type::where('group_id', $inputs['group_id'])->get();
+            $current_type = Type::find($inputs['id']);
+
             foreach ($types as $another_type):
                 if ($current_type->type_name != $inputs['type_name']) {
                     if ($another_type->type_name == $inputs['type_name']) {

@@ -15,7 +15,7 @@ class InvalidateSubscription extends Command
     // The name of the artisan command
     protected $signature = 'subscriptions:invalidate';
 
-    // Description de la commande
+    // Command description
     protected $description = 'Invalidate subscriptions that are past their due date';
 
     /**

@@ -80,6 +80,13 @@ return [
     'create_category_success' => 'Category created',
     'update_category_success' => 'Category updated',
     'delete_category_success' => 'Category deleted',
+    // ReportReason
+    'find_all_report_reasons_success' => 'Reports reasons found',
+    'find_report_reason_success' => 'Report reason found',
+    'find_report_reason_404' => 'Report reason not found',
+    'create_report_reason_success' => 'Report reason created',
+    'update_report_reason_success' => 'Report reason updated',
+    'delete_report_reason_success' => 'Report reason deleted',
     // Country
     'find_all_countries_success' => 'Countries found',
     'find_country_success' => 'Country found',
@@ -87,6 +94,20 @@ return [
     'create_country_success' => 'Country created',
     'update_country_success' => 'Country updated',
     'delete_country_success' => 'Country deleted',
+    // Currency
+    'find_all_currencies_success' => 'Currencies found',
+    'find_currency_success' => 'Currency found',
+    'find_currency_404' => 'Currency not found',
+    'create_currency_success' => 'Currency created',
+    'update_currency_success' => 'Currency updated',
+    'delete_currency_success' => 'Currency deleted',
+    // CurrenciesRate
+    'find_all_currencies_rates_success' => 'Inter-currency rates trouvés',
+    'find_currencies_rate_success' => 'Inter-currency rate trouvé',
+    'find_currencies_rate_404' => 'Inter-currency rate non trouvé',
+    'create_currencies_rate_success' => 'Inter-currency rate créé',
+    'update_currencies_rate_success' => 'Inter-currency rate modifié',
+    'delete_currencies_rate_success' => 'Inter-currency rate supprimé',
     // Partner
     'find_all_partners_success' => 'Partners found',
     'find_partner_success' => 'Partner found',
@@ -151,6 +172,7 @@ return [
     'find_visitor_404' => 'Visitor not found',
     'create_user_success' => 'User created',
     'login_user_success' => 'You are connected',
+    'blocked_user' => 'This account is still blocked',
     'create_user_SMS_failed' => 'There is a problem with the SMS service',
     'update_user_success' => 'User updated',
     'update_password_success' => 'Password updated',
@@ -201,6 +223,8 @@ return [
     'delete_password_reset_success' => 'Password reset deleted',
     'verified_token' => 'OTP code verified',
     'unverified_token' => 'The OTP code is not yet verified',
+    'unverified_token_email' => 'Your email address is not yet verified.',
+    'unverified_token_phone' => 'Your phone number is not yet verified.',
     'bad_token' => 'The OTP code does not match',
     'token_label' => 'Your OTP code:',
     // PersonalAccessToken
@@ -225,6 +249,13 @@ return [
     'create_notification_success' => 'Notification created',
     'update_notification_success' => 'Notification updated',
     'delete_notification_success' => 'Notification deleted',
+    // ToxicContent
+    'find_all_toxic_contents_success' => 'Toxic contents found',
+    'find_toxic_content_success' => 'Toxic content found',
+    'find_toxic_content_404' => 'Toxic content not found',
+    'create_toxic_content_success' => 'Toxic content created',
+    'update_toxic_content_success' => 'Toxic content updated',
+    'delete_toxic_content_success' => 'Toxic content deleted',
     // Session
     'find_all_sessions_success' => 'Sessions found',
     'find_session_success' => 'Session found',

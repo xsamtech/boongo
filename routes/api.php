@@ -13,10 +13,13 @@ use Illuminate\Support\Facades\Route;
 */
 Route::middleware(['auth:sanctum', 'localization'])->group(function () {
     Route::apiResource('country', 'App\Http\Controllers\API\CountryController')->except(['index', 'store', 'search']);
+    Route::apiResource('currency', 'App\Http\Controllers\API\CurrencyController')->except(['index', 'search']);
+    Route::apiResource('currencies_rate', 'App\Http\Controllers\API\CurrenciesRateController')->except(['findCurrencyRate']);
     Route::apiResource('group', 'App\Http\Controllers\API\GroupController');
     Route::apiResource('status', 'App\Http\Controllers\API\StatusController')->except(['search', 'findByGroup']);
     Route::apiResource('type', 'App\Http\Controllers\API\TypeController')->except(['search', 'findByGroup']);
     Route::apiResource('category', 'App\Http\Controllers\API\CategoryController')->except(['search', 'findByGroup', 'allUsedInWorks', 'allUsedInWorksType']);
+    Route::apiResource('report_reason', 'App\Http\Controllers\API\ReportReasonController')->except(['findByEntity']);
     Route::apiResource('work', 'App\Http\Controllers\API\WorkController');
     Route::apiResource('like', 'App\Http\Controllers\API\LikeController');
     Route::apiResource('file', 'App\Http\Controllers\API\FileController');
@@ -34,6 +37,7 @@ Route::middleware(['auth:sanctum', 'localization'])->group(function () {
     Route::apiResource('personal_access_token', 'App\Http\Controllers\API\PersonalAccessTokenController');
     Route::apiResource('message', 'App\Http\Controllers\API\MessageController');
     Route::apiResource('notification', 'App\Http\Controllers\API\NotificationController');
+    Route::apiResource('toxic_content', 'App\Http\Controllers\API\ToxicContentController');
     Route::apiResource('payment', 'App\Http\Controllers\API\PaymentController')->except(['store', 'find_by_order_number', 'find_by_order_number_user', 'switch_status']);
     Route::apiResource('session', 'App\Http\Controllers\API\SessionController');
 });
@@ -44,9 +48,12 @@ Route::middleware(['auth:sanctum', 'localization'])->group(function () {
  */
 Route::group(['middleware' => ['api', 'localization']], function () {
     Route::resource('country', 'App\Http\Controllers\API\CountryController');
+    Route::resource('currency', 'App\Http\Controllers\API\CurrencyController');
+    Route::resource('currencies_rate', 'App\Http\Controllers\API\CurrenciesRateController');
     Route::resource('status', 'App\Http\Controllers\API\StatusController');
     Route::resource('type', 'App\Http\Controllers\API\TypeController');
     Route::resource('category', 'App\Http\Controllers\API\CategoryController');
+    Route::resource('report_reason', 'App\Http\Controllers\API\ReportReasonController');
     Route::resource('subscription', 'App\Http\Controllers\API\SubscriptionController');
     Route::resource('role', 'App\Http\Controllers\API\RoleController');
     Route::resource('user', 'App\Http\Controllers\API\UserController');
@@ -57,6 +64,11 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::get('country', 'App\Http\Controllers\API\CountryController@index')->name('country.api.index');
     Route::post('country', 'App\Http\Controllers\API\CountryController@store')->name('country.api.store');
     Route::get('country/search/{data}', 'App\Http\Controllers\API\CountryController@search')->name('country.api.search');
+    // Currency
+    Route::get('currency', 'App\Http\Controllers\API\CurrencyController@index')->name('currency.api.index');
+    Route::get('currency/search/{data}', 'App\Http\Controllers\API\CurrencyController@search')->name('currency.api.search');
+    // CurrenciesRate
+    Route::get('currencies_rate/find_currency_rate/{from_currency_acronym}/{to_currency_acronym}', 'App\Http\Controllers\API\CurrenciesRateController@findCurrencyRate')->name('currencies_rate.api.find_currency_rate');
     // Status
     Route::get('status/search/{locale}/{data}', 'App\Http\Controllers\API\StatusController@search')->name('status.api.search');
     Route::get('status/find_by_group/{group_name}', 'App\Http\Controllers\API\StatusController@findByGroup')->name('status.api.find_by_group');
@@ -68,6 +80,8 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::get('category/find_by_group/{group_name}', 'App\Http\Controllers\API\CategoryController@findByGroup')->name('category.api.find_by_group');
     Route::get('category/all_used_in_works', 'App\Http\Controllers\API\CategoryController@allUsedInWorks')->name('category.api.all_used_in_works');
     Route::get('category/all_used_in_works_type/{type_id}', 'App\Http\Controllers\API\CategoryController@allUsedInWorksType')->name('category.api.all_used_in_works_type');
+    // ReportReason
+    Route::get('report_reason/find_by_entity/{entity}', 'App\Http\Controllers\API\ReportReasonController@findByEntity')->name('report_reason.api.find_by_entity');
     // Subscription
     Route::get('subscription', 'App\Http\Controllers\API\SubscriptionController@index')->name('subscription.api.index');
     // Role
@@ -99,16 +113,17 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::resource('event', 'App\Http\Controllers\API\EventController');
     Route::resource('message', 'App\Http\Controllers\API\MessageController');
     Route::resource('notification', 'App\Http\Controllers\API\NotificationController');
+    Route::resource('toxic_content', 'App\Http\Controllers\API\ToxicContentController');
 
     // Work
     Route::get('work/trends/{year}', 'App\Http\Controllers\API\WorkController@trends')->name('work.api.trends');
-    Route::get('work/search/{data}', 'App\Http\Controllers\API\WorkController@search')->name('work.api.search');
     Route::get('work/find_all_by_entity/{entity}/{entity_id}', 'App\Http\Controllers\API\WorkController@findAllByEntity')->name('work.api.find_all_by_entity');
     Route::get('work/find_all_by_type/{locale}/{type_name}', 'App\Http\Controllers\API\WorkController@findAllByType')->name('work.api.find_all_by_type');
     Route::get('work/find_views/{work_id}', 'App\Http\Controllers\API\WorkController@findViews')->name('work.api.find_views');
     Route::get('work/find_likes/{work_id}', 'App\Http\Controllers\API\WorkController@findLikes')->name('work.api.find_likes');
     Route::put('work/switch_view/{work_id}', 'App\Http\Controllers\API\WorkController@switchView')->name('work.api.switch_view');
     Route::put('work/add_image/{id}', 'App\Http\Controllers\API\WorkController@addImage')->name('work.api.add_image');
+    Route::post('work/search/{data}', 'App\Http\Controllers\API\WorkController@search')->name('work.api.search');
     Route::post('work/upload_files', 'App\Http\Controllers\API\WorkController@uploadFiles')->name('work.api.upload_files');
     Route::post('work/filter_by_categories', 'App\Http\Controllers\API\WorkController@filterByCategories')->name('work.api.filter_by_categories');
     // Partner
@@ -167,4 +182,6 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::get('notification/select_by_status_user/{status_id}/{user_id}', 'App\Http\Controllers\API\NotificationController@selectByStatusUser')->name('notification.api.select_by_status_user');
     Route::put('notification/switch_status/{id}/{status_id}', 'App\Http\Controllers\API\NotificationController@switchStatus')->name('notification.api.switch_status');
     Route::put('notification/mark_all_read/{user_id}', 'App\Http\Controllers\API\NotificationController@markAllRead')->name('notification.api.mark_all_read');
+    // ToxicContent
+    Route::put('toxic_content/unlock_user/{id}', 'App\Http\Controllers\API\ToxicContentController@unlockUser')->name('toxic_content.api.unlock_user');
 });

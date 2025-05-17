@@ -215,6 +215,10 @@ return [
             'required' => 'Le champ "type" est obligatoire',
             'exists' => 'Ce nom de type existe déjà'
         ],
+        'currency' => [
+            'repetition' => 'Vous avez répété la même devise',
+            'exists' => 'Ce taux interdevises existe déjà'
+        ],
     ],
 
     /*

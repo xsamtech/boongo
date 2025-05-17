@@ -24,7 +24,7 @@ class ProgramController extends BaseController
      */
     public function index()
     {
-        $programs = Program::orderByDesc('created_at')->paginate(12);
+        $programs = Program::orderByDesc('created_at')->paginate(4);
         $count_programs = Program::count();
 
         return $this->handleResponse(ResourcesProgram::collection($programs), __('notifications.find_all_programs_success'), $programs->lastPage(), $count_programs);

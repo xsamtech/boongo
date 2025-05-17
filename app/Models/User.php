@@ -111,6 +111,15 @@ class User extends Authenticatable
 
     /**
      * ONE-TO-MANY
+     * One currency for several users
+     */
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(Currency::class);
+    }
+
+    /**
+     * ONE-TO-MANY
      * One status for several users
      */
     public function status(): BelongsTo
@@ -129,9 +138,18 @@ class User extends Authenticatable
 
     /**
      * MANY-TO-ONE
+     * Several toxic_contents for a user
+     */
+    public function toxic_contents(): HasMany
+    {
+        return $this->hasMany(ToxicContent::class);
+    }
+
+    /**
+     * MANY-TO-ONE
      * Several carts for a user
      */
-    public function carts()
+    public function carts(): HasMany
     {
         return $this->hasMany(Cart::class);
     }
@@ -140,7 +158,7 @@ class User extends Authenticatable
      * MANY-TO-ONE
      * Several likes for a user
      */
-    public function likes()
+    public function likes(): HasMany
     {
         return $this->hasMany(Like::class);
     }
@@ -180,7 +198,7 @@ class User extends Authenticatable
      * MANY-TO-ONE
      * Several sessions for a user
      */
-    public function sessions()
+    public function sessions(): HasMany
     {
         return $this->hasMany(Session::class);
     }

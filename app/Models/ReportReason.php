@@ -10,11 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
  */
-class Country extends Model
+class ReportReason extends Model
 {
     use HasFactory;
 
-    protected $table = 'countries';
+    protected $table = 'report_reasons';
 
     /**
      * The attributes that are mass assignable.
@@ -25,10 +25,10 @@ class Country extends Model
 
     /**
      * MANY-TO-ONE
-     * Several users for a country
+     * Several toxic_contents for a report_reason
      */
-    public function users(): HasMany
+    public function toxic_contents(): HasMany
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(ToxicContent::class);
     }
 }

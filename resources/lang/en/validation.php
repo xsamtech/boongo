@@ -215,6 +215,10 @@ return [
             'required' => 'The "type" field is required',
             'exists' => 'This type name already exists'
         ],
+        'currency' => [
+            'repetition' => 'You have repeated the same currency',
+            'exists' => 'This inter-currency rate already exists'
+        ],
     ],
 
     /*
