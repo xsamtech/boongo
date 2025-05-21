@@ -7,7 +7,7 @@
     </head>
 
     <body>
-        <img src="{{ asset('assets/img/logo-text.png') }}" alt="DikiTivi" width="100">
+        <img src="{{ asset('assets/img/logo-text.png') }}" alt="Boongo" width="100">
 
         <p style="margin-top: 3rem; margin-bottom: 1rem;">@lang('notifications.token_label')</p>
         <h1 style="font-weight: 900;">{{ $token }}</h1>
