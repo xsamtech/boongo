@@ -51,6 +51,7 @@ return [
     'transaction_push_failed' => 'Impossible de traiter la demande, veuillez réessayer. Echec envoi du push',
     'transaction_type_error' => 'Veuillez choisir le type de transaction',
     'new_partner_message' => 'Vous pouvez maintenant vous connecter en tant que partenaire avec votre n° de téléphone. Mot de passe temportaire :',
+    'attachment_failed' => 'L\'attachement a échoué',
     // Group
     'find_all_groups_success' => 'Groupes trouvés',
     'find_group_success' => 'Groupe trouvé',
@@ -118,6 +119,13 @@ return [
     'how_long_partnership' => 'Combien de temps durera ce partenariat ?',
     'partnership_terminated' => 'Partenariat terminé',
     'partnership_still_active' => 'Le partenariat est toujours actif. Jours restants : :remainingDays',
+    // PromoCode
+    'find_all_promo_codes_success' => 'Code promos trouvés',
+    'find_promo_code_success' => 'Code promo trouvé',
+    'find_promo_code_404' => 'Code promo non trouvé',
+    'create_promo_code_success' => 'Code promo créé',
+    'update_promo_code_success' => 'Code promo modifié',
+    'delete_promo_code_success' => 'Code promo supprimé',
     // Work
     'find_all_works_success' => 'Œuvres trouvées',
     'find_work_success' => 'Œuvre trouvée',

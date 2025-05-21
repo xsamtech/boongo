@@ -51,6 +51,7 @@ return [
     'transaction_push_failed' => 'Unable to process request, please try again. Push sending failed',
     'transaction_type_error' => 'Please select transaction type',
     'new_partner_message' => 'You can now log in as a partner with your phone number. Temporary password:',
+    'attachment_failed' => 'Attachment failed',
     // Group
     'find_all_groups_success' => 'Groups found',
     'find_group_success' => 'Group found',
@@ -118,6 +119,13 @@ return [
     'how_long_partnership' => 'How long will this partnership last?',
     'partnership_terminated' => 'Partnership terminated',
     'partnership_still_active' => 'Partnership is still active. Remaining days: :remainingDays',
+    // PromoCode
+    'find_all_promo_codes_success' => 'Promo codes found',
+    'find_promo_code_success' => 'Promo code found',
+    'find_promo_code_404' => 'Promo code not found',
+    'create_promo_code_success' => 'Promo code created',
+    'update_promo_code_success' => 'Promo code updated',
+    'delete_promo_code_success' => 'Promo code deleted',
     // Work
     'find_all_works_success' => 'Works found',
     'find_work_success' => 'Work found',

@@ -54,6 +54,9 @@ class WorkController extends BaseController
         $image_type = Type::where([['type_name->fr', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
         $document_type = Type::where([['type_name->fr', 'Document'], ['group_id', $file_type_group->id]])->first();
         $audio_type = Type::where([['type_name->fr', 'Audio'], ['group_id', $file_type_group->id]])->first();
+        // Get app currency
+        $latest_subscription = Subscription::orderByDesc('created_at')->latest()->first();
+        $selected_currency = $latest_subscription->currency_id;
         // Get inputs
         $inputs = [
             'work_title' => $request->work_title,
@@ -62,6 +65,9 @@ class WorkController extends BaseController
             'video_source' => $request->hasFile('image_file_url') ? 'AWS' : 'YouTube',
             'media_length' => $request->media_length,
             'is_public' => isset($request->is_public) ? $request->is_public : 0,
+            'consultation_price' => $request->consultation_price,
+            'number_of_hours' => $request->number_of_hours,
+            'currency_id' => isset($request->currency_id) ? $request->currency_id : $selected_currency,
             'type_id' => $request->type_id,
             'status_id' => $request->status_id,
             'user_id' => $request->user_id,
@@ -302,6 +308,9 @@ class WorkController extends BaseController
             'video_source' => $request->video_source,
             'media_length' => $request->media_length,
             'is_public' => $request->is_public,
+            'consultation_price' => $request->consultation_price,
+            'number_of_hours' => $request->number_of_hours,
+            'currency_id' => $request->currency_id,
             'type_id' => $request->type_id,
             'status_id' => $request->status_id,
             'user_id' => $request->user_id,
@@ -348,6 +357,27 @@ class WorkController extends BaseController
         if ($inputs['is_public'] != null) {
             $work->update([
                 'is_public' => $inputs['is_public'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['consultation_price'] != null) {
+            $work->update([
+                'consultation_price' => $inputs['consultation_price'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['number_of_hours'] != null) {
+            $work->update([
+                'number_of_hours' => $inputs['number_of_hours'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['currency_id'] != null) {
+            $work->update([
+                'currency_id' => $inputs['currency_id'],
                 'updated_at' => now(),
             ]);
         }

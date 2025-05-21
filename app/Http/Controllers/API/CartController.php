@@ -43,6 +43,7 @@ class CartController extends BaseController
         // Get inputs
         $inputs = [
             'payment_code' => $request->payment_code,
+            'entity' => isset($request->entity) ? $request->entity : 'favorite',
             'status_id' => $request->status_id,
             'user_id' => $request->user_id,
             'payment_id' => $request->payment_id
@@ -97,10 +98,12 @@ class CartController extends BaseController
         $inputs = [
             'id' => $request->id,
             'payment_code' => $request->payment_code,
+            'entity' => $request->entity,
             'status_id' => $request->status_id,
             'user_id' => $request->user_id,
             'payment_id' => $request->payment_id
         ];
+
         if ($inputs['payment_code'] != null) {
             // Select all carts to check unique constraint
             $carts = Cart::all();
@@ -116,6 +119,13 @@ class CartController extends BaseController
 
             $cart->update([
                 'payment_code' => $inputs['payment_code'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['entity'] != null) {
+            $cart->update([
+                'entity' => $inputs['entity'],
                 'updated_at' => now(),
             ]);
         }
@@ -163,128 +173,202 @@ class CartController extends BaseController
     /**
      * Check if work is in cart
      *
-     * @param  int $work_id
-     * @param  int $user_id
+     * @param  int $cart_id
+     * @param  string $entity
+     * @param  int $entity_id
      * @return \Illuminate\Http\Response
      */
-    public function isInside($work_id, $user_id)
+    public function isInside($cart_id, $entity, $entity_id)
     {
-        $work = Work::find($work_id);
+        $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
 
-        if (is_null($work)) {
-            return $this->handleError(__('notifications.work_404'));
+        if (is_null($entity) || !in_array($entity, ['favorite', 'subscription', 'consultation'])) {
+            return $this->handleError(__('validation.custom.owner.required'));
         }
 
-        $user = User::find($user_id);
+        $hasPivot = false;
 
-        if (is_null($user)) {
-            return $this->handleError(__('notifications.find_user_404'));
+        if ($entity === 'favorite' || $entity === 'consultation') {
+            $work = Work::find($entity_id);
+
+            if (is_null($work)) {
+                return $this->handleError(__('notifications.find_work_404'));
+            }
+
+            $query = Cart::where('id', $cart_id)->where('entity', $entity);
+
+            if ($entity === 'consultation') {
+                $status = Status::where([['status_name->fr', 'En cours'], ['group_id', $cart_status_group->id]])->first();
+
+                if (is_null($status)) {
+                    return $this->handleError(__('notifications.find_status_404'));
+                }
+
+                $query->where('status_id', $status->id);
+            }
+
+            $hasPivot = $query->whereHas('works', fn($q) => $q->where('works.id', $work->id))->exists();
+
+        } elseif ($entity === 'subscription') {
+            $subscription = Subscription::find($entity_id);
+
+            if (is_null($subscription)) {
+                return $this->handleError(__('notifications.find_subscription_404'));
+            }
+
+            $status = Status::where([['status_name->fr', 'En cours'], ['group_id', $cart_status_group->id]])->first();
+
+            if (is_null($status)) {
+                return $this->handleError(__('notifications.find_status_404'));
+            }
+
+            $hasPivot = Cart::where('id', $cart_id)->where('entity', $entity)->where('status_id', $status->id)->whereHas('subscriptions', fn($q) => $q->where('subscriptions.id', $subscription->id))->exists();
         }
 
-        $status = Status::where('status_name->fr', 'En cours')->first();
-
-        if (is_null($status)) {
-            return $this->handleError(__('notifications.find_status_404'));
-        }
-
-        $hasPivot = Cart::where([['status_id', $status->id], ['user_id', $user->id]])->whereHas('works', function ($q) use ($work) {
-                        $q->where('works.id', $work->id);
-                    })->exists();
+        $message_success = $entity == 'subscription' ? __('notifications.find_subscription_success') : __('notifications.find_work_success');
+        $message_error = $entity == 'subscription' ? __('notifications.find_subscription_404') : __('notifications.find_work_404');
 
         if ($hasPivot) {
-            return $this->handleResponse(1, __('notifications.find_work_success'), null);
+            return $this->handleResponse(1, $message_success, null);
 
         } else {
-            return $this->handleResponse(0, __('notifications.find_work_404'), null);
+            return $this->handleResponse(0, $message_error, null);
         }
     }
 
     /**
      * Add work to cart.
      *
-     * @param  int $work_id
-     * @param  int $user_id
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string $entity
      * @return \Illuminate\Http\Response
      */
-    public function addToCart($work_id, $user_id)
+    public function addToCart(Request $request, $entity)
     {
-        $work = Work::find($work_id);
-
-        if (is_null($work)) {
-            return $this->handleError(__('notifications.find_work_404'));
-        }
-
-        $user = User::find($user_id);
-
-        if (is_null($user)) {
-            return $this->handleError(__('notifications.find_user_404'));
-        }
-
-        $status = Status::where('status_name->fr', 'En cours')->first();
+        $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
+        $status = Status::where([['status_name->fr', 'En cours'], ['group_id', $cart_status_group->id]])->first();
 
         if (is_null($status)) {
             return $this->handleError(__('notifications.find_status_404'));
         }
 
-        $cart = Cart::where([['status_id', $status->id], ['user_id', $user->id]])->first();
+        $user = User::find($request->user_id);
 
-        if ($cart != null) {
+        if (is_null($user)) {
+            return $this->handleError(__('notifications.find_user_404'));
+        }
 
-            if (count($cart->works) > 0) {
-                $cart->works()->syncWithoutDetaching([$work->id]);
+        if (is_null($entity) || !in_array($entity, ['favorite', 'subscription', 'consultation'])) {
+            return $this->handleError(__('validation.custom.owner.required'));
+        }
+
+        if ($entity == 'favorite' || $entity == 'consultation') {
+            $work = Work::find($request->work_id);
+
+            if (is_null($work)) {
+                return $this->handleError(__('notifications.find_work_404'));
+            }
+
+            $cart = $entity == 'favorite' ? 
+                        Cart::where([['entity', $entity], ['user_id', $user->id]])->first() :
+                        Cart::where([['entity', $entity], ['status_id', $status->id], ['user_id', $user->id]])->first();
+
+            if ($cart != null) {
+                if (count($cart->works) > 0) {
+                    $cart->works()->syncWithoutDetaching([$work->id]);
+
+                } else {
+                    $cart->works()->attach([$work->id]);
+                }
 
             } else {
+                $cart = Cart::create([
+                    'entity' => $entity,
+                    'user_id' => $user->id
+                ]);
+
                 $cart->works()->attach([$work->id]);
             }
 
             return $this->handleResponse(new ResourcesCart($cart), __('notifications.find_cart_success'));
 
         } else {
-            $cart = Cart::create([
-                'status_id' => $status->id,
-                'user_id' => $user->id
-            ]);
+            $subscription = Subscription::find($request->subscription_id);
 
-            $cart->works()->attach([$work->id]);
+            if (is_null($subscription)) {
+                return $this->handleError(__('notifications.find_subscription_404'));
+            }
 
-            return $this->handleResponse(new ResourcesCart($cart), __('notifications.find_cart_success'));
+            $cart = Cart::where([['entity', $entity], ['status_id', $status->id], ['user_id', $user->id]])->first();
+
+            if ($cart != null) {
+                if (count($cart->subscriptions) > 0) {
+                    $cart->subscriptions()->syncWithoutDetaching([$subscription->id]);
+
+                } else {
+                    $cart->subscriptions()->attach([$subscription->id]);
+                }
+
+            } else {
+                $cart = Cart::create([
+                    'entity' => $entity,
+                    'user_id' => $user->id
+                ]);
+
+                $cart->subscriptions()->attach([$subscription->id]);
+            }
         }
     }
 
     /**
      * Remove work from cart.
      *
-     * @param  int $work_id
+     * @param  \Illuminate\Http\Request  $request
      * @param  int $cart_id
      * @return \Illuminate\Http\Response
      */
-    public function removeFromCart($work_id, $cart_id)
+    public function removeFromCart(Request $request, $cart_id)
     {
-        $work = Work::find($work_id);
-
-        if (is_null($work)) {
-            return $this->handleError(__('notifications.find_work_404'));
-        }
-
         $cart = Cart::find($cart_id);
 
         if (is_null($cart)) {
             return $this->handleError(__('notifications.find_cart_404'));
         }
 
-        $cart->works()->detach($work->id);
+        if (isset($request->work_id)) {
+            $work = Work::find($request->work_id);
 
-        return $this->handleResponse(new ResourcesCart($cart), __('notifications.delete_media_success'));
+            if (is_null($work)) {
+                return $this->handleError(__('notifications.find_work_404'));
+            }
+
+            $cart->works()->detach($work->id);
+
+            return $this->handleResponse(new ResourcesCart($cart), __('notifications.delete_work_success'));
+        }
+
+        if (isset($request->subscription_id)) {
+            $subscription = Subscription::find($request->subscription_id);
+
+            if (is_null($subscription)) {
+                return $this->handleError(__('notifications.find_subscription_404'));
+            }
+
+            $cart->subscriptions()->detach($subscription->id);
+
+            return $this->handleResponse(new ResourcesCart($cart), __('notifications.delete_subscription_success'));
+        }
     }
 
     /**
      * Purchase ordered product/service.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int $user_id
+     * @param  int $cart_id
+     * @param  string $entity
      * @return \Illuminate\Http\Response
      */
-    public function purchase(Request $request, $user_id)
+    public function purchase(Request $request, $cart_id, $entity)
     {
         // FlexPay accessing data
         $gateway_mobile = config('services.flexpay.gateway_mobile');
@@ -294,13 +378,11 @@ class CartController extends BaseController
         // $client = new \Vonage\Client($basic);
         // Groups
         $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
-        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
         $payment_status_group = Group::where('group_name', 'Etat du paiement')->first();
         $payment_type_group = Group::where('group_name', 'Type de paiement')->first();
         // Status
         $ongoing_status = Status::where([['status_name->fr', 'En cours'], ['group_id', $cart_status_group->id]])->first();
         $paid_status = Status::where([['status_name->fr', 'Payé'], ['group_id', $cart_status_group->id]])->first();
-        $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
         $in_progress_status = Status::where([['status_name->fr', 'En cours'], ['group_id', $payment_status_group->id]])->first();
         // Types
         $mobile_money_type = Type::where([['type_name->fr', 'Mobile money'], ['group_id', $payment_type_group->id]])->first();
@@ -314,36 +396,31 @@ class CartController extends BaseController
             return $this->handleError(__('miscellaneous.public.home.posts.boost.transaction_type.bank_card'), __('notifications.find_type_404'), 404);
         }
 
-        // Requests
-        $current_user = User::find($user_id);
-
-        if (is_null($current_user)) {
-            return $this->handleError(__('notifications.find_user_404'));
-        }
-
-        $cart = Cart::where([['status_id', $ongoing_status->id], ['user_id', $current_user->id]])->first();
+        $cart = Cart::where(['id', $cart_id], ['status_id', $ongoing_status->id])->first();
 
         if (is_null($cart)) {
-            $cart = Cart::create([
-                'status_id' => $ongoing_status->id, 
-                'user_id' => $current_user->id
-            ]);
+            return $this->handleError(__('notifications.find_cart_404'));
         }
 
-        $subscription = Subscription::find($request->subscription_id);
+        // Get app currency
+        $latest_subscription = Subscription::orderByDesc('created_at')->latest()->first();
+        $selected_currency = $latest_subscription->currency->currency_acronym;
 
-        if (is_null($subscription)) {
-            return $this->handleError(__('notifications.find_subscription_404'));
+        if ($entity == 'favorite') {
+            return $this->handleError(__('notifications.find_cart_404' . ' - FAVORITE'));
         }
+
+        // Get total prices in the cart
+        $total_to_pay = $entity == 'subscription' ? $cart->totalSubscriptionsPrices($selected_currency) : $cart->totalWorksConsultationsPrices($selected_currency);
 
         // Validations
         if ($request->transaction_type_id == null OR !is_numeric($request->transaction_type_id)) {
-            return $this->handleError(__('miscellaneous.found_value') . ' ' . $request->transaction_type_id, __('validation.required', ['field_name' => __('miscellaneous.public.home.posts.boost.transaction_type.title')]), 400);
+            return $this->handleError($request->transaction_type_id, __('validation.required'), 400);
         }
 
         // If the transaction is via mobile money
         if ($request->transaction_type_id == $mobile_money_type->id) {
-            $reference_code = 'REF-' . ((string) random_int(10000000, 99999999)) . '-' . $current_user->id;
+            $reference_code = 'REF-' . ((string) random_int(10000000, 99999999)) . '-' . $cart->user_id;
 
             // Create response by sending request to FlexPay
             $data = array(
@@ -351,8 +428,8 @@ class CartController extends BaseController
                 'type' => 1,
                 'phone' => $request->other_phone,
                 'reference' => $reference_code,
-                'amount' => ((int) $subscription->price),
-                'currency' => 'USD',
+                'amount' => ((int) $total_to_pay),
+                'currency' => $selected_currency,
                 'callbackUrl' => getApiURL() . '/payment/store'
             );
             $data = json_encode($data);
@@ -391,17 +468,14 @@ class CartController extends BaseController
                         $payment = Payment::create([
                             'reference' => $reference_code,
                             'order_number' => $jsonRes['orderNumber'],
-                            'amount' => ((int) $subscription->price),
+                            'amount' => ((int) $total_to_pay),
                             'phone' => $request->other_phone,
-                            'currency' => 'USD',
+                            'currency' => $selected_currency,
                             'type_id' => $request->transaction_type_id,
                             'status_id' => $in_progress_status->id,
-                            'user_id' => $current_user->id
+                            'user_id' => $cart->user_id
                         ]);
                     }
-
-                    // The subscription is created only if the processing succeed
-                    $current_user->subscriptions()->attach($subscription->id, ['payment_id' => $payment->id, 'status_id' => $pending_status->id]);
 
                     // The cart is updated only if the processing succeed
                     $random_string = (string) random_int(1000000, 9999999);
@@ -410,7 +484,6 @@ class CartController extends BaseController
                     $cart->update([
                         'payment_code' => $generated_number,
                         'status_id' => $paid_status->id,
-                        'user_id' => $current_user->id,
                         'payment_id' => $payment->id,
                         'updated_at' => now()
                     ]);
@@ -430,21 +503,21 @@ class CartController extends BaseController
 
         // If the transaction is via bank card
         if ($request->transaction_type_id == $bank_card_type->id) {
-            $reference_code = 'REF-' . ((string) random_int(10000000, 99999999)) . '-' . $current_user->id;
+            $reference_code = 'REF-' . ((string) random_int(10000000, 99999999)) . '-' . $cart->user_id;
 
             // Create response by sending request to FlexPay
             $body = json_encode(array(
                 'authorization' => 'Bearer ' . config('services.flexpay.api_token'),
                 'merchant' => config('services.flexpay.merchant'),
                 'reference' => $reference_code,
-                'amount' => ((int) $subscription->price),
-                'currency' => 'USD',
+                'amount' => ((int) $total_to_pay),
+                'currency' => $selected_currency,
                 'description' => __('miscellaneous.bank_transaction_description'),
                 'callback_url' => getApiURL() . '/payment/store',
-                'approve_url' => $request->app_url . '/subscribed/' . ((int) $subscription->price) . '/USD/0/' . $current_user->id . '?app_id=',
-                'cancel_url' => $request->app_url . '/subscribed/' . ((int) $subscription->price) . '/USD/1/' . $current_user->id . '?app_id=',
-                'decline_url' => $request->app_url . '/subscribed/' . ((int) $subscription->price) . '/USD/2/' . $current_user->id . '?app_id=',
-                'home_url' => $request->app_url . '/subscribe?app_id=&subscription_id=' . $subscription->id . '&user_id=' . $current_user->id . '&api_token=' . $current_user->api_token,
+                'approve_url' => $request->app_url . '/subscribed/' . ((int) $total_to_pay) . '/USD/0/' . $cart->user_id . '?app_id=',
+                'cancel_url' => $request->app_url . '/subscribed/' . ((int) $total_to_pay) . '/USD/1/' . $cart->user_id . '?app_id=',
+                'decline_url' => $request->app_url . '/subscribed/' . ((int) $total_to_pay) . '/USD/2/' . $cart->user_id . '?app_id=',
+                'home_url' => $request->app_url . '/subscribe?app_id=&cart_id=' . $cart->id . '&user_id=' . $cart->user_id . '&api_token=' . $cart->user->api_token,
             ));
 
             $curl = curl_init($gateway_card);
@@ -475,17 +548,14 @@ class CartController extends BaseController
                         $payment = Payment::create([
                             'reference' => $reference_code,
                             'order_number' => $orderNumber,
-                            'amount' => ((int) $subscription->price),
+                            'amount' => ((int) $total_to_pay),
                             'phone' => $request->other_phone,
-                            'currency' => 'USD',
+                            'currency' => $selected_currency,
                             'type_id' => $request->transaction_type_id,
                             'status_id' => $in_progress_status->id,
-                            'user_id' => $current_user->id
+                            'user_id' => $cart->user_id
                         ]);
                     }
-
-                    // The subscription is created only if the processing succeed
-                    $current_user->subscriptions()->attach($subscription->id, ['payment_id' => $payment->id, 'status_id' => $pending_status->id]);
 
                     // The cart is updated only if the processing succeed
                     $random_string = (string) random_int(1000000, 9999999);
@@ -494,7 +564,6 @@ class CartController extends BaseController
                     $cart->update([
                         'payment_code' => $generated_number,
                         'status_id' => $paid_status->id,
-                        'user_id' => $current_user->id,
                         'payment_id' => $payment->id,
                         'updated_at' => now()
                     ]);

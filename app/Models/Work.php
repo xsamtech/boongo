@@ -47,7 +47,16 @@ class Work extends Model
      */
     public function carts(): BelongsToMany
     {
-        return $this->belongsToMany(Cart::class);
+        return $this->belongsToMany(Cart::class)->withTimestamps()->withPivot(['status_id']);
+    }
+
+    /**
+     * ONE-TO-MANY
+     * One currency for several works
+     */
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(Currency::class);
     }
 
     /**

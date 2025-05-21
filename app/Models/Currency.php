@@ -49,6 +49,15 @@ class Currency extends Model
 
     /**
      * MANY-TO-ONE
+     * Several works for a currency
+     */
+    public function works(): HasMany
+    {
+        return $this->hasMany(Work::class);
+    }
+
+    /**
+     * MANY-TO-ONE
      * Several from_currencies for a currency
      */
     public function from_currencies(): HasMany

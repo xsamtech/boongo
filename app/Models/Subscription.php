@@ -24,11 +24,11 @@ class Subscription extends Model
 
     /**
      * MANY-TO-MANY
-     * Several users for several subscriptions
+     * Several carts for several subscriptions
      */
-    public function users(): BelongsToMany
+    public function carts(): BelongsToMany
     {
-        return $this->belongsToMany(User::class)->withTimestamps()->withPivot(['payment_id', 'status_id']);
+        return $this->belongsToMany(Cart::class)->withTimestamps()->withPivot(['status_id']);
     }
 
     /**

@@ -2,16 +2,22 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Cart;
+use App\Models\Currency;
 use App\Models\Group;
 use App\Models\Payment;
 use App\Models\Status;
 use App\Models\Subscription;
+use App\Models\Type;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\Cart as ResourcesCart;
 use App\Http\Resources\Subscription as ResourcesSubscription;
 use App\Http\Resources\User as ResourcesUser;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+use stdClass;
 
 /**
  * @author Xanders
@@ -43,20 +49,21 @@ class SubscriptionController extends BaseController
         $inputs = [
             'number_of_hours' => $request->number_of_hours,
             'price' => $request->price,
-            'type_id' => $request->type_id
+            'currency_id' => $request->currency_id,
+            'type_id' => $request->type_id,
+            'category_id' => $request->category_id
         ];
 
-        // Validate required fields
-        if (trim($inputs['number_of_hours']) == null) {
-            return $this->handleError($inputs['number_of_hours'], __('validation.required'), 400);
-        }
+        $validator = Validator::make($inputs, [
+            'number_of_hours' => ['required'],
+            'price' => ['required'],
+            'currency_id' => ['required'],
+            'type_id' => ['required'],
+            'category_id' => ['required']
+        ]);
 
-        if (trim($inputs['price']) == null OR !is_numeric($inputs['price'])) {
-            $inputs['price'] = 1;
-        }
-
-        if (trim($inputs['type_id']) == null OR !is_numeric($inputs['type_id'])) {
-            return $this->handleError($inputs['type_id'], __('validation.required'), 400);
+        if ($validator->fails()) {
+            return $this->handleError($validator->errors());       
         }
 
         $subscription = Subscription::create($inputs);
@@ -92,31 +99,18 @@ class SubscriptionController extends BaseController
     {
         // Get inputs
         $inputs = [
-            'id' => $request->id,
             'number_of_hours' => $request->number_of_hours,
             'price' => $request->price,
-            'type_id' => $request->type_id
+            'currency_id' => $request->currency_id,
+            'type_id' => $request->type_id,
+            'category_id' => $request->category_id
         ];
 
-        if (trim($inputs['number_of_hours']) != null AND is_numeric($inputs['number_of_hours'])) {
-            // Select all subscriptions and current subscription to check unique constraint
-            $subscriptions = Subscription::all();
-            $current_subscription = Subscription::find($inputs['id']);
-
-            if ($inputs['number_of_hours'] != null) {
-                foreach ($subscriptions as $another_subscription):
-                    if ($current_subscription->number_of_hours != $inputs['number_of_hours']) {
-                        if ($another_subscription->number_of_hours == $inputs['number_of_hours']) {
-                            return $this->handleError($inputs['number_of_hours'], __('validation.custom.number_of_hours.exists'), 400);
-                        }
-                    }
-                endforeach;
-
-                $subscription->update([
-                    'number_of_hours' => $inputs['number_of_hours'],
-                    'updated_at' => now()
-                ]);
-            }
+        if ($inputs['number_of_hours'] != null) {
+            $subscription->update([
+                'number_of_hours' => $inputs['number_of_hours'],
+                'updated_at' => now()
+            ]);
         }
 
         if ($inputs['price'] != null) {
@@ -126,9 +120,23 @@ class SubscriptionController extends BaseController
             ]);
         }
 
+        if ($inputs['currency_id'] != null) {
+            $subscription->update([
+                'currency_id' => $inputs['currency_id'],
+                'updated_at' => now()
+            ]);
+        }
+
         if ($inputs['type_id'] != null) {
             $subscription->update([
                 'type_id' => $inputs['type_id'],
+                'updated_at' => now()
+            ]);
+        }
+
+        if ($inputs['category_id'] != null) {
+            $subscription->update([
+                'category_id' => $inputs['category_id'],
                 'updated_at' => now()
             ]);
         }
@@ -171,12 +179,6 @@ class SubscriptionController extends BaseController
             return $this->handleError(__('notifications.find_user_404'));
         }
 
-        $status = Status::where('status_name->fr', 'En cours')->first();
-
-        if (is_null($status)) {
-            return $this->handleError(__('notifications.find_status_404'));
-        }
-
         $hasPivotValid = User::whereHas('subscriptions', function ($q) use ($user, $valid_status) {
                         $q->where('subscription_user.user_id', $user->id)
                             ->where('subscription_user.status_id', $valid_status->id);
@@ -187,6 +189,249 @@ class SubscriptionController extends BaseController
 
         } else {
             return $this->handleResponse(0, __('notifications.find_user_404'), null);
+        }
+    }
+
+    /**
+     * Purchase ordered product/service.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int $user_id
+     * @return \Illuminate\Http\Response
+     */
+    public function purchase(Request $request, $user_id)
+    {
+        // FlexPay accessing data
+        $gateway_mobile = config('services.flexpay.gateway_mobile');
+        $gateway_card = config('services.flexpay.gateway_card_v2');
+        // Vonage accessing data
+        // $basic  = new \Vonage\Client\Credentials\Basic(config('vonage.api_key'), config('vonage.api_secret'));
+        // $client = new \Vonage\Client($basic);
+        // Groups
+        $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
+        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
+        $payment_status_group = Group::where('group_name', 'Etat du paiement')->first();
+        $payment_type_group = Group::where('group_name', 'Type de paiement')->first();
+        // Status
+        $ongoing_status = Status::where([['status_name->fr', 'En cours'], ['group_id', $cart_status_group->id]])->first();
+        $paid_status = Status::where([['status_name->fr', 'Payé'], ['group_id', $cart_status_group->id]])->first();
+        $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
+        $in_progress_status = Status::where([['status_name->fr', 'En cours'], ['group_id', $payment_status_group->id]])->first();
+        // Types
+        $mobile_money_type = Type::where([['type_name->fr', 'Mobile money'], ['group_id', $payment_type_group->id]])->first();
+        $bank_card_type = Type::where([['type_name->fr', 'Carte bancaire'], ['group_id', $payment_type_group->id]])->first();
+
+        if (is_null($mobile_money_type)) {
+            return $this->handleError(__('miscellaneous.public.home.posts.boost.transaction_type.mobile_money'), __('notifications.find_type_404'), 404);
+        }
+
+        if (is_null($bank_card_type)) {
+            return $this->handleError(__('miscellaneous.public.home.posts.boost.transaction_type.bank_card'), __('notifications.find_type_404'), 404);
+        }
+
+        // Requests
+        $current_user = User::find($user_id);
+
+        if (is_null($current_user)) {
+            return $this->handleError(__('notifications.find_user_404'));
+        }
+
+        $cart = Cart::where([['status_id', $ongoing_status->id], ['user_id', $current_user->id]])->first();
+
+        if (is_null($cart)) {
+            $cart = Cart::create([
+                'status_id' => $ongoing_status->id, 
+                'user_id' => $current_user->id
+            ]);
+        }
+
+        $subscription = Subscription::find($request->subscription_id);
+
+        if (is_null($subscription)) {
+            return $this->handleError(__('notifications.find_subscription_404'));
+        }
+
+        $currency = Currency::find($subscription->currency_id);
+
+        if (is_null($currency)) {
+            return $this->handleError(__('notifications.find_currency_404'));
+        }
+
+        // Validations
+        if ($request->transaction_type_id == null OR !is_numeric($request->transaction_type_id)) {
+            return $this->handleError($request->transaction_type_id, __('validation.required'), 400);
+        }
+
+        // If the transaction is via mobile money
+        if ($request->transaction_type_id == $mobile_money_type->id) {
+            $reference_code = 'REF-' . ((string) random_int(10000000, 99999999)) . '-' . $current_user->id;
+
+            // Create response by sending request to FlexPay
+            $data = array(
+                'merchant' => config('services.flexpay.merchant'),
+                'type' => 1,
+                'phone' => $request->other_phone,
+                'reference' => $reference_code,
+                'amount' => ((int) $subscription->price),
+                'currency' => $currency->currency_acronym,
+                'callbackUrl' => getApiURL() . '/payment/store'
+            );
+            $data = json_encode($data);
+            $ch = curl_init();
+
+            curl_setopt($ch, CURLOPT_URL, $gateway_mobile);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, Array(
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . config('services.flexpay.api_token')
+            ));
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 300);
+
+            $response = curl_exec($ch);
+
+            if (curl_errno($ch)) {
+                return $this->handleError(curl_errno($ch), __('notifications.transaction_request_failed'), 400);
+
+            } else {
+                curl_close($ch); 
+
+                $jsonRes = json_decode($response, true);
+                $code = $jsonRes['code']; // Push sending status
+
+                if ($code != '0') {
+                    return $this->handleError(__('miscellaneous.error_label'), __('notifications.transaction_push_failed'), 400);
+
+                } else {
+                    // Register payment, even if FlexPay will
+                    $payment = Payment::where('order_number', $jsonRes['orderNumber'])->first();
+
+                    if (is_null($payment)) {
+                        $payment = Payment::create([
+                            'reference' => $reference_code,
+                            'order_number' => $jsonRes['orderNumber'],
+                            'amount' => ((int) $subscription->price),
+                            'phone' => $request->other_phone,
+                            'currency' => $currency->currency_acronym,
+                            'type_id' => $request->transaction_type_id,
+                            'status_id' => $in_progress_status->id,
+                            'user_id' => $current_user->id
+                        ]);
+                    }
+
+                    // The subscription is created only if the processing succeed
+                    $current_user->subscriptions()->attach($subscription->id, ['payment_id' => $payment->id, 'status_id' => $pending_status->id]);
+
+                    // The cart is updated only if the processing succeed
+                    $random_string = (string) random_int(1000000, 9999999);
+                    $generated_number = 'BNG-' . $random_string . '-' . date('Y.m.d');
+
+                    $cart->update([
+                        'payment_code' => $generated_number,
+                        'status_id' => $paid_status->id,
+                        'user_id' => $current_user->id,
+                        'payment_id' => $payment->id,
+                        'updated_at' => now()
+                    ]);
+
+                    $object = new stdClass();
+
+                    $object->result_response = [
+                        'message' => $jsonRes['message'],
+                        'order_number' => $jsonRes['orderNumber']
+                    ];
+                    $object->cart = new ResourcesCart($cart);
+
+                    return $this->handleResponse($object, __('notifications.create_subscription_success'));
+                }
+            }
+        }
+
+        // If the transaction is via bank card
+        if ($request->transaction_type_id == $bank_card_type->id) {
+            $reference_code = 'REF-' . ((string) random_int(10000000, 99999999)) . '-' . $current_user->id;
+
+            // Create response by sending request to FlexPay
+            $body = json_encode(array(
+                'authorization' => 'Bearer ' . config('services.flexpay.api_token'),
+                'merchant' => config('services.flexpay.merchant'),
+                'reference' => $reference_code,
+                'amount' => ((int) $subscription->price),
+                'currency' => $currency->currency_acronym,
+                'description' => __('miscellaneous.bank_transaction_description'),
+                'callback_url' => getApiURL() . '/payment/store',
+                'approve_url' => $request->app_url . '/subscribed/' . ((int) $subscription->price) . '/USD/0/' . $current_user->id . '?app_id=',
+                'cancel_url' => $request->app_url . '/subscribed/' . ((int) $subscription->price) . '/USD/1/' . $current_user->id . '?app_id=',
+                'decline_url' => $request->app_url . '/subscribed/' . ((int) $subscription->price) . '/USD/2/' . $current_user->id . '?app_id=',
+                'home_url' => $request->app_url . '/subscribe?app_id=&subscription_id=' . $subscription->id . '&user_id=' . $current_user->id . '&api_token=' . $current_user->api_token,
+            ));
+
+            $curl = curl_init($gateway_card);
+
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+            $curlResponse = curl_exec($curl);
+
+            $jsonRes = json_decode($curlResponse, true);
+            $code = $jsonRes['code'];
+            $message = $jsonRes['message'];
+
+            if (!empty($jsonRes['error'])) {
+                return $this->handleError($jsonRes['error'], $message, $jsonRes['status']);
+
+            } else {
+                if ($code != '0') {
+                    return $this->handleError($code, $message, 400);
+
+                } else {
+                    $url = $jsonRes['url'];
+                    $orderNumber = $jsonRes['orderNumber'];
+                    // Register payment, even if FlexPay will
+                    $payment = Payment::where('order_number', $orderNumber)->first();
+
+                    if (is_null($payment)) {
+                        $payment = Payment::create([
+                            'reference' => $reference_code,
+                            'order_number' => $orderNumber,
+                            'amount' => ((int) $subscription->price),
+                            'phone' => $request->other_phone,
+                            'currency' => $currency->currency_acronym,
+                            'type_id' => $request->transaction_type_id,
+                            'status_id' => $in_progress_status->id,
+                            'user_id' => $current_user->id
+                        ]);
+                    }
+
+                    // The subscription is created only if the processing succeed
+                    $current_user->subscriptions()->attach($subscription->id, ['payment_id' => $payment->id, 'status_id' => $pending_status->id]);
+
+                    // The cart is updated only if the processing succeed
+                    $random_string = (string) random_int(1000000, 9999999);
+                    $generated_number = 'BNG-' . $random_string . '-' . date('Y.m.d');
+
+                    $cart->update([
+                        'payment_code' => $generated_number,
+                        'status_id' => $paid_status->id,
+                        'user_id' => $current_user->id,
+                        'payment_id' => $payment->id,
+                        'updated_at' => now()
+                    ]);
+
+                    $object = new stdClass();
+
+                    $object->result_response = [
+                        'message' => $message,
+                        'order_number' => $orderNumber,
+                        'url' => $url
+                    ];
+                    $object->cart = new ResourcesCart($cart);
+
+                    return $this->handleResponse($object, __('notifications.create_subscription_success'));
+                }
+            }
         }
     }
 

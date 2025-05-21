@@ -24,6 +24,7 @@ class Cart extends JsonResource
             'status' => Status::make($this->status),
             'payment' => Payment::make($this->payment),
             'works' => Work::collection($this->works),
+            'subscriptions' => Subscription::collection($this->subscriptions),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'user_id' => $this->user_id
