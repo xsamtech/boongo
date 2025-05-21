@@ -242,7 +242,9 @@ class User extends Authenticatable
             return collect();
         }
 
-        return $last_consultation_cart->totalWorksConsultationsPrices($this->currency->currency_acronym);
+        $total = $last_consultation_cart->totalWorksConsultationsPrices($this->currency->currency_acronym);
+        dd($total);
+        // return $last_consultation_cart->totalWorksConsultationsPrices($this->currency->currency_acronym);
     }
 
     /**
