@@ -141,7 +141,7 @@ class PromoCodeController extends BaseController
 
     // ==================================== CUSTOM METHODS ====================================
     /**
-     * Check if user is subscribed
+     * Activate subscription directly via a promo code given by a partner
      *
      * @param  int $user_id
      * @param  string $code
