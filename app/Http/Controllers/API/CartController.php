@@ -471,6 +471,7 @@ class CartController extends BaseController
                             'amount' => ((int) $total_to_pay),
                             'phone' => $request->other_phone,
                             'currency' => $selected_currency,
+                            'channel' => $request->channel,
                             'type_id' => $request->transaction_type_id,
                             'status_id' => $in_progress_status->id,
                             'user_id' => $cart->user_id
@@ -551,6 +552,7 @@ class CartController extends BaseController
                             'amount' => ((int) $total_to_pay),
                             'phone' => $request->other_phone,
                             'currency' => $selected_currency,
+                            'channel' => $request->channel,
                             'type_id' => $request->transaction_type_id,
                             'status_id' => $in_progress_status->id,
                             'user_id' => $cart->user_id
