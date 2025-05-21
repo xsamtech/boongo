@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth:sanctum', 'localization'])->group(function () {
-// Route::middleware('localization')->group(function () {
     Route::apiResource('country', 'App\Http\Controllers\API\CountryController')->except(['index', 'store', 'search']);
     Route::apiResource('currency', 'App\Http\Controllers\API\CurrencyController')->except(['index', 'store', 'search']);
     Route::apiResource('currencies_rate', 'App\Http\Controllers\API\CurrenciesRateController')->except(['store', 'findCurrencyRate']);
@@ -109,7 +108,6 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::put('payment/switch_status/{status_id}/{id}', 'App\Http\Controllers\API\PaymentController@switchStatus')->name('payment.api.switch_status');
 });
 Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function () {
-// Route::group(['middleware' => ['api', 'localization']], function () {
     Route::resource('work', 'App\Http\Controllers\API\WorkController');
     Route::resource('partner', 'App\Http\Controllers\API\PartnerController');
     Route::resource('promo_code', 'App\Http\Controllers\API\PromoCodeController');
