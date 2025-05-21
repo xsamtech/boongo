@@ -239,7 +239,7 @@ class User extends Authenticatable
         $last_consultation_cart = $this->carts()->where([['entity', 'consultation'], ['status_id', $ongoing_status->id]])->latest()->first();
 
         if (!$last_consultation_cart) {
-            return collect();
+            return 0;
         }
 
         return $last_consultation_cart->totalWorksConsultationsPrices($this->currency->currency_acronym);
@@ -257,7 +257,7 @@ class User extends Authenticatable
         $last_consultation_cart = $this->carts()->where([['entity', 'consultation'], ['status_id', $paid_status->id]])->latest()->first();
 
         if (!$last_consultation_cart) {
-            return collect();
+            return false;
         }
 
         $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
@@ -338,7 +338,7 @@ class User extends Authenticatable
         $last_subscription_cart = $this->carts()->where([['entity', 'subscription'], ['status_id', $ongoing_status->id]])->latest()->first();
 
         if (!$last_subscription_cart) {
-            return collect();
+            return 0;
         }
 
         return $last_subscription_cart->totalSubscriptionsPrices($this->currency->currency_acronym);
@@ -356,7 +356,7 @@ class User extends Authenticatable
         $last_subscription_cart = $this->carts()->where([['entity', 'subscription'], ['status_id', $paid_status->id]])->latest()->first();
 
         if (!$last_subscription_cart) {
-            return collect();
+            return false;
         }
 
         $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
