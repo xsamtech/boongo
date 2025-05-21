@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Route;
 */
 Route::middleware(['auth:sanctum', 'localization'])->group(function () {
     Route::apiResource('country', 'App\Http\Controllers\API\CountryController')->except(['index', 'store', 'search']);
-    Route::apiResource('currency', 'App\Http\Controllers\API\CurrencyController')->except(['index', 'search']);
-    Route::apiResource('currencies_rate', 'App\Http\Controllers\API\CurrenciesRateController')->except(['findCurrencyRate']);
+    Route::apiResource('currency', 'App\Http\Controllers\API\CurrencyController')->except(['index', 'store', 'search']);
+    Route::apiResource('currencies_rate', 'App\Http\Controllers\API\CurrenciesRateController')->except(['store', 'findCurrencyRate']);
     Route::apiResource('group', 'App\Http\Controllers\API\GroupController');
     Route::apiResource('status', 'App\Http\Controllers\API\StatusController')->except(['search', 'findByGroup']);
     Route::apiResource('type', 'App\Http\Controllers\API\TypeController')->except(['search', 'findByGroup']);
@@ -67,8 +67,10 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::get('country/search/{data}', 'App\Http\Controllers\API\CountryController@search')->name('country.api.search');
     // Currency
     Route::get('currency', 'App\Http\Controllers\API\CurrencyController@index')->name('currency.api.index');
+    Route::post('currency', 'App\Http\Controllers\API\CurrencyController@store')->name('currency.api.store');
     Route::get('currency/search/{data}', 'App\Http\Controllers\API\CurrencyController@search')->name('currency.api.search');
     // CurrenciesRate
+    Route::post('currencies_rate', 'App\Http\Controllers\API\CurrenciesRateController@store')->name('currencies_rate.api.store');
     Route::get('currencies_rate/find_currency_rate/{from_currency_acronym}/{to_currency_acronym}', 'App\Http\Controllers\API\CurrenciesRateController@findCurrencyRate')->name('currencies_rate.api.find_currency_rate');
     // Status
     Route::get('status/search/{locale}/{data}', 'App\Http\Controllers\API\StatusController@search')->name('status.api.search');
