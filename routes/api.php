@@ -19,7 +19,7 @@ Route::middleware(['auth:sanctum', 'localization'])->group(function () {
     Route::apiResource('status', 'App\Http\Controllers\API\StatusController')->except(['search', 'findByGroup']);
     Route::apiResource('type', 'App\Http\Controllers\API\TypeController')->except(['search', 'findByGroup']);
     Route::apiResource('category', 'App\Http\Controllers\API\CategoryController')->except(['search', 'findByGroup', 'allUsedInWorks', 'allUsedInWorksType']);
-    Route::apiResource('report_reason', 'App\Http\Controllers\API\ReportReasonController')->except(['findByEntity']);
+    Route::apiResource('report_reason', 'App\Http\Controllers\API\ReportReasonController')->except(['store', 'findByEntity']);
     Route::apiResource('work', 'App\Http\Controllers\API\WorkController');
     Route::apiResource('like', 'App\Http\Controllers\API\LikeController');
     Route::apiResource('file', 'App\Http\Controllers\API\FileController');
@@ -84,6 +84,7 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::get('category/all_used_in_works', 'App\Http\Controllers\API\CategoryController@allUsedInWorks')->name('category.api.all_used_in_works');
     Route::get('category/all_used_in_works_type/{type_id}', 'App\Http\Controllers\API\CategoryController@allUsedInWorksType')->name('category.api.all_used_in_works_type');
     // ReportReason
+    Route::post('report_reason', 'App\Http\Controllers\API\ReportReasonController@store')->name('report_reason.api.store');
     Route::get('report_reason/find_by_entity/{entity}', 'App\Http\Controllers\API\ReportReasonController@findByEntity')->name('report_reason.api.find_by_entity');
     // Subscription
     Route::get('subscription', 'App\Http\Controllers\API\SubscriptionController@index')->name('subscription.api.index');
