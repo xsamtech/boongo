@@ -51,7 +51,7 @@ class User extends JsonResource
             'currency' => Currency::make($this->currency),
             'status' => Status::make($this->status),
             'roles' => Role::collection($this->roles),
-            'favorite_works' => Work::collection($this->favoriteWorks),
+            'favorite_works' => $this->favoriteWorks(),
             'unpaid_consultations' => Work::collection($this->unpaidConsultations),
             'total_unpaid_consultations' => formatDecimalNumber($this->totalUnpaidConsultations()),
             'has_valid_consultation' => $this->hasValidConsultation(),
