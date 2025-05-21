@@ -24,6 +24,11 @@ class ReportReason extends Model
     protected $guarded = [];
 
     /**
+     * Translatable properties.
+     */
+    protected $translatable = ['reason_content'];
+
+    /**
      * MANY-TO-ONE
      * Several toxic_contents for a report_reason
      */
