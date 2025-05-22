@@ -27,6 +27,7 @@ class BaseController extends Controller
             'success' => true,
             'message' => $msg,
             'data'    => $result,
+            'ad'    => $ad,
         ];
 
         // Add conditional keys only if they are defined
@@ -36,10 +37,6 @@ class BaseController extends Controller
 
         if ($count !== null) {
             $res['count'] = $count;
-        }
-
-        if ($ad !== null) {
-            $res['ad'] = $ad;
         }
 
         // Return JSON response

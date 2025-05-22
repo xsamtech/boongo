@@ -502,7 +502,7 @@ class WorkController extends BaseController
                                         $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                    })->inRandomOrder()->first() : null;
 
                 return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all, $partner);
 
@@ -518,7 +518,7 @@ class WorkController extends BaseController
                                         $query->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                    })->inRandomOrder()->first() : null;
 
                 return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all, $partner);
             }
@@ -534,7 +534,7 @@ class WorkController extends BaseController
                                     $query->wherePivot('status_id', $status_active->id);
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                })->inRandomOrder()->first() : null;
 
             return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all, $partner);
         }
@@ -589,7 +589,7 @@ class WorkController extends BaseController
                                             $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
                                         })->where(function ($query) use ($users_ids) {
                                             $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                        })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                        })->inRandomOrder()->first() : null;
 
                     $query = Work::query();
 
@@ -615,7 +615,7 @@ class WorkController extends BaseController
                                             $query->wherePivot('status_id', $status_active->id);
                                         })->where(function ($query) use ($users_ids) {
                                             $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                        })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                        })->inRandomOrder()->first() : null;
 
                     $query = Work::query();
 
@@ -642,7 +642,7 @@ class WorkController extends BaseController
                                         $query->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                    })->inRandomOrder()->first() : null;
                 $query = Work::query();
 
                 $query->where('user_id', $user->id);
@@ -694,7 +694,7 @@ class WorkController extends BaseController
                                             $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
                                         })->where(function ($query) use ($users_ids) {
                                             $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                        })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                        })->inRandomOrder()->first() : null;
 
                     $query = Work::query();
 
@@ -720,7 +720,7 @@ class WorkController extends BaseController
                                             $query->wherePivot('status_id', $status_active->id);
                                         })->where(function ($query) use ($users_ids) {
                                             $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                        })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                        })->inRandomOrder()->first() : null;
                     $query = Work::query();
 
                     $query->where('organization_id', $organization->id);
@@ -746,7 +746,7 @@ class WorkController extends BaseController
                                         $query->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                    })->inRandomOrder()->first() : null;
                 $query = Work::query();
 
                 $query->where('organization_id', $organization->id);
@@ -817,7 +817,7 @@ class WorkController extends BaseController
                                         $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                    })->inRandomOrder()->first() : null;
                 $query = Work::query();
 
                 $query->where('type_id', $type->id);
@@ -837,7 +837,7 @@ class WorkController extends BaseController
                                         $query->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                    })->inRandomOrder()->first() : null;
                 $query = Work::query();
 
                 $query->where('type_id', $type->id);
@@ -858,7 +858,7 @@ class WorkController extends BaseController
                                     $query->wherePivot('status_id', $status_active->id);
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                })->inRandomOrder()->first() : null;
             $query = Work::query();
 
             $query->where('type_id', $type->id);
@@ -1081,7 +1081,7 @@ class WorkController extends BaseController
                                         $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                    })->inRandomOrder()->first() : null;
 
                 return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
 
@@ -1127,7 +1127,7 @@ class WorkController extends BaseController
                                         $query->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                    })->inRandomOrder()->first() : null;
 
                 return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
             }
@@ -1174,7 +1174,7 @@ class WorkController extends BaseController
                                     $query->wherePivot('status_id', $status_active->id);
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                })->inRandomOrder()->first() : null;
 
             return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
         }
@@ -1353,7 +1353,7 @@ class WorkController extends BaseController
                                         $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                    })->inRandomOrder()->first() : null;
                 $query = Work::query();
                 $categories = array_filter($request->input('categories_ids', []));
 
@@ -1386,7 +1386,7 @@ class WorkController extends BaseController
                                         $query->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                    })->inRandomOrder()->first() : null;
                 $query = Work::query();
                 $categories = array_filter($request->input('categories_ids', []));
 
@@ -1420,7 +1420,7 @@ class WorkController extends BaseController
                                     $query->wherePivot('status_id', $status_active->id);
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                })->inRandomOrder()->first() : 'NO ADVERTISEMENT';
+                                })->inRandomOrder()->first() : null;
             $query = Work::query();
             $categories = array_filter($request->input('categories_ids', []));
 
