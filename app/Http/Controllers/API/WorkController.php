@@ -1430,8 +1430,13 @@ class WorkController extends BaseController
             }
 
         } else {
+            // $partners = Partner::whereHas('categories', function ($query) use ($status_active) {
+            //                         $query->wherePivot('status_id', $status_active->id);
+            //                     })->where(function ($query) use ($users_ids) {
+            //                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+            //                     })->get();
             $partners = Partner::whereHas('categories', function ($query) use ($status_active) {
-                                    $query->wherePivot('status_id', $status_active->id);
+                                    $query->wherePivot('status_id', $status_active->id); // Filtrage sur status_id dans la table pivot
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                 })->get();
