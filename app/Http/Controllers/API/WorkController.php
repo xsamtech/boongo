@@ -498,12 +498,11 @@ class WorkController extends BaseController
                 $count_all = Work::whereHas('sessions', function ($query) use ($year) {
                                         $query->whereYear('sessions.created_at', '=', $year);
                                     })->where('category_id', $valid_subscription->category_id)->distinct()->count();
-                $partners = Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
                                         $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->get();
-                $partner = $partners->isNotEmpty() ? $partners->random() : null;
+                                    })->inRandomOrder()->first() : __('notifications.find_partner_404');
 
                 return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all, $partner);
 
@@ -515,12 +514,11 @@ class WorkController extends BaseController
                 $count_all = Work::whereHas('sessions', function ($query) use ($year) {
                             $query->whereYear('sessions.created_at', '=', $year);
                         })->distinct()->count();
-                $partners = Partner::whereHas('categories', function ($query) use ($status_active) {
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
                                         $query->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->get();
-                $partner = $partners->isNotEmpty() ? $partners->random() : null;
+                                    })->inRandomOrder()->first() : __('notifications.find_partner_404');
 
                 return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all, $partner);
             }
@@ -532,12 +530,11 @@ class WorkController extends BaseController
             $count_all = Work::whereHas('sessions', function ($query) use ($year) {
                                     $query->whereYear('sessions.created_at', '=', $year);
                                 })->distinct()->count();
-            $partners = Partner::whereHas('categories', function ($query) use ($status_active) {
+            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
                                     $query->wherePivot('status_id', $status_active->id);
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                })->get();
-            $partner = $partners->isNotEmpty() ? $partners->random() : null;
+                                })->inRandomOrder()->first() : __('notifications.find_partner_404');
 
             return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all, $partner);
         }
@@ -588,12 +585,12 @@ class WorkController extends BaseController
                                                             $q->where('subscription_user.user_id', $logged_in_user->id)
                                                                 ->where('subscription_user.status_id', $status_valid->id);
                                                         })->latest()->first();
-                    $partners = Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
+                    $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
                                             $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
                                         })->where(function ($query) use ($users_ids) {
                                             $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                        })->get();
-                    $partner = $partners->isNotEmpty() ? $partners->random() : null;
+                                        })->inRandomOrder()->first() : __('notifications.find_partner_404');
+
                     $query = Work::query();
 
                     $query->where('user_id', $user->id);
@@ -614,12 +611,12 @@ class WorkController extends BaseController
                     return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
 
                 } else {
-                    $partners = Partner::whereHas('categories', function ($query) use ($status_active) {
+                    $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
                                             $query->wherePivot('status_id', $status_active->id);
                                         })->where(function ($query) use ($users_ids) {
                                             $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                        })->get();
-                    $partner = $partners->isNotEmpty() ? $partners->random() : null;
+                                        })->inRandomOrder()->first() : __('notifications.find_partner_404');
+
                     $query = Work::query();
 
                     $query->where('user_id', $user->id);
@@ -641,12 +638,11 @@ class WorkController extends BaseController
                 }
 
             } else {
-                $partners = Partner::whereHas('categories', function ($query) use ($status_active) {
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
                                         $query->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->get();
-                $partner = $partners->isNotEmpty() ? $partners->random() : null;
+                                    })->inRandomOrder()->first() : __('notifications.find_partner_404');
                 $query = Work::query();
 
                 $query->where('user_id', $user->id);
@@ -694,12 +690,12 @@ class WorkController extends BaseController
                                                             $q->where('subscription_user.user_id', $logged_in_user->id)
                                                                 ->where('subscription_user.status_id', $status_valid->id);
                                                         })->latest()->first();
-                    $partners = Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
+                    $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
                                             $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
                                         })->where(function ($query) use ($users_ids) {
                                             $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                        })->get();
-                    $partner = $partners->isNotEmpty() ? $partners->random() : null;
+                                        })->inRandomOrder()->first() : __('notifications.find_partner_404');
+
                     $query = Work::query();
 
                     $query->where('organization_id', $organization->id);
@@ -720,12 +716,11 @@ class WorkController extends BaseController
                     return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
 
                 } else {
-                    $partners = Partner::whereHas('categories', function ($query) use ($status_active) {
+                    $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
                                             $query->wherePivot('status_id', $status_active->id);
                                         })->where(function ($query) use ($users_ids) {
                                             $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                        })->get();
-                    $partner = $partners->isNotEmpty() ? $partners->random() : null;
+                                        })->inRandomOrder()->first() : __('notifications.find_partner_404');
                     $query = Work::query();
 
                     $query->where('organization_id', $organization->id);
@@ -747,12 +742,11 @@ class WorkController extends BaseController
                 }
 
             } else {
-                $partners = Partner::whereHas('categories', function ($query) use ($status_active) {
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
                                         $query->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->get();
-                $partner = $partners->isNotEmpty() ? $partners->random() : null;
+                                    })->inRandomOrder()->first() : __('notifications.find_partner_404');
                 $query = Work::query();
 
                 $query->where('organization_id', $organization->id);
@@ -819,12 +813,11 @@ class WorkController extends BaseController
                                                         $q->where('subscription_user.user_id', $logged_in_user->id)
                                                             ->where('subscription_user.status_id', $status_valid->id);
                                                     })->latest()->first();
-                $partners = Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
                                         $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->get();
-                $partner = $partners->isNotEmpty() ? $partners->random() : null;
+                                    })->inRandomOrder()->first() : __('notifications.find_partner_404');
                 $query = Work::query();
 
                 $query->where('type_id', $type->id);
@@ -840,12 +833,11 @@ class WorkController extends BaseController
                 return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
 
             } else {
-                $partners = Partner::whereHas('categories', function ($query) use ($status_active) {
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
                                         $query->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->get();
-                $partner = $partners->isNotEmpty() ? $partners->random() : null;
+                                    })->inRandomOrder()->first() : __('notifications.find_partner_404');
                 $query = Work::query();
 
                 $query->where('type_id', $type->id);
@@ -862,12 +854,11 @@ class WorkController extends BaseController
             }
 
         } else {
-            $partners = Partner::whereHas('categories', function ($query) use ($status_active) {
+            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
                                     $query->wherePivot('status_id', $status_active->id);
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                })->get();
-            $partner = $partners->isNotEmpty() ? $partners->random() : null;
+                                })->inRandomOrder()->first() : __('notifications.find_partner_404');
             $query = Work::query();
 
             $query->where('type_id', $type->id);
@@ -1086,12 +1077,11 @@ class WorkController extends BaseController
 
                 $works = $query->paginate(4);
                 $count_all = $query->count();
-                $partners = Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
                                         $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->get();
-                $partner = $partners->isNotEmpty() ? $partners->random() : null;
+                                    })->inRandomOrder()->first() : __('notifications.find_partner_404');
 
                 return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
 
@@ -1133,12 +1123,11 @@ class WorkController extends BaseController
 
                 $works = $query->paginate(4);
                 $count_all = $query->count();
-                $partners = Partner::whereHas('categories', function ($q) use ($status_active) {
-                                        $q->wherePivot('status_id', $status_active->id);
-                                    })->where(function ($q) use ($users_ids) {
-                                        $q->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->get();
-                $partner = $partners->isNotEmpty() ? $partners->random() : null;
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
+                                        $query->wherePivot('status_id', $status_active->id);
+                                    })->where(function ($query) use ($users_ids) {
+                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                    })->inRandomOrder()->first() : __('notifications.find_partner_404');
 
                 return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
             }
@@ -1181,12 +1170,11 @@ class WorkController extends BaseController
 
             $works = $query->paginate(4);
             $count_all = $query->count();
-            $partners = Partner::whereHas('categories', function ($q) use ($status_active) {
-                                    $q->wherePivot('status_id', $status_active->id);
-                                })->where(function ($q) use ($users_ids) {
-                                    $q->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                })->get();
-            $partner = $partners->isNotEmpty() ? $partners->random() : null;
+            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
+                                    $query->wherePivot('status_id', $status_active->id);
+                                })->where(function ($query) use ($users_ids) {
+                                    $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                })->inRandomOrder()->first() : __('notifications.find_partner_404');
 
             return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
         }
@@ -1361,12 +1349,11 @@ class WorkController extends BaseController
                                                         $q->where('subscription_user.user_id', $logged_in_user->id)
                                                             ->where('subscription_user.status_id', $status_valid->id);
                                                     })->latest()->first();
-                $partners = Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
                                         $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->get();
-                $partner = $partners->isNotEmpty() ? $partners->random() : null;
+                                    })->inRandomOrder()->first() : __('notifications.find_partner_404');
                 $query = Work::query();
                 $categories = array_filter($request->input('categories_ids', []));
 
@@ -1395,12 +1382,11 @@ class WorkController extends BaseController
                 return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
 
             } else {
-                $partners = Partner::whereHas('categories', function ($query) use ($status_active) {
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
                                         $query->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->get();
-                $partner = $partners->isNotEmpty() ? $partners->random() : null;
+                                    })->inRandomOrder()->first() : __('notifications.find_partner_404');
                 $query = Work::query();
                 $categories = array_filter($request->input('categories_ids', []));
 
@@ -1430,12 +1416,11 @@ class WorkController extends BaseController
             }
 
         } else {
-            $count_partners = Partner::count();
-            $partner = $count_partners > 0 ? Partner::whereHas('categories', function ($query) use ($status_active) {
+            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
                                     $query->wherePivot('status_id', $status_active->id);
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                })->inRandomOrder()->first() : 'NO PARTNER';
+                                })->inRandomOrder()->first() : __('notifications.find_partner_404');
             $query = Work::query();
             $categories = array_filter($request->input('categories_ids', []));
 
