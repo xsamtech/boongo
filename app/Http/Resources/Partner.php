@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Models\User as ModelsUser;
+use App\Models\Organization as ModelsOrganization;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,6 +21,8 @@ class Partner extends JsonResource
      */
     public function toArray($request)
     {
+        $from_user = $this->from_user_id != null ? ModelsUser::where('id', $this->from_user_id)->first() : null;
+        $from_organization = $this->from_organization_id != null ? ModelsOrganization::where('id', $this->from_organization_id)->first() : null;
         // Call the remainingDays() function with the current date
         $remainingDays = $this->remainingDays(Carbon::now());
 
@@ -26,6 +30,8 @@ class Partner extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'message' => $this->message,
+            'from_user' => $from_user,
+            'from_organization' => $from_organization,
             'image_url' => $this->image_url != null ? getWebURL() . '/public/storage/' . $this->image_url : getWebURL() . '/public/assets/img/ad.png',
             'website_url' => $this->website_url,
             'remaining_days' => $remainingDays,
