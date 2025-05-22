@@ -1435,7 +1435,7 @@ class WorkController extends BaseController
                                     $query->wherePivot('status_id', $status_active->id);
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                })->inRandomOrder()->first() : null;
+                                })->inRandomOrder()->first() : 'NO PARTNER';
             $query = Work::query();
             $categories = array_filter($request->input('categories_ids', []));
 
