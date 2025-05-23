@@ -323,7 +323,7 @@ class User extends Authenticatable
             return collect();
         }
 
-        return $last_subscription_cart->works()->orderByPivot('created_at', 'desc')->get();
+        return $last_subscription_cart->subscriptions()->orderByPivot('created_at', 'desc')->get();
     }
 
     /**
@@ -362,7 +362,7 @@ class User extends Authenticatable
         $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
         $valid_status = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
 
-        return $last_subscription_cart->works()->wherePivot('status_id', $valid_status->id)->exists();
+        return $last_subscription_cart->subscriptions()->wherePivot('status_id', $valid_status->id)->exists();
     }
 
     /**
@@ -383,7 +383,7 @@ class User extends Authenticatable
         $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
         $valid_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
 
-        return $last_subscription_cart->works()->wherePivot('status_id', $valid_status->id)->orderByPivot('created_at', 'desc')->get();
+        return $last_subscription_cart->subscriptions()->wherePivot('status_id', $valid_status->id)->orderByPivot('created_at', 'desc')->get();
     }
 
     /**
@@ -404,6 +404,6 @@ class User extends Authenticatable
         $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
         $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
 
-        return $last_subscription_cart->works()->wherePivot('status_id', $pending_status->id)->orderByPivot('created_at', 'desc')->get();
+        return $last_subscription_cart->subscriptions()->wherePivot('status_id', $pending_status->id)->orderByPivot('created_at', 'desc')->get();
     }
 }

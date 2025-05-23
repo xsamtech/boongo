@@ -464,10 +464,8 @@ class WorkController extends BaseController
     {
         // Groups
         $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
-        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
         // Statuses
         $status_active = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
-        $status_valid = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
         // Get partners & sponsors IDs
         $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name->fr', 'Partenaire')->orWhere('role_name->fr', 'Sponsor'); })->pluck('id')->toArray();
 
@@ -480,18 +478,11 @@ class WorkController extends BaseController
             }
 
             // Subscription
-            $is_subscribed = User::whereHas('subscriptions', function ($q) use ($logged_in_user, $status_valid) {
-                                        $q->where('subscription_user.user_id', $logged_in_user->id)
-                                            ->where('subscription_user.status_id', $status_valid->id);
-                                    })->exists();
+            $is_subscribed = $logged_in_user->hasValidSubscription();
 
             // If user is subscribed, send only data of the same category as that in the subscription
             if ($is_subscribed) {
-                $valid_subscription = Subscription::whereHas('users', function ($q) use ($logged_in_user, $status_valid) {
-                                                        $q->where('subscription_user.user_id', $logged_in_user->id)
-                                                            ->where('subscription_user.status_id', $status_valid->id);
-                                                    })->latest()->first();
-
+                $valid_subscription = $logged_in_user->validSubscriptions()->latest()->first();
                 $works = Work::whereHas('sessions', function ($query) use ($year) {
                                     $query->whereYear('sessions.created_at', '=', $year);
                                 })->where('category_id', $valid_subscription->category_id)->distinct()->limit(7)->get()->reverse()->values();
@@ -552,10 +543,8 @@ class WorkController extends BaseController
     {
         // Groups
         $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
-        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
         // Statuses
         $status_active = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
-        $status_valid = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
         // Get partners & sponsors IDs
         $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name->fr', 'Partenaire')->orWhere('role_name->fr', 'Sponsor'); })->pluck('id')->toArray();
 
@@ -575,16 +564,10 @@ class WorkController extends BaseController
                 }
 
                 // Subscription
-                $is_subscribed = User::whereHas('subscriptions', function ($q) use ($logged_in_user, $status_valid) {
-                                            $q->where('subscription_user.user_id', $logged_in_user->id)
-                                                ->where('subscription_user.status_id', $status_valid->id);
-                                        })->exists();
+                $is_subscribed = $logged_in_user->hasValidSubscription();
 
                 if ($is_subscribed) {
-                    $valid_subscription = Subscription::whereHas('users', function ($q) use ($logged_in_user, $status_valid) {
-                                                            $q->where('subscription_user.user_id', $logged_in_user->id)
-                                                                ->where('subscription_user.status_id', $status_valid->id);
-                                                        })->latest()->first();
+                    $valid_subscription = $logged_in_user->validSubscriptions()->latest()->first();
                     $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
                                             $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
                                         })->where(function ($query) use ($users_ids) {
@@ -680,16 +663,10 @@ class WorkController extends BaseController
                 }
 
                 // Subscription
-                $is_subscribed = User::whereHas('subscriptions', function ($q) use ($logged_in_user, $status_valid) {
-                                            $q->where('subscription_user.user_id', $logged_in_user->id)
-                                                ->where('subscription_user.status_id', $status_valid->id);
-                                        })->exists();
+                $is_subscribed = $logged_in_user->hasValidSubscription();
 
                 if ($is_subscribed) {
-                    $valid_subscription = Subscription::whereHas('users', function ($q) use ($logged_in_user, $status_valid) {
-                                                            $q->where('subscription_user.user_id', $logged_in_user->id)
-                                                                ->where('subscription_user.status_id', $status_valid->id);
-                                                        })->latest()->first();
+                    $valid_subscription = $logged_in_user->validSubscriptions()->latest()->first();
                     $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
                                             $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
                                         })->where(function ($query) use ($users_ids) {
@@ -803,16 +780,10 @@ class WorkController extends BaseController
             }
 
             // Subscription
-            $is_subscribed = User::whereHas('subscriptions', function ($q) use ($logged_in_user, $status_valid) {
-                                        $q->where('subscription_user.user_id', $logged_in_user->id)
-                                            ->where('subscription_user.status_id', $status_valid->id);
-                                    })->exists();
+            $is_subscribed = $logged_in_user->hasValidSubscription();
 
             if ($is_subscribed) {
-                $valid_subscription = Subscription::whereHas('users', function ($q) use ($logged_in_user, $status_valid) {
-                                                        $q->where('subscription_user.user_id', $logged_in_user->id)
-                                                            ->where('subscription_user.status_id', $status_valid->id);
-                                                    })->latest()->first();
+                $valid_subscription = $logged_in_user->validSubscriptions()->latest()->first();
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
                                         $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
@@ -1013,10 +984,8 @@ class WorkController extends BaseController
     {
         // Groups
         $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
-        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
         // Statuses
         $status_active = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
-        $status_valid = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
         // Get partners & sponsors IDs
         $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name->fr', 'Partenaire')->orWhere('role_name->fr', 'Sponsor'); })->pluck('id')->toArray();
 
@@ -1029,18 +998,11 @@ class WorkController extends BaseController
             }
 
             // Subscription
-            $is_subscribed = User::whereHas('subscriptions', function ($q) use ($logged_in_user, $status_valid) {
-                                        $q->where('subscription_user.user_id', $logged_in_user->id)
-                                            ->where('subscription_user.status_id', $status_valid->id);
-                                    })->exists();
+            $is_subscribed = $logged_in_user->hasValidSubscription();
 
             // If user is subscribed, send only data of the same category as that in the subscription
             if ($is_subscribed) {
-                $valid_subscription = Subscription::whereHas('users', function ($q) use ($logged_in_user, $status_valid) {
-                                                        $q->where('subscription_user.user_id', $logged_in_user->id)
-                                                            ->where('subscription_user.status_id', $status_valid->id);
-                                                    })->latest()->first();
-
+                $valid_subscription = $logged_in_user->validSubscriptions()->latest()->first();
                 $query = Work::query();
                 $categories = array_filter($request->input('categories_ids', []));
 
@@ -1323,10 +1285,8 @@ class WorkController extends BaseController
     {
         // Groups
         $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
-        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
         // Statuses
         $status_active = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
-        $status_valid = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
         // Get partners & sponsors IDs
         $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name->fr', 'Partenaire')->orWhere('role_name->fr', 'Sponsor'); })->pluck('id')->toArray();
 
@@ -1339,16 +1299,10 @@ class WorkController extends BaseController
             }
 
             // Subscription
-            $is_subscribed = User::whereHas('subscriptions', function ($q) use ($logged_in_user, $status_valid) {
-                                        $q->where('subscription_user.user_id', $logged_in_user->id)
-                                            ->where('subscription_user.status_id', $status_valid->id);
-                                    })->exists();
+            $is_subscribed = $logged_in_user->hasValidSubscription();
 
             if ($is_subscribed) {
-                $valid_subscription = Subscription::whereHas('users', function ($q) use ($logged_in_user, $status_valid) {
-                                                        $q->where('subscription_user.user_id', $logged_in_user->id)
-                                                            ->where('subscription_user.status_id', $status_valid->id);
-                                                    })->latest()->first();
+                $valid_subscription = $logged_in_user->validSubscriptions()->latest()->first();
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
                                         $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
                                     })->where(function ($query) use ($users_ids) {
