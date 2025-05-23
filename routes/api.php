@@ -128,7 +128,7 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::get('work/find_likes/{work_id}', 'App\Http\Controllers\API\WorkController@findLikes')->name('work.api.find_likes');
     Route::put('work/switch_view/{work_id}', 'App\Http\Controllers\API\WorkController@switchView')->name('work.api.switch_view');
     Route::put('work/add_image/{id}', 'App\Http\Controllers\API\WorkController@addImage')->name('work.api.add_image');
-    Route::post('work/search/{data}', 'App\Http\Controllers\API\WorkController@search')->name('work.api.search');
+    Route::post('work/search', 'App\Http\Controllers\API\WorkController@search')->name('work.api.search');
     Route::post('work/upload_files', 'App\Http\Controllers\API\WorkController@uploadFiles')->name('work.api.upload_files');
     Route::post('work/filter_by_categories', 'App\Http\Controllers\API\WorkController@filterByCategories')->name('work.api.filter_by_categories');
     // Partner
