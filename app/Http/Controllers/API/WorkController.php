@@ -20,6 +20,7 @@ use Illuminate\Support\Str;
 use App\Http\Resources\Like as ResourcesLike;
 use App\Http\Resources\Session as ResourcesSession;
 use App\Http\Resources\Work as ResourcesWork;
+use Illuminate\Support\Arr;
 
 /**
  * @author Xanders
@@ -1004,9 +1005,9 @@ class WorkController extends BaseController
             if ($is_subscribed) {
                 $valid_subscription = $logged_in_user->validSubscriptions()->latest()->first();
                 $query = Work::query();
-                $categories = array_filter($request->input('categories_ids', []));
+                $categories = array_filter(Arr::wrap($request->input('categories_ids')));
 
-                if (is_array($categories) && count($categories) > 0) {
+                if (count($categories) > 0) {
                     // Filter works having at least one of the specified categories
                     $query->whereHas('categories', function ($q) use ($categories) {
                         $q->whereIn('categories.id', $categories);
@@ -1050,9 +1051,9 @@ class WorkController extends BaseController
             // Otherwise, send all data
             } else {
                 $query = Work::query();
-                $categories = array_filter($request->input('categories_ids', []));
+                $categories = array_filter(Arr::wrap($request->input('categories_ids')));
 
-                if (is_array($categories) && count($categories) > 0) {
+                if (count($categories) > 0) {
                     // Filter works having at least one of the specified categories
                     $query->whereHas('categories', function ($q) use ($categories) {
                         $q->whereIn('categories.id', $categories);
@@ -1097,9 +1098,9 @@ class WorkController extends BaseController
 
         if ($request->hasHeader('X-ip-address')) {
             $query = Work::query();
-            $categories = array_filter($request->input('categories_ids', []));
+            $categories = array_filter(Arr::wrap($request->input('categories_ids')));
 
-            if (is_array($categories) && count($categories) > 0) {
+            if (count($categories) > 0) {
                 // Filter works having at least one of the specified categories
                 $query->whereHas('categories', function ($q) use ($categories) {
                     $q->whereIn('categories.id', $categories);
@@ -1309,9 +1310,9 @@ class WorkController extends BaseController
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
                 $query = Work::query();
-                $categories = array_filter($request->input('categories_ids', []));
+                $categories = array_filter(Arr::wrap($request->input('categories_ids')));
 
-                if (is_array($categories) && count($categories) > 0) {
+                if (count($categories) > 0) {
                     // Filter works having at least one of the specified categories
                     $query->whereHas('categories', function ($q) use ($categories) {
                         $q->whereIn('categories.id', $categories);
@@ -1342,9 +1343,9 @@ class WorkController extends BaseController
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
                 $query = Work::query();
-                $categories = array_filter($request->input('categories_ids', []));
+                $categories = array_filter(Arr::wrap($request->input('categories_ids')));
 
-                if (is_array($categories) && count($categories) > 0) {
+                if (count($categories) > 0) {
                     // Filter works having at least one of the specified categories
                     $query->whereHas('categories', function ($q) use ($categories) {
                         $q->whereIn('categories.id', $categories);
@@ -1376,9 +1377,9 @@ class WorkController extends BaseController
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                 })->inRandomOrder()->first() : null;
             $query = Work::query();
-            $categories = array_filter($request->input('categories_ids', []));
+            $categories = array_filter(Arr::wrap($request->input('categories_ids')));
 
-            if (is_array($categories) && count($categories) > 0) {
+            if (count($categories) > 0) {
                 // Filter works having at least one of the specified categories
                 $query->whereHas('categories', function ($q) use ($categories) {
                     $q->whereIn('categories.id', $categories);
