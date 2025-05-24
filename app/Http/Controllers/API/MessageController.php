@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Resources\Message as ResourcesMessage;
 use App\Http\Resources\User as ResourcesUser;
+use App\Models\Partner;
 
 /**
  * @author Xanders
@@ -388,34 +389,60 @@ class MessageController extends BaseController
      *
      * @param  string $locale
      * @param  string $type_name
-     * @param  int $sender_id
-     * @param  int $addressee_user_id
+     * @param  int $user_id
      * @return \Illuminate\Http\Response
      */
-    public function chatWithUser($locale, $type_name, $sender_id, $addressee_user_id)
+    public function chatWithUser($locale, $type_name, $user_id)
     {
+        // Groups
+        $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
+        // Statuses
+        $status_active = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
+        // Get partners & sponsors IDs
+        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name->fr', 'Partenaire')->orWhere('role_name->fr', 'Sponsor'); })->pluck('id')->toArray();
+        // Request
         $type = Type::where('type_name->' . $locale, $type_name)->first();
 
         if (is_null($type)) {
             return $this->handleError(__('notifications.find_type_404'));
         }
 
-        $sender = User::find($sender_id);
+        $user = User::find($user_id);
 
-        if (is_null($sender)) {
-            return $this->handleError(__('notifications.find_sender_404'));
+        if (is_null($user)) {
+            return $this->handleError(__('notifications.find_user_404'));
         }
 
-        $addressee = User::find($addressee_user_id);
+        // Subscription
+        $is_subscribed = $user->hasValidSubscription();
 
-        if (is_null($addressee)) {
-            return $this->handleError(__('notifications.find_addressee_404'));
+        // If user is subscribed, send only data of the same category as that in the subscription
+        if ($is_subscribed) {
+            $valid_subscription = $user->validSubscriptions()->latest()->first();
+            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
+                                    $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
+                                })->where(function ($query) use ($users_ids) {
+                                    $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                })->inRandomOrder()->first() : null;
+
+            $messages = Message::where([['type_id', $type->id], ['user_id', $user->id]])->orWhere([['type_id', $type->id], ['addressee_user_id', $user->id]])->orderByDesc('created_at')->paginate(4);
+            $count_messages = Message::where([['type_id', $type->id], ['user_id', $user->id]])->orWhere([['type_id', $type->id], ['addressee_user_id', $user->id]])->count();
+
+            return $this->handleResponse(ResourcesMessage::collection($messages), __('notifications.find_all_messages_success'), $messages->lastPage(), $count_messages, $partner);
+
+        // Otherwise, send all data
+        } else {
+            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
+                                    $query->wherePivot('status_id', $status_active->id);
+                                })->where(function ($query) use ($users_ids) {
+                                    $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                })->inRandomOrder()->first() : null;
+
+            $messages = Message::where([['type_id', $type->id], ['user_id', $user->id]])->orWhere([['type_id', $type->id], ['addressee_user_id', $user->id]])->orderByDesc('created_at')->paginate(4);
+            $count_messages = Message::where([['type_id', $type->id], ['user_id', $user->id]])->orWhere([['type_id', $type->id], ['addressee_user_id', $user->id]])->count();
+
+            return $this->handleResponse(ResourcesMessage::collection($messages), __('notifications.find_all_messages_success'), $messages->lastPage(), $count_messages, $partner);
         }
-
-        $messages = Message::where([['type_id', $type->id], ['user_id', $sender->id], ['addressee_user_id', $addressee->id]])->orWhere([['type_id', $type->id], ['user_id', $addressee->id], ['addressee_user_id', $sender->id]])->orderByDesc('created_at')->paginate(4);
-        $count_messages = Message::where([['type_id', $type->id], ['user_id', $sender->id], ['addressee_user_id', $addressee->id]])->orWhere([['type_id', $type->id], ['user_id', $addressee->id], ['addressee_user_id', $sender->id]])->count();
-
-        return $this->handleResponse(ResourcesMessage::collection($messages), __('notifications.find_all_messages_success'), $messages->lastPage(), $count_messages);
     }
 
     /**
