@@ -178,23 +178,64 @@ class AdminController extends Controller
                 'work_id' => $work->id
             ]);
         }
-
         if ($request->hasFile('video_file_url')) {
-            $user_profile = $this::$api_client_manager::call('GET', getApiURL() . '/user/profile/xanderssamoth');
+            $file = $request->file('video_file_url');
+            $filename = $file->getClientOriginalName();
+            $file_url =  'images/works/' . $work->id . '/' . $filename;
 
-            $this::$api_client_manager::call('POST', getApiURL() . '/work/upload_files', $user_profile->data->api_token, ['document_file_type_id' => 6, 'video_file_url' => $request->file('video_file_url')]);
+            try {
+                $file->storeAs('images/works/' . $work->id, $filename, 's3');
+
+            } catch (\Throwable $th) {
+                return $this->handleError($th, __('notifications.create_work_file_500'), 500);
+            }
+
+            File::create([
+                'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
+                'file_url' => config('filesystems.disks.s3.url') . $file_url, // $dir_result
+                'type_id' => 6,
+                'work_id' => $work->id
+            ]);
         }
 
         if ($request->hasFile('document_file_url')) {
-            $user_profile = $this::$api_client_manager::call('GET', getApiURL() . '/user/profile/xanderssamoth');
+            $file = $request->file('document_file_url');
+            $filename = $file->getClientOriginalName();
+            $file_url =  'documents/works/' . $work->id . '/' . $filename;
 
-            $this::$api_client_manager::call('POST', getApiURL() . '/work/upload_files', $user_profile->data->api_token, ['document_file_type_id' => 7, 'document_file_url' => $request->file('document_file_url')]);
+            try {
+                $file->storeAs('documents/works/' . $work->id, $filename, 's3');
+
+            } catch (\Throwable $th) {
+                return $this->handleError($th, __('notifications.create_work_file_500'), 500);
+            }
+
+            File::create([
+                'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
+                'file_url' => config('filesystems.disks.s3.url') . $file_url, // $dir_result
+                'type_id' => 7,
+                'work_id' => $work->id
+            ]);
         }
 
         if ($request->hasFile('audio_file_url')) {
-            $user_profile = $this::$api_client_manager::call('GET', getApiURL() . '/user/profile/xanderssamoth');
+            $file = $request->file('audio_file_url');
+            $filename = $file->getClientOriginalName();
+            $file_url =  'audios/works/' . $work->id . '/' . $filename;
 
-            $this::$api_client_manager::call('POST', getApiURL() . '/work/upload_files', $user_profile->data->api_token, ['document_file_type_id' => 8, 'audio_file_url' => $request->file('audio_file_url')]);
+            try {
+                $file->storeAs('audios/works/' . $work->id, $filename, 's3');
+
+            } catch (\Throwable $th) {
+                return $this->handleError($th, __('notifications.create_work_file_500'), 500);
+            }
+
+            File::create([
+                'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
+                'file_url' => config('filesystems.disks.s3.url') . $file_url, // $dir_result
+                'type_id' => 8,
+                'work_id' => $work->id
+            ]);
         }
 
         return Redirect::back()->with('success_message', __('notifications.create_work_success'));
