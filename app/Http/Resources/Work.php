@@ -30,14 +30,28 @@ class Work extends JsonResource
         $doc_type = ModelType::where([['type_name->fr', 'Document'], ['group_id', $file_type_group->id]])->first();
         $audio_type = ModelType::where([['type_name->fr', 'Audio'], ['group_id', $file_type_group->id]])->first();
         // Requests
+        $is_toxic = !empty($this->user_id) ? ModelsToxicContent::where([['for_user_id', $this->user_id], ['is_unlocked', 0]])->exists() : false;
         $doc = ModelsFile::where([['type_id', $doc_type->id], ['work_id', $this->id]])->first();
         $docs = ModelsFile::where([['type_id', $doc_type->id], ['work_id', $this->id]])->get();
         $audio = ModelsFile::where([['type_id', $audio_type->id], ['work_id', $this->id]])->first();
         $audios = ModelsFile::where([['type_id', $audio_type->id], ['work_id', $this->id]])->get();
         $imgs = ModelsFile::where([['type_id', $img_type->id], ['work_id', $this->id]])->get();
-        $photo = $imgs->first(fn($file) => isPhotoFile($file->file_url));
-        $video = $imgs->first(fn($file) => isVideoFile($file->file_url));
-        $is_toxic = !empty($this->user_id) ? ModelsToxicContent::where([['for_user_id', $this->user_id], ['is_unlocked', 0]])->exists() : false;
+        $photo = null;
+        $video = null;
+
+        foreach ($imgs as $img) {
+            $url = $img->file_url; // ou $img->path selon ton modèle
+
+            if (isPhotoFile($url) && !$photo) {
+                $photo = $img;
+            } elseif (isVideoFile($url) && !$video) {
+                $video = $img;
+            }
+
+            if ($photo && $video) {
+                break;
+            }
+        }
 
         return [
             'id' => $this->id,
