@@ -29,6 +29,65 @@ class AdminController extends Controller
     /**
      * GET: Partners page
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View
+     */
+    public function work(Request $request)
+    {
+        if ($request->has('type')) {
+            if ($request->get('type') == 'empty') {
+                return redirect('/');
+            }
+
+            // Group names
+            $work_type_group = 'Type d\'œuvre';
+            // All types by group
+            $types_by_group = $this::$api_client_manager::call('GET', getApiURL() . '/type/find_by_group/' . $work_type_group);
+            // All categories by group
+            $categories = $this::$api_client_manager::call('GET', getApiURL() . '/category');
+            $works = $this::$api_client_manager::call('GET', getApiURL()  . '/work/find_all_by_type/fr/' . $request->get('type') . ($request->has('page') ? '?page=' . $request->get('page') : ''));
+
+            if ($works->success) {
+                return view('work-test', [
+                    'types' => $types_by_group->data,
+                    'categories' => $categories->data,
+                    'works' => $works->data,
+                    'lastPage' => $works->lastPage,
+                ]);
+
+            } else {
+                $all_works = $this::$api_client_manager::call('GET', getApiURL()  . '/work' . ($request->has('page') ? '?page=' . $request->get('page') : ''));
+                return view('work-test', [
+                    'types' => $types_by_group->data,
+                    'categories' => $categories->data,
+                    'works' => $all_works->data,
+                    'lastPage' => $all_works->lastPage,
+                ]);
+            }
+
+        } else {
+            // User by "username"
+            $user_profile = $this::$api_client_manager::call('GET', getApiURL() . '/user/profile/xanderssamoth');
+            // Group names
+            $work_type_group = 'Type d\'œuvre';
+            // All types by group
+            $types_by_group = $this::$api_client_manager::call('GET', getApiURL() . '/type/find_by_group/' . $work_type_group);
+            // All categories by group
+            $categories = $this::$api_client_manager::call('GET', getApiURL() . '/category', $user_profile->data->api_token);
+            $works = $this::$api_client_manager::call('GET', getApiURL()  . '/work' . ($request->has('page') ? '?page=' . $request->get('page') : ''), $user_profile->data->api_token);
+
+            return view('work-test', [
+                'types' => $types_by_group->data,
+                'categories' => $categories->data,
+                'works' => $works->data,
+                'lastPage' => $works->lastPage,
+            ]);
+        }
+    }
+
+    /**
+     * GET: Partners page
+     *
      * @return \Illuminate\View\View
      */
     public function partners()
@@ -69,6 +128,9 @@ class AdminController extends Controller
             'work_title' => $request->work_title,
             'work_content' => $request->work_content,
             'work_url' => $request->work_url,
+            'video_source' => $request->video_source,
+            'media_length' => $request->media_length,
+            'is_public' => $request->is_public,
             'type_id' => $request->type_id,
             'status_id' => $request->status_id,
             'user_id' => $request->user_id
@@ -89,30 +151,6 @@ class AdminController extends Controller
             $work->categories()->sync($request->categories_ids);
         }
 
-        if ($request->hasFile('file_url')) {
-            if ($request->file_type_id == null) {
-                return Redirect::back()->with('error_message', __('validation.required') . ': "file_type_id"');
-            }
-
-            $type = Type::find($request->file_type_id);
-
-            if (is_null($type)) {
-                return Redirect::back()->with('error_message', __('notifications.find_type_404'));
-            }
-
-            $file_url = ($request->file_type_id == 7 ? 'documents/works/' : ($request->file_type_id == 8 ? 'audios/works/' : 'images/works/')) . $work->id . '/' . Str::random(50) . '.' . $request->file('file_url')->extension();
-
-            // Upload file
-            $dir_result = Storage::url(Storage::disk('public')->put($file_url, $request->file('file_url')));
-
-            File::create([
-                'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
-                'file_url' => $dir_result,
-                'type_id' => $request->file_type_id,
-                'work_id' => $work->id
-            ]);
-        }
-
         if ($request->image_64 != null) {
             if ($request->image_type_id == null) {
                 return Redirect::back()->with('error_message', __('validation.required') . ': "image_type_id"');
@@ -127,14 +165,37 @@ class AdminController extends Controller
             $image_url = 'images/works/' . $work->id . '/' . Str::random(50) . '.png';
 
             // Upload image
-            Storage::url(Storage::disk('public')->put($image_url, base64_decode($image)));
+            try {
+                Storage::url(Storage::disk('s3')->put($image_url, base64_decode($image)));
+
+            } catch (\Throwable $th) {
+                return $this->handleError($th, __('notifications.create_image64_500'), 500);
+            }
 
             File::create([
                 'file_name' => trim($request->image_name) != null ? $request->image_name : $work->work_title,
-                'file_url' => '/storage/' . $image_url,
+                'file_url' => config('filesystems.disks.s3.url') . $image_url,
                 'type_id' => $request->image_type_id,
                 'work_id' => $work->id
             ]);
+        }
+
+        if ($request->hasFile('video_file_url')) {
+            $user_profile = $this::$api_client_manager::call('GET', getApiURL() . '/user/profile/xanderssamoth');
+
+            $this::$api_client_manager::call('POST', getApiURL() . '/work/upload_files', $user_profile->data->api_token, ['document_file_type_id' => 6, 'video_file_url' => $request->file('video_file_url')]);
+        }
+
+        if ($request->hasFile('document_file_url')) {
+            $user_profile = $this::$api_client_manager::call('GET', getApiURL() . '/user/profile/xanderssamoth');
+
+            $this::$api_client_manager::call('POST', getApiURL() . '/work/upload_files', $user_profile->data->api_token, ['document_file_type_id' => 7, 'document_file_url' => $request->file('document_file_url')]);
+        }
+
+        if ($request->hasFile('audio_file_url')) {
+            $user_profile = $this::$api_client_manager::call('GET', getApiURL() . '/user/profile/xanderssamoth');
+
+            $this::$api_client_manager::call('POST', getApiURL() . '/work/upload_files', $user_profile->data->api_token, ['document_file_type_id' => 8, 'audio_file_url' => $request->file('audio_file_url')]);
         }
 
         return Redirect::back()->with('success_message', __('notifications.create_work_success'));

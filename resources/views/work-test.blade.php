@@ -154,7 +154,6 @@
                 </div>
 
                 <input type="hidden" name="image_type_id" id="image_type_id" value="6">
-                <input type="hidden" name="file_type_id" id="file_type_id" value="7">
                 <input type="hidden" name="status_id" id="status_id" value="5">
 @csrf
 
@@ -181,8 +180,18 @@
                                     </div>
 
                                     <div class="form-group mb-3">
-                                        <label for="file_url">@lang('miscellaneous.upload.upload_document')</label>
-                                        <input type="file" name="file_url" id="file_url" class="form-control">
+                                        <label for="video_file_url">@lang('miscellaneous.upload.upload_video')</label>
+                                        <input type="file" name="video_file_url" id="video_file_url" class="form-control">
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="document_file_url">@lang('miscellaneous.upload.upload_document')</label>
+                                        <input type="file" name="document_file_url" id="document_file_url" class="form-control">
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="audio_file_url">@lang('miscellaneous.upload.upload_audio')</label>
+                                        <input type="file" name="audio_file_url" id="audio_file_url" class="form-control">
                                     </div>
 
                                     <div class="form-group mb-3">

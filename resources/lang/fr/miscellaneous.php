@@ -69,7 +69,9 @@ return [
         'use_camera' => 'Utiliser caméra',
         'upload_document' => 'Uploader document',
         'upload_image' => 'Uploader image (Photo/Video)',
+        'upload_video' => 'Uploader un video',
         'register_audio' => 'Enregistrer un audio',
+        'upload_audio' => 'Uploader un audio',
         'choose_existing_file' => 'Choisir fichier existant'
     ],
     'activate' => 'Activer',
