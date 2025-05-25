@@ -286,7 +286,7 @@
                                 <li class="list-group-item py-3">
                                     <div class="d-lg-flex justify-content-between">
                                         <div class="mb-lg-0 mb-4">
-                                            <img src="{{ !empty($item->image_url) ? $item->image_url : asset('assets/img/cover.png') }}" alt="{{ $item->work_title }}" width="100" class="float-sm-start rounded-4 mb-3 me-3">
+                                            <img src="{{ $item->photo_url }}" alt="{{ $item->work_title }}" width="100" class="float-sm-start rounded-4 mb-3 me-3">
                                             <h4 class="my-2 dktv-text-green fw-bold">{{ $item->work_title }}</h4>
                                             <p class="mb-3 text-muted">{{ !empty($item->work_content) ? Str::limit($item->work_content, 50, '...') : '' }}</p>
         @if (!empty($item->document_url))
@@ -294,6 +294,9 @@
         @endif
         @if (!empty($item->video_url))
                                             <a href="{{ $item->video_url }}" target="_blank" class="px-4 py-3"><i class="fa-solid fa-play-circle me-2 fs-4 bng-text-primary"></i></a>
+        @endif
+        @if (!empty($item->audio_url))
+                                            <a href="{{ $item->audio_url }}" target="_blank" class="px-4 py-3"><i class="fa-solid fa-volume-up me-2 fs-4 bng-text-primary"></i></a>
         @endif
                                         </div>
 
