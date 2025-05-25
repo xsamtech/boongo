@@ -208,10 +208,12 @@
                                     <div class="form-group">
                                         <label class="d-block text-center">@lang('miscellaneous.admin.work.data.choose_categories')</label>
 @forelse ($categories as $category)
+    @if ($category->category_name_fr != 'Scolaire' && $category->category_name_fr != 'Académique' && $category->category_name_fr != 'Publique')
                                         <div class="form-check mx-3">
                                             <input type="checkbox" name="categories_ids" id="category_{{ $category->id }}" class="form-check-input" value="{{ $category->id }}">
                                             <label class="form-check-label bng-text-secondary" for="category_{{ $category->id }}">{{ $category->category_name }}</label>
                                         </div>
+    @endif
 @empty
 @endforelse
                                     </div>
