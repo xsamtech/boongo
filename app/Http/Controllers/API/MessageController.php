@@ -447,7 +447,8 @@ class MessageController extends BaseController
             $latest = $filtered->sortByDesc('created_at')->first();
             $correspondent = $latest->user_id == $user->id ? $latest->addressee_user : $latest->user;
             $discussions->push([
-                'entity' => $correspondent?->firstname . ' ' . $correspondent?->lastname,
+                'entity' => 'user',
+                'entity_name' => $correspondent?->firstname . ' ' . $correspondent?->lastname,
                 'latest_at' => $latest->created_at,
                 'messages' => ResourcesMessage::collection($filtered->sortByDesc('created_at')->values())
             ]);
@@ -471,7 +472,8 @@ class MessageController extends BaseController
             $org_name = $latest->organization?->org_name ?? 'organization';
 
             $discussions->push([
-                'entity' => $org_name,
+                'entity' => 'organization',
+                'entity_name' => $org_name,
                 'latest_at' => $latest->created_at,
                 'messages' => ResourcesMessage::collection($filtered->sortByDesc('created_at')->values())
             ]);
@@ -495,7 +497,8 @@ class MessageController extends BaseController
             $circle_name = $latest->circle?->circle_name ?? 'circle';
 
             $discussions->push([
-                'entity' => $circle_name,
+                'entity' => 'circle',
+                'entity_name' => $circle_name,
                 'latest_at' => $latest->created_at,
                 'messages' => ResourcesMessage::collection($filtered->sortByDesc('created_at')->values())
             ]);
@@ -519,7 +522,8 @@ class MessageController extends BaseController
             $event_title = $latest->event?->event_title ?? 'event';
 
             $discussions->push([
-                'entity' => $event_title,
+                'entity' => 'event',
+                'entity_name' => $event_title,
                 'latest_at' => $latest->created_at,
                 'messages' => ResourcesMessage::collection($filtered->sortByDesc('created_at')->values())
             ]);
