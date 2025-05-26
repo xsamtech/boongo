@@ -535,15 +535,15 @@ class MessageController extends BaseController
 
         if ($is_subscribed) {
             $valid_subscription = $user->validSubscriptions()->latest()->first();
-            $partner = Partner::whereHas('categories', fn($q) => $q->where('id', $valid_subscription->category_id)
+            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', fn($q) => $q->where('id', $valid_subscription->category_id)
                                 ->wherePivot('status_id', $status_active->id))
                                 ->where(fn($q) => $q->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id'))
-                                ->inRandomOrder()->first();
+                                ->inRandomOrder()->first() : null;
 
         } else {
-            $partner = Partner::whereHas('categories', fn($q) => $q->wherePivot('status_id', $status_active->id))
+            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', fn($q) => $q->wherePivot('status_id', $status_active->id))
                                 ->where(fn($q) => $q->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id'))
-                                ->inRandomOrder()->first();
+                                ->inRandomOrder()->first() : null;
         }
 
         return $this->handleResponse($paginated->items(), __('notifications.find_all_messages_success'), $paginated->lastPage(), $paginated->total(), $partner);
