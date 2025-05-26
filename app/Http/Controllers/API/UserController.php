@@ -28,6 +28,7 @@ use App\Http\Resources\Event as ResourcesEvent;
 use App\Http\Resources\PasswordReset as ResourcesPasswordReset;
 use App\Http\Resources\ToxicContent as ResourcesToxicContent;
 use App\Http\Resources\User as ResourcesUser;
+use App\Models\Partner;
 
 /**
  * @author Xanders
@@ -899,8 +900,16 @@ class UserController extends BaseController
      * @param  int $status_id
      * @return \Illuminate\Http\Response
      */
-    public function memberGroups($entity, $id, $status_id)
+    public function memberGroups($entity, $id, $status_id = null)
     {
+        // Groups
+        $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
+        // Statuses
+        $status_active = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
+        // Get partners & sponsors IDs
+        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name->fr', 'Partenaire')->orWhere('role_name->fr', 'Sponsor'); })->pluck('id')->toArray();
+        // Request
+        $partner = null;
         $user = User::find($id);
 
         if (is_null($user)) {
@@ -913,18 +922,76 @@ class UserController extends BaseController
             return $this->handleError(__('notifications.find_status_404'));
         }
 
-        if ($entity == 'circle') {
-            $circles = $user->circles()->wherePivot('status_id', $status->id)->orderByDesc('created_at')->paginate(4);
-            $count_circles = $user->circles()->wherePivot('status_id', $status->id)->count();
+        // Subscription
+        $is_subscribed = $user->hasValidSubscription();
 
-            return $this->handleResponse(ResourcesCircle::collection($circles), __('notifications.find_all_circles_success'), $circles->lastPage(), $count_circles);
+        if ($entity == 'circle') {
+            $circles = $user->circles()->wherePivot('status_id', $status?->id)->orderByPivot('created_at', 'desc')->paginate(5);
+            $count_circles = $user->circles()->wherePivot('status_id', $status?->id)->count();
+
+            if ($is_subscribed) {
+                $valid_subscription = $user->validSubscriptions()->latest()->first();
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
+                                        $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
+                                    })->where(function ($query) use ($users_ids) {
+                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                    })->inRandomOrder()->first() : null;
+
+            } else {
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
+                                        $query->wherePivot('status_id', $status_active->id);
+                                    })->where(function ($query) use ($users_ids) {
+                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                    })->inRandomOrder()->first() : null;
+            }
+
+            return $this->handleResponse(ResourcesCircle::collection($circles), __('notifications.find_all_circles_success'), $circles->lastPage(), $count_circles, $partner);
         }
 
         if ($entity == 'event') {
-            $events = $user->events()->wherePivot('status_id', $status->id)->orderByDesc('created_at')->paginate(4);
-            $count_events = $user->events()->wherePivot('status_id', $status->id)->count();
+            $events = $user->events()->wherePivot('status_id', $status?->id)->orderByPivot('created_at', 'desc')->paginate(5);
+            $count_events = $user->events()->wherePivot('status_id', $status?->id)->count();
 
-            return $this->handleResponse(ResourcesEvent::collection($events), __('notifications.find_all_events_success'), $events->lastPage(), $count_events);
+            if ($is_subscribed) {
+                $valid_subscription = $user->validSubscriptions()->latest()->first();
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
+                                        $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
+                                    })->where(function ($query) use ($users_ids) {
+                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                    })->inRandomOrder()->first() : null;
+
+            } else {
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
+                                        $query->wherePivot('status_id', $status_active->id);
+                                    })->where(function ($query) use ($users_ids) {
+                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                    })->inRandomOrder()->first() : null;
+            }
+
+            return $this->handleResponse(ResourcesEvent::collection($events), __('notifications.find_all_events_success'), $events->lastPage(), $count_events, $partner);
+        }
+
+        if ($entity == 'organization') {
+            $organizations = $user->organizations()->orderByPivot('created_at', 'desc')->paginate(5);
+            $count_organizations = $user->organizations()->count();
+
+            if ($is_subscribed) {
+                $valid_subscription = $user->validSubscriptions()->latest()->first();
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
+                                        $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
+                                    })->where(function ($query) use ($users_ids) {
+                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                    })->inRandomOrder()->first() : null;
+
+            } else {
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
+                                        $query->wherePivot('status_id', $status_active->id);
+                                    })->where(function ($query) use ($users_ids) {
+                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                    })->inRandomOrder()->first() : null;
+            }
+
+            return $this->handleResponse(ResourcesEvent::collection($organizations), __('notifications.find_all_organizations_success'), $organizations->lastPage(), $count_organizations);
         }
     }
 
