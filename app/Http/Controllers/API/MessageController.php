@@ -449,6 +449,7 @@ class MessageController extends BaseController
             $discussions->push([
                 'entity' => 'user',
                 'entity_name' => $correspondent?->firstname . ' ' . $correspondent?->lastname,
+                'last_message' => $latest->message_content,
                 'latest_at' => $latest->created_at,
                 'messages' => ResourcesMessage::collection($filtered->sortByDesc('created_at')->values())
             ]);
@@ -474,6 +475,7 @@ class MessageController extends BaseController
             $discussions->push([
                 'entity' => 'organization',
                 'entity_name' => $org_name,
+                'last_message' => $latest->message_content,
                 'latest_at' => $latest->created_at,
                 'messages' => ResourcesMessage::collection($filtered->sortByDesc('created_at')->values())
             ]);
@@ -499,6 +501,7 @@ class MessageController extends BaseController
             $discussions->push([
                 'entity' => 'circle',
                 'entity_name' => $circle_name,
+                'last_message' => $latest->message_content,
                 'latest_at' => $latest->created_at,
                 'messages' => ResourcesMessage::collection($filtered->sortByDesc('created_at')->values())
             ]);
@@ -524,6 +527,7 @@ class MessageController extends BaseController
             $discussions->push([
                 'entity' => 'event',
                 'entity_name' => $event_title,
+                'last_message' => $latest->message_content,
                 'latest_at' => $latest->created_at,
                 'messages' => ResourcesMessage::collection($filtered->sortByDesc('created_at')->values())
             ]);
