@@ -100,29 +100,34 @@ class MessageController extends BaseController
                 return $this->handleError(__('notifications.find_type_404'));
             }
 
-            // Group
+            // Check that it is a valid file type
             $file_type_group = Group::where('group_name', 'Type de fichier')->first();
-            // Types
             $image_type = Type::where([['type_name->fr', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
             $document_type = Type::where([['type_name->fr', 'Document'], ['group_id', $file_type_group->id]])->first();
             $audio_type = Type::where([['type_name->fr', 'Audio'], ['group_id', $file_type_group->id]])->first();
 
-            if ($type->id == $image_type->id AND $type->id == $document_type->id AND $type->id == $audio_type->id) {
+            if (!in_array($type->id, [$image_type?->id, $document_type?->id, $audio_type?->id])) {
                 return $this->handleError(__('notifications.type_is_not_file'));
             }
 
-            $custom_path = ($type->id == $document_type->id ? 'documents/messages' : ($type->id == $audio_type->id ? 'audios/messages' : 'images/messages'));
-            $file_url =  $custom_path . '/' . $message->id . '/' . Str::random(50) . '.' . $request->file('file_url')->extension();
+            // File browsing
+            foreach ($request->file('file_url') as $singleFile) {
+                // Storage path by type
+                $custom_path = ($type->id == $document_type?->id ? 'documents/messages' : ($type->id == $audio_type?->id ? 'audios/messages' : 'images/messages'));
+                $random_name = Str::random(50) . '.' . $singleFile->getClientOriginalExtension();
+                $file_path = $custom_path . '/' . $message->id . '/' . $random_name;
 
-            // Upload file
-            $dir_result = Storage::url(Storage::disk('public')->put($file_url, $request->file('file_url')));
+                // Saving the file
+                $stored_path = Storage::url(Storage::disk('public')->put($file_path, $singleFile));
 
-            File::create([
-                'file_name' => trim($request->file_name) != null ? $request->file_name : $request->file('file_url')->getClientOriginalName(),
-                'file_url' => $dir_result,
-                'type_id' => $type->id,
-                'message_id' => $message->id
-            ]);
+                // Creation of the database file
+                File::create([
+                    'file_name' => trim($request->file_name) ?: $singleFile->getClientOriginalName(),
+                    'file_url' => $stored_path,
+                    'type_id' => $type->id,
+                    'message_id' => $message->id
+                ]);
+            }
         }
 
         /*

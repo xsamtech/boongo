@@ -68,6 +68,15 @@ class User extends Authenticatable
      * MANY-TO-MANY
      * Several organizations for several users
      */
+    public function groupMessages(): BelongsToMany
+    {
+        return $this->belongsToMany(Message::class, 'message_user')->withTimestamps();
+    }
+
+    /**
+     * MANY-TO-MANY
+     * Several organizations for several users
+     */
     public function organizations(): BelongsToMany
     {
         return $this->belongsToMany(Organization::class)->withTimestamps();
