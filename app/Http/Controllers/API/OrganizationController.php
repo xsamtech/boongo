@@ -217,7 +217,7 @@ class OrganizationController extends BaseController
             ]);
         }
 
-        if ($inputs['image_64'] != null) {
+        if ($request->image_64 != null) {
             $current_organization = Organization::find($inputs['id']);
 
             if (is_null($current_organization)) {
