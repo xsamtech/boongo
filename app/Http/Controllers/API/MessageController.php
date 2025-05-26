@@ -114,16 +114,21 @@ class MessageController extends BaseController
             foreach ($request->file('file_url') as $singleFile) {
                 // Storage path by type
                 $custom_path = ($type->id == $document_type?->id ? 'documents/messages' : ($type->id == $audio_type?->id ? 'audios/messages' : 'images/messages'));
-                $random_name = Str::random(50) . '.' . $singleFile->getClientOriginalExtension();
-                $file_path = $custom_path . '/' . $message->id . '/' . $random_name;
+                $filename = $singleFile->getClientOriginalName();
+                $file_url =  $custom_path . '/' . $message->id . '/' . Str::random(50) . '.' . $filename;
 
                 // Saving the file
-                $stored_path = Storage::url(Storage::disk('public')->put($file_path, $singleFile));
+                try {
+                    $singleFile->storeAs($custom_path . '/' . $message->id, $filename, 's3');
+
+                } catch (\Throwable $th) {
+                    return $this->handleError($th, __('notifications.create_work_file_500'), 500);
+                }
 
                 // Creation of the database file
                 File::create([
                     'file_name' => trim($request->file_name) ?: $singleFile->getClientOriginalName(),
-                    'file_url' => $stored_path,
+                    'file_url' => config('filesystems.disks.s3.url') . $file_url,
                     'type_id' => $type->id,
                     'message_id' => $message->id
                 ]);

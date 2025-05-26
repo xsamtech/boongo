@@ -66,11 +66,11 @@ class User extends Authenticatable
 
     /**
      * MANY-TO-MANY
-     * Several organizations for several users
+     * Several groupMessages for several users
      */
     public function groupMessages(): BelongsToMany
     {
-        return $this->belongsToMany(Message::class, 'message_user')->withTimestamps();
+        return $this->belongsToMany(Message::class, 'message_user')->orderByPivot('created_at', 'desc')->withTimestamps()->withPivot('status_id');
     }
 
     /**

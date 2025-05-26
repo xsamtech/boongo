@@ -111,7 +111,6 @@ class WorkController extends BaseController
             $file_url =  'images/works/' . $work->id . '/' . $filename;
 
             // Upload file
-            // $dir_result = Storage::url(Storage::disk('public')->put($file_url, $file));
             try {
                 $file->storeAs('images/works/' . $work->id, $filename, 's3');
 
@@ -121,7 +120,7 @@ class WorkController extends BaseController
 
             File::create([
                 'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
-                'file_url' => config('filesystems.disks.s3.url') . $file_url, // $dir_result
+                'file_url' => config('filesystems.disks.s3.url') . $file_url,
                 'type_id' => $type->id,
                 'work_id' => $work->id
             ]);
@@ -147,7 +146,6 @@ class WorkController extends BaseController
             $file_url =  'documents/works/' . $work->id . '/' . $filename;
 
             // Upload file
-            // $dir_result = Storage::url(Storage::disk('public')->put($file_url, $file));
             try {
                 $file->storeAs('documents/works/' . $work->id, $filename, 's3');
 
@@ -157,7 +155,7 @@ class WorkController extends BaseController
 
             File::create([
                 'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
-                'file_url' => config('filesystems.disks.s3.url') . $file_url, // $dir_result
+                'file_url' => config('filesystems.disks.s3.url') . $file_url,
                 'type_id' => $type->id,
                 'work_id' => $work->id
             ]);
@@ -183,7 +181,6 @@ class WorkController extends BaseController
             $file_url =  'audios/works/' . $work->id . '/' . $filename;
 
             // Upload file
-            // $dir_result = Storage::url(Storage::disk('public')->put($file_url, $file));
             try {
                 $file->storeAs('audios/works/' . $work->id, $filename, 's3');
 
@@ -193,7 +190,7 @@ class WorkController extends BaseController
 
             File::create([
                 'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
-                'file_url' => config('filesystems.disks.s3.url') . $file_url, // $dir_result
+                'file_url' => config('filesystems.disks.s3.url') . $file_url,
                 'type_id' => $type->id,
                 'work_id' => $work->id
             ]);
@@ -213,7 +210,12 @@ class WorkController extends BaseController
             $image_url = 'images/works/' . $work->id . '/' . Str::random(50) . '.png';
 
             // Upload image
-            Storage::url(Storage::disk('public')->put($image_url, base64_decode($image)));
+            try {
+                Storage::url(Storage::disk('s3')->put($image_url, base64_decode($image)));
+
+            } catch (\Throwable $th) {
+                return $this->handleError($th, __('notifications.create_work_file_500'), 500);
+            }
 
             File::create([
                 'file_name' => trim($request->image_name) != null ? $request->image_name : $work->work_title,
