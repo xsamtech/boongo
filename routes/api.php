@@ -147,8 +147,8 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::put('subscription/validate_subscription/{user_id}', 'App\Http\Controllers\API\SubscriptionController@validateSubscription')->name('subscription.api.validate_subscription');
     Route::put('subscription/invalidate_subscription/{user_id}', 'App\Http\Controllers\API\SubscriptionController@invalidateSubscription')->name('subscription.api.invalidate_subscription');
     // User
-    Route::get('user/find_by_role/{locale}/{role_name}', 'App\Http\Controllers\API\UserController@findByRole')->name('user.api.find_by_role');
-    Route::get('user/find_by_not_role/{locale}/{role_name}', 'App\Http\Controllers\API\UserController@findByNotRole')->name('user.api.find_by_not_role');
+    Route::get('user/find_by_role/{role_name}', 'App\Http\Controllers\API\UserController@findByRole')->name('user.api.find_by_role');
+    Route::get('user/find_by_not_role/{role_name}', 'App\Http\Controllers\API\UserController@findByNotRole')->name('user.api.find_by_not_role');
     Route::get('user/organization_members/{organization_id}/{role_name}', 'App\Http\Controllers\API\UserController@organizationMembers')->name('user.api.organization_members');
     Route::get('user/group_members/{entity}/{entity_id}', 'App\Http\Controllers\API\UserController@groupMembers')->name('user.api.group_members');
     Route::get('user/member_groups/{entity}/{user_id}/{status_id}', 'App\Http\Controllers\API\UserController@memberGroups')->name('user.api.member_groups');

@@ -803,13 +803,12 @@ class UserController extends BaseController
      * Search all users having a specific role
      *
      * @param  string $locale
-     * @param  string $role_name
      * @return \Illuminate\Http\Response
      */
-    public function findByRole($locale, $role_name)
+    public function findByRole($role_name)
     {
-        $users = User::whereHas('roles', function ($query) use ($locale, $role_name) {
-                                    $query->where('role_name->' . $locale, $role_name);
+        $users = User::whereHas('roles', function ($query) use ($role_name) {
+                                    $query->where('role_name', $role_name);
                                 })->orderByDesc('users.created_at')->get();
 
         return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'));    
@@ -822,10 +821,10 @@ class UserController extends BaseController
      * @param  string $role_name
      * @return \Illuminate\Http\Response
      */
-    public function findByNotRole($locale, $role_name)
+    public function findByNotRole($role_name)
     {
-        $users = User::whereDoesntHave('roles', function ($query) use ($locale, $role_name) {
-                                    $query->where('role_name->' . $locale, $role_name);
+        $users = User::whereDoesntHave('roles', function ($query) use ($role_name) {
+                                    $query->where('role_name' . $role_name);
                                 })->orderByDesc('users.created_at')->get();
 
         return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'));    
