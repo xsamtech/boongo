@@ -431,14 +431,20 @@ class MessageController extends BaseController
         // Subscription
         $is_subscribed = $user->hasValidSubscription();
 
-        // Message processing
         $perPage = $request->get('per_page', 10);
         $page = $request->get('page', 1);
-        // Prepare results
         $discussions = collect();
-        // === GROUP MESSAGES (via message_user, 2+ persons)
-        $groupMessages = DB::table('message_user')->select('message_id')->groupBy('message_id')->havingRaw('COUNT(user_id) >= 2')->pluck('message_id');
-        $grouped = Message::whereIn('id', $groupMessages)->where('type_id', $type->id)->whereHas('users', fn($q) => $q->where('user_id', $user->id))->with('users', 'sender')->get()->groupBy('id');
+
+        // === GROUP MESSAGES
+        $groupMessages = DB::table('message_user')->select('message_id')
+                            ->groupBy('message_id')
+                            ->havingRaw('COUNT(user_id) >= 2')
+                            ->pluck('message_id');
+
+        $grouped = Message::whereIn('id', $groupMessages)
+                            ->where('type_id', $type->id)
+                            ->whereHas('users', fn($q) => $q->where('user_id', $user->id))
+                            ->with('users', 'sender')->get()->groupBy('id');
 
         foreach ($grouped as $messages) {
             $filtered = $messages->filter(fn($msg) => $msg->user_id == $user->id || $msg->users->contains('id', $user->id));
@@ -450,17 +456,15 @@ class MessageController extends BaseController
             $discussions->push([
                 'entity' => 'chat',
                 'latest_at' => $latest->created_at,
-                'messages' => $filtered->sortByDesc('created_at')->values()->map(fn($msg) => [
-                    'id' => $msg->id,
-                    'content' => $msg->message_content,
-                    'created_at' => $msg->created_at,
-                    'user_id' => $msg->user_id,
-                ]),
+                'messages' => ResourcesMessage::collection($filtered->sortByDesc('created_at')->values())
             ]);
         }
 
-        // === ORGANIZATION MESSAGES
-        $orgGroups = Message::whereNotNull('addressee_organization_id')->where('type_id', $type->id)->where(fn($q) => $q->where('user_id', $user->id)->orWhere('addressee_user_id', $user->id))->with('organization', 'sender')->get()->groupBy('addressee_organization_id');
+        // === ORGANIZATION
+        $orgGroups = Message::whereNotNull('addressee_organization_id')
+                            ->where('type_id', $type->id)
+                            ->where(fn($q) => $q->where('user_id', $user->id)->orWhere('addressee_user_id', $user->id))
+                            ->with('organization', 'sender')->get()->groupBy('addressee_organization_id');
 
         foreach ($orgGroups as $messages) {
             $filtered = $messages->filter(fn($msg) => $msg->user_id == $user->id || $msg->addressee_user_id == $user->id);
@@ -472,17 +476,15 @@ class MessageController extends BaseController
             $discussions->push([
                 'entity' => 'organization',
                 'latest_at' => $latest->created_at,
-                'messages' => $filtered->sortByDesc('created_at')->values()->map(fn($msg) => [
-                    'id' => $msg->id,
-                    'content' => $msg->message_content,
-                    'created_at' => $msg->created_at,
-                    'user_id' => $msg->user_id,
-                ]),
+                'messages' => ResourcesMessage::collection($filtered->sortByDesc('created_at')->values())
             ]);
         }
 
-        // === CIRCLE MESSAGES
-        $circleGroups = Message::whereNotNull('addressee_circle_id')->where('type_id', $type->id)->where(fn($q) => $q->where('user_id', $user->id)->orWhere('addressee_user_id', $user->id))->with('circle', 'sender')->get()->groupBy('addressee_circle_id');
+        // === CIRCLE
+        $circleGroups = Message::whereNotNull('addressee_circle_id')
+                                ->where('type_id', $type->id)
+                                ->where(fn($q) => $q->where('user_id', $user->id)->orWhere('addressee_user_id', $user->id))
+                                ->with('circle', 'sender')->get()->groupBy('addressee_circle_id');
 
         foreach ($circleGroups as $messages) {
             $filtered = $messages->filter(fn($msg) => $msg->user_id == $user->id || $msg->addressee_user_id == $user->id);
@@ -494,17 +496,15 @@ class MessageController extends BaseController
             $discussions->push([
                 'entity' => 'circle',
                 'latest_at' => $latest->created_at,
-                'messages' => $filtered->sortByDesc('created_at')->values()->map(fn($msg) => [
-                    'id' => $msg->id,
-                    'content' => $msg->message_content,
-                    'created_at' => $msg->created_at,
-                    'user_id' => $msg->user_id,
-                ]),
+                'messages' => ResourcesMessage::collection($filtered->sortByDesc('created_at')->values())
             ]);
         }
 
-        // === EVENT MESSAGES
-        $eventGroups = Message::whereNotNull('event_id')->where('type_id', $type->id)->where(fn($q) => $q->where('user_id', $user->id)->orWhere('addressee_user_id', $user->id))->with('event', 'sender')->get()->groupBy('event_id');
+        // === EVENT
+        $eventGroups = Message::whereNotNull('event_id')
+                                ->where('type_id', $type->id)
+                                ->where(fn($q) => $q->where('user_id', $user->id)->orWhere('addressee_user_id', $user->id))
+                                ->with('event', 'sender')->get()->groupBy('event_id');
 
         foreach ($eventGroups as $messages) {
             $filtered = $messages->filter(fn($msg) => $msg->user_id == $user->id || $msg->addressee_user_id == $user->id);
@@ -516,40 +516,37 @@ class MessageController extends BaseController
             $discussions->push([
                 'entity' => 'event',
                 'latest_at' => $latest->created_at,
-                'messages' => $filtered->sortByDesc('created_at')->values()->map(fn($msg) => [
-                    'id' => $msg->id,
-                    'content' => $msg->message_content,
-                    'created_at' => $msg->created_at,
-                    'user_id' => $msg->user_id,
-                ]),
+                'messages' => ResourcesMessage::collection($filtered->sortByDesc('created_at')->values())
             ]);
         }
 
-        // === Global tri & pagination
+        // Tri et pagination
         $sorted = $discussions->sortByDesc('latest_at')->values();
-        $paginated = new LengthAwarePaginator($sorted->forPage($page, $perPage)->values(), $sorted->count(), $perPage, $page, ['path' => request()->url(), 'query' => request()->query()]);
+        $paginated = new LengthAwarePaginator(
+            $sorted->forPage($page, $perPage)->values(),
+            $sorted->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
 
-        // If user is subscribed, send only data of the same category as that in the subscription
+        // === PUB & RETURN
+        $partner = null;
+
         if ($is_subscribed) {
             $valid_subscription = $user->validSubscriptions()->latest()->first();
-            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
-                                    $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
-                                })->where(function ($query) use ($users_ids) {
-                                    $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                })->inRandomOrder()->first() : null;
+            $partner = Partner::whereHas('categories', fn($q) => $q->where('id', $valid_subscription->category_id)
+                                ->wherePivot('status_id', $status_active->id))
+                                ->where(fn($q) => $q->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id'))
+                                ->inRandomOrder()->first();
 
-            return $this->handleResponse($paginated->items(), __('notifications.find_all_messages_success'), $paginated->lastPage(), $paginated->total(), $partner);
-
-        // Otherwise, send all data
         } else {
-            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
-                                    $query->wherePivot('status_id', $status_active->id);
-                                })->where(function ($query) use ($users_ids) {
-                                    $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                })->inRandomOrder()->first() : null;
-
-            return $this->handleResponse($paginated->items(), __('notifications.find_all_messages_success'), $paginated->lastPage(), $paginated->total(), $partner);
+            $partner = Partner::whereHas('categories', fn($q) => $q->wherePivot('status_id', $status_active->id))
+                                ->where(fn($q) => $q->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id'))
+                                ->inRandomOrder()->first();
         }
+
+        return $this->handleResponse($paginated->items(), __('notifications.find_all_messages_success'), $paginated->lastPage(), $paginated->total(), $partner);
     }
 
     /**
