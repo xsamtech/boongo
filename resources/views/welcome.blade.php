@@ -78,6 +78,10 @@
 				<p><u>Contact</u> : <strong>+243 855 273 394</strong></p>
 				<p><u>E-mail</u> : <strong><a href="mailto:contact@boongo7.com">contact@boongo7.com</a></strong></p>
 				<p><u>Adresse Physique</u> : <strong>Silikin Village - Concession COTEX / 63 Avenue Colonel Mondjiba - Kinshasa/Gombe</strong></p>
+				<hr>
+				<a href="{{ asset('assets/apps/boongo-release.apk') }}">
+					<h1>Télécharger ici la version Android</h1>
+				</a>
 			</div>
 		</div>
 	</main>
