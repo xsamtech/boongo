@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\Circle as ResourcesCircle;
 use App\Http\Resources\Event as ResourcesEvent;
+use App\Http\Resources\Organization as ResourcesOrganization;
 use App\Http\Resources\PasswordReset as ResourcesPasswordReset;
 use App\Http\Resources\ToxicContent as ResourcesToxicContent;
 use App\Http\Resources\User as ResourcesUser;
@@ -991,7 +992,7 @@ class UserController extends BaseController
                                     })->inRandomOrder()->first() : null;
             }
 
-            return $this->handleResponse(ResourcesEvent::collection($organizations), __('notifications.find_all_organizations_success'), $organizations->lastPage(), $count_organizations);
+            return $this->handleResponse(ResourcesOrganization::collection($organizations), __('notifications.find_all_organizations_success'), $organizations->lastPage(), $count_organizations);
         }
     }
 
