@@ -79,7 +79,7 @@
 				<p><u>E-mail</u> : <strong><a href="mailto:contact@boongo7.com">contact@boongo7.com</a></strong></p>
 				<p><u>Adresse Physique</u> : <strong>Silikin Village - Concession COTEX / 63 Avenue Colonel Mondjiba - Kinshasa/Gombe</strong></p>
 				<hr>
-				<h3 class="text-center"><a href="{{ asset('assets/apps/boongo-0_0_1.apk') }}" class="text-decoration-underline">Télécharger ici la version <strong>OVERVIEW</strong> de l'appli Android</a></h3>
+				<h3 class="mb-4"><a href="{{ asset('assets/apps/boongo-0_0_1.apk') }}" class="text-decoration-underline">Télécharger ici la version <strong>OVERVIEW</strong> de l'appli Android</a></h3>
 			</div>
 		</div>
 	</main>
