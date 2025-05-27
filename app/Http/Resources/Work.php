@@ -65,7 +65,7 @@ class Work extends JsonResource
             'number_of_hours' => $this->number_of_hours,
             'is_owner_blocked' => $is_toxic,
             'photo_url' => $photo ? $photo->file_url : getWebURL() . '/assets/img/cover.png',
-            'video_url' => $video ? $photo->file_url : getWebURL() . '/assets/img/cover.png',
+            'video_url' => $video ? $video->file_url : getWebURL() . '/assets/img/cover.png',
             'document_url' => !empty($files) ? (inArrayR($doc_type->id, $files, 'type_id') ? $doc->file_url : null) : null,
             'audio_url' => !empty($files) ? (inArrayR($audio_type->id, $files, 'type_id') ? $audio->file_url : null) : null,
             'images' => !empty($imgs) ? getArrayKeys($imgs, 'file_url') : null,
