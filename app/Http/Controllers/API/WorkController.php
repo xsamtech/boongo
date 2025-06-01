@@ -65,6 +65,8 @@ class WorkController extends BaseController
             'work_url' => $request->work_url,
             'video_source' => $request->hasFile('image_file_url') ? 'AWS' : 'YouTube',
             'media_length' => $request->media_length,
+            'author' => $request->author,
+            'editor' => $request->editor,
             'is_public' => isset($request->is_public) ? $request->is_public : 0,
             'consultation_price' => $request->consultation_price,
             'number_of_hours' => $request->number_of_hours,
@@ -310,6 +312,8 @@ class WorkController extends BaseController
             'work_url' => $request->work_url,
             'video_source' => $request->video_source,
             'media_length' => $request->media_length,
+            'author' => $request->author,
+            'editor' => $request->editor,
             'is_public' => $request->is_public,
             'consultation_price' => $request->consultation_price,
             'number_of_hours' => $request->number_of_hours,
@@ -353,6 +357,20 @@ class WorkController extends BaseController
         if ($inputs['media_length'] != null) {
             $work->update([
                 'media_length' => $inputs['media_length'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['author'] != null) {
+            $work->update([
+                'author' => $inputs['author'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['editor'] != null) {
+            $work->update([
+                'editor' => $inputs['editor'],
                 'updated_at' => now(),
             ]);
         }

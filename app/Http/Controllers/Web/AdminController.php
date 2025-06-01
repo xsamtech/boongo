@@ -129,6 +129,8 @@ class AdminController extends Controller
             'work_content' => $request->work_content,
             'work_url' => $request->work_url,
             'video_source' => isset($request->video_source) ? $request->video_source : 'AWS',
+            'author' => $request->author,
+            'editor' => $request->editor,
             'is_public' => 1,
             'type_id' => $request->type_id,
             'status_id' => $request->status_id,

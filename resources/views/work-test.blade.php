@@ -180,6 +180,16 @@
                                     </div>
 
                                     <div class="form-group mb-3">
+                                        <label for="author" class="visually-hidden">Auteur</label>
+                                        <input type="text" name="author" id="author" class="form-control" placeholder="Auteur">
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="editor" class="visually-hidden">Maison d'édition / Label de production</label>
+                                        <input type="text" name="editor" id="editor" class="form-control" placeholder="Maison d'édition / Label de production">
+                                    </div>
+
+                                    <div class="form-group mb-3">
                                         <label for="video_file_url">@lang('miscellaneous.upload.upload_video')</label>
                                         <input type="file" name="video_file_url" id="video_file_url" class="form-control">
                                     </div>
