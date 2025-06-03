@@ -93,6 +93,46 @@ class WorkController extends BaseController
             $work->categories()->sync($request->categories_ids);
         }
 
+        if ($request->hasFile('files_urls')) {
+            if ($request->file_type_id == null) {
+                return $this->handleError($request->file_type_id, __('validation.required') . ' (' . __('miscellaneous.file_type') . ') ', 400);
+            }
+
+            $current_type = Type::find($request->file_type_id);
+
+            if (is_null($current_type)) {
+                return $this->handleError(__('notifications.find_type_404'));
+            }
+
+            if (!in_array($current_type->id, [$image_type?->id, $document_type?->id, $audio_type?->id])) {
+                return $this->handleError(__('notifications.type_is_not_file'));
+            }
+
+            // File browsing
+            foreach ($request->file('files_urls') as $singleFile) {
+                // Storage path by type
+                $custom_path = ($current_type->id == $document_type?->id ? 'documents/works' : ($current_type->id == $audio_type?->id ? 'audios/works' : 'images/works'));
+                $filename = $singleFile->getClientOriginalName();
+                $file_url =  $custom_path . '/' . $work->id . '/' . Str::random(50) . '.' . $filename;
+
+                // Saving the file
+                try {
+                    $singleFile->storeAs($custom_path . '/' . $work->id, $filename, 's3');
+
+                } catch (\Throwable $th) {
+                    return $this->handleError($th, __('notifications.create_work_file_500'), 500);
+                }
+
+                // Creation of the database file
+                File::create([
+                    'file_name' => trim($request->file_name) ?: $singleFile->getClientOriginalName(),
+                    'file_url' => config('filesystems.disks.s3.url') . $file_url,
+                    'type_id' => $current_type->id,
+                    'work_id' => $work->id
+                ]);
+            }
+        }
+
         if ($request->hasFile('video_file_url')) {
             if ($request->image_file_type_id == null) {
                 return $this->handleError($request->image_file_type_id, __('validation.required') . ' (' . __('miscellaneous.file_type') . ') ', 400);
