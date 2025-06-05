@@ -51,7 +51,7 @@
 	<title>Bibliothèque numérique</title>
 </head>
 <body>
-	<main role="main" class="container my-5" style="background-image: url(../../public/assets/img/drc-map.png); background-size: cover; background-repeat: no-repeat; background-attachment: fixed;">
+	<main role="main" class="container my-5" style="background-image: url({{ asset('assets/img/drc-map.png') }}); background-size: cover; background-repeat: no-repeat; background-attachment: fixed;">
 		<div class="row">
 			<div class="col-lg-2"></div>
 			<div class="col-lg-8">
@@ -61,7 +61,7 @@
 				</div>
 				<h1 class="mt-5 text-center">Annonce du lancement d’une Bibliothèque Numérique au standard industriel</h1>
 				<hr>
-				<hr>
+				<hr>Boon
 				<hr>
 				<p style="text-align: justify;">Nous avons le plaisir de vous annoncer le lancement officiel de notre <strong>bibliothèque numérique de nouvelle génération, conçue selon les standards industriels les plus avancés. Cette plateforme innovante a pour vocation de rendre accessibles, à un large public, des contenus de haute valeur documentaire dans un objectif de <span class="text-danger">vulgarisation des données</span></strong>.</p>
 				<p style="text-align: justify;">Notre bibliothèque propose un vaste catalogue comprenant :</p>
