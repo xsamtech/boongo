@@ -29,9 +29,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // if (app()->environment('production')) {
-        //     URL::forceScheme('https');
-        // }
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
 
         // Select all countries
         $countries = Country::all();
