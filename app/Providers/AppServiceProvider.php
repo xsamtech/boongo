@@ -8,6 +8,7 @@ use App\Models\Type;
 use Illuminate\Support\ServiceProvider;
 use App\Http\Resources\Country as ResourcesCountry;
 use App\Http\Resources\Type as ResourcesType;
+use Illuminate\Support\Facades\URL;
 
 /**
  * @author Xanders
@@ -28,6 +29,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         // Select all countries
         $countries = Country::all();
         // Select all types by group (Type de transaction)
