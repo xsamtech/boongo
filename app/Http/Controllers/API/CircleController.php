@@ -168,15 +168,14 @@ class CircleController extends BaseController
      * Search (by filtering or not) an organization
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string $data
      * @return \Illuminate\Http\Response
      */
-    public function search(Request $request, $data)
+    public function search(Request $request)
     {
         $query = Circle::query();
 
         // Apply the filter to the circle name
-        $query->where('circle_name', 'LIKE', '%' . $data . '%');
+        $query->where('circle_name', 'LIKE', '%' . $request->data . '%');
 
         // Add dynamic conditions
         $query->when($request->type_id, function ($query) use ($request) {

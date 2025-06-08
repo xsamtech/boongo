@@ -805,13 +805,12 @@ class UserController extends BaseController
      * Search (by filtering or not) a user
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string $data
      * @return \Illuminate\Http\Response
      */
-     public function search(Request $request, $data)
-     {
+    public function search(Request $request)
+    {
         // A more surgical search
-        $search = trim($data);
+        $search = trim($request->data);
         $keywords = preg_split('/\s+/', $search); // split by space
         // Request
         $query = User::query();

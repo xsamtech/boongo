@@ -322,35 +322,40 @@ class EventController extends BaseController
     /**
      * Search a event by its title.
      *
-     * @param  string $data
-     * @param  string|null $date_from
-     * @param  string|null $date_to
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function search($data, $date_from = null, $date_to = null)
+    public function search(Request $request)
     {
-        // Group
-        $access_type_group = Group::where('group_name', 'Type d\'accès')->first();
-        // Type
-        $public_type = Type::where([['type_name->fr', 'Public'], ['group_id', $access_type_group->id]])->first();
+        $query = Event::query();
 
-        if ($date_from != null OR $date_to != null) {
-            $events = Event::where(['event_title', 'LIKE', '%' . $data . '%'], ['type_id', $public_type->id])->whereBetween('created_at', [$date_from, $date_to])->orderByDesc('created_at')->paginate(4);
-            $count_events = Event::where(['event_title', 'LIKE', '%' . $data . '%'], ['type_id', $public_type->id])->whereBetween('created_at', [$date_from, $date_to])->count();
-
-            if (is_null($events)) {
-                return $this->handleResponse([], __('miscellaneous.empty_list'));
-            }
-
-            return $this->handleResponse(ResourcesEvent::collection($events), __('notifications.find_all_events_success'), $events->lastPage(), $count_events);
-
-        } else {
-            $events = Event::where(['event_title', 'LIKE', '%' . $data . '%'], ['type_id', $public_type->id])->orderByDesc('created_at')->paginate(4);
-            $count_events = Event::where(['event_title', 'LIKE', '%' . $data . '%'], ['type_id', $public_type->id])->count();
-
-            return $this->handleResponse(ResourcesEvent::collection($events), __('notifications.find_all_events_success'), $events->lastPage(), $count_events);
+        // Filter by event title if "data" is present in the query
+        if ($request->has('data')) {
+            $query->where('event_title', 'LIKE', '%' . $request->data . '%');
         }
+
+        // Apply filter on dates if "date_from" or "date_to" is set
+        if ($request->date_from || $request->date_to) {
+            $query->whereBetween('created_at', [
+                $request->date_from ?: '1970-01-01', // Default to a very old date if not set
+                $request->date_to ?: now(),          // Default to current date if not set
+            ]);
+        }
+
+        // Add dynamic conditions (type_id)
+        $query->when($request->type_id, function ($query) use ($request) {
+            return $query->where('type_id', $request->type_id);
+        });
+
+        // Retrieve results with pagination
+        $events = $query->orderByDesc('created_at')->paginate(10);
+        // Count events to determine return message
+        $count_events = $events->total(); // Using Pagination to Get Total Events
+        $message = $count_events > 0 ? __('notifications.find_all_events_success') : __('notifications.find_event_404');
+
+        return $this->handleResponse(ResourcesEvent::collection($events), $message, $events->lastPage(), $count_events);
     }
+
 
     /**
      * Find all events by type.

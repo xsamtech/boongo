@@ -94,7 +94,6 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::post('user', 'App\Http\Controllers\API\UserController@store')->name('user.api.store');
     Route::get('user/{id}', 'App\Http\Controllers\API\UserController@show')->name('user.api.show');
     Route::get('user/profile/{username}', 'App\Http\Controllers\API\UserController@profile')->name('user.api.profile');
-    Route::get('user/search/{data}', 'App\Http\Controllers\API\UserController@search')->name('user.api.search');
     Route::post('user/login', 'App\Http\Controllers\API\UserController@login')->name('user.api.login');
     // PasswordReset
     Route::get('password_reset/search_by_email_or_phone/{data}', 'App\Http\Controllers\API\PasswordResetController@searchByEmailOrPhone')->name('password_reset.api.search_by_email_or_phone');
@@ -164,18 +163,19 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::put('user/subscribe_to_group/{user_id}/{addressee_id}', 'App\Http\Controllers\API\UserController@subscribeToGroup')->name('user.api.subscribe_to_group');
     Route::put('user/unsubscribe_to_group/{user_id}/{addressee_id}', 'App\Http\Controllers\API\UserController@unsubscribeToGroup')->name('user.api.unsubscribe_to_group');
     Route::put('user/update_avatar_picture/{id}', 'App\Http\Controllers\API\UserController@updateAvatarPicture')->name('user.api.update_avatar_picture');
+    Route::post('user/search', 'App\Http\Controllers\API\UserController@search')->name('user.api.search');
     // Organization
-    Route::get('organization/search/{data}', 'App\Http\Controllers\API\OrganizationController@search')->name('organization.api.search');
+    Route::post('organization/search', 'App\Http\Controllers\API\OrganizationController@search')->name('organization.api.search');
     Route::get('organization/find_all_by_owner/{data}', 'App\Http\Controllers\API\OrganizationController@findAllByOwner')->name('organization.api.find_all_by_owner');
     // Circle
-    Route::get('circle/search/{data}', 'App\Http\Controllers\API\CircleController@search')->name('circle.api.search');
+    Route::post('circle/search/{data}', 'App\Http\Controllers\API\CircleController@search')->name('circle.api.search');
     // Event
-    Route::get('event/search/{data}/{date_from}/{date_to}', 'App\Http\Controllers\API\EventController@search')->name('event.api.search');
     Route::get('event/find_by_type/{locale}/{type_name}', 'App\Http\Controllers\API\EventController@findByType')->name('event.api.find_by_type');
     Route::get('event/find_by_status/{locale}/{status_name}', 'App\Http\Controllers\API\EventController@findByStatus')->name('event.api.find_by_status');
     Route::get('event/find_by_organization/{organization_id}', 'App\Http\Controllers\API\EventController@findByOrganization')->name('event.api.find_by_organization');
     Route::get('event/find_speakers/{event_id}', 'App\Http\Controllers\API\EventController@findSpeakers')->name('event.api.find_speakers');
     Route::put('event/update_cover/{event_id}', 'App\Http\Controllers\API\EventController@update_cover')->name('event.api.update_cover');
+    Route::post('event/search', 'App\Http\Controllers\API\EventController@search')->name('event.api.search');
     Route::post('event/filter_for_organization/{organization_id}', 'App\Http\Controllers\API\EventController@filterForOrganization')->name('event.api.filter_for_organization');
     Route::post('event/filter_for_everybody', 'App\Http\Controllers\API\EventController@filterForEverybody')->name('event.api.filter_for_everybody');
     // Message
