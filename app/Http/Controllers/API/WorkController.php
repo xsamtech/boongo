@@ -528,7 +528,7 @@ class WorkController extends BaseController
         // Statuses
         $status_active = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
         // Get partners & sponsors IDs
-        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name->fr', 'Partenaire')->orWhere('role_name->fr', 'Sponsor'); })->pluck('id')->toArray();
+        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name', 'Partenaire')->orWhere('role_name', 'Sponsor'); })->pluck('id')->toArray();
 
         if ($request->hasHeader('X-user-id')) {
             // User
@@ -607,7 +607,7 @@ class WorkController extends BaseController
         // Statuses
         $status_active = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
         // Get partners & sponsors IDs
-        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name->fr', 'Partenaire')->orWhere('role_name->fr', 'Sponsor'); })->pluck('id')->toArray();
+        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name', 'Partenaire')->orWhere('role_name', 'Sponsor'); })->pluck('id')->toArray();
 
         if ($entity == 'user') {
             $user = User::find($entity_id);
@@ -824,7 +824,7 @@ class WorkController extends BaseController
         $status_active = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
         $status_valid = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
         // Get partners & sponsors IDs
-        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name->fr', 'Partenaire')->orWhere('role_name->fr', 'Sponsor'); })->pluck('id')->toArray();
+        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name', 'Partenaire')->orWhere('role_name', 'Sponsor'); })->pluck('id')->toArray();
         // Request
         $type = Type::where('type_name->' . $locale, $type_name)->first();
 
@@ -1048,7 +1048,7 @@ class WorkController extends BaseController
         // Statuses
         $status_active = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
         // Get partners & sponsors IDs
-        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name->fr', 'Partenaire')->orWhere('role_name->fr', 'Sponsor'); })->pluck('id')->toArray();
+        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name', 'Partenaire')->orWhere('role_name', 'Sponsor'); })->pluck('id')->toArray();
 
         if ($request->hasHeader('X-user-id') and $request->hasHeader('X-ip-address') or $request->hasHeader('X-user-id') and !$request->hasHeader('X-ip-address')) {
             // Logged in user
@@ -1349,7 +1349,7 @@ class WorkController extends BaseController
         // Statuses
         $status_active = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
         // Get partners & sponsors IDs
-        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name->fr', 'Partenaire')->orWhere('role_name->fr', 'Sponsor'); })->pluck('id')->toArray();
+        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name', 'Partenaire')->orWhere('role_name', 'Sponsor'); })->pluck('id')->toArray();
 
         if ($request->hasHeader('X-user-id')) {
             // Logged in user

@@ -412,7 +412,7 @@ class MessageController extends BaseController
         $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
         $status_active = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
         $users_ids = User::whereHas('roles', function ($query) {
-                                $query->where('role_name->fr', 'Partenaire')->orWhere('role_name->fr', 'Sponsor');
+                                $query->where('role_name', 'Partenaire')->orWhere('role_name', 'Sponsor');
                             })->pluck('id')->toArray();
         $type = Type::where('type_name->' . $locale, $type_name)->first();
 
