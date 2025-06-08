@@ -94,6 +94,7 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::post('user', 'App\Http\Controllers\API\UserController@store')->name('user.api.store');
     Route::get('user/{id}', 'App\Http\Controllers\API\UserController@show')->name('user.api.show');
     Route::get('user/profile/{username}', 'App\Http\Controllers\API\UserController@profile')->name('user.api.profile');
+    Route::get('user/search/{data}', 'App\Http\Controllers\API\UserController@search')->name('user.api.search');
     Route::post('user/login', 'App\Http\Controllers\API\UserController@login')->name('user.api.login');
     // PasswordReset
     Route::get('password_reset/search_by_email_or_phone/{data}', 'App\Http\Controllers\API\PasswordResetController@searchByEmailOrPhone')->name('password_reset.api.search_by_email_or_phone');
@@ -114,6 +115,7 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::resource('cart', 'App\Http\Controllers\API\CartController');
     Route::resource('subscription', 'App\Http\Controllers\API\SubscriptionController')->except(['index']);
     Route::resource('user', 'App\Http\Controllers\API\UserController')->except(['store', 'show', 'login']);
+    Route::resource('circle', 'App\Http\Controllers\API\CircleController');
     Route::resource('organization', 'App\Http\Controllers\API\OrganizationController');
     Route::resource('event', 'App\Http\Controllers\API\EventController');
     Route::resource('message', 'App\Http\Controllers\API\MessageController');
@@ -165,6 +167,8 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     // Organization
     Route::get('organization/search/{data}', 'App\Http\Controllers\API\OrganizationController@search')->name('organization.api.search');
     Route::get('organization/find_all_by_owner/{data}', 'App\Http\Controllers\API\OrganizationController@findAllByOwner')->name('organization.api.find_all_by_owner');
+    // Circle
+    Route::get('circle/search/{data}', 'App\Http\Controllers\API\CircleController@search')->name('circle.api.search');
     // Event
     Route::get('event/search/{data}/{date_from}/{date_to}', 'App\Http\Controllers\API\EventController@search')->name('event.api.search');
     Route::get('event/find_by_type/{locale}/{type_name}', 'App\Http\Controllers\API\EventController@findByType')->name('event.api.find_by_type');

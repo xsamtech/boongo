@@ -162,4 +162,32 @@ class CircleController extends BaseController
 
         return $this->handleResponse(ResourcesCircle::collection($circles), __('notifications.delete_circle_success'));
     }
+
+    // ==================================== CUSTOM METHODS ====================================
+    /**
+     * Search (by filtering or not) an organization
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string $data
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request, $data)
+    {
+        $query = Circle::query();
+
+        // Apply the filter to the circle name
+        $query->where('circle_name', 'LIKE', '%' . $data . '%');
+
+        // Add dynamic conditions
+        $query->when($request->type_id, function ($query) use ($request) {
+            return $query->where('type_id', $request->type_id);
+        });
+
+        // Retrieves the query results
+        $circles = $query->orderByDesc('updated_at')->paginate(10);
+        $count_circles = $query->count();
+        $message = ($count_circles > 0 ? __('notifications.find_all_circles_success') : __('notifications.find_circle_404'));
+
+        return $this->handleResponse(ResourcesCircle::collection($circles), $message, $circles->lastPage(), $count_circles);
+    }
 }

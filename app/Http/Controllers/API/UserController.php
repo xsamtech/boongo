@@ -802,6 +802,47 @@ class UserController extends BaseController
     }
 
     /**
+     * Search (by filtering or not) a user
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string $data
+     * @return \Illuminate\Http\Response
+     */
+     public function search(Request $request, $data)
+     {
+        // A more surgical search
+        $search = trim($data);
+        $keywords = preg_split('/\s+/', $search); // split by space
+        // Request
+        $query = User::query();
+
+        // Apply the filter to the user firstname/lastname
+        $query->where(function ($q) use ($keywords) {
+            foreach ($keywords as $keyword) {
+                $q->where(function ($sub) use ($keyword) {
+                    $sub->where('firstname', 'LIKE', $keyword . '%')
+                    ->orWhere('lastname', 'LIKE', $keyword . '%')
+                    ->orWhereRaw("CONCAT(firstname, ' ', lastname) LIKE ?", [$keyword . '%']);
+                });
+            }
+        });
+
+        // Add dynamic conditions
+        $query->when($request->role_id, function ($query) use ($request) {
+            return $query->whereHas('roles', function ($query) use ($request) {
+                $query->where('id', $request->role_id);
+            });
+        });
+
+        // Tri par date de mise à jour et pagination
+        $users = $query->orderByDesc('updated_at')->paginate(10);
+        $count_users = $query->count();
+        $message = ($count_users > 0 ? __('notifications.find_all_members_success') : __('notifications.find_member_404'));
+
+        return $this->handleResponse(ResourcesUser::collection($users), $message, $users->lastPage(), $count_users);
+    }
+
+    /**
      * Search all users having a specific role
      *
      * @param  string $locale
@@ -908,7 +949,7 @@ class UserController extends BaseController
         // Statuses
         $status_active = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
         // Get partners & sponsors IDs
-        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name->fr', 'Partenaire')->orWhere('role_name->fr', 'Sponsor'); })->pluck('id')->toArray();
+        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name', 'Partenaire')->orWhere('role_name', 'Sponsor'); })->pluck('id')->toArray();
         // Request
         $partner = null;
         $user = User::find($id);
