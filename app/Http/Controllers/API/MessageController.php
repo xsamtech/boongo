@@ -463,6 +463,7 @@ class MessageController extends BaseController
      * @param  string $locale
      * @param  string $type_name
      * @param  int $user_id
+     * @param  string $status_name
      * @return \Illuminate\Http\Response
      */
     public function userChatsList(Request $request, $locale, $type_name, $user_id)
@@ -471,10 +472,20 @@ class MessageController extends BaseController
         $invitation_status_group = Group::where('group_name', 'Etat de l\'invitation')->first();
         $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
         $message_type_group = Group::where('group_name', 'Type de message')->first();
+        $message_status_group = Group::where('group_name', 'Etat du message')->first();
         // Status
         $active_status = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
         $accepted_status = Status::where([['status_name->fr', 'Acceptée'], ['group_id', $invitation_status_group->id]])->first();
+
         // Requests
+        $status = null;
+
+        if (isset($request->status_name) && is_string($request->status_name) && !empty($request->status_name)) {
+            $status = Status::where([['status_name->' . $locale, $request->status_name], ['group_id', $message_status_group->id]])->first();
+
+            if (is_null($status)) return $this->handleError(__('notifications.find_status_404'));
+        }
+
         $users_ids = User::whereHas('roles', function ($query) {
                                 $query->where('role_name', 'Partenaire')->orWhere('role_name', 'Sponsor');
                             })->pluck('id')->toArray();
@@ -498,6 +509,11 @@ class MessageController extends BaseController
                                     $q->where('user_id', $user->id)
                                     ->orWhere('addressee_user_id', $user->id);
                                 })
+                                ->when($status, function ($query) use ($status) {
+                                    $query->whereHas('status', function($q) use ($status) {
+                                        $q->where('status_id', $status->id);
+                                    });
+                                })
                                 ->with('addressee_user', 'user')
                                 ->get()
                                 ->groupBy(function ($message) use ($user) {
@@ -519,6 +535,7 @@ class MessageController extends BaseController
                 'entity_name' => $correspondent?->firstname . ' ' . $correspondent?->lastname,
                 'entity_profile' => $correspondent?->avatar_url ?? getWebURL() . '/assets/img/avatar-' . $correspondent?->gender . '.png',
                 'last_message' => $latest->message_content,
+                'latest_is_unread' => $latest?->status->getTranslation('status_name', 'fr') == 'Non lu' ? true : false,
                 'latest_at' => timeAgo($latest->created_at),
                 'messages' => ResourcesMessage::collection($filtered->sortByDesc('created_at')->values())
             ]);
@@ -529,6 +546,11 @@ class MessageController extends BaseController
         $orgGroups = Message::whereNotNull('addressee_organization_id')
                                 ->where('type_id', $type->id)
                                 ->whereIn('addressee_organization_id', $organizations_ids)
+                                ->when($status, function ($query) use ($status) {
+                                    $query->whereHas('status', function($q) use ($status) {
+                                        $q->where('status_id', $status->id);
+                                    });
+                                })
                                 ->with('organization', 'user')
                                 ->get()
                                 ->groupBy('addressee_organization_id');
@@ -546,6 +568,7 @@ class MessageController extends BaseController
                 'entity_name' => $organization->org_name,
                 'entity_profile' => $organization->cover_url ?? getWebURL() . '/assets/img/banner.png',
                 'last_message' => !empty($latest->message_content) ? $latest->message_content : (count($latest->files) > 0 ? 'FILES' : null),
+                'latest_is_unread' => $latest?->status->getTranslation('status_name', 'fr') == 'Non lu' ? true : false,
                 'latest_at' => timeAgo($latest->created_at),
                 'messages' => ResourcesMessage::collection($filtered->sortByDesc('created_at')->values())
             ]);
@@ -556,6 +579,11 @@ class MessageController extends BaseController
         $circleGroups = Message::whereNotNull('addressee_circle_id')
                                     ->where('type_id', $type->id)
                                     ->whereIn('addressee_circle_id', $circle_ids)
+                                    ->when($status, function ($query) use ($status) {
+                                        $query->whereHas('status', function($q) use ($status) {
+                                            $q->where('status_id', $status->id);
+                                        });
+                                    })
                                     ->with('circle', 'user')
                                     ->get()
                                     ->groupBy('addressee_circle_id');
@@ -573,6 +601,7 @@ class MessageController extends BaseController
                 'entity_name' => $circle->circle_name,
                 'entity_profile' => $circle->cover_url ?? getWebURL() . '/assets/img/banner.png',
                 'last_message' => !empty($latest->message_content) ? $latest->message_content : (count($latest->files) > 0 ? 'FILES' : null),
+                'latest_is_unread' => $latest?->status->getTranslation('status_name', 'fr') == 'Non lu' ? true : false,
                 'latest_at' => timeAgo($latest->created_at),
                 'messages' => ResourcesMessage::collection($messages->sortByDesc('created_at')->values())
             ]);
@@ -583,6 +612,11 @@ class MessageController extends BaseController
         $eventGroups = Message::whereNotNull('event_id')
                                 ->where('type_id', $type->id)
                                 ->whereIn('event_id', $event_ids)
+                                ->when($status, function ($query) use ($status) {
+                                    $query->whereHas('status', function($q) use ($status) {
+                                        $q->where('status_id', $status->id);
+                                    });
+                                })
                                 ->with('event', 'sender')
                                 ->get()
                                 ->groupBy('event_id');
@@ -600,13 +634,18 @@ class MessageController extends BaseController
                 'entity_name' => $event->event_title,
                 'entity_profile' => $event->cover_url ?? getWebURL() . '/assets/img/banner.png',
                 'last_message' => !empty($latest->message_content) ? $latest->message_content : (count($latest->files) > 0 ? 'FILES' : null),
+                'latest_is_unread' => $latest?->status->getTranslation('status_name', 'fr') == 'Non lu' ? true : false,
                 'latest_at' => timeAgo($latest->created_at),
                 'messages' => ResourcesMessage::collection($messages->sortByDesc('created_at')->values())
             ]);
         }
 
         // === Finalisation
-        $sorted = $discussions->sortByDesc('latest_at')->values();
+        $unread_status = Status::where([['status_name->fr', 'Non lu'], ['group_id', $message_status_group->id]])->first();
+        $sorted = $discussions->sortByDesc(function($discussion) use ($unread_status) {
+            // Si le message est non lu, le mettre en priorité
+            return $discussion['messages']->first()->status_id == $unread_status->id ? 1 : 0;
+        })->values();
         $paginated = new LengthAwarePaginator(
             $sorted->forPage($page, $perPage)->values(),
             $sorted->count(),
