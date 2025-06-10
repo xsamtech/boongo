@@ -181,7 +181,8 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     // Message
     Route::get('message/search_in_chat/{locale}/{type_name}/{data}/{sender_id}/{addressee_id}', 'App\Http\Controllers\API\MessageController@searchInChat')->name('message.api.search_in_chat');
     Route::get('message/search_in_group/{entity}/{entity_id}/{member_id}/{data}', 'App\Http\Controllers\API\MessageController@searchInGroup')->name('message.api.search_in_group');
-    Route::get('message/chat_with_user/{locale}/{type_name}/{user_id}', 'App\Http\Controllers\API\MessageController@chatWithUser')->name('message.api.chat_with_user');
+    Route::get('message/user_chats_list/{locale}/{type_name}/{user_id}', 'App\Http\Controllers\API\MessageController@userChatsList')->name('message.api.user_chats_list');
+    Route::get('message/selected_chat/{locale}/{type_name}/{user_id}/{entity}/{entity_id}', 'App\Http\Controllers\API\MessageController@selectedChat')->name('message.api.selected_chat');
     Route::get('message/members_with_message_status/{locale}/{status_name}/{message_id}', 'App\Http\Controllers\API\MessageController@membersWithMessageStatus')->name('message.api.members_with_message_status');
     Route::get('message/delete_for_myself/{user_id}/{message_id}/{entity}', 'App\Http\Controllers\API\MessageController@deleteForMyself')->name('message.api.delete_for_myself');
     Route::get('message/delete_for_everybody/{message_id}', 'App\Http\Controllers\API\MessageController@deleteForEverybody')->name('message.api.delete_for_everybody');

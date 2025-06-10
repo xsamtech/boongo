@@ -827,9 +827,15 @@ class UserController extends BaseController
         });
 
         // Add dynamic conditions
-        $query->when($request->role_id, function ($query) use ($request) {
+        $query->when($request->roles_ids, function ($query) use ($request) {
             return $query->whereHas('roles', function ($query) use ($request) {
-                $query->where('id', $request->role_id);
+                $query->whereIn('id', $request->roles_ids);
+            });
+        });
+
+        $query->when($request->not_roles_ids, function ($query) use ($request) {
+            return $query->whereDoesntHave('roles', function ($query) use ($request) {
+                $query->whereIn('id', $request->not_roles_ids);
             });
         });
 
@@ -946,7 +952,7 @@ class UserController extends BaseController
         // Groups
         $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
         // Statuses
-        $status_active = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
+        $active_status = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
         // Get partners & sponsors IDs
         $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name', 'Partenaire')->orWhere('role_name', 'Sponsor'); })->pluck('id')->toArray();
         // Request
@@ -972,15 +978,15 @@ class UserController extends BaseController
 
             if ($is_subscribed) {
                 $valid_subscription = $user->validSubscriptions()->latest()->first();
-                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
-                                        $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $active_status) {
+                                        $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
 
             } else {
-                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
-                                        $query->wherePivot('status_id', $status_active->id);
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
+                                        $query->wherePivot('status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
@@ -995,15 +1001,15 @@ class UserController extends BaseController
 
             if ($is_subscribed) {
                 $valid_subscription = $user->validSubscriptions()->latest()->first();
-                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
-                                        $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $active_status) {
+                                        $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
 
             } else {
-                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
-                                        $query->wherePivot('status_id', $status_active->id);
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
+                                        $query->wherePivot('status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
@@ -1018,15 +1024,15 @@ class UserController extends BaseController
 
             if ($is_subscribed) {
                 $valid_subscription = $user->validSubscriptions()->latest()->first();
-                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $status_active) {
-                                        $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $status_active->id);
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $active_status) {
+                                        $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
 
             } else {
-                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($status_active) {
-                                        $query->wherePivot('status_id', $status_active->id);
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
+                                        $query->wherePivot('status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;

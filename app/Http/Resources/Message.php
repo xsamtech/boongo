@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use App\Models\Group as ModelsGroup;
 use App\Models\Type as ModelsType;
-use App\Models\File as ModelsFile;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -28,26 +27,22 @@ class Message extends JsonResource
         $doc_type = ModelsType::where([['type_name->fr', 'Document'], ['group_id', $file_type_group->id]])->first();
         $image_type = ModelsType::where([['type_name->fr', 'Image'], ['group_id', $file_type_group->id]])->first();
         $audio_type = ModelsType::where([['type_name->fr', 'Audio'], ['group_id', $file_type_group->id]])->first();
-        // Requests
-        $docs = ModelsFile::where([['type_id', $doc_type->id], ['message_id', $this->id]])->get();
-        $images = ModelsFile::where([['type_id', $image_type->id], ['message_id', $this->id]])->get();
-        $audios = ModelsFile::where([['type_id', $audio_type->id], ['message_id', $this->id]])->get();
 
         return [
             'id' => $this->id,
             'message_content' => $this->message_content,
             'answered_for' => $this->answered_for,
-            'type' => Type::make($this->type),
-            'status' => Status::make($this->status),
-            'user' => User::make($this->user),
-            'addressee_user' => User::make($this->addressee_user),
-            'addressee_organization' => Organization::make($this->addressee_organization),
-            'addressee_circle' => Circle::make($this->addressee_circle),
-            'event' => Event::make($this->event),
+            'type' => Type::make($this->whenLoaded('type')),
+            'status' => Status::make($this->whenLoaded('status')),
+            'user' => User::make($this->whenLoaded('user')),
+            'addressee_user' => User::make($this->whenLoaded('addressee_user')),
+            'addressee_organization' => Organization::make($this->whenLoaded('addressee_organization')),
+            'addressee_circle' => Circle::make($this->whenLoaded('addressee_circle')),
+            'event' => Event::make($this->whenLoaded('event')),
             'likes' => Like::collection($this->likes),
-            'documents' => $docs,
-            'images' => $images,
-            'audios' => $audios,
+            'documents' => File::collection($this->files->where('type_id', $doc_type->id)->values()),
+            'images' => File::collection($this->files->where('type_id', $image_type->id)->values()),
+            'audios' => File::collection($this->files->where('type_id', $audio_type->id)->values()),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'created_at_explicit' => $this->created_at->format('Y') == date('Y') ? explicitDayMonth($this->created_at->format('Y-m-d H:i:s')) : explicitDate($this->created_at->format('Y-m-d H:i:s')),
