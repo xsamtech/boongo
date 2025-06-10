@@ -53,12 +53,16 @@ class MessageController extends BaseController
         $notification_status_group = Group::where('group_name', 'Etat de la notification')->first();
         $notification_type_group = Group::where('group_name', 'Type de notification')->first();
         $message_type_group = Group::where('group_name', 'Type de message')->first();
+        $file_type_group = Group::where('group_name', 'Type de fichier')->first();
         // Statuses
         $unread_message_status = Status::where([['status_name->fr', 'Non lu'], ['group_id', $message_status_group->id]])->first();
         $unread_notification_status = Status::where([['status_name->fr', 'Non lue'], ['group_id', $notification_status_group->id]])->first();
         // Types
         $message_in_organisation_type = Type::where([['type_name->fr', 'Message dans l\'organisation'], ['group_id', $notification_type_group->id]])->first();
         $chat_type = Type::where([['type_name->fr', 'Discussion'], ['group_id', $message_type_group->id]])->first();
+        $image_type = Type::where([['type_name->fr', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
+        $document_type = Type::where([['type_name->fr', 'Document'], ['group_id', $file_type_group->id]])->first();
+        $audio_type = Type::where([['type_name->fr', 'Audio'], ['group_id', $file_type_group->id]])->first();
         // Get inputs
         $inputs = [
             'message_content' => $request->message_content,
@@ -88,6 +92,60 @@ class MessageController extends BaseController
         }
 
         $message = Message::create($inputs);
+
+        if ($request->hasFile('files_urls')) {
+            // Types of extensions for different file types
+            $image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'avi', 'mov', 'mkv', 'webm'];
+            $document_extensions = ['pdf', 'doc', 'docx', 'txt'];
+            $audio_extensions = ['mp3', 'wav', 'flac'];
+
+            // File browsing
+            foreach ($request->file('files_urls') as $key => $singleFile) {
+                // Checking the file extension
+                $file_extension = $singleFile->getClientOriginalExtension();
+
+                // File type check
+                $custom_uri = '';
+                $is_valid_type = false;
+                $file_type_id = null;
+
+                if (in_array($file_extension, $image_extensions)) { // File is an image
+                    $custom_uri = 'images/messages';
+                    $file_type_id = $image_type->id;
+                    $is_valid_type = true;
+
+                } elseif (in_array($file_extension, $document_extensions)) { // File is a document
+                    $custom_uri = 'documents/messages';
+                    $file_type_id = $document_type->id;
+                    $is_valid_type = true;
+
+                } elseif (in_array($file_extension, $audio_extensions)) { // File is an audio
+                    $custom_uri = 'audios/messages';
+                    $file_type_id = $audio_type->id;
+                    $is_valid_type = true;
+                }
+
+                // If the extension does not match any valid type
+                if (!$is_valid_type) {
+                    return $this->handleError(__('notifications.type_is_not_file'));
+                }
+
+                // Generate a unique path for the file
+                $filename = $singleFile->getClientOriginalName();
+                $file_path = $custom_uri . '/' . $message->id . '/' . Str::random(50) . '.' . $file_extension;
+
+                // Upload file
+                Storage::disk('public')->put($file_path, $singleFile);
+
+                // Creating the database record for the file
+                File::create([
+                    'file_name' => trim($request->files_names[$key]) ?: $filename,
+                    'file_url' => Storage::url($file_path),
+                    'type_id' => $file_type_id,
+                    'message_id' => $message->id
+                ]);
+            }
+        }
 
         if ($request->hasFile('file_url')) {
             if ($request->file_type_id == null) {
