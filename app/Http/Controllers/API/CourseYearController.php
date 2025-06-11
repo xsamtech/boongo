@@ -19,7 +19,7 @@ class CourseYearController extends BaseController
      */
     public function index()
     {
-        $course_years = CourseYear::orderByDesc('created_at')->paginate(4);
+        $course_years = CourseYear::orderByDesc('created_at')->paginate(10);
         $count_course_years = CourseYear::count();
 
         return $this->handleResponse(ResourcesCourseYear::collection($course_years), __('notifications.find_all_course_years_success'), $course_years->lastPage(), $count_course_years);
@@ -113,7 +113,7 @@ class CourseYearController extends BaseController
     {
         $course_year->delete();
 
-        $course_years = CourseYear::orderBy('created_at')->paginate(4);
+        $course_years = CourseYear::orderBy('created_at')->paginate(10);
         $count_course_years = CourseYear::count();
 
         return $this->handleResponse(ResourcesCourseYear::collection($course_years), __('notifications.delete_course_year_success'), $course_years->lastPage(), $count_course_years);

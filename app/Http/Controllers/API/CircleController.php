@@ -22,7 +22,7 @@ class CircleController extends BaseController
      */
     public function index()
     {
-        $circles = Circle::orderByDesc('created_at')->paginate(4);
+        $circles = Circle::orderByDesc('created_at')->paginate(10);
         $count_circles = Circle::count();
 
         return $this->handleResponse(ResourcesCircle::collection($circles), __('notifications.find_all_circles_success'), $circles->lastPage(), $count_circles);

@@ -30,7 +30,7 @@ class Event extends JsonResource
             'start_at_explicit' => !empty($this->start_at) ? ($this->start_at->format('Y') == date('Y') ? explicitDayMonth($this->start_at->format('Y-m-d H:i:s')) : explicitDate($this->start_at->format('Y-m-d H:i:s'))) : null,
             'end_at_explicit' => !empty($this->end_at) ? ($this->end_at->format('Y') == date('Y') ? explicitDayMonth($this->end_at->format('Y-m-d H:i:s')) : explicitDate($this->end_at->format('Y-m-d H:i:s'))) : null,
             'event_place' => $this->event_place,
-            'cover_url' => !empty($this->cover_url) ? getWebURL() . '/storage/' . $this->cover_url : getWebURL() . '/assets/img/banner.png',
+            'cover_url' => !empty($this->cover_url) ? getWebURL() . '/storage/' . $this->cover_url : getWebURL() . '/assets/img/banner-event.png',
             'type' => Type::make($this->type),
             'status' => Status::make($this->status),
             'organization' => Organization::make($this->organization),

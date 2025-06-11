@@ -35,7 +35,7 @@ class WorkController extends BaseController
      */
     public function index()
     {
-        $works = Work::orderByDesc('created_at')->paginate(4);
+        $works = Work::orderByDesc('created_at')->paginate(10);
         $count_works = Work::count();
 
         return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_works);
@@ -663,7 +663,7 @@ class WorkController extends BaseController
                     });
 
                     // Retrieves the query results
-                    $works = $query->orderByDesc('updated_at')->paginate(4);
+                    $works = $query->orderByDesc('updated_at')->paginate(10);
                     $count_all = $query->count();
 
                     return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
@@ -689,7 +689,7 @@ class WorkController extends BaseController
                     });
 
                     // Retrieves the query results
-                    $works = $query->orderByDesc('updated_at')->paginate(4);
+                    $works = $query->orderByDesc('updated_at')->paginate(10);
                     $count_all = $query->count();
 
                     return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
@@ -715,7 +715,7 @@ class WorkController extends BaseController
                 });
 
                 // Retrieves the query results
-                $works = $query->orderByDesc('updated_at')->paginate(4);
+                $works = $query->orderByDesc('updated_at')->paginate(10);
                 $count_all = $query->count();
 
                 return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
@@ -762,7 +762,7 @@ class WorkController extends BaseController
                     });
 
                     // Retrieves the query results
-                    $works = $query->orderByDesc('updated_at')->paginate(4);
+                    $works = $query->orderByDesc('updated_at')->paginate(10);
                     $count_all = $query->count();
 
                     return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
@@ -787,7 +787,7 @@ class WorkController extends BaseController
                     });
 
                     // Retrieves the query results
-                    $works = $query->orderByDesc('updated_at')->paginate(4);
+                    $works = $query->orderByDesc('updated_at')->paginate(10);
                     $count_all = $query->count();
 
                     return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
@@ -813,7 +813,7 @@ class WorkController extends BaseController
                 });
 
                 // Retrieves the query results
-                $works = $query->orderByDesc('updated_at')->paginate(4);
+                $works = $query->orderByDesc('updated_at')->paginate(10);
                 $count_all = $query->count();
 
                 return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
@@ -873,7 +873,7 @@ class WorkController extends BaseController
                     return $query->where('status_id', $request->status_id);
                 });
 
-                $works = $query->orderByDesc('created_at')->paginate(4);
+                $works = $query->orderByDesc('created_at')->paginate(10);
                 $count_all = $query->count();
 
                 return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
@@ -893,7 +893,7 @@ class WorkController extends BaseController
                     return $query->where('status_id', $request->status_id);
                 });
 
-                $works = $query->orderByDesc('created_at')->paginate(4);
+                $works = $query->orderByDesc('created_at')->paginate(10);
                 $count_all = $query->count();
 
                 return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
@@ -914,7 +914,7 @@ class WorkController extends BaseController
                 return $query->where('status_id', $request->status_id);
             });
 
-            $works = $query->orderByDesc('created_at')->paginate(4);
+            $works = $query->orderByDesc('created_at')->paginate(10);
             $count_all = $query->count();
 
             return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
@@ -939,7 +939,7 @@ class WorkController extends BaseController
                                     // $query->where('work_session.read', 1)
                                     $query->where('work_session.work_id', $work->id)
                                         ->orderByDesc('work_session.created_at');
-                                })->paginate(4);
+                                })->paginate(10);
         $count_all = Session::whereHas('works', function ($query) use ($work) {
                                     // $query->where('work_session.read', 1)
                                     $query->where('work_session.work_id', $work->id)
@@ -963,7 +963,7 @@ class WorkController extends BaseController
             return $this->handleError(__('notifications.find_work_404'));
         }
 
-        $likes = Like::where('for_work_id', $work->id)->orderByDesc('created_at')->paginate(4);
+        $likes = Like::where('for_work_id', $work->id)->orderByDesc('created_at')->paginate(10);
         $count_all = Like::where('for_work_id', $work->id)->count();
 
         return $this->handleResponse(ResourcesLike::collection($likes), __('notifications.find_all_likes_success'), $likes->lastPage(), $count_all);
@@ -1112,7 +1112,7 @@ class WorkController extends BaseController
                     }
                 }
 
-                $works = $query->paginate(4);
+                $works = $query->paginate(10);
                 $count_all = $query->count();
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $active_status) {
                                         $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $active_status->id);
@@ -1158,7 +1158,7 @@ class WorkController extends BaseController
                     }
                 }
 
-                $works = $query->paginate(4);
+                $works = $query->paginate(10);
                 $count_all = $query->count();
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
                                         $query->wherePivot('status_id', $active_status->id);
@@ -1205,7 +1205,7 @@ class WorkController extends BaseController
                 }
             }
 
-            $works = $query->paginate(4);
+            $works = $query->paginate(10);
             $count_all = $query->count();
             $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
                                     $query->wherePivot('status_id', $active_status->id);
@@ -1405,7 +1405,7 @@ class WorkController extends BaseController
                     return $query->where('status_id', $request->status_id);
                 });
 
-                $works = $query->paginate(4);
+                $works = $query->paginate(10);
                 $count_all = $query->count();
 
                 return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
@@ -1438,7 +1438,7 @@ class WorkController extends BaseController
                     return $query->where('status_id', $request->status_id);
                 });
 
-                $works = $query->paginate(4);
+                $works = $query->paginate(10);
                 $count_all = $query->count();
 
                 return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
@@ -1472,7 +1472,7 @@ class WorkController extends BaseController
                 return $query->where('status_id', $request->status_id);
             });
 
-            $works = $query->paginate(4);
+            $works = $query->paginate(10);
             $count_all = $query->count();
 
             return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);

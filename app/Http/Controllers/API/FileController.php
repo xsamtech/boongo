@@ -19,7 +19,7 @@ class FileController extends BaseController
      */
     public function index()
     {
-        $files = File::orderBy('created_at')->paginate(4);
+        $files = File::orderBy('created_at')->paginate(10);
         $count_files = File::count();
 
         return $this->handleResponse(ResourcesFile::collection($files), __('notifications.find_all_files_success'), $files->lastPage(), $count_files);
@@ -201,7 +201,7 @@ class FileController extends BaseController
     {
         $file->delete();
 
-        $files = File::orderBy('created_at')->paginate(4);
+        $files = File::orderBy('created_at')->paginate(10);
         $count_files = File::count();
 
         return $this->handleResponse(ResourcesFile::collection($files), __('notifications.delete_file_success'), $files->lastPage(), $count_files);

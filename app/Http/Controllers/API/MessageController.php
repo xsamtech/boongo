@@ -393,7 +393,7 @@ class MessageController extends BaseController
             return $this->handleError(__('notifications.find_addressee_404'));
         }
 
-        $messages = Message::where([['message_content', 'LIKE', '%' . $data . '%'], ['type_id', $message_type->id], ['user_id', $sender->id], ['addressee_user_id', $addressee->id]])->orWhere([['message_content', 'LIKE', '%' . $data . '%'], ['type_id', $message_type->id], ['user_id', $addressee->id], ['addressee_user_id', $sender->id]])->orderByDesc('created_at')->paginate(4);
+        $messages = Message::where([['message_content', 'LIKE', '%' . $data . '%'], ['type_id', $message_type->id], ['user_id', $sender->id], ['addressee_user_id', $addressee->id]])->orWhere([['message_content', 'LIKE', '%' . $data . '%'], ['type_id', $message_type->id], ['user_id', $addressee->id], ['addressee_user_id', $sender->id]])->orderByDesc('created_at')->paginate(10);
         $count_messages = Message::where([['message_content', 'LIKE', '%' . $data . '%'], ['type_id', $message_type->id], ['user_id', $sender->id], ['addressee_user_id', $addressee->id]])->orWhere([['message_content', 'LIKE', '%' . $data . '%'], ['type_id', $message_type->id], ['user_id', $addressee->id], ['addressee_user_id', $sender->id]])->count();
 
         if (is_null($messages)) {
@@ -428,7 +428,7 @@ class MessageController extends BaseController
                 return $this->handleError(__('notifications.find_organization_404'));
             }
 
-            $messages = Message::where([['message_content', 'LIKE', '%' . $data . '%'], ['addressee_organization_id', $organization->id]])->orderByDesc('created_at')->paginate(4);
+            $messages = Message::where([['message_content', 'LIKE', '%' . $data . '%'], ['addressee_organization_id', $organization->id]])->orderByDesc('created_at')->paginate(10);
             $count_messages = Message::where([['message_content', 'LIKE', '%' . $data . '%'], ['addressee_organization_id', $organization->id]])->count();
 
             if (is_null($messages)) {
@@ -445,7 +445,7 @@ class MessageController extends BaseController
                 return $this->handleError(__('notifications.find_circle_404'));
             }
 
-            $messages = Message::where([['message_content', 'LIKE', '%' . $data . '%'], ['addressee_circle_id', $circle->id]])->orderByDesc('created_at')->paginate(4);
+            $messages = Message::where([['message_content', 'LIKE', '%' . $data . '%'], ['addressee_circle_id', $circle->id]])->orderByDesc('created_at')->paginate(10);
             $count_messages = Message::where([['message_content', 'LIKE', '%' . $data . '%'], ['addressee_circle_id', $circle->id]])->count();
 
             if (is_null($messages)) {
@@ -800,7 +800,7 @@ class MessageController extends BaseController
             return $this->handleError(__('notifications.find_message_404'));
         }
 
-        $users = $message->users()->wherePivot('status_id', $status->id)->orderByDesc('created_at')->paginate(4);
+        $users = $message->users()->wherePivot('status_id', $status->id)->orderByDesc('created_at')->paginate(10);
         $count_users = $message->users()->wherePivot('status_id', $status->id)->count();
 
         return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $count_users);
@@ -899,7 +899,7 @@ class MessageController extends BaseController
         }
 
         $all_messages = Message::where([['type_id', $type->id], ['user_id', $sender->id], ['addressee_user_id', $addressee->id]])->get();
-        $messages = Message::where([['type_id', $type->id], ['user_id', $sender->id], ['addressee_user_id', $addressee->id]])->orderByDesc('created_at')->paginate(4);
+        $messages = Message::where([['type_id', $type->id], ['user_id', $sender->id], ['addressee_user_id', $addressee->id]])->orderByDesc('created_at')->paginate(10);
         $count_messages = Message::where([['type_id', $type->id], ['user_id', $sender->id], ['addressee_user_id', $addressee->id]])->count();
 
         foreach ($all_messages as $message) {
@@ -941,7 +941,7 @@ class MessageController extends BaseController
             }
 
             $all_messages = Message::where('addressee_organization_id', $organization->id)->get();
-            $messages = Message::where('addressee_organization_id', $organization->id)->orderByDesc('created_at')->paginate(4);
+            $messages = Message::where('addressee_organization_id', $organization->id)->orderByDesc('created_at')->paginate(10);
             $count_messages = Message::where('addressee_organization_id', $organization->id)->count();
 
             foreach ($all_messages as $message) {
@@ -959,7 +959,7 @@ class MessageController extends BaseController
             }
 
             $all_messages = Message::where('addressee_circle_id', $circle->id)->get();
-            $messages = Message::where('addressee_circle_id', $circle->id)->orderByDesc('created_at')->paginate(4);
+            $messages = Message::where('addressee_circle_id', $circle->id)->orderByDesc('created_at')->paginate(10);
             $count_messages = Message::where('addressee_circle_id', $circle->id)->count();
 
             foreach ($all_messages as $message) {

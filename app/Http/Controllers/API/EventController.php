@@ -27,7 +27,7 @@ class EventController extends BaseController
      */
     public function index()
     {
-        $events = Event::orderByDesc('created_at')->paginate(4);
+        $events = Event::orderByDesc('created_at')->paginate(10);
         $count_events = Event::count();
 
         return $this->handleResponse(ResourcesEvent::collection($events), __('notifications.find_all_events_success'), $events->lastPage(), $count_events);
@@ -312,7 +312,7 @@ class EventController extends BaseController
 
         $event->delete();
 
-        $events = Event::orderByDesc('created_at')->paginate(4);
+        $events = Event::orderByDesc('created_at')->paginate(10);
         $count_events = Event::count();
 
         return $this->handleResponse(ResourcesEvent::collection($events), __('notifications.delete_event_success'), $events->lastPage(), $count_events);
@@ -372,7 +372,7 @@ class EventController extends BaseController
             return $this->handleError(__('notifications.find_type_404'));
         }
 
-        $events = Event::where('type_id', $type->id)->orderByDesc('created_at')->paginate(4);
+        $events = Event::where('type_id', $type->id)->orderByDesc('created_at')->paginate(10);
         $count_events = Event::where('type_id', $type->id)->count();
 
         return $this->handleResponse(ResourcesEvent::collection($events), __('notifications.find_all_events_success'), $events->lastPage(), $count_events);
@@ -393,7 +393,7 @@ class EventController extends BaseController
             return $this->handleError(__('notifications.find_status_404'));
         }
 
-        $events = Event::where('status_id', $status->id)->orderByDesc('created_at')->paginate(4);
+        $events = Event::where('status_id', $status->id)->orderByDesc('created_at')->paginate(10);
         $count_events = Event::where('status_id', $status->id)->count();
 
         return $this->handleResponse(ResourcesEvent::collection($events), __('notifications.find_all_events_success'), $events->lastPage(), $count_events);
@@ -413,7 +413,7 @@ class EventController extends BaseController
             return $this->handleError(__('notifications.find_organization_404'));
         }
 
-        $events = Event::where('organization_id', $organization->id)->orderByDesc('created_at')->paginate(4);
+        $events = Event::where('organization_id', $organization->id)->orderByDesc('created_at')->paginate(10);
         $count_events = Event::where('organization_id', $organization->id)->count();
 
         return $this->handleResponse(ResourcesEvent::collection($events), __('notifications.find_all_events_success'), $events->lastPage(), $count_events);
@@ -433,7 +433,7 @@ class EventController extends BaseController
             return $this->handleError(__('notifications.find_event_404'));
         }
 
-        $users = $event->users()->wherePivot('is_speaker', 1)->paginate(4);
+        $users = $event->users()->wherePivot('is_speaker', 1)->paginate(10);
         $count_users = $event->users()->wherePivot('is_speaker', 1)->count();
 
         return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $count_users);
@@ -468,7 +468,7 @@ class EventController extends BaseController
         });
 
         // Retrieves the query results
-        $events = $query->orderByDesc('created_at')->paginate(4);
+        $events = $query->orderByDesc('created_at')->paginate(10);
         $count_events = $query->count();
 
         return $this->handleResponse(ResourcesEvent::collection($events), __('notifications.find_all_events_success'), $events->lastPage(), $count_events);
@@ -494,7 +494,7 @@ class EventController extends BaseController
         });
 
         // Retrieves the query results
-        $events = $query->orderByDesc('created_at')->paginate(4);
+        $events = $query->orderByDesc('created_at')->paginate(10);
         $count_events = $query->count();
 
         return $this->handleResponse(ResourcesEvent::collection($events), __('notifications.find_all_events_success'), $events->lastPage(), $count_events);

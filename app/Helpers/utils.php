@@ -10,7 +10,8 @@ use Carbon\Carbon;
 if (!function_exists('getWebURL')) {
     function getWebURL()
     {
-        return (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+        // return (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+        return 'http://192.168.11.238/boongo/public';
     }
 }
 
@@ -18,7 +19,8 @@ if (!function_exists('getWebURL')) {
 if (!function_exists('getApiURL')) {
     function getApiURL()
     {
-        return (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/api';
+        // return (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/api';
+        return 'http://192.168.11.238/boongo/public/api';
     }
 }
 

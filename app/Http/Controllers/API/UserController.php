@@ -850,43 +850,142 @@ class UserController extends BaseController
     /**
      * Search all users having a specific role
      *
-     * @param  string $locale
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string $role_name
      * @return \Illuminate\Http\Response
      */
-    public function findByRole($role_name)
+    public function findByRole(Request $request, $role_name)
     {
+        // Groups
+        $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
+        // Statuses
+        $active_status = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
+        // Get partners & sponsors IDs
+        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name', 'Partenaire')->orWhere('role_name', 'Sponsor'); })->pluck('id')->toArray();
+        // Requests
         $users = User::whereHas('roles', function ($query) use ($role_name) {
                                     $query->where('role_name', $role_name);
-                                })->orderByDesc('users.created_at')->get();
+                                })->orderBy('firstname')->paginate(10);
+        $partner = null;
 
-        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'));    
+        if ($request->hasHeader('X-user-id')) {
+            // User
+            $logged_in_user = User::find($request->header('X-user-id'));
+
+            if (is_null($logged_in_user)) {
+                return $this->handleError(__('notifications.find_user_404'));
+            }
+
+            // Subscription
+            $is_subscribed = $logged_in_user->hasValidSubscription();
+
+            // If user is subscribed, send only data of the same category as that in the subscription
+            if ($is_subscribed) {
+                $valid_subscription = $logged_in_user->validSubscriptions()->latest()->first();
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $active_status) {
+                                        $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $active_status->id);
+                                    })->where(function ($query) use ($users_ids) {
+                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                    })->inRandomOrder()->first() : null;
+
+            // Otherwise, send all data
+            } else {
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
+                                        $query->wherePivot('status_id', $active_status->id);
+                                    })->where(function ($query) use ($users_ids) {
+                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                    })->inRandomOrder()->first() : null;
+            }
+
+        } else {
+            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
+                                    $query->wherePivot('status_id', $active_status->id);
+                                })->where(function ($query) use ($users_ids) {
+                                    $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                })->inRandomOrder()->first() : null;
+        }
+
+        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $users->total(), $partner);
     }
 
     /**
      * Search all users having a role different than the given
      *
-     * @param  string $locale
+     * @param  \Illuminate\Http\Request  $request
      * @param  string $role_name
      * @return \Illuminate\Http\Response
      */
-    public function findByNotRole($role_name)
+    public function findByNotRole(Request $request, $role_name)
     {
+        // Groups
+        $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
+        // Statuses
+        $active_status = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
+        // Get partners & sponsors IDs
+        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name', 'Partenaire')->orWhere('role_name', 'Sponsor'); })->pluck('id')->toArray();
+        // Requests
         $users = User::whereDoesntHave('roles', function ($query) use ($role_name) {
                                     $query->where('role_name' . $role_name);
-                                })->orderByDesc('users.created_at')->get();
+                                })->orderBy('firstname')->paginate(10);
+        $partner = null;
 
-        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'));    
+        if ($request->hasHeader('X-user-id')) {
+            // User
+            $logged_in_user = User::find($request->header('X-user-id'));
+
+            if (is_null($logged_in_user)) {
+                return $this->handleError(__('notifications.find_user_404'));
+            }
+
+            // Subscription
+            $is_subscribed = $logged_in_user->hasValidSubscription();
+
+            // If user is subscribed, send only data of the same category as that in the subscription
+            if ($is_subscribed) {
+                $valid_subscription = $logged_in_user->validSubscriptions()->latest()->first();
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $active_status) {
+                                        $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $active_status->id);
+                                    })->where(function ($query) use ($users_ids) {
+                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                    })->inRandomOrder()->first() : null;
+
+            // Otherwise, send all data
+            } else {
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
+                                        $query->wherePivot('status_id', $active_status->id);
+                                    })->where(function ($query) use ($users_ids) {
+                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                    })->inRandomOrder()->first() : null;
+            }
+
+        } else {
+            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
+                                    $query->wherePivot('status_id', $active_status->id);
+                                })->where(function ($query) use ($users_ids) {
+                                    $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                })->inRandomOrder()->first() : null;
+        }
+
+        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $users->total(), $partner);
     }
 
     /**
      * Retrieves users in an organization with a specific role.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  int  $organization_id
      * @param  string  $role_name
      * @return \Illuminate\Http\Response
      */
-    public function organizationMembers($organization_id, $role_name)
+    public function organizationMembers(Request $request, $organization_id, $role_name)
     {
+        // Groups
+        $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
+        // Statuses
+        $active_status = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
+        // Get partners & sponsors IDs
+        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name', 'Partenaire')->orWhere('role_name', 'Sponsor'); })->pluck('id')->toArray();
+        // Requests
         // Get the organization
         $organization = Organization::find($organization_id);
 
@@ -899,20 +998,69 @@ class UserController extends BaseController
                                                     $query->where('role_name', $role_name);
                                                 });
         // Executes the query to retrieve users
-        $users = $usersQuery->get();
+        $users = $usersQuery->orderBy('firstname')->paginate(10);
+        $partner = null;
 
-        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'));
+        if ($request->hasHeader('X-user-id')) {
+            // User
+            $logged_in_user = User::find($request->header('X-user-id'));
+
+            if (is_null($logged_in_user)) {
+                return $this->handleError(__('notifications.find_user_404'));
+            }
+
+            // Subscription
+            $is_subscribed = $logged_in_user->hasValidSubscription();
+
+            // If user is subscribed, send only data of the same category as that in the subscription
+            if ($is_subscribed) {
+                $valid_subscription = $logged_in_user->validSubscriptions()->latest()->first();
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $active_status) {
+                                        $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $active_status->id);
+                                    })->where(function ($query) use ($users_ids) {
+                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                    })->inRandomOrder()->first() : null;
+
+            // Otherwise, send all data
+            } else {
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
+                                        $query->wherePivot('status_id', $active_status->id);
+                                    })->where(function ($query) use ($users_ids) {
+                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                    })->inRandomOrder()->first() : null;
+            }
+
+        } else {
+            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
+                                    $query->wherePivot('status_id', $active_status->id);
+                                })->where(function ($query) use ($users_ids) {
+                                    $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                })->inRandomOrder()->first() : null;
+        }
+
+        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $users->total(), $partner);
     }
 
     /**
      * Retrieves users in a circle / event.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  string  $entity
      * @param  int  $entity_id
      * @return \Illuminate\Http\Response
      */
-    public function groupMembers($entity, $entity_id)
+    public function groupMembers(Request $request, $entity, $entity_id)
     {
+        // Groups
+        $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
+        // Statuses
+        $active_status = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
+        // Get partners & sponsors IDs
+        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name', 'Partenaire')->orWhere('role_name', 'Sponsor'); })->pluck('id')->toArray();
+        // Requests
+        $users = null;
+        $partner = null;
+
         if ($entity == 'circle') {
             $circle = Circle::find($entity_id);
 
@@ -920,9 +1068,7 @@ class UserController extends BaseController
                 return $this->handleError(__('notifications.find_circle_404'));
             }
 
-            $users = $circle->users;
-
-            return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'));
+            $users = $circle->users()->paginate(10);
         }
 
         if ($entity == 'event') {
@@ -932,10 +1078,47 @@ class UserController extends BaseController
                 return $this->handleError(__('notifications.find_event_404'));
             }
 
-            $users = $event->users;
-
-            return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'));
+            $users = $event->users()->paginate(10);
         }
+
+        if ($request->hasHeader('X-user-id')) {
+            // User
+            $logged_in_user = User::find($request->header('X-user-id'));
+
+            if (is_null($logged_in_user)) {
+                return $this->handleError(__('notifications.find_user_404'));
+            }
+
+            // Subscription
+            $is_subscribed = $logged_in_user->hasValidSubscription();
+
+            // If user is subscribed, send only data of the same category as that in the subscription
+            if ($is_subscribed) {
+                $valid_subscription = $logged_in_user->validSubscriptions()->latest()->first();
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $active_status) {
+                                        $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $active_status->id);
+                                    })->where(function ($query) use ($users_ids) {
+                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                    })->inRandomOrder()->first() : null;
+
+            // Otherwise, send all data
+            } else {
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
+                                        $query->wherePivot('status_id', $active_status->id);
+                                    })->where(function ($query) use ($users_ids) {
+                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                    })->inRandomOrder()->first() : null;
+            }
+
+        } else {
+            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
+                                    $query->wherePivot('status_id', $active_status->id);
+                                })->where(function ($query) use ($users_ids) {
+                                    $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                })->inRandomOrder()->first() : null;
+        }
+
+        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $users->total(), $partner);
     }
 
     /**
@@ -973,7 +1156,7 @@ class UserController extends BaseController
         $is_subscribed = $user->hasValidSubscription();
 
         if ($entity == 'circle') {
-            $circles = $user->circles()->wherePivot('status_id', $status?->id)->orderByPivot('created_at', 'desc')->paginate(5);
+            $circles = $user->circles()->wherePivot('status_id', $status?->id)->orderByPivot('created_at', 'desc')->paginate(10);
             $count_circles = $user->circles()->wherePivot('status_id', $status?->id)->count();
 
             if ($is_subscribed) {
@@ -996,7 +1179,7 @@ class UserController extends BaseController
         }
 
         if ($entity == 'event') {
-            $events = $user->events()->wherePivot('status_id', $status?->id)->orderByPivot('created_at', 'desc')->paginate(5);
+            $events = $user->events()->wherePivot('status_id', $status?->id)->orderByPivot('created_at', 'desc')->paginate(10);
             $count_events = $user->events()->wherePivot('status_id', $status?->id)->count();
 
             if ($is_subscribed) {
@@ -1019,7 +1202,7 @@ class UserController extends BaseController
         }
 
         if ($entity == 'organization') {
-            $organizations = $user->organizations()->orderByPivot('created_at', 'desc')->paginate(5);
+            $organizations = $user->organizations()->orderByPivot('created_at', 'desc')->paginate(10);
             $count_organizations = $user->organizations()->count();
 
             if ($is_subscribed) {
