@@ -66,6 +66,8 @@ class MessageController extends BaseController
         // Get inputs
         $inputs = [
             'message_content' => $request->message_content,
+            'doc_title' => $request->doc_title,
+            'doc_uri' => $request->doc_uri,
             'answered_for' => $request->answered_for,
             'type_id' => isset($request->type_id) ? $request->type_id : $chat_type->id,
             'status_id' => isset($request->status_id) ? $request->status_id : $unread_message_status->id,
@@ -270,6 +272,8 @@ class MessageController extends BaseController
         // Get inputs
         $inputs = [
             'message_content' => $request->message_content,
+            'doc_title' => $request->doc_title,
+            'doc_uri' => $request->doc_uri,
             'answered_for' => $request->answered_for,
             'type_id' => $request->type_id,
             'status_id' => $request->status_id,
@@ -283,6 +287,20 @@ class MessageController extends BaseController
         if ($inputs['message_content'] != null) {
             $message->update([
                 'message_content' => $inputs['message_content'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['doc_title'] != null) {
+            $message->update([
+                'doc_title' => $inputs['doc_title'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['doc_uri'] != null) {
+            $message->update([
+                'doc_uri' => $inputs['doc_uri'],
                 'updated_at' => now(),
             ]);
         }
@@ -535,6 +553,8 @@ class MessageController extends BaseController
                 'entity_name' => $correspondent?->firstname . ' ' . $correspondent?->lastname,
                 'entity_profile' => $correspondent?->avatar_url ?? getWebURL() . '/assets/img/avatar-' . $correspondent?->gender . '.png',
                 'last_message' => $latest->message_content,
+                'note_doc_title' => $latest->doc_title,
+                'note_doc_uri' => $latest->doc_uri,
                 'latest_is_unread' => $latest?->status->getTranslation('status_name', 'fr') == 'Non lu' ? true : false,
                 'latest_at' => timeAgo($latest->created_at),
                 'messages' => ResourcesMessage::collection($filtered->sortByDesc('created_at')->values())
@@ -568,6 +588,8 @@ class MessageController extends BaseController
                 'entity_name' => $organization->org_name,
                 'entity_profile' => $organization->cover_url ?? getWebURL() . '/assets/img/banner.png',
                 'last_message' => !empty($latest->message_content) ? $latest->message_content : (count($latest->files) > 0 ? 'FILES' : null),
+                'note_doc_title' => $latest->doc_title,
+                'note_doc_uri' => $latest->doc_uri,
                 'latest_is_unread' => $latest?->status->getTranslation('status_name', 'fr') == 'Non lu' ? true : false,
                 'latest_at' => timeAgo($latest->created_at),
                 'messages' => ResourcesMessage::collection($filtered->sortByDesc('created_at')->values())
@@ -601,6 +623,8 @@ class MessageController extends BaseController
                 'entity_name' => $circle->circle_name,
                 'entity_profile' => $circle->cover_url ?? getWebURL() . '/assets/img/banner.png',
                 'last_message' => !empty($latest->message_content) ? $latest->message_content : (count($latest->files) > 0 ? 'FILES' : null),
+                'note_doc_title' => $latest->doc_title,
+                'note_doc_uri' => $latest->doc_uri,
                 'latest_is_unread' => $latest?->status->getTranslation('status_name', 'fr') == 'Non lu' ? true : false,
                 'latest_at' => timeAgo($latest->created_at),
                 'messages' => ResourcesMessage::collection($messages->sortByDesc('created_at')->values())
@@ -634,6 +658,8 @@ class MessageController extends BaseController
                 'entity_name' => $event->event_title,
                 'entity_profile' => $event->cover_url ?? getWebURL() . '/assets/img/banner.png',
                 'last_message' => !empty($latest->message_content) ? $latest->message_content : (count($latest->files) > 0 ? 'FILES' : null),
+                'note_doc_title' => $latest->doc_title,
+                'note_doc_uri' => $latest->doc_uri,
                 'latest_is_unread' => $latest?->status->getTranslation('status_name', 'fr') == 'Non lu' ? true : false,
                 'latest_at' => timeAgo($latest->created_at),
                 'messages' => ResourcesMessage::collection($messages->sortByDesc('created_at')->values())
