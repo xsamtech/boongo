@@ -149,52 +149,6 @@ class MessageController extends BaseController
             }
         }
 
-        if ($request->hasFile('file_url')) {
-            if ($request->file_type_id == null) {
-                return $this->handleError($request->file_type_id, __('validation.required') . ' (' . __('miscellaneous.file_type') . ') ', 400);
-            }
-
-            $type = Type::find($request->file_type_id);
-
-            if (is_null($type)) {
-                return $this->handleError(__('notifications.find_type_404'));
-            }
-
-            // Check that it is a valid file type
-            $file_type_group = Group::where('group_name', 'Type de fichier')->first();
-            $image_type = Type::where([['type_name->fr', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
-            $document_type = Type::where([['type_name->fr', 'Document'], ['group_id', $file_type_group->id]])->first();
-            $audio_type = Type::where([['type_name->fr', 'Audio'], ['group_id', $file_type_group->id]])->first();
-
-            if (!in_array($type->id, [$image_type?->id, $document_type?->id, $audio_type?->id])) {
-                return $this->handleError(__('notifications.type_is_not_file'));
-            }
-
-            // File browsing
-            foreach ($request->file('file_url') as $singleFile) {
-                // Storage path by type
-                $custom_path = ($type->id == $document_type?->id ? 'documents/messages' : ($type->id == $audio_type?->id ? 'audios/messages' : 'images/messages'));
-                $filename = $singleFile->getClientOriginalName();
-                $file_url =  $custom_path . '/' . $message->id . '/' . Str::random(50) . '.' . $filename;
-
-                // Saving the file
-                try {
-                    $singleFile->storeAs($custom_path . '/' . $message->id, $filename, 's3');
-
-                } catch (\Throwable $th) {
-                    return $this->handleError($th, __('notifications.create_work_file_500'), 500);
-                }
-
-                // Creation of the database file
-                File::create([
-                    'file_name' => trim($request->file_name) ?: $singleFile->getClientOriginalName(),
-                    'file_url' => config('filesystems.disks.s3.url') . $file_url,
-                    'type_id' => $type->id,
-                    'message_id' => $message->id
-                ]);
-            }
-        }
-
         /*
             HISTORY AND/OR NOTIFICATION MANAGEMENT
         */
@@ -553,7 +507,6 @@ class MessageController extends BaseController
                 'entity_name' => $correspondent?->firstname . ' ' . $correspondent?->lastname,
                 'entity_profile' => $correspondent?->avatar_url ?? getWebURL() . '/assets/img/avatar-' . $correspondent?->gender . '.png',
                 'last_message' => $latest->message_content,
-                'note_doc_title' => $latest->doc_title,
                 'note_doc_uri' => $latest->doc_uri,
                 'latest_is_unread' => $latest?->status->getTranslation('status_name', 'fr') == 'Non lu' ? true : false,
                 'latest_at' => timeAgo($latest->created_at),
@@ -588,7 +541,6 @@ class MessageController extends BaseController
                 'entity_name' => $organization->org_name,
                 'entity_profile' => $organization->cover_url ?? getWebURL() . '/assets/img/banner.png',
                 'last_message' => !empty($latest->message_content) ? $latest->message_content : (count($latest->files) > 0 ? 'FILES' : null),
-                'note_doc_title' => $latest->doc_title,
                 'note_doc_uri' => $latest->doc_uri,
                 'latest_is_unread' => $latest?->status->getTranslation('status_name', 'fr') == 'Non lu' ? true : false,
                 'latest_at' => timeAgo($latest->created_at),
@@ -623,7 +575,6 @@ class MessageController extends BaseController
                 'entity_name' => $circle->circle_name,
                 'entity_profile' => $circle->cover_url ?? getWebURL() . '/assets/img/banner.png',
                 'last_message' => !empty($latest->message_content) ? $latest->message_content : (count($latest->files) > 0 ? 'FILES' : null),
-                'note_doc_title' => $latest->doc_title,
                 'note_doc_uri' => $latest->doc_uri,
                 'latest_is_unread' => $latest?->status->getTranslation('status_name', 'fr') == 'Non lu' ? true : false,
                 'latest_at' => timeAgo($latest->created_at),
@@ -658,7 +609,6 @@ class MessageController extends BaseController
                 'entity_name' => $event->event_title,
                 'entity_profile' => $event->cover_url ?? getWebURL() . '/assets/img/banner.png',
                 'last_message' => !empty($latest->message_content) ? $latest->message_content : (count($latest->files) > 0 ? 'FILES' : null),
-                'note_doc_title' => $latest->doc_title,
                 'note_doc_uri' => $latest->doc_uri,
                 'latest_is_unread' => $latest?->status->getTranslation('status_name', 'fr') == 'Non lu' ? true : false,
                 'latest_at' => timeAgo($latest->created_at),

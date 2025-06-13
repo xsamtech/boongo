@@ -31,6 +31,8 @@ class Message extends JsonResource
         return [
             'id' => $this->id,
             'message_content' => $this->message_content,
+            'doc_title' => $this->doc_title,
+            'doc_uri' => $this->doc_uri,
             'answered_for' => $this->answered_for,
             'type' => Type::make($this->whenLoaded('type')),
             'status' => Status::make($this->whenLoaded('status')),
