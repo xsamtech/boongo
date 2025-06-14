@@ -29,7 +29,6 @@ class ToxicContent extends JsonResource
             'is_unlocked' => $this->is_unlocked,
             'is_archived' => $this->is_archived,
             'report_reason' => ReportReason::make($this->report_reason),
-            'user' => User::make($this->user),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'report_reason_id' => $this->report_reason_id,

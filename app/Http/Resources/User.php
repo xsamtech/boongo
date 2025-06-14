@@ -51,6 +51,7 @@ class User extends JsonResource
             'currency' => Currency::make($this->whenLoaded('currency')),
             'status' => Status::make($this->whenLoaded('status')),
             'roles' => Role::collection($this->roles),
+            'toxic_contents' => ToxicContent::collection($this->toxic_contents),
             'favorite_works' => $this->favoriteWorks(),
             'unpaid_consultations' => $this->unpaidConsultations(),
             'total_unpaid_consultations' => formatDecimalNumber($this->totalUnpaidConsultations()),
