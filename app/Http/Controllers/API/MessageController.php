@@ -17,6 +17,7 @@ use Illuminate\Support\Str;
 use App\Http\Resources\Message as ResourcesMessage;
 use App\Http\Resources\User as ResourcesUser;
 use App\Models\Event;
+use App\Models\Like;
 use App\Models\Partner;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -780,6 +781,45 @@ class MessageController extends BaseController
         $count_users = $message->users()->wherePivot('status_id', $status->id)->count();
 
         return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $count_users);
+    }
+
+    /**
+     * Like/Unlike message.
+     *
+     * @param  int $message_id
+     * @param  int $user_id
+     * @return \Illuminate\Http\Response
+     */
+    public function switchLike($message_id, $user_id)
+    {
+        $message = Message::find($message_id);
+
+        if (is_null($message)) {
+            return $this->handleError(__('notifications.find_message_404'));
+        }
+
+        $user = User::find($user_id);
+
+        if (is_null($user)) {
+            return $this->handleError(__('notifications.find_user_404'));
+        }
+
+        // Check if user liked message
+        $like = Like::where('user_id', $user->id)->where('message_id', $message_id)->first();
+
+        if ($like) {
+            $like->delete();
+
+            return $this->handleResponse(new ResourcesMessage($message), __('notifications.delete_like_success'));
+
+        } else {
+            Like::create([
+                'user_id' => $user->id,
+                'for_message_id' => $message->id,
+            ]);
+
+            return $this->handleResponse(new ResourcesMessage($message), __('notifications.create_like_success'));
+        }
     }
 
     /**
