@@ -25,7 +25,7 @@ class Message extends JsonResource
         $file_type_group = ModelsGroup::where('group_name', 'Type de fichier')->first();
         // Types
         $doc_type = ModelsType::where([['type_name->fr', 'Document'], ['group_id', $file_type_group->id]])->first();
-        $image_type = ModelsType::where([['type_name->fr', 'Image'], ['group_id', $file_type_group->id]])->first();
+        $image_type = ModelsType::where([['type_name->fr', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
         $audio_type = ModelsType::where([['type_name->fr', 'Audio'], ['group_id', $file_type_group->id]])->first();
 
         return [
@@ -33,6 +33,7 @@ class Message extends JsonResource
             'message_content' => $this->message_content,
             'doc_title' => $this->doc_title,
             'doc_uri' => $this->doc_uri,
+            'doc_page' => $this->doc_page,
             'answered_for' => $this->answered_for,
             'type' => Type::make($this->whenLoaded('type')),
             'status' => Status::make($this->whenLoaded('status')),

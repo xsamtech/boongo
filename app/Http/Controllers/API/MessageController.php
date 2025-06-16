@@ -503,6 +503,7 @@ class MessageController extends BaseController
             $latest = $filtered->sortByDesc('created_at')->first();
             $correspondent = $latest->user_id == $user->id ? $latest->addressee_user : $latest->user;
             $discussions->push([
+                'id' => $latest->id,
                 'entity' => 'user',
                 'entity_id' => $correspondent?->id,
                 'entity_name' => $correspondent?->firstname . ' ' . $correspondent?->lastname,
@@ -537,6 +538,7 @@ class MessageController extends BaseController
             $latest = $messages->sortByDesc('created_at')->first();
 
             $discussions->push([
+                'id' => $latest->id,
                 'entity' => 'organization',
                 'entity_id' => $organization->id,
                 'entity_name' => $organization->org_name,
@@ -571,6 +573,7 @@ class MessageController extends BaseController
             $latest = $messages->sortByDesc('created_at')->first();
 
             $discussions->push([
+                'id' => $latest->id,
                 'entity' => 'circle',
                 'entity_id' => $circle->id,
                 'entity_name' => $circle->circle_name,
@@ -605,6 +608,7 @@ class MessageController extends BaseController
             $latest = $messages->sortByDesc('created_at')->first();
 
             $discussions->push([
+                'id' => $latest->id,
                 'entity' => 'event',
                 'entity_id' => $event->id,
                 'entity_name' => $event->event_title,
@@ -830,7 +834,7 @@ class MessageController extends BaseController
      * @param  string $entity
      * @return \Illuminate\Http\Response
      */
-    public function deleteForMyself($user_id, $message_id, $entity)
+    public function deleteForMyself($user_id, $message_id)
     {
         $message_status_group = Group::where('group_name', 'Etat du message')->first();
         $deleted_message_status = Status::where([['status_name->fr', 'Supprimé'], ['group_id', $message_status_group->id]])->first();
@@ -846,16 +850,7 @@ class MessageController extends BaseController
             return $this->handleError(__('notifications.find_message_404'));
         }
 
-        if ($entity == 'personal') {
-            $message->update([
-                'status_id' => $deleted_message_status->id,
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($entity == 'group') {
-            $message->users()->updateExistingPivot($user->id, ['status_id' => $deleted_message_status->id]);
-        }
+        $message->users()->updateExistingPivot($user->id, ['status_id' => $deleted_message_status->id]);
 
         return $this->handleResponse(new ResourcesMessage($message), __('notifications.find_message_success'));
     }
