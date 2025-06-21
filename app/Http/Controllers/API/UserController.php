@@ -1937,15 +1937,15 @@ class UserController extends BaseController
         $file = new Filesystem;
         $file->cleanDirectory($_SERVER['DOCUMENT_ROOT'] . '/public/storage/images/users/' . $inputs['user_id'] . '/avatar');
         // Create image URL
-		$image_url = 'images/users/' . $id . '/avatar/' . Str::random(50) . '.png';
+		$image_path = 'images/users/' . $id . '/avatar/' . Str::random(50) . '.png';
 
 		// Upload image
-		Storage::url(Storage::disk('public')->put($image_url, base64_decode($image)));
+		Storage::disk('public')->put($image_path, base64_decode($image));
 
 		$user = User::find($id);
 
         $user->update([
-            'avatar_url' => $image_url,
+            'avatar_url' => Storage::url($image_path),
             'updated_at' => now()
         ]);
 

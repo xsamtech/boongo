@@ -23,7 +23,7 @@ class File extends JsonResource
             'file_name' => $this->file_name,
             'file_url' => $this->file_url != null ? $this->file_url : getWebURL() . '/assets/img/cover.png',
             'media_length' => $this->media_length,
-            'type' => Type::make($this->whenLoaded('type')),
+            'type' => Type::make($this->type),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'type_id' => $this->type_id,

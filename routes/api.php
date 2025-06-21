@@ -4,6 +4,8 @@
  * @see https://team.xsamtech.com/xanderssamoth
  */
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -198,3 +200,7 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     // ToxicContent
     Route::put('toxic_content/unlock_user/{id}', 'App\Http\Controllers\API\ToxicContentController@unlockUser')->name('toxic_content.api.unlock_user');
 });
+// Broadcasting endpoint
+Route::post('/broadcasting/auth', function (Request $request) {
+    return Broadcast::auth($request);
+})->middleware('auth:sanctum');

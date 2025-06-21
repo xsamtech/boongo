@@ -18,6 +18,13 @@ class Like extends Model
     protected $table = 'likes';
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $guarded = [];
+
+    /**
      * ONE-TO-MANY
      * One user for several likes
      */

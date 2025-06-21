@@ -219,6 +219,21 @@ class User extends Authenticatable
     }
 
     /**
+     * All users who consulted user works
+     */
+    public function worksSubscribers()
+    {
+        return User::whereHas('carts', function ($cartQuery) {
+                        $cartQuery->where('entity', 'consultation')
+                        ->whereHas('works', function ($workQuery) {
+                            $workQuery->where('user_id', $this->id);
+                        });
+                    })->where('id', '<>', $this->id) // exclude current user
+                    ->distinct()->get();
+    }
+
+
+    /**
      * All works whose consultation is not paid
      */
     public function unpaidConsultations()

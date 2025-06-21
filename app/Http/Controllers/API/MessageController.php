@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\MessageSent;
 use App\Models\Circle;
 use App\Models\File;
 use App\Models\Group;
@@ -21,6 +22,7 @@ use App\Models\Like;
 use App\Models\Partner;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use stdClass;
 
 /**
@@ -177,6 +179,15 @@ class MessageController extends BaseController
                 endforeach;
             }
         }
+
+        $message->load(['user', 'addressee_user', 'addressee_organization', 'addressee_circle', 'event']);
+        // Load relations for the "MessageSent" event
+        $message->load(['user.roles', 'user.country', 'user.currency', 'user.status.group', 'type.group', 'status.group', 'files', 'likes.user.roles', 'likes.user.country', 'likes.user.currency', 'likes.user.status.group', 'likes.user.toxic_contents.report_reason']);
+
+        // Check that the events are broadcasted correctly
+        Log::info('Broadcasting message ID ' . $message->id);
+        // The event broadcast
+        broadcast(new MessageSent($message))->toOthers();
 
         return $this->handleResponse(new ResourcesMessage($message), __('notifications.create_message_success'));
     }
@@ -683,7 +694,7 @@ class MessageController extends BaseController
 
         $messagesQuery = Message::where('type_id', $type->id)
                                     ->with(['user', 'addressee_user', 'addressee_organization', 
-                                    'addressee_circle', 'event', 'type', 'status', 'likes', 'files']);
+                                    'addressee_circle', 'event', 'type', 'status', 'likes', 'files'])->orderByDesc('created_at');
         $is_subscribed = $user->hasValidSubscription();
 
         switch ($entity) {
@@ -809,7 +820,7 @@ class MessageController extends BaseController
         }
 
         // Check if user liked message
-        $like = Like::where('user_id', $user->id)->where('message_id', $message_id)->first();
+        $like = Like::where('user_id', $user->id)->where('for_message_id', $message_id)->first();
 
         if ($like) {
             $like->delete();

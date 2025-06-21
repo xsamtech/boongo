@@ -190,8 +190,8 @@ class CurrenciesRateController extends BaseController
     public function findCurrencyRate($from_currency_acronym, $to_currency_acronym)
     {
         // Currencies
-        $from_currency = Currency::where('currency_acronym' . $from_currency_acronym)->first();
-        $to_currency = Currency::where('currency_acronym' . $to_currency_acronym)->first();
+        $from_currency = Currency::where('currency_acronym', $from_currency_acronym)->first();
+        $to_currency = Currency::where('currency_acronym', $to_currency_acronym)->first();
         // Request
         $currencies_rate = CurrenciesRate::where([['from_currency_id', $from_currency->id], ['to_currency_id', $to_currency->id]])->first();
 
