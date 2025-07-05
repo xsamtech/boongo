@@ -61,7 +61,7 @@ class User extends Authenticatable
      */
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class);
+        return $this->belongsToMany(Role::class)->withTimestamps()->orderByPivot('created_at', 'desc');
     }
 
     /**
@@ -204,6 +204,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user has role
+     */
+    public function hasRole($role_name)
+    {
+        return $this->roles->contains('role_name', $role_name);
+    }
+
+    /**
+     * Last selected organization
+     */
+    public function lastOrganization()
+    {
+        return $this->organizations()->orderByPivot('created_at', 'desc')->first();
+    }
+
+    /**
      * All favorite works
      */
     public function favoriteWorks()
@@ -217,21 +233,6 @@ class User extends Authenticatable
 
         return $last_favorite_cart->works()->orderByPivot('created_at', 'desc')->get();
     }
-
-    /**
-     * All users who consulted user works
-     */
-    public function worksSubscribers()
-    {
-        return User::whereHas('carts', function ($cartQuery) {
-                        $cartQuery->where('entity', 'consultation')
-                        ->whereHas('works', function ($workQuery) {
-                            $workQuery->where('user_id', $this->id);
-                        });
-                    })->where('id', '<>', $this->id) // exclude current user
-                    ->distinct()->get();
-    }
-
 
     /**
      * All works whose consultation is not paid

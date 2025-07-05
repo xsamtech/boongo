@@ -23,6 +23,11 @@ class Work extends Model
      */
     protected $guarded = [];
 
+    protected $casts = [
+        'consultation_price' => 'decimal:2',
+        'currency_id' => 'integer',
+    ];
+
     /**
      * MANY-TO-MANY
      * Several sessions for several works

@@ -970,6 +970,77 @@ class UserController extends BaseController
     }
 
     /**
+     * Search all users having a role different than the given
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function worksSubscribers(Request $request, $id)
+    {
+        // Groups
+        $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
+        // Statuses
+        $active_status = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
+        // Get partners & sponsors IDs
+        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name', 'Partenaire')->orWhere('role_name', 'Sponsor'); })->pluck('id')->toArray();
+        // Requests
+        $user = User::find($id);
+
+        if (is_null($user)) {
+            return $this->handleError(__('notifications.find_user_404'));
+        }
+
+        $users = User::whereHas('carts', function ($cartQuery) use ($user) {
+                            $cartQuery->where('entity', 'consultation')
+                            ->whereHas('works', function ($workQuery) use ($user) {
+                                $workQuery->where('user_id', $user->id);
+                            });
+                        })->where('id', '<>', $user->id) // exclude current user
+                        ->distinct()->paginate(10);
+        $partner = null;
+
+        if ($request->hasHeader('X-user-id')) {
+            // User
+            $logged_in_user = User::find($request->header('X-user-id'));
+
+            if (is_null($logged_in_user)) {
+                return $this->handleError(__('notifications.find_user_404'));
+            }
+
+            // Subscription
+            $is_subscribed = $logged_in_user->hasValidSubscription();
+
+            // If user is subscribed, send only data of the same category as that in the subscription
+            if ($is_subscribed) {
+                $valid_subscription = $logged_in_user->validSubscriptions()->latest()->first();
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $active_status) {
+                                        $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $active_status->id);
+                                    })->where(function ($query) use ($users_ids) {
+                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                    })->inRandomOrder()->first() : null;
+
+            // Otherwise, send all data
+            } else {
+                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
+                                        $query->wherePivot('status_id', $active_status->id);
+                                    })->where(function ($query) use ($users_ids) {
+                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                    })->inRandomOrder()->first() : null;
+            }
+
+        } else {
+            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
+                                    $query->wherePivot('status_id', $active_status->id);
+                                })->where(function ($query) use ($users_ids) {
+                                    $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                })->inRandomOrder()->first() : null;
+        }
+
+        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $users->total(), $partner);
+    }
+
+    /**
      * Retrieves users in an organization with a specific role.
      *
      * @param  \Illuminate\Http\Request  $request
