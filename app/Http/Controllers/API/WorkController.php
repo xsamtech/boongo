@@ -137,11 +137,12 @@ class WorkController extends BaseController
 
                 // Generate a unique path for the file
                 $filename = $singleFile->getClientOriginalName();
-                $file_url =  $custom_uri . '/' . $work->id . '/' . $filename;
+                $cleaned_filename = sanitizeFileName($filename);
+                $file_url =  $custom_uri . '/' . $work->id . '/' . $cleaned_filename ;
 
                 // Upload file
                 try {
-                    $singleFile->storeAs($custom_uri . '/' . $work->id, $filename, 's3');
+                    $singleFile->storeAs($custom_uri . '/' . $work->id, $cleaned_filename, 's3');
 
                 } catch (\Throwable $th) {
                     return $this->handleError($th, __('notifications.create_work_file_500'), 500);
@@ -149,147 +150,13 @@ class WorkController extends BaseController
 
                 // Creating the database record for the file
                 File::create([
-                    'file_name' => trim($fileNames[$key] ?? $filename),
+                    'file_name' => trim($fileNames[$key] ?? $cleaned_filename),
                     'file_url' => config('filesystems.disks.s3.url') . $file_url,
                     'type_id' => $file_type_id,
                     'work_id' => $work->id
                 ]);
             }
         }
-
-        // if ($request->hasFile('video_file_url')) {
-        //     if ($request->image_file_type_id == null) {
-        //         return $this->handleError($request->image_file_type_id, __('validation.required') . ' (' . __('miscellaneous.file_type') . ') ', 400);
-        //     }
-
-        //     $type = Type::find($request->image_file_type_id);
-
-        //     if (is_null($type)) {
-        //         return $this->handleError(__('notifications.find_type_404'));
-        //     }
-
-        //     if ($type->id != $image_type->id) {
-        //         return $this->handleError(__('notifications.type_is_not_file') . ' ' . $image_type->type_name);
-        //     }
-
-        //     $file = $request->file('video_file_url');
-        //     $filename = $file->getClientOriginalName();
-        //     $file_url =  'images/works/' . $work->id . '/' . $filename;
-
-        //     // Upload file
-        //     try {
-        //         $file->storeAs('images/works/' . $work->id, $filename, 's3');
-
-        //     } catch (\Throwable $th) {
-        //         return $this->handleError($th, __('notifications.create_work_file_500'), 500);
-        //     }
-
-        //     File::create([
-        //         'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
-        //         'file_url' => config('filesystems.disks.s3.url') . $file_url,
-        //         'type_id' => $type->id,
-        //         'work_id' => $work->id
-        //     ]);
-        // }
-
-        // if ($request->hasFile('document_file_url')) {
-        //     if ($request->document_file_type_id == null) {
-        //         return $this->handleError($request->document_file_type_id, __('validation.required') . ' (' . __('miscellaneous.file_type') . ') ', 400);
-        //     }
-
-        //     $type = Type::find($request->document_file_type_id);
-
-        //     if (is_null($type)) {
-        //         return $this->handleError(__('notifications.find_type_404'));
-        //     }
-
-        //     if ($type->id != $document_type->id) {
-        //         return $this->handleError(__('notifications.type_is_not_file') . ' ' . $document_type->type_name);
-        //     }
-
-        //     $file = $request->file('document_file_url');
-        //     $filename = $file->getClientOriginalName();
-        //     $file_url =  'documents/works/' . $work->id . '/' . $filename;
-
-        //     // Upload file
-        //     try {
-        //         $file->storeAs('documents/works/' . $work->id, $filename, 's3');
-
-        //     } catch (\Throwable $th) {
-        //         return $this->handleError($th, __('notifications.create_work_file_500'), 500);
-        //     }
-
-        //     File::create([
-        //         'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
-        //         'file_url' => config('filesystems.disks.s3.url') . $file_url,
-        //         'type_id' => $type->id,
-        //         'work_id' => $work->id
-        //     ]);
-        // }
-
-        // if ($request->hasFile('audio_file_url')) {
-        //     if ($request->audio_file_type_id == null) {
-        //         return $this->handleError($request->audio_file_type_id, __('validation.required') . ' (' . __('miscellaneous.file_type') . ') ', 400);
-        //     }
-
-        //     $type = Type::find($request->audio_file_type_id);
-
-        //     if (is_null($type)) {
-        //         return $this->handleError(__('notifications.find_type_404'));
-        //     }
-
-        //     if ($type->id != $audio_type->id) {
-        //         return $this->handleError(__('notifications.type_is_not_file') . ' ' . $audio_type->type_name);
-        //     }
-
-        //     $file = $request->file('audio_file_url');
-        //     $filename = $file->getClientOriginalName();
-        //     $file_url =  'audios/works/' . $work->id . '/' . $filename;
-
-        //     // Upload file
-        //     try {
-        //         $file->storeAs('audios/works/' . $work->id, $filename, 's3');
-
-        //     } catch (\Throwable $th) {
-        //         return $this->handleError($th, __('notifications.create_work_file_500'), 500);
-        //     }
-
-        //     File::create([
-        //         'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
-        //         'file_url' => config('filesystems.disks.s3.url') . $file_url,
-        //         'type_id' => $type->id,
-        //         'work_id' => $work->id
-        //     ]);
-        // }
-
-        // if ($request->image_64 != null) {
-        //     if ($request->image_type_id == null) {
-        //         return $this->handleError($request->image_type_id, __('validation.required'), 400);
-        //     }
-
-        //     // $extension = explode('/', explode(':', substr($request->image_64, 0, strpos($request->image_64, ';')))[1])[1];
-        //     $replace = substr($request->image_64, 0, strpos($request->image_64, ',') + 1);
-        //     // Find substring from replace here eg: data:image/png;base64,
-        //     $image = str_replace($replace, '', $request->image_64);
-        //     $image = str_replace(' ', '+', $image);
-        //     // Create image URL
-        //     $image_url = 'images/works/' . $work->id . '/' . Str::random(50) . '.png';
-
-        //     // Upload image
-        //     try {
-        //         Storage::url(Storage::disk('s3')->put($image_url, base64_decode($image)));
-
-        //     } catch (\Throwable $th) {
-        //         return $this->handleError($th, __('notifications.create_work_file_500'), 500);
-        //     }
-
-        //     File::create([
-        //         'file_name' => trim($request->image_name) != null ? $request->image_name : $work->work_title,
-        //         'file_url' => getWebURL() . '/storage/' . $image_url,
-        //         'type_id' => $request->image_type_id,
-        //         'work_id' => $work->id
-        //     ]);
-        // }
 
         return $this->handleResponse(new ResourcesWork($work), __('notifications.create_work_success'));
     }

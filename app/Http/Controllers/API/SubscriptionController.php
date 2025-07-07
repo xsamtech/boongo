@@ -33,9 +33,21 @@ class SubscriptionController extends BaseController
      */
     public function index()
     {
-        $subscriptions = Subscription::all();
+        // Récupérer tous les abonnements avec leurs catégories
+        $subscriptions = Subscription::with('category')->get();
 
-        return $this->handleResponse(ResourcesSubscription::collection($subscriptions), __('notifications.find_all_subscriptions_success'));
+        // Regrouper les abonnements par catégorie
+        $groupedSubscriptions = $subscriptions->groupBy(function ($subscription) {
+            return $subscription->category->category_name;
+        });
+
+        // Transformer les données regroupées pour les envoyer dans la réponse
+        // Ici on fait une ressource personnalisée pour chaque catégorie, tu peux adapter selon ce que tu veux retourner
+        $groupedSubscriptionsResource = $groupedSubscriptions->map(function ($group) {
+            return ResourcesSubscription::collection($group); // ou créer une nouvelle ressource personnalisée pour chaque groupe
+        });
+
+        return $this->handleResponse($groupedSubscriptionsResource, __('notifications.find_all_subscriptions_success'));
     }
 
     /**

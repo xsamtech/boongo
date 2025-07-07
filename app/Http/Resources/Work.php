@@ -60,6 +60,8 @@ class Work extends JsonResource
             'work_url' => $this->work_url,
             'video_source' => $this->video_source,
             'media_length' => $this->media_length,
+            'author' => $this->author,
+            'editor' => $this->editor,
             'is_public' => $this->is_public,
             'consultation_price' => $this->consultation_price,
             'number_of_hours' => $this->number_of_hours,

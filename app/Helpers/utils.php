@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
@@ -11,7 +12,7 @@ if (!function_exists('getWebURL')) {
     function getWebURL()
     {
         // return (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
-        return 'http://192.168.243.238/boongo/public';
+        return 'http://192.168.59.238/boongo/public';
     }
 }
 
@@ -20,7 +21,7 @@ if (!function_exists('getApiURL')) {
     function getApiURL()
     {
         // return (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/api';
-        return 'http://192.168.243.238/boongo/public/api';
+        return 'http://192.168.59.238/boongo/public/api';
     }
 }
 
@@ -61,6 +62,23 @@ if (!function_exists('isVideoFile')) {
 
         // Check if the extension is in the list
         return in_array($extension, $videoExtensions);
+    }
+}
+
+// Helper function to sanitize filenames
+if (!function_exists('sanitizeFileName')) {
+    function sanitizeFileName($filename)
+    {
+        // Convert to lowercase
+        $filename = strtolower($filename);
+
+        // Replace spaces with underscores
+        $filename = str_replace(' ', '_', $filename);
+
+        // Remove special characters (you can add more if needed)
+        $filename = preg_replace('/[^a-z0-9._-]/', '', $filename);
+
+        return $filename;
     }
 }
 
@@ -117,7 +135,7 @@ if (!function_exists('deleteExplodedArrayItem')) {
         $explodes = explode($separator, $subject);
         $clean_inventory = array();
 
-        foreach($explodes as $explode) {
+        foreach ($explodes as $explode) {
             if (!isset($clean_inventory[$explode])) {
                 $clean_inventory[$explode] = 0;
             }
