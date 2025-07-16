@@ -30,7 +30,40 @@ class Partner extends Model
      */
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, 'category_partner')->orderByPivot('created_at', 'desc')->withTimestamps()->withPivot(['promo_code', 'number_of_days', 'number_of_registrations', 'status_id']);
+        return $this->belongsToMany(Category::class, 'category_partner')->orderByPivot('created_at', 'desc')->withTimestamps()->withPivot(['activation_code', 'promo_code', 'number_of_days', 'is_used', 'status_id']);
+    }
+
+    /**
+     * Get all partner activation codes
+     */
+    public function allActivationCodes()
+    {
+        $categories = $this->categories;
+
+        $activationCodes = [];
+
+        foreach ($categories as $category) {
+            // Check the activation codes and their status in the pivot relationship
+            if ($category->pivot->activation_code) {
+                $activationCodes[] = [
+                    'activation_code' => $category->pivot->activation_code,
+                    'is_used' => $category->pivot->is_used
+                ];
+            }
+        }
+
+        return $activationCodes;
+    }
+
+    /**
+     * Get all partner activation codes by "is_used"
+     */
+    public function allActivationCodesByIsUsed($is_used)
+    {
+        $activationCodes = $this->categories()->wherePivot('is_used', $is_used)
+                                ->pluck('pivot.activation_code'); // Retrieve activation codes only
+
+        return $activationCodes;
     }
 
     /**

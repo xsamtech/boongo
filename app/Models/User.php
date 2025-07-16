@@ -204,11 +204,50 @@ class User extends Authenticatable
     }
 
     /**
+     * MANY-TO-ONE
+     * Several activation_codes for a user
+     */
+    public function activation_codes(): HasMany
+    {
+        return $this->hasMany(ActivationCode::class);
+    }
+
+    /**
+     * Check if user has active code
+     */
+    public function hasActiveCode()
+    {
+        return $this->activation_codes()->where('is_active', 1)->exists();
+    }
+
+    /**
      * Check if user has role
      */
     public function hasRole($role_name)
     {
         return $this->roles->contains('role_name', $role_name);
+    }
+
+    /**
+     * The unpaid consultation cart
+     */
+    public function unpaidConsultationCart()
+    {
+        $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
+        $ongoing_status = Status::where([['status_name->fr', 'En cours'], ['group_id', $cart_status_group->id]])->first();
+
+        return $this->carts()->where([['entity', 'consultation'], ['status_id', $ongoing_status->id]])->latest()->first();
+    }
+
+    /**
+     * The unpaid subscription cart
+     */
+    public function unpaidSubscriptionCart()
+    {
+        $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
+        $ongoing_status = Status::where([['status_name->fr', 'En cours'], ['group_id', $cart_status_group->id]])->first();
+
+        return $this->carts()->where([['entity', 'subscription'], ['status_id', $ongoing_status->id]])->latest()->first();
     }
 
     /**
@@ -313,27 +352,6 @@ class User extends Authenticatable
     }
 
     /**
-     * All works whose consultation is pending
-     */
-    public function pendingConsultations()
-    {
-        $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
-        $paid_status = Status::where([['status_name->fr', 'Payé'], ['group_id', $cart_status_group->id]])->first();
-
-        // Retrieve the last cart where the entity is "consultation"
-        $last_consultation_cart = $this->carts()->where([['entity', 'consultation'], ['status_id', $paid_status->id]])->latest()->first();
-
-        if (!$last_consultation_cart) {
-            return collect();
-        }
-
-        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
-        $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
-
-        return $last_consultation_cart->works()->wherePivot('status_id', $pending_status->id)->orderByPivot('created_at', 'desc')->get();
-    }
-
-    /**
      * All unpaid subscriptions
      */
     public function unpaidSubscriptions()
@@ -406,7 +424,7 @@ class User extends Authenticatable
         }
 
         $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
-        $valid_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
+        $valid_status = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
 
         return $last_subscription_cart->subscriptions()->wherePivot('status_id', $valid_status->id)->orderByPivot('created_at', 'desc')->get();
     }
@@ -430,5 +448,13 @@ class User extends Authenticatable
         $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
 
         return $last_subscription_cart->subscriptions()->wherePivot('status_id', $pending_status->id)->orderByPivot('created_at', 'desc')->get();
+    }
+
+    /**
+     * Grand totals (Consultations + Subscriptions)
+     */
+    public function grandTotalsUnpaid()
+    {
+        return $this->totalUnpaidConsultations() + $this->totalUnpaidSubscriptions();
     }
 }

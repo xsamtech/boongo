@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Events\MessageSent;
 use App\Models\Circle;
+use App\Models\Event;
 use App\Models\File;
 use App\Models\Group;
+use App\Models\Like;
+use App\Events\MessageSent;
 use App\Models\Message;
 use App\Models\Notification;
 use App\Models\Organization;
+use App\Models\Partner;
 use App\Models\Status;
 use App\Models\Type;
 use App\Models\User;
@@ -17,13 +20,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Resources\Message as ResourcesMessage;
 use App\Http\Resources\User as ResourcesUser;
-use App\Models\Event;
-use App\Models\Like;
-use App\Models\Partner;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use stdClass;
 
 /**
  * @author Xanders

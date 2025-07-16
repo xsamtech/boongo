@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\PromoCode;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\PromoCode as ResourcesPromoCode;
+use App\Models\ActivationCode;
 use App\Models\Group;
 use App\Models\Partner;
 use App\Models\Status;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\ActivationCode as ResourcesActivationCode;
 
 /**
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
  */
-class PromoCodeController extends BaseController
+class ActivationCodeController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -24,9 +24,9 @@ class PromoCodeController extends BaseController
      */
     public function index()
     {
-        $promo_codes = PromoCode::orderByDesc('created_at')->get();
+        $activation_codes = ActivationCode::orderByDesc('created_at')->get();
 
-        return $this->handleResponse(ResourcesPromoCode::collection($promo_codes), __('notifications.find_all_promo_codes_success'));
+        return $this->handleResponse(ResourcesActivationCode::collection($activation_codes), __('notifications.find_all_activation_codes_success'));
     }
 
     /**
@@ -54,9 +54,9 @@ class PromoCodeController extends BaseController
             return $this->handleError($validator->errors());       
         }
 
-        $promo_code = PromoCode::create($inputs);
+        $activation_code = ActivationCode::create($inputs);
 
-        return $this->handleResponse(new ResourcesPromoCode($promo_code), __('notifications.create_promo_code_success'));
+        return $this->handleResponse(new ResourcesActivationCode($activation_code), __('notifications.create_activation_code_success'));
     }
 
     /**
@@ -67,23 +67,23 @@ class PromoCodeController extends BaseController
      */
     public function show($id)
     {
-        $promo_code = PromoCode::find($id);
+        $activation_code = ActivationCode::find($id);
 
-        if (is_null($promo_code)) {
-            return $this->handleError(__('notifications.find_promo_code_404'));
+        if (is_null($activation_code)) {
+            return $this->handleError(__('notifications.find_activation_code_404'));
         }
 
-        return $this->handleResponse(new ResourcesPromoCode($promo_code), __('notifications.find_promo_code_success'));
+        return $this->handleResponse(new ResourcesActivationCode($activation_code), __('notifications.find_activation_code_success'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\PromoCode  $promo_code
+     * @param  \App\Models\ActivationCode  $activation_code
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, PromoCode $promo_code)
+    public function update(Request $request, ActivationCode $activation_code)
     {
         // Get inputs
         $inputs = [
@@ -94,64 +94,62 @@ class PromoCodeController extends BaseController
         ];
 
         if ($inputs['for_partner_id'] != null) {
-            $promo_code->update([
+            $activation_code->update([
                 'for_partner_id' => $inputs['for_partner_id'],
                 'updated_at' => now(),
             ]);
         }
 
         if ($inputs['code'] != null) {
-            $promo_code->update([
+            $activation_code->update([
                 'code' => $inputs['code'],
                 'updated_at' => now(),
             ]);
         }
 
         if ($inputs['is_active'] != null) {
-            $promo_code->update([
+            $activation_code->update([
                 'is_active' => $inputs['is_active'],
                 'updated_at' => now(),
             ]);
         }
 
         if ($inputs['user_id'] != null) {
-            $promo_code->update([
+            $activation_code->update([
                 'user_id' => $inputs['user_id'],
                 'updated_at' => now(),
             ]);
         }
 
-        return $this->handleResponse(new ResourcesPromoCode($promo_code), __('notifications.update_promo_code_success'));
+        return $this->handleResponse(new ResourcesActivationCode($activation_code), __('notifications.update_activation_code_success'));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\PromoCode  $promo_code
+     * @param  \App\Models\ActivationCode  $activation_code
      * @return \Illuminate\Http\Response
      */
-    public function destroy(PromoCode $promo_code)
+    public function destroy(ActivationCode $activation_code)
     {
-        $promo_code->delete();
+        $activation_code->delete();
 
-        $promo_codes = PromoCode::all();
+        $activation_codes = ActivationCode::all();
 
-        return $this->handleResponse(ResourcesPromoCode::collection($promo_codes), __('notifications.delete_promo_code_success'));
+        return $this->handleResponse(ResourcesActivationCode::collection($activation_codes), __('notifications.delete_activation_code_success'));
     }
 
     // ==================================== CUSTOM METHODS ====================================
     /**
-     * Activate subscription directly via a promo code given by a partner
+     * Activate subscription directly via a activation code given by a partner
      *
      * @param  int $user_id
      * @param  string $code
-     * @param  string $for_partner_id
+     * @param  string $partner_id
      * @return \Illuminate\Http\Response
      */
-    public function activateSubscription($user_id, $code, $for_partner_id)
+    public function activateSubscription($user_id, $code, $partner_id)
     {
-        // $promo_code = PromoCode::find($id);
-
         // Group
         $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
         // Status
@@ -163,34 +161,27 @@ class PromoCodeController extends BaseController
             return $this->handleError(__('notifications.find_user_404'));
         }
 
-        $partner = Partner::find($for_partner_id);
+        $partner = Partner::find($partner_id);
 
         if (is_null($partner)) {
-            return $this->handleError(__('notifications.find_user_404'));
+            return $this->handleError(__('notifications.find_partner_404'));
         }
 
-        $promo_code_exists = $partner->categories()->wherePivot([['promo_code', $code], ['status_id', $active_status->id]])->exists();
+        // Ensure the partner exists, is active and has activation code
+        $activation_code_exists = $partner->categories()->wherePivot([['activation_code', $code], ['is_used', 0], ['status_id', $active_status->id]])->exists();
 
-        if ($promo_code_exists) {
-            $terminated_status = Status::where([['status_name->fr', 'Terminé'], ['group_id', $partnership_status_group->id]])->first();
-
-            // Register user promo code
-            $promo_code = PromoCode::create([
-                'for_partner_id' => $partner->id,
-                'code' => $code,
-                'is_active' => 1,
-                'user_id' => $user->id
-            ]);
-
-            // Terminate partnership with the promo code
-            $partner->categories()->updateExistingPivot($partner->categories()->pluck('id')->toArray(), [
-                'status_id' => $terminated_status->id
-            ]);
-
-            return $this->handleResponse(new ResourcesPromoCode($promo_code), __('notifications.create_promo_code_success'));
-
-        } else {
-            return $this->handleError(__('notifications.find_promo_code_404'));
+        if (!$activation_code_exists) {
+            return $this->handleError(__('notifications.find_activation_code_404'));
         }
+
+        // Register user activation code
+        $activation_code = ActivationCode::create([
+            'for_partner_id' => $partner->id,
+            'code' => $code,
+            'is_active' => 1,
+            'user_id' => $user->id
+        ]);
+
+        return $this->handleResponse(new ResourcesActivationCode($activation_code), __('notifications.create_subscription_success'));
     }
 }

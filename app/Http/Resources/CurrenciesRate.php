@@ -23,7 +23,7 @@ class CurrenciesRate extends JsonResource
             'id' => $this->id,
             'from_currency' => Currency::make($this->from_currency),
             'to_currency' => Currency::make($this->to_currency),
-            'rate' => $this->rate,
+            'rate' => round($this->rate),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'from_currency_id' => $this->from_currency_id,

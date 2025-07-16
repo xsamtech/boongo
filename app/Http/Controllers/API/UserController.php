@@ -365,6 +365,8 @@ class UserController extends BaseController
             'two_factor_confirmed_at' => $request->two_factor_confirmed_at,
             'two_factor_phone_confirmed_at' => $request->two_factor_phone_confirmed_at,
             'is_incognito' => $request->is_incognito,
+            'promo_code' => $request->promo_code,
+            'is_promoted' => $request->is_promoted,
             'country_id' => $request->country_id,
             'currency_id' => $request->currency_id,
             'status_id' => $request->status_id
@@ -697,6 +699,20 @@ class UserController extends BaseController
         if ($inputs['is_incognito'] != null) {
             $user->update([
                 'is_incognito' => $inputs['is_incognito'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['promo_code'] != null) {
+            $user->update([
+                'promo_code' => $inputs['promo_code'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['is_promoted'] != null) {
+            $user->update([
+                'is_promoted' => $inputs['is_promoted'],
                 'updated_at' => now(),
             ]);
         }

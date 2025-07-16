@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Resources\Partner as ResourcesPartner;
+use App\Models\ActivationCode;
+use App\Models\Role;
+use App\Models\User;
 use Carbon\Carbon;
 
 /**
@@ -37,6 +40,8 @@ class PartnerController extends BaseController
      */
     public function store(Request $request)
     {
+        $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
+        $active_status = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
         // Get inputs
         $inputs = [
             'name' => $request->name,
@@ -68,25 +73,63 @@ class PartnerController extends BaseController
             $image = str_replace($replace, '', $request->image_64);
             $image = str_replace(' ', '+', $image);
             // Create image URL
-            $image_url = 'images/partners/' . $partner->id . '/' . Str::random(50) . '.png';
+            $image_path = 'images/partners/' . $partner->id . '/' . Str::random(50) . '.png';
 
             // Upload image
-            Storage::url(Storage::disk('public')->put($image_url, base64_decode($image)));
+            Storage::disk('public')->put($image_path, base64_decode($image));
 
             $partner->update([
-                'image_url' => $image_url,
+                'image_url' => Storage::url($image_path),
                 'updated_at' => now()
             ]);
         }
 
-        if ($request->category_id != null) {
-            if ($request->number_of_days == null) {
-                return $this->handleError(__('notifications.how_long_partnership'));
+        if ($inputs['from_user_id'] != null) {
+            $user = User::find($inputs['from_user_id']);
+
+            if (is_null($user)) {
+                return $this->handleError(__('notifications.find_user_404'));
             }
 
-            $random_int = random_int(1000, 9999);
+            if ($request->category_id != null) {
+                if ($request->number_of_days == null) {
+                    return $this->handleError(__('notifications.how_long_partnership'));
+                }
 
-            $partner->categories()->attach($request->category_id, ['promo_code' => $random_int, 'number_of_days' => $request->number_of_days]);
+                if (!$user->hasRole('Partenaire')) {
+                    $role = Role::where('role_name', 'Partenaire')->first();
+
+                    $user->roles()->syncWithoutDetaching([$role->id]);
+                }
+
+                if ($request->entity == 'promotional') {
+                    $random_int = random_int(1000, 9999);
+
+                    $partner->categories()->attach($request->category_id, ['promo_code' => $random_int, 'number_of_days' => $request->number_of_days, 'status_id' => $active_status->id]);
+
+                } else {
+                    $codes = [];
+
+                    for ($i = 0; $i < $request->codes_count; $i++) {
+                        $random_code = Str::random(7);  // Generates a 7-character alphanumeric code
+
+                        $codes[$request->category_id] = [
+                            'activation_code' => $random_code,
+                            'number_of_days' => $request->number_of_days,
+                            'status_id' => $active_status->id
+                        ];
+                    }
+
+                    $partner->categories()->attach($codes);
+                }
+
+            } else {
+                if (!$user->hasRole('Sponsor')) {
+                    $role = Role::where('role_name', 'Sponsor')->first();
+
+                    $user->roles()->syncWithoutDetaching([$role->id]);
+                }
+            }
         }
 
         return $this->handleResponse(new ResourcesPartner($partner), __('notifications.create_partner_success'));
@@ -118,6 +161,8 @@ class PartnerController extends BaseController
      */
     public function update(Request $request, Partner $partner)
     {
+        $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
+        $active_status = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
         // Get inputs
         $inputs = [
             'id' => $request->id,
@@ -172,6 +217,13 @@ class PartnerController extends BaseController
             ]);
         }
 
+        if ($inputs['website_url'] != null) {
+            $partner->update([
+                'website_url' => $inputs['website_url'],
+                'updated_at' => now(),
+            ]);
+        }
+
         if ($inputs['image_64'] != null) {
             $current_partner = Partner::find($inputs['id']);
 
@@ -196,36 +248,30 @@ class PartnerController extends BaseController
             ]);
         }
 
-        if ($inputs['website_url'] != null) {
-            $partner->update([
-                'website_url' => $inputs['website_url'],
-                'updated_at' => now(),
-            ]);
-        }
-
         if ($request->category_id != null) {
-            $pivot_exists = $partner->categories()->where('category_id', $request->category_id)->exists();
+            if ($request->number_of_days == null) {
+                return $this->handleError(__('notifications.how_long_partnership'));
+            }
 
-            // If the relationship already exists, we update the pivot based on the data sent
-            if ($pivot_exists) {
-                if ($request->number_of_days != null AND $request->number_of_registrations != null) {
-                    $partner->categories()->syncWithoutDetaching([$request->category_id => ['number_of_days' => $request->number_of_days, 'number_of_registrations' => $request->number_of_registrations]]);
-
-                } elseif ($request->number_of_days != null AND $request->number_of_registrations == null) {
-                    $partner->categories()->syncWithoutDetaching([$request->category_id => ['number_of_days' => $request->number_of_days]]);
-
-                } elseif ($request->number_of_days == null AND $request->number_of_registrations != null) {
-                    $partner->categories()->syncWithoutDetaching([$request->category_id => ['number_of_registrations' => $request->number_of_registrations]]);
-                }
-
-            // If the relationship doesn't exist, we create the relationship by adding the necessary attributes
-            } else {
-                if ($request->number_of_days == null) {
-                    return $this->handleError(__('notifications.how_long_partnership'));
-                }
-
+            if ($request->entity == 'promotional') {
                 $random_int = random_int(1000, 9999);
-                $partner->categories()->attach($request->category_id, ['promo_code' => $random_int, 'number_of_days' => $request->number_of_days]);
+
+                $partner->categories()->attach($request->category_id, ['promo_code' => $random_int, 'number_of_days' => $request->number_of_days, 'status_id' => $active_status->id]);
+
+            } else {
+                $codes = [];
+
+                for ($i = 0; $i < $request->codes_count; $i++) {
+                    $random_code = Str::random(7);  // Generates a 7-character alphanumeric code
+
+                    $codes[$request->category_id] = [
+                        'activation_code' => $random_code,
+                        'number_of_days' => $request->number_of_days,
+                        'status_id' => $active_status->id
+                    ];
+                }
+
+                $partner->categories()->attach($codes);
             }
         }
 
@@ -287,6 +333,44 @@ class PartnerController extends BaseController
     }
 
     /**
+     * Withdraw some categories partnership.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function withdrawSomeCategories(Request $request, $id)
+    {
+        $partner = Partner::find($id);
+
+        if (is_null($partner)) {
+            return $this->handleError(__('notifications.find_partner_404'));
+        }
+
+        $partner->categories()->detach($request->categories_ids);
+
+        return $this->handleResponse(new ResourcesPartner($partner), __('notifications.update_partner_success'));
+    }
+
+    /**
+     * Withdraw some categories partnership.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function withdrawAllCategories($id)
+    {
+        $partner = Partner::find($id);
+
+        if (is_null($partner)) {
+            return $this->handleError(__('notifications.find_partner_404'));
+        }
+
+        $partner->categories()->detach();
+
+        return $this->handleResponse(new ResourcesPartner($partner), __('notifications.update_partner_success'));
+    }
+
+    /**
      * Terminate partnership
      *
      * @param  int $partner_id
@@ -316,6 +400,30 @@ class PartnerController extends BaseController
             $partner->categories()->updateExistingPivot($partner->categories()->pluck('id')->toArray(), [
                 'status_id' => $terminated_status->id
             ]);
+
+            // Disable all activation codes
+            $activationCodes = ActivationCode::where('for_partner_id', $partner->id)->get();
+
+            if ($activationCodes->isNotEmpty()) {
+                foreach ($activationCodes as $activationCode) {
+                    $activationCode->update(['is_active' => 0]);
+                }
+            }
+
+            // Withdraw promotional codes from all users
+            if ($partner->categories[0]->pivot->promo_code != null) {
+                $promoCode = $partner->categories[0]->pivot->promo_code;
+                $users = User::where('promo_code', $promoCode)->get();
+
+                if ($users->isNotEmpty()) {
+                    foreach ($users as $user) {
+                        $user->update([
+                            'promo_code' => null,
+                            'is_promoted' => null,
+                        ]);
+                    }
+                }
+            }
 
             return $this->handleResponse(new ResourcesPartner($partner), __('notifications.partnership_terminated'));
 

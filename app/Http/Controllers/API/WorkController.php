@@ -19,7 +19,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Resources\Like as ResourcesLike;
 use App\Http\Resources\Session as ResourcesSession;
+use App\Http\Resources\User as ResourcesUser;
 use App\Http\Resources\Work as ResourcesWork;
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
 
 /**
@@ -1357,6 +1359,52 @@ class WorkController extends BaseController
             $count_all = $query->count();
 
             return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
+        }
+    }
+
+    /**
+     * Invalidate a user consultations.
+     *
+     * @param  int $user_id
+     */
+    public function invalidateConsultations($user_id)
+    {
+        // Groups
+        $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
+        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
+        // Status
+        $paid_status = Status::where([['status_name->fr', 'Payé'], ['group_id', $cart_status_group->id]])->first();
+        $valid_status = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
+        $expired_status = Status::where([['status_name->fr', 'Expiré'], ['group_id', $subscription_status_group->id]])->first();
+        // Requests
+        $user = User::find($user_id);
+
+        if (is_null($user)) {
+            return $this->handleError(__('notifications.find_user_404'));
+        }
+
+        // Retrieve the last cart where the entity is "consultation"
+        $last_consultation_cart = $user->carts()->where([['entity', 'consultation'], ['status_id', $paid_status->id]])->latest()->first();
+
+        if (is_null($last_consultation_cart)) {
+            return $this->handleError(__('notifications.find_cart_404'));
+        }
+
+        $updated_at = Carbon::parse($last_consultation_cart->updated_at);
+
+        // Check if the update date is older than 30 days
+        if ($updated_at->diffInDays(Carbon::now()) >= 30) {
+            $cart_works = $last_consultation_cart->works()->wherePivot('status_id', $valid_status->id)->get();
+
+            // Expire consultation for each work in the cart
+            foreach ($cart_works as $work) {
+                $last_consultation_cart->works()->updateExistingPivot($work->id, ['status_id' => $expired_status->id]);
+            }
+
+            return $this->handleResponse(new ResourcesUser($user), __('notifications.expire_consultation_success'));
+
+        } else {
+            return $this->handleError(new ResourcesUser($user), __('notifications.expire_consultation_failed'), 404);
         }
     }
 

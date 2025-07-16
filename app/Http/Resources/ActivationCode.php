@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
  */
-class Cart extends JsonResource
+class ActivationCode extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -20,15 +20,13 @@ class Cart extends JsonResource
     {
         return [
             'id' => $this->id,
-            'payment_code' => $this->payment_code,
-            'entity' => $this->entity,
-            'status' => Status::make($this->status),
-            'payment' => Payment::make($this->payment),
-            'works' => Work::collection($this->works),
-            'subscriptions' => Subscription::collection($this->subscriptions),
+            'for_partner_id' => $this->for_partner_id,
+            'code' => $this->code,
+            'is_active' => $this->is_active,
+            'user' => User::make($this->user),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
-            'user_id' => $this->user_id
+            'user_id' => $this->user_id,
         ];
     }
 }

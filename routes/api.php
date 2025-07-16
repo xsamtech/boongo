@@ -28,7 +28,7 @@ Route::middleware(['auth:sanctum', 'localization'])->group(function () {
     Route::apiResource('subscription', 'App\Http\Controllers\API\SubscriptionController')->except(['index']);
     Route::apiResource('cart', 'App\Http\Controllers\API\CartController');
     Route::apiResource('partner', 'App\Http\Controllers\API\PartnerController');
-    Route::apiResource('promo_code', 'App\Http\Controllers\API\PromoCodeController');
+    Route::apiResource('activation_code', 'App\Http\Controllers\API\ActivationCodeController');
     Route::apiResource('role', 'App\Http\Controllers\API\RoleController')->except(['search']);
     Route::apiResource('user', 'App\Http\Controllers\API\UserController')->except(['store', 'show', 'login']);
     Route::apiResource('organization', 'App\Http\Controllers\API\OrganizationController');
@@ -112,7 +112,7 @@ Route::group(['middleware' => ['api', 'localization']], function () {
 Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function () {
     Route::resource('work', 'App\Http\Controllers\API\WorkController');
     Route::resource('partner', 'App\Http\Controllers\API\PartnerController');
-    Route::resource('promo_code', 'App\Http\Controllers\API\PromoCodeController');
+    Route::resource('activation_code', 'App\Http\Controllers\API\ActivationCodeController');
     Route::resource('cart', 'App\Http\Controllers\API\CartController');
     Route::resource('subscription', 'App\Http\Controllers\API\SubscriptionController')->except(['index']);
     Route::resource('user', 'App\Http\Controllers\API\UserController')->except(['store', 'show', 'login']);
@@ -130,6 +130,7 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::get('work/find_views/{work_id}', 'App\Http\Controllers\API\WorkController@findViews')->name('work.api.find_views');
     Route::get('work/find_likes/{work_id}', 'App\Http\Controllers\API\WorkController@findLikes')->name('work.api.find_likes');
     Route::put('work/switch_view/{work_id}', 'App\Http\Controllers\API\WorkController@switchView')->name('work.api.switch_view');
+    Route::put('work/invalidate_consultations/{user_id}', 'App\Http\Controllers\API\WorkController@invalidateConsultations')->name('work.api.invalidate_consultations');
     Route::put('work/add_image/{id}', 'App\Http\Controllers\API\WorkController@addImage')->name('work.api.add_image');
     Route::post('work/search', 'App\Http\Controllers\API\WorkController@search')->name('work.api.search');
     Route::post('work/upload_files', 'App\Http\Controllers\API\WorkController@uploadFiles')->name('work.api.upload_files');
@@ -137,14 +138,15 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     // Partner
     Route::get('partner/search/{data}', 'App\Http\Controllers\API\PartnerController@search')->name('partner.api.search');
     Route::get('partner/partnerships_by_status/{locale}/{status_name}', 'App\Http\Controllers\API\PartnerController@partnershipsByStatus')->name('partner.api.partnerships_by_status');
+    Route::put('partner/withdraw_some_categories/{partner_id}', 'App\Http\Controllers\API\PartnerController@withdrawSomeCategories')->name('partner.api.withdraw_some_categories');
+    Route::put('partner/withdraw_all_categories/{partner_id}', 'App\Http\Controllers\API\PartnerController@withdrawSomeCategories')->name('partner.api.withdraw_all_categories');
     Route::put('partner/terminate_partnership/{partner_id}', 'App\Http\Controllers\API\PartnerController@terminatePartnership')->name('partner.api.terminate_partnership');
-    // PromoCode
-    Route::put('promo_code/activate_subscription/{user_id}/{code}/{for_partner_id}', 'App\Http\Controllers\API\PromoCodeController@activateSubscription')->name('promo_code.api.activate_subscription');
+    // ActivationCode
+    Route::put('activation_code/activate_subscription/{user_id}/{code}/{partner_id}', 'App\Http\Controllers\API\ActivationCodeController@activateSubscription')->name('activation_code.api.activate_subscription');
     // Cart
-    Route::get('cart/is_inside/{cart_id}/{entity}/{entity_id}', 'App\Http\Controllers\API\CartController@isInside')->name('cart.api.is_inside');
     Route::put('cart/remove_from_cart/{cart_id}', 'App\Http\Controllers\API\CartController@removeFromCart')->name('cart.api.remove_from_cart');
     Route::post('cart/add_to_cart/{entity}', 'App\Http\Controllers\API\CartController@addToCart')->name('cart.api.add_to_cart');
-    Route::post('cart/purchase/{cart_id}/{entity}', 'App\Http\Controllers\API\CartController@purchase')->name('cart.api.purchase');
+    Route::post('cart/purchase/{user_id}', 'App\Http\Controllers\API\CartController@purchase')->name('cart.api.purchase');
     // Subscription
     Route::get('subscription/is_subscribed/{user_id}', 'App\Http\Controllers\API\SubscriptionController@isSubscribed')->name('subscription.api.is_subscribed');
     Route::put('subscription/validate_subscription/{user_id}', 'App\Http\Controllers\API\SubscriptionController@validateSubscription')->name('subscription.api.validate_subscription');

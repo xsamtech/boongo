@@ -2,23 +2,17 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Cart;
-use App\Models\Currency;
 use App\Models\Group;
 use App\Models\Payment;
 use App\Models\Status;
 use App\Models\Subscription;
-use App\Models\Type;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\Cart as ResourcesCart;
 use App\Http\Resources\Subscription as ResourcesSubscription;
 use App\Http\Resources\User as ResourcesUser;
-use App\Models\PromoCode;
 use Carbon\Carbon;
-use stdClass;
 
 /**
  * @author Xanders
@@ -206,17 +200,18 @@ class SubscriptionController extends BaseController
     }
 
     /**
-     * Validate a user subscription.
+     * Validate a user subscriptions.
      *
      * @param  int $user_id
      */
     public function validateSubscription($user_id)
     {
         // Groups
+        $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
         $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
         $payment_status_group = Group::where('group_name', 'Etat du paiement')->first();
         // Status
-        $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
+        $paid_status = Status::where([['status_name->fr', 'Payé'], ['group_id', $cart_status_group->id]])->first();
         $valid_status = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
         $done_status = Status::where([['status_name->fr', 'Effectué'], ['group_id', $payment_status_group->id]])->first();
         // Requests
@@ -226,27 +221,27 @@ class SubscriptionController extends BaseController
             return $this->handleError(__('notifications.find_user_404'));
         }
 
-        // $pending_subscription = Subscription::whereHas('users', function ($query) use ($pending_status, $user) {
-        //                                         $query->where('subscription_user.user_id', $user->id)
-        //                                                 ->where('subscription_user.status_id', $pending_status->id);
-        //                                     })->orderBy('updated_at', 'desc')->first();
-        $pending_subscription_user = DB::table('subscription_user')->where([['user_id', $user->id], ['status_id', $pending_status->id]])->latest()->first();
+        $last_subscription_cart = $this->carts()->where([['entity', 'subscription'], ['status_id', $paid_status->id]])->latest()->first();
 
-        if ($pending_subscription_user != null) {
-            // $subscription_pivot = $pending_subscription->users()->find($user->id)->pivot;
-            $user_payment = Payment::find($pending_subscription_user->payment_id);
+        if (!$last_subscription_cart) {
+            return $this->handleError(__('notifications.find_subscription_404'));
+        }
 
-            if ($user_payment != null) {
-                if ($user_payment->status_id == $done_status->id) {
-                    // $user->subscriptions()->updateExistingPivot($pending_subscription->id, ['status_id' => $valid_status->id]);
-                    DB::table('subscription_user')->where('user_id', $user->id)->where('payment_id', $user_payment->id)->update(['status_id' => $valid_status->id]);
+        $cart_payment = Payment::find($last_subscription_cart->payment_id);
 
-                    return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
-                }
-            }
+        if (is_null($cart_payment)) {
+            return $this->handleError(__('notifications.find_payment_404'));
+        }
+
+        if ($cart_payment->status_id == $done_status->id) {
+            // Update all subscriptions linked to this cart in the pivot table "cart_subscription"
+            $last_subscription_cart->subscriptions()->updateExistingPivot(
+                $last_subscription_cart->subscriptions->pluck('id')->toArray(), // We target all subscriptions associated with this cart
+                ['status_id' => $valid_status->id] // We update the "status_id" in the pivot
+            );
 
         } else {
-            return $this->handleError(new ResourcesUser($user), __('notifications.find_subscription_404'), 404);
+            return $this->handleError(new ResourcesCart($last_subscription_cart), __('notifications.find_done_payment_404'), 404);
         }
     }
 
@@ -258,9 +253,10 @@ class SubscriptionController extends BaseController
     public function invalidateSubscription($user_id)
     {
         // Groups
+        $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
         $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
         // Status
-        $valid_status = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
+        $paid_status = Status::where([['status_name->fr', 'Payé'], ['group_id', $cart_status_group->id]])->first();
         $expired_status = Status::where([['status_name->fr', 'Expiré'], ['group_id', $subscription_status_group->id]])->first();
         // Requests
         $user = User::find($user_id);
@@ -269,40 +265,28 @@ class SubscriptionController extends BaseController
             return $this->handleError(__('notifications.find_user_404'));
         }
 
-        $valid_subscription = Subscription::whereHas('carts', function ($query) use ($valid_status, $user) {
-                                                $query->where('subscription_user.user_id', $user->id)
-                                                        ->where('subscription_user.status_id', $valid_status->id);
-                                            })->orderBy('updated_at', 'desc')->first();
-
-        $promo_code_exists = PromoCode::where([['is_active', 1], ['user_id', $user->id]])->first();
-
-        if ($promo_code_exists != null) {
-            $promo_code_exists->update([
-                'is_active' => 0,
-                'updated_at' => now(),
-            ]);
-        }
+        $valid_subscription = $user->validSubscriptions()->first();
 
         if ($valid_subscription != null) {
             $subscription = Subscription::find($valid_subscription->subscription_id);
             // Create two date instances
-            $current_date = date('Y-m-d h:i:s');
-            // $subscription_date = $valid_subscription->users()->pivot->created_at->format('Y-m-d h:i:s');
-            $subscription_user_date = $valid_subscription->created_at;
-            $current_date_instance = Carbon::parse($current_date);
-            $subscription_user_date_instance = Carbon::parse($subscription_user_date);
+            $current_date_instance = Carbon::parse(date('Y-m-d h:i:s'));
+            $subscription_date_instance = Carbon::parse($valid_subscription->created_at);
             // Determine the difference between dates
-            $diff = $current_date_instance->diff($subscription_user_date_instance);
+            $diff = $current_date_instance->diff($subscription_date_instance);
             $diffInHours = $diff->days * 24 + $diff->h + $diff->i / 60;
 
             if (($subscription->number_of_hours - round($diffInHours)) > 0) {
-                return $this->handleError(new ResourcesUser($user), __('notifications.invalidate_subscription_failed') . ' (TimeRemaining: '. ($subscription->number_of_hours - round($diffInHours)) .')', 400);
+                return $this->handleError(new ResourcesUser($user), __('notifications.invalidate_subscription_failed') . ' (Time remaining: '. ($subscription->number_of_hours - round($diffInHours)) .')', 400);
 
             } else {
-                $user_payment = Payment::find($valid_subscription_user->payment_id);
-
-                // $user->subscriptions()->updateExistingPivot($valid_subscription->id, ['status_id' => $expired_status->id]);
-                DB::table('subscription_user')->where('user_id', $user->id)->where('payment_id', $user_payment->id)->update(['status_id' => $expired_status->id]);
+                $user->carts()->where([['entity', 'subscription'], ['status_id', $paid_status->id]])->updateExistingPivot($valid_subscription->id, ['status_id' => $expired_status->id]);
+                $user->carts()
+                        ->where([['entity', 'subscription'], ['status_id', $paid_status->id]])
+                        ->latest() // Get the last cart
+                        ->first() // Get the first one (which will actually be the last one because of latest)
+                        ->subscriptions() // Access the works relationship on this cart
+                        ->updateExistingPivot($valid_subscription->id, ['status_id' => $expired_status->id]);
 
                 return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
             }

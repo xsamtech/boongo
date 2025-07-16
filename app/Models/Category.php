@@ -46,7 +46,7 @@ class Category extends Model
      */
     public function partners(): BelongsToMany
     {
-        return $this->belongsToMany(Partner::class, 'category_partner')->orderByPivot('created_at', 'desc')->withTimestamps()->withPivot(['promo_code', 'number_of_days', 'number_of_registrations', 'status_id']);
+        return $this->belongsToMany(Partner::class, 'category_partner')->orderByPivot('created_at', 'desc')->withTimestamps()->withPivot(['activation_code', 'promo_code', 'number_of_days', 'is_used', 'status_id']);
     }
 
     /**
