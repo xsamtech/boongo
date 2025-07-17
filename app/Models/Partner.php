@@ -30,7 +30,15 @@ class Partner extends Model
      */
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, 'category_partner')->orderByPivot('created_at', 'desc')->withTimestamps()->withPivot(['activation_code', 'promo_code', 'number_of_days', 'is_used', 'status_id']);
+        return $this->belongsToMany(Category::class, 'category_partner')->orderByPivot('created_at', 'desc')->withTimestamps()->withPivot('activation_code', 'promo_code', 'number_of_days', 'is_used', 'status_id', 'updated_at');
+    }
+
+    /**
+     * Check if partner has code
+     */
+    public function hasPromoCode()
+    {
+        return $this->categories()->whereNotNull('category_partner.promo_code')->exists();
     }
 
     /**
@@ -72,21 +80,35 @@ class Partner extends Model
      * @param \Carbon\Carbon $date
      * @return int
      */
-    public function remainingDays($date)
+    public function remainingDays($date = null)
     {
-        // Retrieve the last record from the 'category_partner' table for this partner
-        $pivotData = $this->categories()->latest('pivot_updated_at')->first()->pivot;
+        // Utiliser la date actuelle si aucune date n'est fournie
+        $date = $date ? Carbon::parse($date) : Carbon::now();
 
-        // Get the number of days (number_of_days) and the date updated (updated_at)
-        $numberOfDays = $pivotData->number_of_days;
-        $updatedAt = Carbon::parse($pivotData->updated_at);
+        // Récupérer le dernier enregistrement de l'association catégorie-partenaire
+        $pivotData = $this->categories()->latest('updated_at')->first();
 
-        // Calculate the number of days since the update date
+        // Vérifier si le partenaire a des catégories associées
+        if (!$pivotData) {
+            return 'NO PIVOT: ' . 0; // Pas de catégories associées
+        }
+
+        // Accéder aux données du pivot
+        $pivot = $pivotData->pivot;
+
+        // Vérifier que number_of_days est un nombre valide
+        if (!is_numeric($pivot->number_of_days) || $pivot->number_of_days <= 0) {
+            return 'PIVOT NOT INT: ' . 0; // Retourner 0 si la durée est invalide
+        }
+
+        // Récupérer la date de mise à jour (updated_at)
+        $updatedAt = Carbon::parse($pivot->updated_at);
+        // Calculer le nombre de jours depuis la mise à jour
         $daysSinceUpdate = $updatedAt->diffInDays($date);
+        // Calculer les jours restants
+        $remainingDays = $pivot->number_of_days - $daysSinceUpdate;
 
-        // Calculate the remaining days
-        $remainingDays = $numberOfDays - $daysSinceUpdate;
-
-        return $remainingDays > 0 ? $remainingDays : 0; // Ensure the number of days remaining is positive
+        // Retourner 0 si les jours restants sont négatifs
+        return $remainingDays > 0 ? $remainingDays : 0;
     }
 }

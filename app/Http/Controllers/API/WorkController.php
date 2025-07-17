@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Resources\Like as ResourcesLike;
+use App\Http\Resources\Partner as ResourcesPartner;
 use App\Http\Resources\Session as ResourcesSession;
 use App\Http\Resources\User as ResourcesUser;
 use App\Http\Resources\Work as ResourcesWork;
@@ -448,8 +449,9 @@ class WorkController extends BaseController
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
+                $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all, $partner);
+                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all, $partnerResource);
 
             // Otherwise, send all data
             } else {
@@ -460,12 +462,13 @@ class WorkController extends BaseController
                             $query->whereYear('sessions.created_at', '=', $year);
                         })->distinct()->count();
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                        $query->wherePivot('status_id', $active_status->id);
+                                        $query->where('category_partner.status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
+                $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all, $partner);
+                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all, $partnerResource);
             }
 
         } else {
@@ -476,12 +479,13 @@ class WorkController extends BaseController
                                     $query->whereYear('sessions.created_at', '=', $year);
                                 })->distinct()->count();
             $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                    $query->wherePivot('status_id', $active_status->id);
+                                    $query->where('category_partner.status_id', $active_status->id);
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                 })->inRandomOrder()->first() : null;
+            $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all, $partner);
+            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), null, $count_all, $partnerResource);
         }
     }
 
@@ -544,12 +548,13 @@ class WorkController extends BaseController
                     // Retrieves the query results
                     $works = $query->orderByDesc('updated_at')->paginate(10);
                     $count_all = $query->count();
+                    $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-                    return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
+                    return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
 
                 } else {
                     $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                            $query->wherePivot('status_id', $active_status->id);
+                                            $query->where('category_partner.status_id', $active_status->id);
                                         })->where(function ($query) use ($users_ids) {
                                             $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                         })->inRandomOrder()->first() : null;
@@ -570,13 +575,14 @@ class WorkController extends BaseController
                     // Retrieves the query results
                     $works = $query->orderByDesc('updated_at')->paginate(10);
                     $count_all = $query->count();
+                    $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-                    return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
+                    return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
                 }
 
             } else {
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                        $query->wherePivot('status_id', $active_status->id);
+                                        $query->where('category_partner.status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
@@ -596,8 +602,9 @@ class WorkController extends BaseController
                 // Retrieves the query results
                 $works = $query->orderByDesc('updated_at')->paginate(10);
                 $count_all = $query->count();
+                $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
+                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
             }
         }
 
@@ -643,12 +650,13 @@ class WorkController extends BaseController
                     // Retrieves the query results
                     $works = $query->orderByDesc('updated_at')->paginate(10);
                     $count_all = $query->count();
+                    $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-                    return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
+                    return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
 
                 } else {
                     $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                            $query->wherePivot('status_id', $active_status->id);
+                                            $query->where('category_partner.status_id', $active_status->id);
                                         })->where(function ($query) use ($users_ids) {
                                             $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                         })->inRandomOrder()->first() : null;
@@ -668,13 +676,14 @@ class WorkController extends BaseController
                     // Retrieves the query results
                     $works = $query->orderByDesc('updated_at')->paginate(10);
                     $count_all = $query->count();
+                    $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-                    return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
+                    return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
                 }
 
             } else {
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                        $query->wherePivot('status_id', $active_status->id);
+                                        $query->where('category_partner.status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
@@ -694,8 +703,9 @@ class WorkController extends BaseController
                 // Retrieves the query results
                 $works = $query->orderByDesc('updated_at')->paginate(10);
                 $count_all = $query->count();
+                $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
+                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
             }
         }
     }
@@ -712,10 +722,8 @@ class WorkController extends BaseController
     {
         // Groups
         $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
-        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
         // Statuses
         $active_status = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
-        $status_valid = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
         // Get partners & sponsors IDs
         $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name', 'Partenaire')->orWhere('role_name', 'Sponsor'); })->pluck('id')->toArray();
         // Request
@@ -754,12 +762,13 @@ class WorkController extends BaseController
 
                 $works = $query->orderByDesc('created_at')->paginate(10);
                 $count_all = $query->count();
+                $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
+                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
 
             } else {
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                        $query->wherePivot('status_id', $active_status->id);
+                                        $query->where('category_partner.status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
@@ -774,13 +783,14 @@ class WorkController extends BaseController
 
                 $works = $query->orderByDesc('created_at')->paginate(10);
                 $count_all = $query->count();
+                $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
+                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
             }
 
         } else {
             $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                    $query->wherePivot('status_id', $active_status->id);
+                                    $query->where('category_partner.status_id', $active_status->id);
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                 })->inRandomOrder()->first() : null;
@@ -795,8 +805,9 @@ class WorkController extends BaseController
 
             $works = $query->orderByDesc('created_at')->paginate(10);
             $count_all = $query->count();
+            $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
+            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
         }
     }
 
@@ -998,8 +1009,9 @@ class WorkController extends BaseController
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
+                $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
+                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
 
             // Otherwise, send all data
             } else {
@@ -1040,12 +1052,13 @@ class WorkController extends BaseController
                 $works = $query->paginate(10);
                 $count_all = $query->count();
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                        $query->wherePivot('status_id', $active_status->id);
+                                        $query->where('category_partner.status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
+                $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
+                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
             }
         }
 
@@ -1087,12 +1100,13 @@ class WorkController extends BaseController
             $works = $query->paginate(10);
             $count_all = $query->count();
             $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                    $query->wherePivot('status_id', $active_status->id);
+                                    $query->where('category_partner.status_id', $active_status->id);
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                 })->inRandomOrder()->first() : null;
+            $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
+            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
         }
     }
 
@@ -1290,12 +1304,13 @@ class WorkController extends BaseController
 
                 $works = $query->paginate(10);
                 $count_all = $query->count();
+                $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
+                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
 
             } else {
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                        $query->wherePivot('status_id', $active_status->id);
+                                        $query->where('category_partner.status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
@@ -1323,13 +1338,14 @@ class WorkController extends BaseController
 
                 $works = $query->paginate(10);
                 $count_all = $query->count();
+                $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
+                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
             }
 
         } else {
             $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                    $query->wherePivot('status_id', $active_status->id);
+                                    $query->where('category_partner.status_id', $active_status->id);
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                 })->inRandomOrder()->first() : null;
@@ -1357,8 +1373,9 @@ class WorkController extends BaseController
 
             $works = $query->paginate(10);
             $count_all = $query->count();
+            $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
-            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partner);
+            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
         }
     }
 

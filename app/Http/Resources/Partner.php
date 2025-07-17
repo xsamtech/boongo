@@ -30,11 +30,12 @@ class Partner extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'message' => $this->message,
-            'from_user' => $from_user,
-            'from_organization' => $from_organization,
-            'image_url' => $this->image_url != null ? getWebURL() . '/public/storage/' . $this->image_url : getWebURL() . '/public/assets/img/ad.png',
+            'from_user' => !empty($from_user) ? User::make($from_user) : null,
+            'from_organization' => !empty($from_organization) ? Organization::make($from_organization) : null,
+            'image_url' => $this->image_url != null ? getWebURL() . $this->image_url : getWebURL() . '/public/assets/img/ad.png',
             'website_url' => $this->website_url,
             'remaining_days' => $remainingDays,
+            'has_promo_code' => $this->hasPromoCode(),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s')
         ];

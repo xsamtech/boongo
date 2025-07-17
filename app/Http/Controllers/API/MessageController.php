@@ -19,6 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Resources\Message as ResourcesMessage;
+use App\Http\Resources\Partner as ResourcesPartner;
 use App\Http\Resources\User as ResourcesUser;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
@@ -648,17 +649,23 @@ class MessageController extends BaseController
 
         if ($is_subscribed) {
             $valid_subscription = $user->validSubscriptions()->latest()->first();
-            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', fn($q) => $q->where('id', $valid_subscription->category_id)->wherePivot('status_id', $active_status->id))
-                                ->where(fn($q) => $q->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id'))
-                                ->inRandomOrder()->first() : null;
+            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $active_status) {
+                                    $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $active_status->id);
+                                })->where(function ($query) use ($users_ids) {
+                                    $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                })->inRandomOrder()->first() : null;
 
         } else {
-            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', fn($q) => $q->wherePivot('status_id', $active_status->id))
-                                ->where(fn($q) => $q->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id'))
-                                ->inRandomOrder()->first() : null;
+            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
+                                    $query->where('category_partner.status_id', $active_status->id);
+                                })->where(function ($query) use ($users_ids) {
+                                    $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                })->inRandomOrder()->first() : null;
         }
 
-        return $this->handleResponse($paginated->items(), __('notifications.find_all_messages_success'), $paginated->lastPage(), $paginated->total(), $partner);
+        $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
+
+        return $this->handleResponse($paginated->items(), __('notifications.find_all_messages_success'), $paginated->lastPage(), $paginated->total(), $partnerResource);
     }
 
     /**
@@ -751,17 +758,23 @@ class MessageController extends BaseController
 
         if ($is_subscribed) {
             $valid_subscription = $user->validSubscriptions()->latest()->first();
-            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', fn($q) => $q->where('id', $valid_subscription->category_id)->wherePivot('status_id', $active_status->id))
-                                ->where(fn($q) => $q->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id'))
-                                ->inRandomOrder()->first() : null;
+            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $active_status) {
+                                    $query->where('id', $valid_subscription->category_id)->wherePivot('status_id', $active_status->id);
+                                })->where(function ($query) use ($users_ids) {
+                                    $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                })->inRandomOrder()->first() : null;
 
         } else {
-            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', fn($q) => $q->wherePivot('status_id', $active_status->id))
-                                ->where(fn($q) => $q->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id'))
-                                ->inRandomOrder()->first() : null;
+            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
+                                    $query->where('category_partner.status_id', $active_status->id);
+                                })->where(function ($query) use ($users_ids) {
+                                    $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
+                                })->inRandomOrder()->first() : null;
         }
 
-        return $this->handleResponse(ResourcesMessage::collection($messages), __('notifications.find_all_messages_success'), $messages->lastPage(), $count_messages, $partner);
+        $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
+
+        return $this->handleResponse(ResourcesMessage::collection($messages), __('notifications.find_all_messages_success'), $messages->lastPage(), $count_messages, $partnerResource);
     }
 
 

@@ -10,6 +10,7 @@ use App\Models\Event;
 use App\Models\Group;
 use App\Models\Notification;
 use App\Models\Organization;
+use App\Models\Partner;
 use App\Models\PasswordReset;
 use App\Models\PersonalAccessToken;
 use App\Models\Status;
@@ -26,10 +27,10 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\Circle as ResourcesCircle;
 use App\Http\Resources\Event as ResourcesEvent;
 use App\Http\Resources\Organization as ResourcesOrganization;
+use App\Http\Resources\Partner as ResourcesPartner;
 use App\Http\Resources\PasswordReset as ResourcesPasswordReset;
 use App\Http\Resources\ToxicContent as ResourcesToxicContent;
 use App\Http\Resources\User as ResourcesUser;
-use App\Models\Partner;
 
 /**
  * @author Xanders
@@ -907,7 +908,7 @@ class UserController extends BaseController
             // Otherwise, send all data
             } else {
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                        $query->wherePivot('status_id', $active_status->id);
+                                        $query->where('category_partner.status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
@@ -915,13 +916,15 @@ class UserController extends BaseController
 
         } else {
             $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                    $query->wherePivot('status_id', $active_status->id);
+                                    $query->where('category_partner.status_id', $active_status->id);
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                 })->inRandomOrder()->first() : null;
         }
 
-        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $users->total(), $partner);
+        $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
+
+        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $users->total(), $partnerResource);
     }
 
     /**
@@ -968,7 +971,7 @@ class UserController extends BaseController
             // Otherwise, send all data
             } else {
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                        $query->wherePivot('status_id', $active_status->id);
+                                        $query->where('category_partner.status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
@@ -976,13 +979,15 @@ class UserController extends BaseController
 
         } else {
             $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                    $query->wherePivot('status_id', $active_status->id);
+                                    $query->where('category_partner.status_id', $active_status->id);
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                 })->inRandomOrder()->first() : null;
         }
 
-        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $users->total(), $partner);
+        $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
+
+        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $users->total(), $partnerResource);
     }
 
     /**
@@ -1039,7 +1044,7 @@ class UserController extends BaseController
             // Otherwise, send all data
             } else {
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                        $query->wherePivot('status_id', $active_status->id);
+                                        $query->where('category_partner.status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
@@ -1047,13 +1052,15 @@ class UserController extends BaseController
 
         } else {
             $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                    $query->wherePivot('status_id', $active_status->id);
+                                    $query->where('category_partner.status_id', $active_status->id);
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                 })->inRandomOrder()->first() : null;
         }
 
-        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $users->total(), $partner);
+        $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
+
+        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $users->total(), $partnerResource);
     }
 
     /**
@@ -1111,7 +1118,7 @@ class UserController extends BaseController
             // Otherwise, send all data
             } else {
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                        $query->wherePivot('status_id', $active_status->id);
+                                        $query->where('category_partner.status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
@@ -1119,13 +1126,15 @@ class UserController extends BaseController
 
         } else {
             $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                    $query->wherePivot('status_id', $active_status->id);
+                                    $query->where('category_partner.status_id', $active_status->id);
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                 })->inRandomOrder()->first() : null;
         }
 
-        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $users->total(), $partner);
+        $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
+
+        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $users->total(), $partnerResource);
     }
 
     /**
@@ -1191,7 +1200,7 @@ class UserController extends BaseController
             // Otherwise, send all data
             } else {
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                        $query->wherePivot('status_id', $active_status->id);
+                                        $query->where('category_partner.status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
@@ -1199,13 +1208,15 @@ class UserController extends BaseController
 
         } else {
             $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                    $query->wherePivot('status_id', $active_status->id);
+                                    $query->where('category_partner.status_id', $active_status->id);
                                 })->where(function ($query) use ($users_ids) {
                                     $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                 })->inRandomOrder()->first() : null;
         }
 
-        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $users->total(), $partner);
+        $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
+
+        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'), $users->lastPage(), $users->total(), $partnerResource);
     }
 
     /**
@@ -1256,13 +1267,15 @@ class UserController extends BaseController
 
             } else {
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                        $query->wherePivot('status_id', $active_status->id);
+                                        $query->where('category_partner.status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
             }
 
-            return $this->handleResponse(ResourcesCircle::collection($circles), __('notifications.find_all_circles_success'), $circles->lastPage(), $count_circles, $partner);
+            $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
+
+            return $this->handleResponse(ResourcesCircle::collection($circles), __('notifications.find_all_circles_success'), $circles->lastPage(), $count_circles, $partnerResource);
         }
 
         if ($entity == 'event') {
@@ -1279,13 +1292,15 @@ class UserController extends BaseController
 
             } else {
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                        $query->wherePivot('status_id', $active_status->id);
+                                        $query->where('category_partner.status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
             }
 
-            return $this->handleResponse(ResourcesEvent::collection($events), __('notifications.find_all_events_success'), $events->lastPage(), $count_events, $partner);
+            $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
+
+            return $this->handleResponse(ResourcesEvent::collection($events), __('notifications.find_all_events_success'), $events->lastPage(), $count_events, $partnerResource);
         }
 
         if ($entity == 'organization') {
@@ -1302,7 +1317,7 @@ class UserController extends BaseController
 
             } else {
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                        $query->wherePivot('status_id', $active_status->id);
+                                        $query->where('category_partner.status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;

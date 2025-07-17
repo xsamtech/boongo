@@ -96,21 +96,22 @@ class PartnerController extends BaseController
                     return $this->handleError(__('notifications.how_long_partnership'));
                 }
 
-                if (!$user->hasRole('Partenaire')) {
-                    $role = Role::where('role_name', 'Partenaire')->first();
-
-                    $user->roles()->syncWithoutDetaching([$role->id]);
-                }
-
                 if ($request->entity == 'promotional') {
                     $random_int = random_int(1000, 9999);
 
                     $partner->categories()->attach($request->category_id, ['promo_code' => $random_int, 'number_of_days' => $request->number_of_days, 'status_id' => $active_status->id]);
 
-                } else {
+                    if (!$user->hasRole('Partenaire')) {
+                        $role = Role::where('role_name', 'Partenaire')->first();
+
+                        $user->roles()->syncWithoutDetaching([$role->id]);
+                    }
+
+                } else if ($request->entity == 'activation') {
+                    $codesCount = $request->codes_count ?? 1;
                     $codes = [];
 
-                    for ($i = 0; $i < $request->codes_count; $i++) {
+                    for ($i = 0; $i < $codesCount; $i++) {
                         $random_code = Str::random(7);  // Generates a 7-character alphanumeric code
 
                         $codes[$request->category_id] = [
@@ -121,6 +122,12 @@ class PartnerController extends BaseController
                     }
 
                     $partner->categories()->attach($codes);
+
+                    if (!$user->hasRole('Partenaire')) {
+                        $role = Role::where('role_name', 'Partenaire')->first();
+
+                        $user->roles()->syncWithoutDetaching([$role->id]);
+                    }
                 }
 
             } else {
@@ -258,10 +265,11 @@ class PartnerController extends BaseController
 
                 $partner->categories()->attach($request->category_id, ['promo_code' => $random_int, 'number_of_days' => $request->number_of_days, 'status_id' => $active_status->id]);
 
-            } else {
+            } else if ($request->entity == 'activation') {
+                $codesCount = $request->codes_count ?? 1;
                 $codes = [];
 
-                for ($i = 0; $i < $request->codes_count; $i++) {
+                for ($i = 0; $i < $codesCount; $i++) {
                     $random_code = Str::random(7);  // Generates a 7-character alphanumeric code
 
                     $codes[$request->category_id] = [
