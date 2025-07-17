@@ -138,6 +138,7 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     // Partner
     Route::get('partner/search/{data}', 'App\Http\Controllers\API\PartnerController@search')->name('partner.api.search');
     Route::get('partner/partnerships_by_status/{locale}/{status_name}', 'App\Http\Controllers\API\PartnerController@partnershipsByStatus')->name('partner.api.partnerships_by_status');
+    Route::get('partner/partners_with_activation_code/{locale}/{status_name}', 'App\Http\Controllers\API\PartnerController@partnersWithActivationCode')->name('partner.api.partners_with_activation_code');
     Route::put('partner/withdraw_some_categories/{partner_id}', 'App\Http\Controllers\API\PartnerController@withdrawSomeCategories')->name('partner.api.withdraw_some_categories');
     Route::put('partner/withdraw_all_categories/{partner_id}', 'App\Http\Controllers\API\PartnerController@withdrawSomeCategories')->name('partner.api.withdraw_all_categories');
     Route::put('partner/terminate_partnership/{partner_id}', 'App\Http\Controllers\API\PartnerController@terminatePartnership')->name('partner.api.terminate_partnership');

@@ -1336,6 +1336,10 @@ class WorkController extends BaseController
                     return $query->where('status_id', $request->status_id);
                 });
 
+                $query->when($request->user_id, function ($query) use ($request) {
+                    return $query->where('user_id', $request->user_id);
+                });
+
                 $works = $query->paginate(10);
                 $count_all = $query->count();
                 $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
@@ -1369,6 +1373,10 @@ class WorkController extends BaseController
 
             $query->when($request->status_id, function ($query) use ($request) {
                 return $query->where('status_id', $request->status_id);
+            });
+
+            $query->when($request->user_id, function ($query) use ($request) {
+                return $query->where('user_id', $request->user_id);
             });
 
             $works = $query->paginate(10);

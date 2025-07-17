@@ -341,6 +341,29 @@ class PartnerController extends BaseController
     }
 
     /**
+     * All partnerships according to status
+     *
+     * @param  string $locale
+     * @param  string $status_name
+     * @return \Illuminate\Http\Response
+     */
+    public function partnersWithActivationCode($locale, $status_name)
+    {
+        $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
+        $status = Status::where([['status_name->' . $locale, $status_name], ['group_id', $partnership_status_group->id]])->first();
+
+        if (is_null($status)) {
+            return $this->handleError(__('notifications.find_status_404'));
+        }
+
+        $partners = Partner::whereHas('categories', function ($query) use ($status) {
+                                $query->whereNotNull('category_partner.activation_code')->where('category_partner.status_id', $status->id);
+                            })->get();
+
+        return $this->handleResponse(ResourcesPartner::collection($partners), __('notifications.find_all_partners_success'));
+    }
+
+    /**
      * Withdraw some categories partnership.
      *
      * @param  \Illuminate\Http\Request  $request

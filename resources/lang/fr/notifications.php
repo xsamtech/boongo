@@ -126,6 +126,7 @@ return [
     'create_activation_code_success' => 'Code d\'activation créé',
     'update_activation_code_success' => 'Code d\'activation modifié',
     'delete_activation_code_success' => 'Code d\'activation supprimé',
+    'existing_activation_code' => 'Code d\'activation déjà utilisé',
     // Work
     'find_all_works_success' => 'Œuvres trouvées',
     'find_work_success' => 'Œuvre trouvée',

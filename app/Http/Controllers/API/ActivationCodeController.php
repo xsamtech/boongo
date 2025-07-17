@@ -168,10 +168,16 @@ class ActivationCodeController extends BaseController
         }
 
         // Ensure the partner exists, is active and has activation code
-        $activation_code_exists = $partner->categories()->wherePivot([['activation_code', $code], ['is_used', 0], ['status_id', $active_status->id]])->exists();
+        $activation_code_exists = $partner->categories()->wherePivot('activation_code', $code)->wherePivot('is_used', 0)->wherePivot('status_id', $active_status->id)->exists();
 
         if (!$activation_code_exists) {
             return $this->handleError(__('notifications.find_activation_code_404'));
+        }
+
+        $existing_activation_code = ActivationCode::where('for_partner_id', $partner->id)->where('code', $code)->first();
+
+        if (!empty($existing_activation_code)) {
+            return $this->handleError(__('notifications.existing_activation_code'));
         }
 
         // Register user activation code
