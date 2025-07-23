@@ -240,8 +240,10 @@ class SubscriptionController extends BaseController
                 ['status_id' => $valid_status->id] // We update the "status_id" in the pivot
             );
 
+            return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
+
         } else {
-            return $this->handleError(new ResourcesCart($last_subscription_cart), __('notifications.find_done_payment_404'), 404);
+            return $this->handleError(new ResourcesUser($user), __('notifications.find_done_payment_404'), 404);
         }
     }
 

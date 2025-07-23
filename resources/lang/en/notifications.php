@@ -113,6 +113,7 @@ return [
     'find_all_partners_success' => 'Partners found',
     'find_partner_success' => 'Partner found',
     'find_partner_404' => 'Partner not found',
+    'find_active_partnership_404' => 'Active partnership not found',
     'create_partner_success' => 'Partner created',
     'update_partner_success' => 'Partner updated',
     'delete_partner_success' => 'Partner deleted',

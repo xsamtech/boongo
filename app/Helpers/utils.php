@@ -11,7 +11,7 @@ if (!function_exists('getWebURL')) {
     function getWebURL()
     {
         // return (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
-        return 'http://192.168.67.238/boongo/public';
+        return 'http://192.168.247.238/boongo/public';
     }
 }
 
@@ -20,7 +20,7 @@ if (!function_exists('getApiURL')) {
     function getApiURL()
     {
         // return (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/api';
-        return 'http://192.168.67.238/boongo/public/api';
+        return 'http://192.168.247.238/boongo/public/api';
     }
 }
 

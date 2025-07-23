@@ -330,7 +330,7 @@ class CartController extends BaseController
         $ongoing_status = Status::where([['status_name->fr', 'En cours'], ['group_id', $cart_status_group->id]])->first();
         $paid_status = Status::where([['status_name->fr', 'Payé'], ['group_id', $cart_status_group->id]])->first();
         $in_progress_status = Status::where([['status_name->fr', 'En cours'], ['group_id', $payment_status_group->id]])->first();
-        $valid_status = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
+        $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
         // Types
         $mobile_money_type = Type::where([['type_name->fr', 'Mobile money'], ['group_id', $payment_type_group->id]])->first();
         $bank_card_type = Type::where([['type_name->fr', 'Carte bancaire'], ['group_id', $payment_type_group->id]])->first();
@@ -357,7 +357,7 @@ class CartController extends BaseController
         $user_currency = $current_user->currency->currency_acronym;
 
         // Get total prices in the cart
-        $total_to_pay = 10000;
+        $total_to_pay = 0;
 
         if ($current_user->unpaidConsultations()->isNotEmpty()) {
             $total_to_pay += $current_user->totalUnpaidConsultations();
@@ -451,7 +451,7 @@ class CartController extends BaseController
                         ]);
 
                         foreach ($cart_consultation->works as $work) {
-                            $cart_consultation->works()->updateExistingPivot($work->id, ['status_id' => $valid_status->id]);
+                            $cart_consultation->works()->updateExistingPivot($work->id, ['status_id' => $pending_status->id]);
                         }
                     }
 
@@ -468,10 +468,11 @@ class CartController extends BaseController
                         ]);
 
                         foreach ($cart_subscription->subscriptions as $subscription) {
-                            $cart_subscription->subscriptions()->updateExistingPivot($subscription->id, ['status_id' => $valid_status->id]);
+                            $cart_subscription->subscriptions()->updateExistingPivot($subscription->id, ['status_id' => $pending_status->id]);
                         }
                     }
 
+                    $object->user = new ResourcesUser($current_user);
                     $object->result_response = [
                         'message' => $jsonRes['message'],
                         'order_number' => $jsonRes['orderNumber']
@@ -563,7 +564,7 @@ class CartController extends BaseController
                         ]);
 
                         foreach ($cart_consultation->works as $work) {
-                            $cart_consultation->works()->updateExistingPivot($work->id, ['status_id' => $valid_status->id]);
+                            $cart_consultation->works()->updateExistingPivot($work->id, ['status_id' => $pending_status->id]);
                         }
                     }
 
@@ -576,10 +577,11 @@ class CartController extends BaseController
                         ]);
 
                         foreach ($cart_subscription->subscriptions as $subscription) {
-                            $cart_subscription->subscriptions()->updateExistingPivot($subscription->id, ['status_id' => $valid_status->id]);
+                            $cart_subscription->subscriptions()->updateExistingPivot($subscription->id, ['status_id' => $pending_status->id]);
                         }
                     }
 
+                    $object->user = new ResourcesUser($current_user);
                     $object->result_response = [
                         'message' => $message,
                         'order_number' => $orderNumber,

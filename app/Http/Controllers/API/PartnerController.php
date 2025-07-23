@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Resources\Partner as ResourcesPartner;
+use App\Http\Resources\User as ResourcesUser;
 use App\Models\ActivationCode;
 use App\Models\Role;
 use App\Models\User;
@@ -361,6 +362,41 @@ class PartnerController extends BaseController
                             })->get();
 
         return $this->handleResponse(ResourcesPartner::collection($partners), __('notifications.find_all_partners_success'));
+    }
+
+    /**
+     * All users having promotional code of a specific partner
+     *
+     * @param  int $partner_id
+     * @return \Illuminate\Http\Response
+     */
+    public function usersWithPromoCode($partner_id)
+    {
+        // Group
+        $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
+        // Status
+        $active_status = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
+        // Request
+        $partner = Partner::find($partner_id);
+
+        if (is_null($partner)) {
+            return $this->handleError(__('notifications.find_partner_404'));
+        }
+
+        // Ensure the partnership exists and is active
+        $active_partnership = $partner->categories()->wherePivotNotNull('promo_code')->wherePivot('status_id', $active_status->id)->latest('updated_at')->first();
+
+        if (is_null($active_partnership)) {
+            return $this->handleError(__('notifications.find_active_partnership_404'));
+        }
+
+        // Access pivot data
+        $pivot = $active_partnership->pivot;
+
+        // Find all users having partner promotional code
+        $users = User::where('promo_code', $pivot->promo_code)->get();
+
+        return $this->handleResponse(ResourcesUser::collection($users), __('notifications.find_all_users_success'));
     }
 
     /**

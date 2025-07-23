@@ -57,6 +57,7 @@ class User extends JsonResource
             'is_partner' => $this->hasRole('Partenaire'),
             'is_sponsor' => $this->hasRole('Sponsor'),
             'is_publisher' => $this->hasRole('Publieur'),
+            'partner' => $this->partner,
             'unpaid_consultation_cart' => Cart::make($this->unpaidConsultationCart()),
             'unpaid_subscription_cart' => Cart::make($this->unpaidSubscriptionCart()),
             'roles' => Role::collection($this->roles),

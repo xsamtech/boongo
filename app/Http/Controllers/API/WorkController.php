@@ -22,6 +22,7 @@ use App\Http\Resources\Partner as ResourcesPartner;
 use App\Http\Resources\Session as ResourcesSession;
 use App\Http\Resources\User as ResourcesUser;
 use App\Http\Resources\Work as ResourcesWork;
+use App\Models\Payment;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 
@@ -1384,6 +1385,55 @@ class WorkController extends BaseController
             $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
 
             return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
+        }
+    }
+
+    /**
+     * Validate a user subscriptions.
+     *
+     * @param  int $user_id
+     */
+    public function validateConsultations($user_id)
+    {
+        // Groups
+        $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
+        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
+        $payment_status_group = Group::where('group_name', 'Etat du paiement')->first();
+        // Status
+        $paid_status = Status::where([['status_name->fr', 'Payé'], ['group_id', $cart_status_group->id]])->first();
+        $valid_status = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
+        $done_status = Status::where([['status_name->fr', 'Effectué'], ['group_id', $payment_status_group->id]])->first();
+        // Requests
+        $user = User::find($user_id);
+
+        if (is_null($user)) {
+            return $this->handleError(__('notifications.find_user_404'));
+        }
+
+        $last_consultation_cart = $this->carts()->where([['entity', 'consultation'], ['status_id', $paid_status->id]])->latest()->first();
+
+        if (!$last_consultation_cart) {
+            return $this->handleError(__('notifications.find_subscription_404'));
+        }
+
+        $cart_payment = Payment::find($last_consultation_cart->payment_id);
+
+        if (is_null($cart_payment)) {
+            return $this->handleError(__('notifications.find_payment_404'));
+        }
+
+        // Check if payment linked to this cart is done
+        if ($cart_payment->status_id == $done_status->id) {
+            // Update all works linked to this cart in the pivot table "cart_work"
+            $last_consultation_cart->works()->updateExistingPivot(
+                $last_consultation_cart->works->pluck('id')->toArray(), // We target all works associated with this cart
+                ['status_id' => $valid_status->id] // We update the "status_id" in the pivot
+            );
+
+            return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
+
+        } else {
+            return $this->handleError(new ResourcesUser($user), __('notifications.find_done_payment_404'), 404);
         }
     }
 

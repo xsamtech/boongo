@@ -213,6 +213,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Retrieve all user's partners.
+     */
+    public function partners()
+    {
+        return $this->hasMany(Partner::class, 'from_user_id', 'id');
+    }
+
+    /**
+     * Retrieve the user's most recent partner
+     */
+    public function getPartnerAttribute()
+    {
+        return $this->partners()->latest('created_at')->first();  // Le partenaire le plus récent
+    }
+
+    /**
      * Check if user has active code
      */
     public function hasActiveCode()

@@ -10,6 +10,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ActivationCode as ResourcesActivationCode;
+use App\Http\Resources\User as ResourcesUser;
+use Carbon\Carbon;
 
 /**
  * @author Xanders
@@ -141,6 +143,40 @@ class ActivationCodeController extends BaseController
 
     // ==================================== CUSTOM METHODS ====================================
     /**
+     * All users having some activation code belonging to specific a partner
+     *
+     * @param  int $user_id
+     * @param  string $code
+     * @param  string $partner_id
+     * @return \Illuminate\Http\Response
+     */
+    public function findUsersByPartner($partner_id)
+    {
+        // Group
+        $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
+        // Status
+        $active_status = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
+        // Request
+        $partner = Partner::find($partner_id);
+
+        if (is_null($partner)) {
+            return $this->handleError(__('notifications.find_partner_404'));
+        }
+
+        // Ensure the partnership exists and is active
+        $active_partnership_exists = $partner->categories()->wherePivot('status_id', $active_status->id)->exists();
+
+        if (!$active_partnership_exists) {
+            return $this->handleError(__('notifications.find_active_partnership_404'));
+        }
+
+        // Find all activation codes
+        $activation_codes = ActivationCode::where('for_partner_id', $partner->id)->where('is_active', 1)->get();
+
+        return $this->handleResponse(ResourcesActivationCode::collection($activation_codes), __('notifications.find_all_users_success'));
+    }
+
+    /**
      * Activate subscription directly via a activation code given by a partner
      *
      * @param  int $user_id
@@ -189,5 +225,68 @@ class ActivationCodeController extends BaseController
         ]);
 
         return $this->handleResponse(new ResourcesActivationCode($activation_code), __('notifications.create_subscription_success'));
+    }
+
+    /**
+     * Disable subscription got via a activation code given by a partner
+     *
+     * @param  int $user_id
+     * @return \Illuminate\Http\Response
+     */
+    public function disableSubscription($user_id)
+    {
+        // Group
+        $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
+        // Status
+        $active_status = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
+        $terminated_status = Status::where([['status_name->fr', 'Terminé'], ['group_id', $partnership_status_group->id]])->first();
+        // Request
+        $user = User::find($user_id);
+
+        if (is_null($user)) {
+            return $this->handleError(__('notifications.find_user_404'));
+        }
+
+        $user_activation_code = $user->activation_codes()->where('is_active', 1)->latest('updated_at')->first();
+
+        if (is_null($user_activation_code)) {
+            return $this->handleError(__('notifications.find_activation_code_404'));
+        }
+
+        // Ensure the partner exists, is active and has activation code
+        $partner = Partner::whereHas('categories', function ($query) use ($active_status, $user_activation_code) {
+                                $query->where('category_partner.status_id', $active_status->id)
+                                        ->where('category_partner.activation_code', $user_activation_code->code);
+                            })->first();
+
+        if (is_null($partner)) {
+            return $this->handleError(__('notifications.find_partner_404'));
+        }
+
+        // Calculate the remaining days for the partnership
+        $remainingDays = $partner->remainingDays(Carbon::now());
+
+        // If the remaining days are 0, we end the partnership
+        if ($remainingDays <= 0) {
+            // Update all records in the "category_partner" table for this partner
+            $partner->categories()->updateExistingPivot($partner->categories()->pluck('id')->toArray(), [
+                'status_id' => $terminated_status->id
+            ]);
+
+            // Disable all activation codes
+            $activationCodes = ActivationCode::where('for_partner_id', $partner->id)->get();
+
+            if ($activationCodes->isNotEmpty()) {
+                foreach ($activationCodes as $activationCode) {
+                    $activationCode->update(['is_active' => 0]);
+                }
+            }
+
+            return $this->handleResponse(new ResourcesUser($user), __('notifications.create_subscription_success'));
+
+        // If days remaining are > 0, return a message indicating that it is not yet finished
+        } else {
+            return $this->handleError(new ResourcesUser($user), __('notifications.partnership_still_active', ['remainingDays' => $remainingDays]), 400);
+        }
     }
 }

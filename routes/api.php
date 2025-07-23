@@ -130,6 +130,7 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::get('work/find_views/{work_id}', 'App\Http\Controllers\API\WorkController@findViews')->name('work.api.find_views');
     Route::get('work/find_likes/{work_id}', 'App\Http\Controllers\API\WorkController@findLikes')->name('work.api.find_likes');
     Route::put('work/switch_view/{work_id}', 'App\Http\Controllers\API\WorkController@switchView')->name('work.api.switch_view');
+    Route::put('work/validate_consultations/{user_id}', 'App\Http\Controllers\API\WorkController@validateConsultations')->name('work.api.validate_consultations');
     Route::put('work/invalidate_consultations/{user_id}', 'App\Http\Controllers\API\WorkController@invalidateConsultations')->name('work.api.invalidate_consultations');
     Route::put('work/add_image/{id}', 'App\Http\Controllers\API\WorkController@addImage')->name('work.api.add_image');
     Route::post('work/search', 'App\Http\Controllers\API\WorkController@search')->name('work.api.search');
@@ -139,11 +140,14 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::get('partner/search/{data}', 'App\Http\Controllers\API\PartnerController@search')->name('partner.api.search');
     Route::get('partner/partnerships_by_status/{locale}/{status_name}', 'App\Http\Controllers\API\PartnerController@partnershipsByStatus')->name('partner.api.partnerships_by_status');
     Route::get('partner/partners_with_activation_code/{locale}/{status_name}', 'App\Http\Controllers\API\PartnerController@partnersWithActivationCode')->name('partner.api.partners_with_activation_code');
+    Route::get('partner/users_with_promo_code/{partner_id}', 'App\Http\Controllers\API\PartnerController@usersWithPromoCode')->name('partner.api.users_with_promo_code');
     Route::put('partner/withdraw_some_categories/{partner_id}', 'App\Http\Controllers\API\PartnerController@withdrawSomeCategories')->name('partner.api.withdraw_some_categories');
     Route::put('partner/withdraw_all_categories/{partner_id}', 'App\Http\Controllers\API\PartnerController@withdrawSomeCategories')->name('partner.api.withdraw_all_categories');
     Route::put('partner/terminate_partnership/{partner_id}', 'App\Http\Controllers\API\PartnerController@terminatePartnership')->name('partner.api.terminate_partnership');
     // ActivationCode
+    Route::get('activation_code/find_users_by_partner/{partner_id}', 'App\Http\Controllers\API\ActivationCodeController@findUsersByPartner')->name('activation_code.api.find_users_by_partner');
     Route::put('activation_code/activate_subscription/{user_id}/{code}/{partner_id}', 'App\Http\Controllers\API\ActivationCodeController@activateSubscription')->name('activation_code.api.activate_subscription');
+    Route::put('activation_code/disable_subscription/{user_id}', 'App\Http\Controllers\API\ActivationCodeController@disableSubscription')->name('activation_code.api.disable_subscription');
     // Cart
     Route::put('cart/remove_from_cart/{cart_id}', 'App\Http\Controllers\API\CartController@removeFromCart')->name('cart.api.remove_from_cart');
     Route::post('cart/add_to_cart/{entity}', 'App\Http\Controllers\API\CartController@addToCart')->name('cart.api.add_to_cart');
