@@ -21,7 +21,7 @@ class Subscription extends JsonResource
         return [
             'id' => $this->id,
             'number_of_hours' => $this->number_of_hours,
-            'price' => round($this->price),
+            'price' => formatDecimalNumber($this->price),
             'currency' => Currency::make($this->currency),
             'type' => Type::make($this->type),
             'category' => Category::make($this->category),

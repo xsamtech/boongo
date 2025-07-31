@@ -63,7 +63,7 @@ class Work extends JsonResource
             'author' => $this->author,
             'editor' => $this->editor,
             'is_public' => $this->is_public,
-            'consultation_price' => $this->consultation_price,
+            'consultation_price' => !empty($this->consultation_price) ? formatDecimalNumber($this->consultation_price) : null,
             'number_of_hours' => $this->number_of_hours,
             'is_owner_blocked' => $is_toxic,
             'photo_url' => !empty($photo) ? $photo->file_url : getWebURL() . '/assets/img/cover.png',
