@@ -506,7 +506,7 @@ class CartController extends BaseController
                 'approve_url' => $request->app_url . '/subscribed/' . round($total_to_pay) . '/USD/0/' . $current_user->_id . '?app_id=',
                 'cancel_url' => $request->app_url . '/subscribed/' . round($total_to_pay) . '/USD/1/' . $current_user->id . '?app_id=',
                 'decline_url' => $request->app_url . '/subscribed/' . round($total_to_pay) . '/USD/2/' . $current_user->id . '?app_id=',
-                'home_url' => $request->app_url . '/subscribe?app_id=&cart_consultation_id=' . (!empty($cart_consultation) ? $cart_consultation->id : null) . '&cart_subscription_id=' . (!empty($cart_subscription) ? $cart_subscription->id : null) . '&user_id=' . $current_user->id . '&api_token=' . $current_user->api_token,
+                'home_url' => $request->app_url . '/subscribe?app_id=&cart_consultation_id=' . (!empty($cart_consultation) ? $cart_consultation->id : 0) . '&cart_subscription_id=' . (!empty($cart_subscription) ? $cart_subscription->id : 0) . '&user_id=' . $current_user->id . '&api_token=' . $current_user->api_token,
             ));
 
             $curl = curl_init($gateway_card);
