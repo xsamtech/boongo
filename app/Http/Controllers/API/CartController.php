@@ -336,8 +336,8 @@ class CartController extends BaseController
         $bank_card_type = Type::where([['type_name->fr', 'Carte bancaire'], ['group_id', $payment_type_group->id]])->first();
 
         $object = new stdClass();
-        $cart_consultation = [];
-        $cart_subscription = [];
+        $cart_consultation = null;
+        $cart_subscription = null;
 
         if (is_null($mobile_money_type)) {
             return $this->handleError(__('miscellaneous.public.home.posts.boost.transaction_type.mobile_money'), __('notifications.find_type_404'), 404);
@@ -492,105 +492,104 @@ class CartController extends BaseController
                 $cart_subscription = Cart::where([['entity', 'subscription'], ['status_id', $ongoing_status->id], ['user_id', $current_user->id]])->latest()->first();
             }
 
-            return $cart_consultation;
-            // $reference_code = 'REF-' . ((string) random_int(10000000, 99999999)) . '-' . $current_user->id;
+            $reference_code = 'REF-' . ((string) random_int(10000000, 99999999)) . '-' . $current_user->id;
 
-            // // Create response by sending request to FlexPay
-            // $body = json_encode(array(
-            //     'authorization' => 'Bearer ' . config('services.flexpay.api_token'),
-            //     'merchant' => config('services.flexpay.merchant'),
-            //     'reference' => $reference_code,
-            //     'amount' => round($total_to_pay),
-            //     'currency' => $user_currency,
-            //     'description' => __('miscellaneous.bank_transaction_description'),
-            //     'callback_url' => getApiURL() . '/payment/store',
-            //     'approve_url' => $request->app_url . '/subscribed/' . round($total_to_pay) . '/USD/0/' . $current_user->_id . '?app_id=',
-            //     'cancel_url' => $request->app_url . '/subscribed/' . round($total_to_pay) . '/USD/1/' . $current_user->id . '?app_id=',
-            //     'decline_url' => $request->app_url . '/subscribed/' . round($total_to_pay) . '/USD/2/' . $current_user->id . '?app_id=',
-            //     'home_url' => $request->app_url . '/subscribe?app_id=&cart_consultation_id=' . $cart_consultation->id . '&cart_subscription_id=' . $cart_subscription->id . '&user_id=' . $current_user->id . '&api_token=' . $current_user->api_token,
-            // ));
+            // Create response by sending request to FlexPay
+            $body = json_encode(array(
+                'authorization' => 'Bearer ' . config('services.flexpay.api_token'),
+                'merchant' => config('services.flexpay.merchant'),
+                'reference' => $reference_code,
+                'amount' => round($total_to_pay),
+                'currency' => $user_currency,
+                'description' => __('miscellaneous.bank_transaction_description'),
+                'callback_url' => getApiURL() . '/payment/store',
+                'approve_url' => $request->app_url . '/subscribed/' . round($total_to_pay) . '/USD/0/' . $current_user->_id . '?app_id=',
+                'cancel_url' => $request->app_url . '/subscribed/' . round($total_to_pay) . '/USD/1/' . $current_user->id . '?app_id=',
+                'decline_url' => $request->app_url . '/subscribed/' . round($total_to_pay) . '/USD/2/' . $current_user->id . '?app_id=',
+                'home_url' => $request->app_url . '/subscribe?app_id=&cart_consultation_id=' . (!empty($cart_consultation) ? $cart_consultation->id : null) . '&cart_subscription_id=' . (!empty($cart_subscription) ? $cart_subscription->id : null) . '&user_id=' . $current_user->id . '&api_token=' . $current_user->api_token,
+            ));
 
-            // $curl = curl_init($gateway_card);
+            $curl = curl_init($gateway_card);
 
-            // curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
-            // curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-            // $curlResponse = curl_exec($curl);
+            $curlResponse = curl_exec($curl);
 
-            // $jsonRes = json_decode($curlResponse, true);
-            // $code = $jsonRes['code'];
-            // $message = $jsonRes['message'];
+            $jsonRes = json_decode($curlResponse, true);
+            $code = $jsonRes['code'];
+            $message = $jsonRes['message'];
 
-            // if (!empty($jsonRes['error'])) {
-            //     return $this->handleError($jsonRes['error'], $message, $jsonRes['status']);
+            if (!empty($jsonRes['error'])) {
+                return $this->handleError($jsonRes['error'], $message, $jsonRes['status']);
 
-            // } else {
-            //     if ($code != '0') {
-            //         return $this->handleError($code, $message, 400);
+            } else {
+                if ($code != '0') {
+                    return $this->handleError($code, $message, 400);
 
-            //     } else {
-            //         $url = $jsonRes['url'];
-            //         $orderNumber = $jsonRes['orderNumber'];
-            //         // Register payment, even if FlexPay will
-            //         $payment = Payment::where('order_number', $orderNumber)->first();
+                } else {
+                    $url = $jsonRes['url'];
+                    $orderNumber = $jsonRes['orderNumber'];
+                    // Register payment, even if FlexPay will
+                    $payment = Payment::where('order_number', $orderNumber)->first();
 
-            //         if (is_null($payment)) {
-            //             $payment = Payment::create([
-            //                 'reference' => $reference_code,
-            //                 'order_number' => $orderNumber,
-            //                 'amount' => round($total_to_pay),
-            //                 'phone' => $request->other_phone,
-            //                 'currency' => $user_currency,
-            //                 'channel' => $request->channel,
-            //                 'type_id' => $request->transaction_type_id,
-            //                 'status_id' => $in_progress_status->id,
-            //                 'user_id' => $current_user->id
-            //             ]);
-            //         }
+                    if (is_null($payment)) {
+                        $payment = Payment::create([
+                            'reference' => $reference_code,
+                            'order_number' => $orderNumber,
+                            'amount' => round($total_to_pay),
+                            'phone' => $request->other_phone,
+                            'currency' => $user_currency,
+                            'channel' => $request->channel,
+                            'type_id' => $request->transaction_type_id,
+                            'status_id' => $in_progress_status->id,
+                            'user_id' => $current_user->id
+                        ]);
+                    }
 
-            //         // If user has promotional code, update "is_promoted" column
-            //         if ($current_user->promo_code != null) {
-            //             $current_user->update(['is_promoted' => 0]);
-            //         }
+                    // If user has promotional code, update "is_promoted" column
+                    if ($current_user->promo_code != null) {
+                        $current_user->update(['is_promoted' => 0]);
+                    }
 
-            //         // The cart is updated only if the processing succeed
-            //         $random_string = (string) random_int(1000000, 9999999);
-            //         $generated_number = 'BNG-' . $random_string . '-' . date('Y.m.d');
+                    // The cart is updated only if the processing succeed
+                    $random_string = (string) random_int(1000000, 9999999);
+                    $generated_number = 'BNG-' . $random_string . '-' . date('Y.m.d');
 
-            //         if ($cart_consultation != null) {
-            //             $cart_consultation->update([
-            //                 'payment_code' => $generated_number,
-            //                 'status_id' => $paid_status->id,
-            //                 'payment_id' => $payment->id,
-            //                 'updated_at' => now()
-            //             ]);
+                    if ($cart_consultation != null) {
+                        $cart_consultation->update([
+                            'payment_code' => $generated_number,
+                            'status_id' => $paid_status->id,
+                            'payment_id' => $payment->id,
+                            'updated_at' => now()
+                        ]);
 
-            //             foreach ($cart_consultation->works as $work) {
-            //                 $cart_consultation->works()->updateExistingPivot($work->id, ['status_id' => $pending_status->id]);
-            //             }
-            //         }
+                        foreach ($cart_consultation->works as $work) {
+                            $cart_consultation->works()->updateExistingPivot($work->id, ['status_id' => $pending_status->id]);
+                        }
+                    }
 
-            //         if ($cart_subscription != null) {
-            //             $cart_subscription->update([
-            //                 'payment_code' => $generated_number,
-            //                 'status_id' => $paid_status->id,
-            //                 'payment_id' => $payment->id,
-            //                 'updated_at' => now()
-            //             ]);
+                    if ($cart_subscription != null) {
+                        $cart_subscription->update([
+                            'payment_code' => $generated_number,
+                            'status_id' => $paid_status->id,
+                            'payment_id' => $payment->id,
+                            'updated_at' => now()
+                        ]);
 
-            //             foreach ($cart_subscription->subscriptions as $subscription) {
-            //                 $cart_subscription->subscriptions()->updateExistingPivot($subscription->id, ['status_id' => $pending_status->id]);
-            //             }
-            //         }
+                        foreach ($cart_subscription->subscriptions as $subscription) {
+                            $cart_subscription->subscriptions()->updateExistingPivot($subscription->id, ['status_id' => $pending_status->id]);
+                        }
+                    }
 
-            //         $object->user = new ResourcesUser($current_user);
-            //         $object->result_response = [
-            //             'message' => $message,
-            //             'order_number' => $orderNumber,
-            //             'url' => $url
-            //         ];
-            //     }
-            // }
+                    $object->user = new ResourcesUser($current_user);
+                    $object->result_response = [
+                        'message' => $message,
+                        'order_number' => $orderNumber,
+                        'url' => $url
+                    ];
+                }
+            }
         }
 
         $object->cart_consultation = !empty($cart_consultation) ? new ResourcesCart($cart_consultation) : null;
