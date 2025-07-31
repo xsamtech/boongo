@@ -463,10 +463,14 @@ class PartnerController extends BaseController
 
         // If the remaining days are 0, we end the partnership
         if ($remainingDays <= 0) {
+            $categoryIds = $partner->categories()->pluck('categories.id')->toArray();
+
             // Update all records in the "category_partner" table for this partner
-            $partner->categories()->updateExistingPivot($partner->categories()->pluck('id')->toArray(), [
-                'status_id' => $terminated_status->id
-            ]);
+            foreach ($categoryIds as $id) {
+                $partner->categories()->updateExistingPivot($id, [
+                    'status_id' => $terminated_status->id
+                ]);
+            }
 
             // Disable all activation codes
             $activationCodes = ActivationCode::where('for_partner_id', $partner->id)->get();

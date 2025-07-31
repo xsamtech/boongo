@@ -308,21 +308,24 @@ class User extends Authenticatable
     }
 
     /**
-     * Total unpaid consultations price
+     * Check if user has at least one pending consultation
      */
-    public function totalUnpaidConsultations()
+    public function hasPendingConsultation()
     {
         $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
-        $ongoing_status = Status::where([['status_name->fr', 'En cours'], ['group_id', $cart_status_group->id]])->first();
+        $paid_status = Status::where([['status_name->fr', 'Payé'], ['group_id', $cart_status_group->id]])->first();
 
         // Retrieve the last cart where the entity is "consultation"
-        $last_consultation_cart = $this->carts()->where([['entity', 'consultation'], ['status_id', $ongoing_status->id]])->latest()->first();
+        $last_consultation_cart = $this->carts()->where([['entity', 'consultation'], ['status_id', $paid_status->id]])->latest()->first();
 
         if (!$last_consultation_cart) {
-            return 0;
+            return false;
         }
 
-        return $last_consultation_cart->totalWorksConsultationsPrices($this->currency->currency_acronym);
+        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
+        $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
+
+        return $last_consultation_cart->works()->wherePivot('status_id', $pending_status->id)->exists();
     }
 
     /**
@@ -344,6 +347,27 @@ class User extends Authenticatable
         $valid_status = Status::where([['status_name->fr', 'Valide'], ['group_id', $subscription_status_group->id]])->first();
 
         return $last_consultation_cart->works()->wherePivot('status_id', $valid_status->id)->exists();
+    }
+
+    /**
+     * All pending consultations (Cart is paid but consultations in cart are not validated)
+     */
+    public function pendingConsultations()
+    {
+        $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
+        $paid_status = Status::where([['status_name->fr', 'Payé'], ['group_id', $cart_status_group->id]])->first();
+
+        // Retrieve the last cart where the entity is "consultation"
+        $last_consultation_cart = $this->carts()->where([['entity', 'consultation'], ['status_id', $paid_status->id]])->latest()->first();
+
+        if (!$last_consultation_cart) {
+            return collect();
+        }
+
+        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
+        $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
+
+        return $last_consultation_cart->works()->wherePivot('status_id', $pending_status->id)->orderByPivot('created_at', 'desc')->get();
     }
 
     /**
@@ -386,21 +410,24 @@ class User extends Authenticatable
     }
 
     /**
-     * Total unpaid subscriptions price
+     * Check if user has at least one pending subscription
      */
-    public function totalUnpaidSubscriptions()
+    public function hasPendingSubscriptions()
     {
         $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
-        $ongoing_status = Status::where([['status_name->fr', 'En cours'], ['group_id', $cart_status_group->id]])->first();
+        $paid_status = Status::where([['status_name->fr', 'Payé'], ['group_id', $cart_status_group->id]])->first();
 
         // Retrieve the last cart where the entity is "subscription"
-        $last_subscription_cart = $this->carts()->where([['entity', 'subscription'], ['status_id', $ongoing_status->id]])->latest()->first();
+        $last_subscription_cart = $this->carts()->where([['entity', 'subscription'], ['status_id', $paid_status->id]])->latest()->first();
 
         if (!$last_subscription_cart) {
-            return 0;
+            return false;
         }
 
-        return $last_subscription_cart->totalSubscriptionsPrices($this->currency->currency_acronym);
+        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
+        $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
+
+        return $last_subscription_cart->subscriptions()->wherePivot('status_id', $pending_status->id)->exists();
     }
 
     /**
@@ -425,6 +452,27 @@ class User extends Authenticatable
     }
 
     /**
+     * All pending subscriptions (Cart is paid but subscriptions in cart are not validated)
+     */
+    public function pendingSubscriptions()
+    {
+        $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
+        $paid_status = Status::where([['status_name->fr', 'Payé'], ['group_id', $cart_status_group->id]])->first();
+
+        // Retrieve the last cart where the entity is "subscription"
+        $last_subscription_cart = $this->carts()->where([['entity', 'subscription'], ['status_id', $paid_status->id]])->latest()->first();
+
+        if (!$last_subscription_cart) {
+            return collect();
+        }
+
+        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
+        $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
+
+        return $last_subscription_cart->subscriptions()->wherePivot('status_id', $pending_status->id)->orderByPivot('created_at', 'desc')->get();
+    }
+
+    /**
      * All valid subscriptions
      */
     public function validSubscriptions()
@@ -446,31 +494,26 @@ class User extends Authenticatable
     }
 
     /**
-     * All pending subscriptions
+     * All totals unpaid
      */
-    public function pendingSubscriptions()
+    public function totalsUnpaid()
     {
         $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
-        $paid_status = Status::where([['status_name->fr', 'Payé'], ['group_id', $cart_status_group->id]])->first();
+        $ongoing_status = Status::where([['status_name->fr', 'En cours'], ['group_id', $cart_status_group->id]])->first();
 
+        // Retrieve the last cart where the entity is "consultation"
+        $last_consultation_cart = $this->carts()->where([['entity', 'consultation'], ['status_id', $ongoing_status->id]])->latest()->first();
         // Retrieve the last cart where the entity is "subscription"
-        $last_subscription_cart = $this->carts()->where([['entity', 'subscription'], ['status_id', $paid_status->id]])->latest()->first();
+        $last_subscription_cart = $this->carts()->where([['entity', 'subscription'], ['status_id', $ongoing_status->id]])->latest()->first();
+        // Retrieve all totals
+        $totalUnpaidConsultations = !$last_consultation_cart ? 0 : $last_consultation_cart->totalWorksConsultationsPrices($this->currency->currency_acronym);
+        $totalUnpaidSubscriptions = !$last_subscription_cart ? 0 : $last_subscription_cart->totalSubscriptionsPrices($this->currency->currency_acronym);
+        $grandTotalUnpaid = $totalUnpaidConsultations + $totalUnpaidSubscriptions;
 
-        if (!$last_subscription_cart) {
-            return collect();
-        }
-
-        $subscription_status_group = Group::where('group_name', 'Etat de l\'abonnement')->first();
-        $pending_status = Status::where([['status_name->fr', 'En attente'], ['group_id', $subscription_status_group->id]])->first();
-
-        return $last_subscription_cart->subscriptions()->wherePivot('status_id', $pending_status->id)->orderByPivot('created_at', 'desc')->get();
-    }
-
-    /**
-     * Grand totals (Consultations + Subscriptions)
-     */
-    public function grandTotalsUnpaid()
-    {
-        return $this->totalUnpaidConsultations() + $this->totalUnpaidSubscriptions();
+        return [
+            'total_unpaid_consultations' => $totalUnpaidConsultations,
+            'total_unpaid_subscriptions' => $totalUnpaidSubscriptions,
+            'grand_totals' => $grandTotalUnpaid
+        ];
     }
 }

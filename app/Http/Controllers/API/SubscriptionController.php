@@ -9,7 +9,6 @@ use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\Cart as ResourcesCart;
 use App\Http\Resources\Subscription as ResourcesSubscription;
 use App\Http\Resources\User as ResourcesUser;
 use Carbon\Carbon;

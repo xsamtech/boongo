@@ -50,10 +50,14 @@ class TerminateExpiredPartnership extends Command
 
             // If the remaining days are 0 or less, we terminate the partnership
             if ($remainingDays <= 0) {
+                $categoryIds = $partner->categories()->pluck('categories.id')->toArray();
+
                 // Update the partnership status to "Terminé"
-                $partner->categories()->updateExistingPivot($partner->categories()->pluck('id')->toArray(), [
-                    'status_id' => $terminated_status->id
-                ]);
+                foreach ($categoryIds as $id) {
+                    $partner->categories()->updateExistingPivot($id, [
+                        'status_id' => $terminated_status->id
+                    ]);
+                }
 
                 $this->info("Partnership with ID {$partner->id} terminated.");
             }

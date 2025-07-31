@@ -53,10 +53,14 @@ class TerminateExpiredPartnership implements ShouldQueue
 
             // If the remaining days are 0 or less, we terminate the partnership
             if ($remainingDays <= 0) {
-                // Update the partnership status to "Terminé"
-                $partner->categories()->updateExistingPivot($partner->categories()->pluck('id')->toArray(), [
-                    'status_id' => $terminated_status->id
-                ]);
+                $categoryIds = $partner->categories()->pluck('categories.id')->toArray();
+
+                // Update all records in the "category_partner" table for this partner
+                foreach ($categoryIds as $id) {
+                    $partner->categories()->updateExistingPivot($id, [
+                        'status_id' => $terminated_status->id
+                    ]);
+                }
             }
         }
     }

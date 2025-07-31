@@ -204,9 +204,9 @@ class ActivationCodeController extends BaseController
         }
 
         // Ensure the partner exists, is active and has activation code
-        $activation_code_exists = $partner->categories()->wherePivot('activation_code', $code)->wherePivot('is_used', 0)->wherePivot('status_id', $active_status->id)->exists();
+        $category_by_activation_code = $partner->categories()->wherePivot('activation_code', $code)->wherePivot('is_used', 0)->wherePivot('status_id', $active_status->id)->first();
 
-        if (!$activation_code_exists) {
+        if (is_null($category_by_activation_code)) {
             return $this->handleError(__('notifications.find_activation_code_404'));
         }
 
@@ -222,6 +222,10 @@ class ActivationCodeController extends BaseController
             'code' => $code,
             'is_active' => 1,
             'user_id' => $user->id
+        ]);
+
+        $partner->categories()->wherePivot('activation_code', $code)->updateExistingPivot($category_by_activation_code->id, [
+            'is_used' => 1
         ]);
 
         return $this->handleResponse(new ResourcesActivationCode($activation_code), __('notifications.create_subscription_success'));
@@ -268,10 +272,14 @@ class ActivationCodeController extends BaseController
 
         // If the remaining days are 0, we end the partnership
         if ($remainingDays <= 0) {
+            $categoryIds = $partner->categories()->pluck('categories.id')->toArray();
+
             // Update all records in the "category_partner" table for this partner
-            $partner->categories()->updateExistingPivot($partner->categories()->pluck('id')->toArray(), [
-                'status_id' => $terminated_status->id
-            ]);
+            foreach ($categoryIds as $id) {
+                $partner->categories()->updateExistingPivot($id, [
+                    'status_id' => $terminated_status->id
+                ]);
+            }
 
             // Disable all activation codes
             $activationCodes = ActivationCode::where('for_partner_id', $partner->id)->get();
@@ -282,11 +290,11 @@ class ActivationCodeController extends BaseController
                 }
             }
 
-            return $this->handleResponse(new ResourcesUser($user), __('notifications.create_subscription_success'));
+            return $this->handleResponse(new ResourcesUser($user), __('notifications.update_subscription_success'));
 
         // If days remaining are > 0, return a message indicating that it is not yet finished
         } else {
-            return $this->handleError(new ResourcesUser($user), __('notifications.partnership_still_active', ['remainingDays' => $remainingDays]), 400);
+            return $this->handleResponse(new ResourcesUser($user), __('notifications.partnership_still_active', ['remainingDays' => $remainingDays]));
         }
     }
 }

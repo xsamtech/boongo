@@ -358,13 +358,14 @@ class CartController extends BaseController
 
         // Get total prices in the cart
         $total_to_pay = 0;
+        $cart_totals = $current_user->totalsUnpaid();
 
         if ($current_user->unpaidConsultations()->isNotEmpty()) {
-            $total_to_pay += $current_user->totalUnpaidConsultations();
+            $total_to_pay += $cart_totals['total_unpaid_consultations'];
         }
 
         if ($current_user->unpaidSubscriptions()->isNotEmpty()) {
-            $total_to_pay += $current_user->totalUnpaidSubscriptions();
+            $total_to_pay += $cart_totals['total_unpaid_subscriptions'];
         }
 
         // Validations
