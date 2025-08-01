@@ -112,7 +112,7 @@ class PartnerController extends BaseController
                     $codesCount = $request->codes_count ?? 1;
                     $codes = [];
 
-                    for ($i = 1; $i <= $codesCount; $i++) {
+                    for ($i = 0; $i < $codesCount; $i++) {
                         $random_code = Str::random(7);  // Generates a 7-character alphanumeric code
 
                         $codes[$request->category_id] = [
@@ -267,20 +267,18 @@ class PartnerController extends BaseController
                 $partner->categories()->attach($request->category_id, ['promo_code' => $random_int, 'number_of_days' => $request->number_of_days, 'status_id' => $active_status->id]);
 
             } else if ($request->entity == 'activation') {
+                $random_code = Str::random(7);  // Generates a 7-character alphanumeric code
                 $codesCount = $request->codes_count ?? 1;
-                $codes = [];
 
-                for ($i = 1; $i <= $codesCount; $i++) {
-                    $random_code = Str::random(7);  // Generates a 7-character alphanumeric code
-
-                    $codes[$request->category_id] = [
+                for ($i = 0; $i < $codesCount; $i++) {
+                    $partner->categories()->newPivotStatement()->insert([
+                        'category_id' => $request->category_id,
+                        'partner_id' => $partner->id,
                         'activation_code' => $random_code,
                         'number_of_days' => $request->number_of_days,
                         'status_id' => $active_status->id
-                    ];
+                    ]);
                 }
-
-                $partner->categories()->attach($codes);
             }
         }
 
