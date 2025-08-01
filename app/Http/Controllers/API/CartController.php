@@ -595,6 +595,6 @@ class CartController extends BaseController
         $object->cart_consultation = !empty($cart_consultation) ? new ResourcesCart($cart_consultation) : null;
         $object->cart_subscription = !empty($cart_subscription) ? new ResourcesCart($cart_subscription) : null;
 
-        return $this->handleResponse($object, __('notifications.create_payment_finished'));
+        return $this->handleResponse($object, __('notifications.ready_for_payment'));
     }
 }

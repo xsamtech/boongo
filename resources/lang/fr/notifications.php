@@ -290,6 +290,7 @@ return [
     'error_while_processing' => 'Une erreur lors du traitement de votre requête',
     'process_failed' => 'Impossible de traiter la demande, veuillez réessayer',
     'process_canceled' => 'Vous avez annulé votre transaction',
+    'ready_for_payment' => 'Prêt pour le paiement',
     'create_payment_finished' => 'Paiement terminé',
     'create_payment_success' => 'Paiement créé',
     'update_payment_success' => 'Paiement modifié',

@@ -290,6 +290,7 @@ return [
     'error_while_processing' => 'An error while processing your request',
     'process_failed' => 'Unable to process the request, please try again',
     'process_canceled' => 'You canceled your transaction',
+    'ready_for_payment' => 'Ready for payment',
     'create_payment_finished' => 'Payment finished',
     'create_payment_success' => 'Payment created',
     'update_payment_success' => 'Payment updated',
