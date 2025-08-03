@@ -220,7 +220,7 @@ class SubscriptionController extends BaseController
             return $this->handleError(__('notifications.find_user_404'));
         }
 
-        $last_subscription_cart = $this->carts()->where([['entity', 'subscription'], ['status_id', $paid_status->id]])->latest()->first();
+        $last_subscription_cart = $user->carts()->where([['entity', 'subscription'], ['status_id', $paid_status->id]])->latest()->first();
 
         if (!$last_subscription_cart) {
             return $this->handleError(__('notifications.find_subscription_404'));
@@ -233,16 +233,19 @@ class SubscriptionController extends BaseController
         }
 
         if ($cart_payment->status_id == $done_status->id) {
+            $subscriptionsIds = $last_subscription_cart->subscriptions()->pluck('subscriptions.id')->toArray();
+
             // Update all subscriptions linked to this cart in the pivot table "cart_subscription"
-            $last_subscription_cart->subscriptions()->updateExistingPivot(
-                $last_subscription_cart->subscriptions->pluck('id')->toArray(), // We target all subscriptions associated with this cart
-                ['status_id' => $valid_status->id] // We update the "status_id" in the pivot
-            );
+            foreach ($subscriptionsIds as $id) {
+                $last_subscription_cart->subscriptions()->updateExistingPivot($id, [
+                    'status_id' => $valid_status->id // We update the "status_id" in the pivot
+                ]);
+            }
 
             return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
 
         } else {
-            return $this->handleError(new ResourcesUser($user), __('notifications.find_done_payment_404'), 404);
+            return $this->handleResponse(new ResourcesUser($user), __('notifications.find_done_payment_404'));
         }
     }
 
@@ -266,10 +269,21 @@ class SubscriptionController extends BaseController
             return $this->handleError(__('notifications.find_user_404'));
         }
 
+        $last_subscription_cart = $user->carts()->where([['entity', 'subscription'], ['status_id', $paid_status->id]])->latest()->first();
+
+        if (is_null($last_subscription_cart)) {
+            return $this->handleError(__('notifications.find_cart_404'));
+        }
+
         $valid_subscription = $user->validSubscriptions()->first();
 
         if ($valid_subscription != null) {
             $subscription = Subscription::find($valid_subscription->subscription_id);
+
+            if (is_null($subscription)) {
+                return $this->handleError(__('notifications.find_subscription_404'));
+            }
+
             // Create two date instances
             $current_date_instance = Carbon::parse(date('Y-m-d h:i:s'));
             $subscription_date_instance = Carbon::parse($valid_subscription->created_at);
@@ -278,16 +292,10 @@ class SubscriptionController extends BaseController
             $diffInHours = $diff->days * 24 + $diff->h + $diff->i / 60;
 
             if (($subscription->number_of_hours - round($diffInHours)) > 0) {
-                return $this->handleError(new ResourcesUser($user), __('notifications.invalidate_subscription_failed') . ' (Time remaining: '. ($subscription->number_of_hours - round($diffInHours)) .')', 400);
+                return $this->handleResponse(new ResourcesUser($user), __('notifications.invalidate_subscription_failed') . ' (Time remaining: '. ($subscription->number_of_hours - round($diffInHours)) .')');
 
             } else {
-                $user->carts()->where([['entity', 'subscription'], ['status_id', $paid_status->id]])->updateExistingPivot($valid_subscription->id, ['status_id' => $expired_status->id]);
-                $user->carts()
-                        ->where([['entity', 'subscription'], ['status_id', $paid_status->id]])
-                        ->latest() // Get the last cart
-                        ->first() // Get the first one (which will actually be the last one because of latest)
-                        ->subscriptions() // Access the works relationship on this cart
-                        ->updateExistingPivot($valid_subscription->id, ['status_id' => $expired_status->id]);
+                $last_subscription_cart->subscriptions()->updateExistingPivot($valid_subscription->id, ['status_id' => $expired_status->id]);
 
                 return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
             }

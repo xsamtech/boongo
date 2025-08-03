@@ -1436,7 +1436,7 @@ class WorkController extends BaseController
             return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
 
         } else {
-            return $this->handleError(new ResourcesUser($user), __('notifications.find_done_payment_404'), 404);
+            return $this->handleResponse(new ResourcesUser($user), __('notifications.find_done_payment_404'));
         }
     }
 
@@ -1484,7 +1484,7 @@ class WorkController extends BaseController
             return $this->handleResponse(new ResourcesUser($user), __('notifications.expire_consultation_success'));
 
         } else {
-            return $this->handleError(new ResourcesUser($user), __('notifications.expire_consultation_failed'), 404);
+            return $this->handleResponse(new ResourcesUser($user), __('notifications.expire_consultation_failed'));
         }
     }
 
