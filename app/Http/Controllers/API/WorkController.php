@@ -1410,7 +1410,7 @@ class WorkController extends BaseController
             return $this->handleError(__('notifications.find_user_404'));
         }
 
-        $last_consultation_cart = $this->carts()->where([['entity', 'consultation'], ['status_id', $paid_status->id]])->latest()->first();
+        $last_consultation_cart = $user->carts()->where([['entity', 'consultation'], ['status_id', $paid_status->id]])->latest()->first();
 
         if (!$last_consultation_cart) {
             return $this->handleError(__('notifications.find_subscription_404'));
