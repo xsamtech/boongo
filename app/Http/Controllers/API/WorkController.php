@@ -1428,7 +1428,7 @@ class WorkController extends BaseController
 
             // Update all works linked to this cart in the pivot table "cart_work"
             foreach ($worksIds as $id) {
-                $last_consultation_cart->works()->updateExistingPivot($id,[
+                $last_consultation_cart->works()->updateExistingPivot($id, [
                     'status_id' => $valid_status->id // We update the "status_id" in the pivot
                 ]);
             }
@@ -1472,11 +1472,13 @@ class WorkController extends BaseController
 
         // Check if the update date is older than 30 days
         if ($updated_at->diffInDays(Carbon::now()) >= 30) {
-            $cart_works = $last_consultation_cart->works()->wherePivot('status_id', $valid_status->id)->get();
+            $worksIds = $last_consultation_cart->works()->wherePivot('status_id', $valid_status->id)->pluck('works.id')->toArray();
 
             // Expire consultation for each work in the cart
-            foreach ($cart_works as $work) {
-                $last_consultation_cart->works()->updateExistingPivot($work->id, ['status_id' => $expired_status->id]);
+            foreach ($worksIds as $id) {
+                $last_consultation_cart->works()->updateExistingPivot($id, [
+                    'status_id' => $expired_status->id // We update the "status_id" in the pivot
+                ]);
             }
 
             return $this->handleResponse(new ResourcesUser($user), __('notifications.expire_consultation_success'));
