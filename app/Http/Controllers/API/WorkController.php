@@ -1424,7 +1424,7 @@ class WorkController extends BaseController
 
         // Check if payment linked to this cart is done
         if ($cart_payment->status_id == $done_status->id) {
-            $worksIds = $last_consultation_cart->works->pluck('id')->toArray();
+            $worksIds = $last_consultation_cart->works()->pluck('works.id')->toArray();
 
             // Update all works linked to this cart in the pivot table "cart_work"
             foreach ($worksIds as $id) {
