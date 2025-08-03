@@ -1424,11 +1424,14 @@ class WorkController extends BaseController
 
         // Check if payment linked to this cart is done
         if ($cart_payment->status_id == $done_status->id) {
+            $worksIds = $last_consultation_cart->works->pluck('id')->toArray();
+
             // Update all works linked to this cart in the pivot table "cart_work"
-            $last_consultation_cart->works()->updateExistingPivot(
-                $last_consultation_cart->works->pluck('id')->toArray(), // We target all works associated with this cart
-                ['status_id' => $valid_status->id] // We update the "status_id" in the pivot
-            );
+            foreach ($worksIds as $id) {
+                $last_consultation_cart->works()->updateExistingPivot($id,[
+                    'status_id' => $valid_status->id // We update the "status_id" in the pivot
+                ]);
+            }
 
             return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
 
