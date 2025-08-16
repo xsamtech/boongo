@@ -53,11 +53,11 @@ class LikeController extends BaseController
             'for_message_id' => $request->for_message_id
         ];
 
-        $like = Like::create($inputs);
-
         if ($inputs['user_id'] == null) {
             return $this->handleError($inputs['user_id'], __('validation.custom.user.required'), 400);
         }
+
+        $like = Like::create($inputs);
 
         if ($inputs['for_work_id'] != null) {
             $work = Work::find($inputs['for_work_id']);
