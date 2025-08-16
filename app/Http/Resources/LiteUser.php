@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
  */
-class User extends JsonResource
+class LiteUser extends JsonResource
 {
     /**
      * Transform the resource into an array.
