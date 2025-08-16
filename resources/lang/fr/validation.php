@@ -219,6 +219,9 @@ return [
             'repetition' => 'Vous avez répété la même devise',
             'exists' => 'Ce taux interdevises existe déjà'
         ],
+        'user' => [
+            'required' => 'Veuillez sélectionner un utilisateur'
+        ],
     ],
 
     /*

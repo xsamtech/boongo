@@ -55,6 +55,10 @@ class LikeController extends BaseController
 
         $like = Like::create($inputs);
 
+        if ($inputs['user_id'] == null) {
+            return $this->handleError($inputs['user_id'], __('validation.custom.user.required'), 400);
+        }
+
         if ($inputs['for_work_id'] != null) {
             $work = Work::find($inputs['for_work_id']);
 

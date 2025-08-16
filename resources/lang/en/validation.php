@@ -219,6 +219,9 @@ return [
             'repetition' => 'You have repeated the same currency',
             'exists' => 'This inter-currency rate already exists'
         ],
+        'user' => [
+            'required' => 'Select a user please'
+        ],
     ],
 
     /*
