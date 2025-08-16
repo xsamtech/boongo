@@ -1036,7 +1036,7 @@ class UserController extends BaseController
             if ($is_subscribed) {
                 $valid_subscription = $logged_in_user->validSubscriptions()->sortByDesc(function ($subscription) { return $subscription->pivot->created_at; })->first();
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $active_status) {
-                                        $query->where('category_partner.id', $valid_subscription->category_id)->wherePivot('category_partner.status_id', $active_status->id);
+                                        $query->where('category_partner.id', $valid_subscription->category_id)->where('category_partner.status_id', $active_status->id);
                                     })->where(function ($query) use ($users_ids) {
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
