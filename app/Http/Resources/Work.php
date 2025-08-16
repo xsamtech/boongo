@@ -76,7 +76,6 @@ class Work extends JsonResource
             'currency' => Currency::make($this->currency),
             'type' => Type::make($this->type),
             'status' => Status::make($this->status),
-            'organization_owner' => User::make($this->organization_owner),
             'category' => Category::make($this->category),
             'categories' => Category::collection($this->categories),
             'likes' => Like::collection($this->likes),
