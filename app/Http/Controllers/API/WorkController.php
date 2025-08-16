@@ -413,7 +413,7 @@ class WorkController extends BaseController
      * Find current trends.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  string $year
+     * @param  int $year
      * @return \Illuminate\Http\Response
      */
     public function trends(Request $request, $year)

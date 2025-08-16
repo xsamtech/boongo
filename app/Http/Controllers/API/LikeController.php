@@ -173,4 +173,43 @@ class LikeController extends BaseController
 
         return $this->handleResponse(ResourcesLike::collection($likes), __('notifications.delete_like_success'));
     }
+
+    // ==================================== CUSTOM METHODS ====================================
+    /**
+     * Unlike a work or message.
+     *
+     * @param  int $user_id
+     * @param  string $entity
+     * @param  int $entity_id
+     * @return \Illuminate\Http\Response
+     */
+    public function unlikeEntity($user_id, $entity, $entity_id)
+    {
+        $like = null;
+        $likes = null;
+
+        if ($entity == 'work') {
+            $like = Like::where('user_id', $user_id)->where('for_work_id', $entity_id)->first();
+            $likes = Like::where('for_work_id', $entity_id)->get();
+
+            if (is_null($like)) {
+                return $this->handleError(__('notifications.find_like_404'));
+            }
+
+            $like->delete();
+        }
+
+        if ($entity == 'message') {
+            $like = Like::where('user_id', $user_id)->where('for_message_id', $entity_id)->first();
+            $likes = Like::where('for_message_id', $entity_id)->get();
+
+            if (is_null($like)) {
+                return $this->handleError(__('notifications.find_like_404'));
+            }
+
+            $like->delete();
+        }
+
+        return $this->handleResponse(ResourcesLike::collection($likes), __('notifications.delete_like_success'));
+    }
 }

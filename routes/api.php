@@ -111,6 +111,7 @@ Route::group(['middleware' => ['api', 'localization']], function () {
 });
 Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function () {
     Route::resource('work', 'App\Http\Controllers\API\WorkController');
+    Route::resource('like', 'App\Http\Controllers\API\LikeController');
     Route::resource('partner', 'App\Http\Controllers\API\PartnerController');
     Route::resource('activation_code', 'App\Http\Controllers\API\ActivationCodeController');
     Route::resource('cart', 'App\Http\Controllers\API\CartController');
@@ -136,6 +137,8 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::post('work/search', 'App\Http\Controllers\API\WorkController@search')->name('work.api.search');
     Route::post('work/upload_files', 'App\Http\Controllers\API\WorkController@uploadFiles')->name('work.api.upload_files');
     Route::post('work/filter_by_categories', 'App\Http\Controllers\API\WorkController@filterByCategories')->name('work.api.filter_by_categories');
+    // Like
+    Route::delete('like/unlike_entity/{user_id}/{entity}/{entity_id}', 'App\Http\Controllers\API\LikeController@unlikeEntity')->name('like.api.unlike_entity');
     // Partner
     Route::get('partner/search/{data}', 'App\Http\Controllers\API\PartnerController@search')->name('partner.api.search');
     Route::get('partner/partnerships_by_status/{locale}/{status_name}', 'App\Http\Controllers\API\PartnerController@partnershipsByStatus')->name('partner.api.partnerships_by_status');
