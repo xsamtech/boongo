@@ -1041,7 +1041,6 @@ class UserController extends BaseController
                                         $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
                                     })->inRandomOrder()->first() : null;
 
-                return $partner;
             // Otherwise, send all data
             } else {
                 $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
