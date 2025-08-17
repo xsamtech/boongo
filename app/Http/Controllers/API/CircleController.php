@@ -182,6 +182,12 @@ class CircleController extends BaseController
             return $query->where('type_id', $request->type_id);
         });
 
+        $query->when($request->user_id, function ($query) use ($request) {
+            return $query->whereHas('users', function ($query) use ($request) {
+                        $query->where('circle_user.user_id', $request->user_id);
+                    });
+        });
+
         // Retrieves the query results
         $circles = $query->orderByDesc('updated_at')->paginate(10);
         $count_circles = $query->count();
