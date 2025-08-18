@@ -109,9 +109,9 @@ if (!function_exists('explicitMonth')) {
 if (!function_exists('explicitDayMonth')) {
     function explicitDayMonth($date)
     {
-        setlocale(LC_ALL, app()->getLocale());
+        Carbon::setLocale(app()->getLocale());
 
-        return utf8_encode(Carbon::parse($date)->formatLocalized('%A %d %B'));
+        return Carbon::parse($date)->translatedFormat('l d F');
     }
 }
 
@@ -119,9 +119,9 @@ if (!function_exists('explicitDayMonth')) {
 if (!function_exists('explicitDate')) {
     function explicitDate($date)
     {
-        setlocale(LC_ALL, app()->getLocale());
+        Carbon::setLocale(app()->getLocale());
 
-        return utf8_encode(Carbon::parse($date)->formatLocalized('%A %d %B %Y'));
+        return Carbon::parse($date)->translatedFormat('l d F Y');
     }
 }
 
