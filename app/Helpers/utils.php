@@ -99,9 +99,9 @@ if (!function_exists('getArrayKeys')) {
 if (!function_exists('explicitMonth')) {
     function explicitMonth($month)
     {
-        setlocale(LC_ALL, app()->getLocale());
+        Carbon::setLocale(app()->getLocale());
 
-        return utf8_encode(strftime("%B", strtotime(date('F', mktime(0, 0, 0, $month, 10)))));
+        return Carbon::createFromFormat('m', $month)->translatedFormat('F');
     }
 }
 
