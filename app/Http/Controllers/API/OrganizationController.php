@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Resources\Organization as ResourcesOrganization;
+use App\Models\Group;
+use App\Models\Status;
+use App\Models\Type;
 
 /**
  * @author Xanders
@@ -298,6 +301,41 @@ class OrganizationController extends BaseController
      * Retrieves all organizations belonging to a user.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  int  $type_id
+     * @return \Illuminate\Http\Response
+     */
+    public function findAllByType(Request $request, $type_id)
+    {
+        // Group
+        $organization_status_group = Group::where('group_name', 'Etat de l\'organisation')->first();
+        // Status
+        $shared_status = Status::where([['status_name->fr', 'Partagée'], ['group_id', $organization_status_group->id]])->first();
+        // Request
+        $type = Type::find($type_id);
+
+        if (is_null($type)) {
+            return $this->handleError(__('notifications.find_type_404'));
+        }
+
+        // Start with the shared organizations query
+        $query = Organization::where('type_id', $type->id)->where('status_id', $shared_status->id); 
+
+        // If the "X-user-id" header is set, the user's organizations are also added
+        if ($request->hasHeader('X-user-id')) {
+            $query->orWhere('user_id', $request->header('X-user-id'));
+        }
+
+        // Retrieve organizations and pagination
+        $organizations = $query->orderByDesc('updated_at')->paginate(10);
+        $count_organizations = $query->total();
+
+        return $this->handleResponse(ResourcesOrganization::collection($organizations), __('notifications.find_all_organizations_success'), $organizations->lastPage(), $count_organizations);
+    }
+
+    /**
+     * Retrieves all organizations belonging to a user.
+     *
+     * @param  \Illuminate\Http\Request  $request
      * @param  int  $user_id
      * @return \Illuminate\Http\Response
      */
@@ -320,7 +358,7 @@ class OrganizationController extends BaseController
         });
 
         $organizations = $query->orderByDesc('updated_at')->paginate(10);
-        $count_organizations = $query->count();
+        $count_organizations = $query->total();
 
         return $this->handleResponse(ResourcesOrganization::collection($organizations), __('notifications.find_all_organizations_success'), $organizations->lastPage(), $count_organizations);
     }
