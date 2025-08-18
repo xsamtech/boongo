@@ -88,7 +88,7 @@ class Work extends Model
      */
     public function user_owner(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
@@ -97,7 +97,7 @@ class Work extends Model
      */
     public function organization_owner(): BelongsTo
     {
-        return $this->belongsTo(Organization::class);
+        return $this->belongsTo(Organization::class, 'organization_id');
     }
 
     /**
