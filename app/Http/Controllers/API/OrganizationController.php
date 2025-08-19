@@ -327,7 +327,7 @@ class OrganizationController extends BaseController
 
         // Retrieve organizations and pagination
         $organizations = $query->orderByDesc('updated_at')->paginate(10);
-        $count_organizations = $query->total();
+        $count_organizations = $organizations->total();
 
         return $this->handleResponse(ResourcesOrganization::collection($organizations), __('notifications.find_all_organizations_success'), $organizations->lastPage(), $count_organizations);
     }
