@@ -289,6 +289,11 @@ class OrganizationController extends BaseController
             return $query->where('user_id', $request->user_id);
         });
 
+        // If the "X-user-id" header is set, the user's organizations are also added
+        if ($request->hasHeader('X-user-id')) {
+            $query->orWhere('user_id', $request->header('X-user-id'));
+        }
+
         // Retrieves the query results
         $organizations = $query->orderByDesc('updated_at')->paginate(10);
         $count_organizations = $query->count();
