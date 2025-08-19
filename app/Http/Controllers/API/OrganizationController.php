@@ -291,7 +291,9 @@ class OrganizationController extends BaseController
 
         // If the "X-user-id" header is set, the user's organizations are also added
         if ($request->hasHeader('X-user-id')) {
-            $query->orWhere('user_id', $request->header('X-user-id'));
+            $query->orWhere(function ($q) use ($request) {
+                $q->where('org_name', 'LIKE', '%' . $request->data . '%')->where('user_id', $request->header('X-user-id'));
+            });
         }
 
         // Retrieves the query results
