@@ -180,7 +180,7 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     // Organization
     Route::post('organization/search', 'App\Http\Controllers\API\OrganizationController@search')->name('organization.api.search');
     Route::get('organization/find_all_by_type/{type_id}', 'App\Http\Controllers\API\OrganizationController@findAllByType')->name('organization.api.find_all_by_type');
-    Route::get('organization/find_all_by_owner/{data}', 'App\Http\Controllers\API\OrganizationController@findAllByOwner')->name('organization.api.find_all_by_owner');
+    Route::get('organization/find_all_by_owner/{user_id}', 'App\Http\Controllers\API\OrganizationController@findAllByOwner')->name('organization.api.find_all_by_owner');
     // Circle
     Route::post('circle/search', 'App\Http\Controllers\API\CircleController@search')->name('circle.api.search');
     // Event

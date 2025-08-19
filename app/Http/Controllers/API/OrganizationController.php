@@ -298,7 +298,7 @@ class OrganizationController extends BaseController
     }
 
     /**
-     * Retrieves all organizations belonging to a user.
+     * Retrieves all organizations by type.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $type_id
@@ -358,7 +358,7 @@ class OrganizationController extends BaseController
         });
 
         $organizations = $query->orderByDesc('updated_at')->paginate(10);
-        $count_organizations = $query->total();
+        $count_organizations = $organizations->total();
 
         return $this->handleResponse(ResourcesOrganization::collection($organizations), __('notifications.find_all_organizations_success'), $organizations->lastPage(), $count_organizations);
     }
