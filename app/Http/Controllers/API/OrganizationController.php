@@ -41,6 +41,7 @@ class OrganizationController extends BaseController
         // Get inputs
         $inputs = [
             'org_name' => $request->org_name,
+            'org_acronym' => $request->org_acronym,
             'org_description' => $request->org_description,
             'id_number' => $request->id_number,
             'phone' => $request->phone,
@@ -121,6 +122,7 @@ class OrganizationController extends BaseController
         $inputs = [
             'id' => $request->id,
             'org_name' => $request->org_name,
+            'org_acronym' => $request->org_acronym,
             'org_description' => $request->org_description,
             'id_number' => $request->id_number,
             'phone' => $request->phone,
@@ -153,6 +155,13 @@ class OrganizationController extends BaseController
 
             $organization->update([
                 'org_name' => $inputs['org_name'],
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($inputs['org_acronym'] != null) {
+            $organization->update([
+                'org_acronym' => $inputs['org_acronym'],
                 'updated_at' => now(),
             ]);
         }
