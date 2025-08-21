@@ -134,7 +134,7 @@ return [
     'find_work_404' => 'Work not found',
     'add_work_success' => 'Work added',
     'create_work_success' => 'Work created',
-    'create_work_file_500' => 'The work file could not be created',
+    'create_work_file_500' => 'The file could not be created',
     'create_image64_500' => 'The Base64 image upload failed',
     'update_work_success' => 'Work updated',
     'delete_work_success' => 'Work deleted',

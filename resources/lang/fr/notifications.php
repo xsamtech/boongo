@@ -134,7 +134,7 @@ return [
     'find_work_404' => 'Œuvre non trouvée',
     'add_work_success' => 'Œuvre ajoutée',
     'create_work_success' => 'Œuvre créée',
-    'create_work_file_500' => 'Le fichier de l\'œuvre n\'a pas pu être créé',
+    'create_work_file_500' => 'Le fichier n\'a pas pu être créé',
     'create_image64_500' => 'L\'uploade de l\'image Base64 a échoué',
     'update_work_success' => 'Œuvre modifiée',
     'delete_work_success' => 'Œuvre supprimée',

@@ -119,6 +119,7 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::resource('user', 'App\Http\Controllers\API\UserController')->except(['store', 'show', 'login']);
     Route::resource('circle', 'App\Http\Controllers\API\CircleController');
     Route::resource('organization', 'App\Http\Controllers\API\OrganizationController');
+    Route::resource('program', 'App\Http\Controllers\API\ProgramController');
     Route::resource('event', 'App\Http\Controllers\API\EventController');
     Route::resource('message', 'App\Http\Controllers\API\MessageController');
     Route::resource('notification', 'App\Http\Controllers\API\NotificationController');
@@ -183,6 +184,9 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::get('organization/find_all_by_owner/{user_id}', 'App\Http\Controllers\API\OrganizationController@findAllByOwner')->name('organization.api.find_all_by_owner');
     // Circle
     Route::post('circle/search', 'App\Http\Controllers\API\CircleController@search')->name('circle.api.search');
+    // Program
+    Route::get('program/find_all_by_year_and_organization/{course_year}/{organization_id}', 'App\Http\Controllers\API\ProgramController@findAllByYearAndOrganization')->name('program.api.find_all_by_year_and_organization');
+    Route::post('program/add_organization_program/{organization_id}', 'App\Http\Controllers\API\ProgramController@addOrganizationProgram')->name('program.api.add_organization_program');
     // Event
     Route::get('event/find_by_type/{locale}/{type_name}', 'App\Http\Controllers\API\EventController@findByType')->name('event.api.find_by_type');
     Route::get('event/find_by_status/{locale}/{status_name}', 'App\Http\Controllers\API\EventController@findByStatus')->name('event.api.find_by_status');
