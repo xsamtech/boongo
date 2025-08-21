@@ -34,7 +34,6 @@ class Organization extends JsonResource
             'website_url' => $this->website_url,
             'type' => Type::make($this->type),
             'status' => Status::make($this->status),
-            'programs' => Program::collection($this->programs),
             'cover_url' => trim($this->cover_url) != null ? getWebURL() . '/public/storage/' . $this->cover_url : getWebURL() . '/assets/img/banner-organization.png',
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
