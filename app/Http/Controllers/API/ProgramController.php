@@ -41,6 +41,7 @@ class ProgramController extends BaseController
     public function store(Request $request)
     {
         $inputs = [
+            'class' => $request->class,
             'course_year_id' => $request->course_year_id,
             'organization_id' => $request->organization_id
         ];
@@ -114,9 +115,17 @@ class ProgramController extends BaseController
     {
         // Get inputs
         $inputs = [
+            'class' => $request->class,
             'course_year_id' => $request->course_year_id,
             'organization_id' => $request->organization_id
         ];
+
+        if ($inputs['class'] != null) {
+            $program->update([
+                'class' => $inputs['class'],
+                'updated_at' => now()
+            ]);
+        }
 
         if ($inputs['course_year_id'] != null) {
             $program->update([
@@ -244,6 +253,7 @@ class ProgramController extends BaseController
 
         // Retrieve programs and count
         $program = Program::create([
+            'class' => $request->class,
             'course_year_id' => $course_year->id,
             'organization_id' => $organization->id
         ]);

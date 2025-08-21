@@ -21,8 +21,12 @@ class Program extends JsonResource
     {
         return [
             'id' => $this->id,
+            'class' => $this->class,
+            'course_year' => CourseYear::make($this->course_year),
+            'files' => File::collection($this->files),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at->format('Y-m-d H:i:s')
+            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+            'organization_id' => $this->organization_id,
         ];
     }
 }

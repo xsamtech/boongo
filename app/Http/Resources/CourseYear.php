@@ -22,7 +22,6 @@ class CourseYear extends JsonResource
         return [
             'id' => $this->id,
             'year' => $this->year,
-            'programs' => Program::collection($this->programs),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s')
         ];
