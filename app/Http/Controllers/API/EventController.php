@@ -86,13 +86,13 @@ class EventController extends BaseController
             $image = str_replace($replace, '', $request->image_64);
             $image = str_replace(' ', '+', $image);
             // Create image URL
-            $image_url = 'images/events/' . $inputs['event_id'] . '/cover/' . Str::random(50) . '.png';
+            $image_path = 'images/events/' . $event->id . '/cover/' . Str::random(50) . '.png';
 
             // Upload image
-            Storage::url(Storage::disk('public')->put($image_url, base64_decode($image)));
+            Storage::disk('public')->put($image_path, base64_decode($image));
 
             $event->update([
-                'cover_url' => $image_url,
+                'cover_url' => Storage::url($image_path),
                 'updated_at' => now()
             ]);
         }
@@ -520,15 +520,15 @@ class EventController extends BaseController
         $image = str_replace($replace, '', $inputs['image_64']);
         $image = str_replace(' ', '+', $image);
         // Create image URL
-		$image_url = 'images/events/' . $inputs['event_id'] . '/cover/' . Str::random(50) . '.png';
+		$image_path = 'images/events/' . $inputs['event_id'] . '/cover/' . Str::random(50) . '.png';
 
 		// Upload image
-		Storage::url(Storage::disk('public')->put($image_url, base64_decode($image)));
+        Storage::disk('public')->put($image_path, base64_decode($image));
 
 		$event = Event::find($id);
 
         $event->update([
-            'cover_url' => $image_url,
+            'cover_url' => Storage::url($image_path),
             'updated_at' => now()
         ]);
 
