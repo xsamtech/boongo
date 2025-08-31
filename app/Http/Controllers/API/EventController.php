@@ -59,6 +59,7 @@ class EventController extends BaseController
             'event_description' => $request->event_description,
             'start_at' => $request->start_at,
             'end_at' => $request->end_at,
+            'event_place' => $request->event_place,
             'type_id' => isset($request->type_id) ? $request->type_id : $public_type->id,
             'status_id' => isset($request->status_id) ? $request->status_id : $created_status->id,
             'organization_id' => $request->organization_id
@@ -187,7 +188,7 @@ class EventController extends BaseController
             'event_place' => $request->event_place,
             'type_id' => $request->type_id,
             'status_id' => $request->status_id,
-            'user_id' => $request->user_id
+            'organization_id' => $request->organization_id
         ];
         // Select specific event to check unique constraint
         $current_event = Event::find($inputs['id']);
