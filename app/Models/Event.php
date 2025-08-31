@@ -26,6 +26,18 @@ class Event extends Model
     protected $guarded = [];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'start_at' => 'datetime:Y-m-d H:i:s',
+        'end_at' => 'datetime:Y-m-d H:i:s',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
+    /**
      * MANY-TO-MANY
      * Several users for several events
      * 
