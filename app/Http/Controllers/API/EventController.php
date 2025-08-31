@@ -50,7 +50,7 @@ class EventController extends BaseController
         $created_status = Status::where([['status_name->fr', 'Créé'], ['group_id', $event_status_group->id]])->first();
         $unread_notification_status = Status::where([['status_name->fr', 'Non lue'], ['group_id', $notification_status_group->id]])->first();
         // Type
-        $public_type = Type::where([['type_name->fr', 'Public'], ['group_id' => $access_type_group->id]])->first();
+        $public_type = Type::where([['type_name->fr', 'Public'], ['group_id', $access_type_group->id]])->first();
         $new_event_type = Type::where([['type_name->fr', 'Nouvel événement'], ['group_id', $notification_type_group->id]])->first();
         $invitation_as_speaker_type = Type::where([['type_name->fr', 'Invitation en tant que speaker'], ['group_id', $notification_type_group->id]])->first();
         // Get inputs
