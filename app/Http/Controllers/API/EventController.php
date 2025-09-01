@@ -357,7 +357,6 @@ class EventController extends BaseController
         return $this->handleResponse(ResourcesEvent::collection($events), $message, $events->lastPage(), $count_events);
     }
 
-
     /**
      * Find all events by type.
      *
@@ -468,6 +467,10 @@ class EventController extends BaseController
             return $query->where('status_id', $request->status_id);
         });
 
+        $query->when($request->category_id, function ($query) use ($request) {
+            return $query->where('category_id', $request->category_id);
+        });
+
         // Retrieves the query results
         $events = $query->orderByDesc('created_at')->paginate(10);
         $count_events = $query->count();
@@ -492,6 +495,10 @@ class EventController extends BaseController
 
         $query->when($request->status_id, function ($query) use ($request) {
             return $query->where('status_id', $request->status_id);
+        });
+
+        $query->when($request->category_id, function ($query) use ($request) {
+            return $query->where('category_id', $request->category_id);
         });
 
         // Retrieves the query results
