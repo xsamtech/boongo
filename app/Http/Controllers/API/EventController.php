@@ -467,7 +467,9 @@ class EventController extends BaseController
             return $query->where('status_id', $request->status_id);
         });
 
-        $query->when($request->category_id, function ($query) use ($request) {
+        $query->when(is_null($request->category_id), function ($query) {
+            return $query->whereNull('category_id');
+        }, function ($query) use ($request) {
             return $query->where('category_id', $request->category_id);
         });
 
