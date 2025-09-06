@@ -211,6 +211,9 @@ return [
         'owner' => [
             'required' => 'Select an entity please'
         ],
+        'action' => [
+            'required' => 'Select an action please'
+        ],
         'type_name' => [
             'required' => 'The "type" field is required',
             'exists' => 'This type name already exists'

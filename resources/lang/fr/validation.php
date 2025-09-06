@@ -211,6 +211,9 @@ return [
         'owner' => [
             'required' => 'Sélectionner une entité s’il vous plait'
         ],
+        'action' => [
+            'required' => 'Sélectionner une action s’il vous plait'
+        ],
         'type_name' => [
             'required' => 'Le champ "type" est obligatoire',
             'exists' => 'Ce nom de type existe déjà'

@@ -60,6 +60,7 @@ class EventController extends BaseController
             'start_at' => $request->start_at,
             'end_at' => $request->end_at,
             'event_place' => $request->event_place,
+            'event_place_address' => $request->event_place_address,
             'type_id' => isset($request->type_id) ? $request->type_id : $public_type->id,
             'status_id' => isset($request->status_id) ? $request->status_id : $created_status->id,
             'organization_id' => $request->organization_id
@@ -267,6 +268,7 @@ class EventController extends BaseController
         if ($inputs['event_place'] != null) {
             $event->update([
                 'event_place' => $inputs['event_place'],
+                'event_place_address' => !empty($request->event_place_address) ? $request->event_place_address : $current_event->event_place_address,
                 'updated_at' => now()
             ]);
         }

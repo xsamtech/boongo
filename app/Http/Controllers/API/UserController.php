@@ -1618,23 +1618,79 @@ class UserController extends BaseController
     }
 
     /**
-     * Update user organization in storage.
+     * Update user membership in group.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  string  $entity
+     * @param  int  $entity_id
      * @param  string  $action
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function updateOrganization(Request $request, $action, $id)
+    public function updateUserMembership(Request $request, $entity, $entity_id, $action, $id)
     {
         $user = User::find($id);
 
+        if ($entity != 'organization' AND $entity != 'event' AND $entity != 'circle') {
+            return $this->handleError(__('validation.custom.owner.required') . ' (organization / event / circle)');
+        }
+
+        if ($action != 'add' AND $action != 'remove') {
+            return $this->handleError(__('validation.custom.action.required') . ' (add / remove)');
+        }
+
         if ($action == 'add') {
-            $user->organizations()->syncWithoutDetaching([$request->organization_id]);
+            if ($entity == 'organization') {
+                $organization = Event::find($entity_id);
+
+                if (is_null($organization)) {
+                    return $this->handleError(__('notifications.find_organization_404'));
+                }
+
+                $user->organizations()->syncWithoutDetaching([$organization->id]);
+            }
+
+            if ($entity == 'event') {
+                $event = Event::find($entity_id);
+
+                if (is_null($event)) {
+                    return $this->handleError(__('notifications.find_event_404'));
+                }
+
+                $user->events()->syncWithoutDetaching([$event->id => ['is_speaker' => $request->is_speaker, 'status_id' => $request->status_id]]);
+            }
+
+            if ($entity == 'circle') {
+                $circle = Event::find($entity_id);
+
+                if (is_null($circle)) {
+                    return $this->handleError(__('notifications.find_circle_404'));
+                }
+
+                $user->circles()->syncWithoutDetaching([$circle->id => ['is_admin' => $request->is_admin, 'status_id' => $request->status_id]]);
+            }
         }
 
         if ($action == 'remove') {
-            $user->organizations()->detach([$request->organization_id]);
+            if ($entity == 'event') {
+                $event = Event::find($entity_id);
+
+                if (is_null($event)) {
+                    return $this->handleError(__('notifications.find_event_404'));
+                }
+
+                $user->events()->detach([$event->id]);
+            }
+
+            if ($entity == 'circle') {
+                $circle = Event::find($entity_id);
+
+                if (is_null($circle)) {
+                    return $this->handleError(__('notifications.find_circle_404'));
+                }
+
+                $user->circles()->detach([$circle->id]);
+            }
         }
 
         return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));

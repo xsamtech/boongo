@@ -40,6 +40,7 @@ Route::middleware(['auth:sanctum', 'localization'])->group(function () {
     Route::apiResource('personal_access_token', 'App\Http\Controllers\API\PersonalAccessTokenController');
     Route::apiResource('message', 'App\Http\Controllers\API\MessageController');
     Route::apiResource('notification', 'App\Http\Controllers\API\NotificationController');
+    Route::apiResource('read_notification', 'App\Http\Controllers\API\ReadNotificationController');
     Route::apiResource('toxic_content', 'App\Http\Controllers\API\ToxicContentController');
     Route::apiResource('payment', 'App\Http\Controllers\API\PaymentController')->except(['store', 'find_by_order_number', 'find_by_order_number_user', 'switch_status']);
     Route::apiResource('session', 'App\Http\Controllers\API\SessionController');
@@ -173,6 +174,7 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::put('user/switch_status/{id}/{status_id}', 'App\Http\Controllers\API\UserController@switchStatus')->name('user.api.switch_status');
     Route::put('user/update_role/{action}/{id}', 'App\Http\Controllers\API\UserController@updateRole')->name('user.api.update_role');
     Route::put('user/update_organization/{action}/{id}', 'App\Http\Controllers\API\UserController@updateOrganization')->name('user.api.update_organization');
+    Route::put('user/update_user_membership/{entity}/{entity_id}/{action}/{id}', 'App\Http\Controllers\API\UserController@updateUserMembership')->name('user.api.update_user_membership');
     Route::put('user/update_password/{id}', 'App\Http\Controllers\API\UserController@updatePassword')->name('user.api.update_password');
     Route::put('user/subscribe_to_group/{user_id}/{addressee_id}', 'App\Http\Controllers\API\UserController@subscribeToGroup')->name('user.api.subscribe_to_group');
     Route::put('user/unsubscribe_to_group/{user_id}/{addressee_id}', 'App\Http\Controllers\API\UserController@unsubscribeToGroup')->name('user.api.unsubscribe_to_group');
