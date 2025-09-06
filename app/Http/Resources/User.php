@@ -63,6 +63,8 @@ class User extends JsonResource
             'currency' => Currency::make($this->currency),
             'status' => Status::make($this->status),
             'roles' => Role::collection($this->roles),
+            'events' => Event::collection($this->events),
+            'circles' => Event::collection($this->circles),
             'toxic_contents' => ToxicContent::collection($this->toxic_contents),
             'favorite_works' => Work::collection($this->favoriteWorks()),
             // Works consultations
