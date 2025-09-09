@@ -37,14 +37,19 @@ class ReadNotificationController extends BaseController
         $inputs = [
             'text_content' => $request->text_content,
             'redirect_url' => $request->redirect_url,
+            'screen' => $request->screen,
+            'entity' => $request->entity,
+            'entity_id' => $request->entity_id,
             'icon' => $request->icon,
             'image_url' => $request->image_url,
             'created_at' => $request->created_at,
             'updated_at' => $request->updated_at,
+            'notification_id' => $request->notification_id,
             'user_id' => $request->user_id,
         ];
 
         $validator = Validator::make($inputs, [
+            'notification_id' => ['required'],
             'user_id' => ['required'],
         ]);
 
@@ -88,15 +93,20 @@ class ReadNotificationController extends BaseController
             'id' => $request->id,
             'text_content' => $request->text_content,
             'redirect_url' => $request->redirect_url,
+            'screen' => $request->screen,
+            'entity' => $request->entity,
+            'entity_id' => $request->entity_id,
             'icon' => $request->icon,
             'image_url' => $request->image_url,
             'created_at' => $request->created_at,
             'updated_at' => $request->updated_at,
+            'notification_id' => $request->notification_id,
             'user_id' => $request->user_id,
         ];
 
         $validator = Validator::make($inputs, [
-            'user_id' => ['required']
+            'notification_id' => ['required'],
+            'user_id' => ['required'],
         ]);
 
         if ($validator->fails()) {

@@ -40,7 +40,7 @@ class Work extends JsonResource
         $video = null;
 
         foreach ($imgs as $img) {
-            $url = $img->file_url; // ou $img->path selon ton modèle
+            $url = $img->file_url;
 
             if (isPhotoFile($url) && !$photo) {
                 $photo = $img;

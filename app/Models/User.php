@@ -196,6 +196,17 @@ class User extends Authenticatable
 
     /**
      * MANY-TO-ONE
+     * Several read_notification for a user
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function read_notification(): HasMany
+    {
+        return $this->hasMany(ReadNotification::class, 'user_id');
+    }
+
+    /**
+     * MANY-TO-ONE
      * Several sessions for a user
      */
     public function sessions(): HasMany

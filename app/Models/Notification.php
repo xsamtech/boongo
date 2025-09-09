@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @author Xanders
@@ -109,5 +110,16 @@ class Notification extends Model
     public function circle(): BelongsTo
     {
         return $this->belongsTo(Circle::class);
+    }
+
+    /**
+     * MANY-TO-ONE
+     * Several read_notification for a user
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function read_notification(): HasOne
+    {
+        return $this->hasOne(ReadNotification::class, 'notification_id');
     }
 }

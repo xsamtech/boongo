@@ -25,6 +25,17 @@ class ReadNotification extends Model
 
     /**
      * ONE-TO-MANY
+     * One notification for several notifications
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function notification(): BelongsTo
+    {
+        return $this->belongsTo(Notification::class, 'notification_id');
+    }
+
+    /**
+     * ONE-TO-MANY
      * One user for several notifications
      * 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

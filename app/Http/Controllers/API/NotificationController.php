@@ -7,6 +7,14 @@ use App\Models\Status;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\Notification as ResourcesNotification;
+use App\Models\Circle;
+use App\Models\Event;
+use App\Models\File;
+use App\Models\Group;
+use App\Models\Like;
+use App\Models\ReadNotification;
+use App\Models\Type;
+use App\Models\Work;
 
 /**
  * @author Xanders
@@ -160,13 +168,26 @@ class NotificationController extends BaseController
     /**
      * Change notification status.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  $id
      * @param  $status_id
      * @return \Illuminate\Http\Response
      */
-    public function switchStatus($id, $status_id)
+    public function switchStatus(Request $request, $id, $status_id)
     {
+        // Groups
+        $notification_status_group = Group::where('group_name', 'Etat de la notification')->first();
+        $file_type_group = Group::where('group_name', 'Type de fichier')->first();
+        // Type
+        $img_type = Type::where([['type_name->fr', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
+        // Status
+        $read_status = Status::where([['status_name->fr', 'Lue'], ['group_id', $notification_status_group->id]])->first();
+        // Request
         $status = Status::find($status_id);
+        $entity = null;
+        $entity_id = null;
+        $icon = null;
+        $image_url = null;
 
         if (is_null($status)) {
             return $this->handleError(__('notifications.find_status_404'));
@@ -180,7 +201,119 @@ class NotificationController extends BaseController
             'updated_at' => now()
         ]);
 
-        return $this->handleResponse(new ResourcesNotification($notification), __('notifications.find_notification_success'));
+        if (!empty($notification->work_id)) {
+            $entity = 'work';
+            $work = Work::find($id);
+
+            if (is_null($work)) {
+                return $this->handleError(__('notifications.find_work_404'));
+            }
+
+            $imgs = File::where([['type_id', $img_type->id], ['work_id', $work->id]])->get();
+            $photo = null;
+
+            foreach ($imgs as $img) {
+                $url = $img->file_url;
+
+                if (isPhotoFile($url) && !$photo) {
+                    $photo = $img;
+                }
+
+                if ($photo) {
+                    break;
+                }
+            }
+
+            $entity_id = $work->id;
+            $icon = 'fa-solid fa-book';
+            $image_url = !empty($photo) ? $photo->file_url : getWebURL() . '/assets/img/cover.png';
+
+        } else if (!empty($notification->like_id)) {
+            $entity = 'like';
+            $like = Like::find($id);
+
+            if (is_null($like)) {
+                return $this->handleError(__('notifications.find_like_404'));
+            }
+
+            $work = Work::find($like->for_work_id);
+
+            if (is_null($work)) {
+                return $this->handleError(__('notifications.find_work_404'));
+            }
+
+            $imgs = File::where([['type_id', $img_type->id], ['work_id', $work->id]])->get();
+            $photo = null;
+
+            foreach ($imgs as $img) {
+                $url = $img->file_url;
+
+                if (isPhotoFile($url) && !$photo) {
+                    $photo = $img;
+                }
+
+                if ($photo) {
+                    break;
+                }
+            }
+
+            $entity_id = $work->id;
+            $icon = 'fa-solid fa-book';
+            $image_url = !empty($photo) ? $photo->file_url : getWebURL() . '/assets/img/cover.png';
+
+        } else if (!empty($notification->event_id)) {
+            $entity = 'event';
+            $event = Event::find($id);
+
+            if (is_null($event)) {
+                return $this->handleError(__('notifications.find_event_404'));
+            }
+
+            $entity_id = $event->id;
+            $icon = 'fa-solid fa-calendar';
+            $image_url = !empty($event->cover_url) ? $event->cover_url : getWebURL() . '/assets/img/banner-event.png';
+
+        } else if (!empty($notification->circle_id)) {
+            $entity = 'circle';
+            $circle = Circle::find($id);
+
+            if (is_null($circle)) {
+                return $this->handleError(__('notifications.find_circle_404'));
+            }
+
+            $entity_id = $circle->id;
+            $icon = 'fa-solid fa-users';
+            $image_url = !empty($circle->profile_url) ? $circle->profile_url : getWebURL() . '/assets/img/banner-circle.png';
+        }
+
+        // If notification is marked as read, create "ReadNotification" object
+        if ($status->id == $read_status->id) {
+            if (!empty($entity) AND !empty($entity_id)) {
+                ReadNotification::create([
+                    'text_content' => $request->text_content,
+                    'redirect_url' => $request->redirect_url,
+                    'screen' => $request->screen,
+                    'entity' => $entity,
+                    'entity_id' => $entity_id,
+                    'icon' => $icon,
+                    'image_url' => $image_url,
+                    'created_at' => $notification->created_at,
+                    'updated_at' => $notification->updated_at,
+                    'notification_id' => $notification->id,
+                    'user_id' => $notification->to_user_id,
+                ]);
+            }
+
+        // Otherwise, find existing "ReadNotification" object, and delete it
+        } else {
+            $read_notification = ReadNotification::where('notification_id', $notification->id)->first();
+
+            if (!empty($read_notification)) {
+                $read_notification->delete();
+            }
+        }
+
+        return $this->handleResponse(new ResourcesNotification($notification), __('notifications.update_status_success'));
     }
 
     /**

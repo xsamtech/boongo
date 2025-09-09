@@ -23,10 +23,15 @@ class ReadNotification extends JsonResource
             'id' => $this->id,
             'text_content' => $this->text_content,
             'redirect_url' => $this->redirect_url,
+            'screen' => $this->screen,
+            'entity' => $this->entity,
+            'entity_id' => $this->entity_id,
             'icon' => $this->icon,
             'image_url' => $this->image_url,
+            'notification' => Notification::make($this->notification),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+            'notification_id' => $this->notification_id,
             'user_id' => $this->user_id,
         ];
     }

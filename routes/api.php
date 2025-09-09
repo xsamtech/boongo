@@ -173,7 +173,6 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::get('user/find_by_status/{status_id}', 'App\Http\Controllers\API\UserController@findByStatus')->name('user.api.find_by_status');
     Route::put('user/switch_status/{id}/{status_id}', 'App\Http\Controllers\API\UserController@switchStatus')->name('user.api.switch_status');
     Route::put('user/update_role/{action}/{id}', 'App\Http\Controllers\API\UserController@updateRole')->name('user.api.update_role');
-    Route::put('user/update_organization/{action}/{id}', 'App\Http\Controllers\API\UserController@updateOrganization')->name('user.api.update_organization');
     Route::put('user/update_user_membership/{entity}/{entity_id}/{action}/{id}', 'App\Http\Controllers\API\UserController@updateUserMembership')->name('user.api.update_user_membership');
     Route::put('user/update_password/{id}', 'App\Http\Controllers\API\UserController@updatePassword')->name('user.api.update_password');
     Route::put('user/subscribe_to_group/{user_id}/{addressee_id}', 'App\Http\Controllers\API\UserController@subscribeToGroup')->name('user.api.subscribe_to_group');
