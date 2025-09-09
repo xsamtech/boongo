@@ -31,7 +31,8 @@ class NotificationController extends BaseController
     {
         $notifications = Notification::orderByDesc('created_at')->get();
 
-        return $this->handleResponse(ResourcesNotification::collection($notifications), __('notifications.find_all_notifications_success'));
+        return $notifications;
+        // return $this->handleResponse(ResourcesNotification::collection($notifications), __('notifications.find_all_notifications_success'));
     }
 
     /**
