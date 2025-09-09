@@ -39,7 +39,10 @@ class Notification extends JsonResource
             'status_id' => $this->status_id,
             'from_user_id' => $this->from_user_id,
             'to_user_id' => $this->to_user_id,
-            'work_id' => $this->work_id
+            'work_id' => $this->work_id,
+            'like_id' => $this->like_id,
+            'event_id' => $this->event_id,
+            'circle_id' => $this->circle_id
         ];
     }
 }
