@@ -122,4 +122,14 @@ class Notification extends Model
     {
         return $this->hasOne(ReadNotification::class, 'notification_id');
     }
+
+    /**
+     * @return string
+     */
+    public function notificationIcon(): string
+    {
+        $type = Type::find($this->type_id);
+
+        return $type?->icon;
+    }
 }

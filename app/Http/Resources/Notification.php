@@ -29,6 +29,7 @@ class Notification extends JsonResource
             'like' => Like::make($this->like),
             'event' => Event::make($this->event),
             'circle' => Circle::make($this->circle),
+            'notification_icon' => $this->notificationIcon(),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'created_at_explicit' => $this->created_at->format('Y') == date('Y') ? explicitDayMonth($this->created_at->format('Y-m-d H:i:s')) : explicitDate($this->created_at->format('Y-m-d H:i:s')),
