@@ -132,4 +132,18 @@ class ReadNotificationController extends BaseController
 
         return $this->handleResponse(ResourcesReadNotification::collection($read_notifications), __('notifications.delete_notification_success'));
     }
+
+    // ==================================== CUSTOM METHODS ====================================
+    /**
+     * Select all user read notifications.
+     *
+     * @param  $user_id
+     * @return \Illuminate\Http\Response
+     */
+    public function selectByUser($user_id)
+    {
+        $read_notifications = ReadNotification::where('user_id', $user_id)->get();
+
+        return $this->handleResponse(ResourcesReadNotification::collection($read_notifications), __('notifications.find_all_notifications_success'));
+    }
 }

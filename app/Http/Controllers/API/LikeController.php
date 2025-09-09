@@ -71,25 +71,26 @@ class LikeController extends BaseController
                 'status_id' => $unread_notification_status->id,
                 'from_user_id' => $like->user_id,
                 'to_user_id' => !empty($work->user_id) ? $work->user_id : (!empty($work->organization_id) ? $work->organization->user_id : null),
+                'work_id' => $inputs['for_work_id'],
                 'like_id' => $like->id
             ]);
         }
 
-        if ($inputs['for_message_id'] != null) {
-            $message = Message::find($inputs['for_message_id']);
+        // if ($inputs['for_message_id'] != null) {
+        //     $message = Message::find($inputs['for_message_id']);
 
-            if (is_null($message)) {
-                return $this->handleError(__('notifications.find_message_404'));
-            }
+        //     if (is_null($message)) {
+        //         return $this->handleError(__('notifications.find_message_404'));
+        //     }
 
-            Notification::create([
-                'type_id' => $liked_message_type->id,
-                'status_id' => $unread_notification_status->id,
-                'from_user_id' => $like->user_id,
-                'to_user_id' => $message->user_id,
-                'like_id' => $like->id
-            ]);
-        }
+        //     Notification::create([
+        //         'type_id' => $liked_message_type->id,
+        //         'status_id' => $unread_notification_status->id,
+        //         'from_user_id' => $like->user_id,
+        //         'to_user_id' => $message->user_id,
+        //         'like_id' => $like->id
+        //     ]);
+        // }
 
         return $this->handleResponse(new ResourcesLike($like), __('notifications.create_like_success'));
     }
@@ -197,6 +198,12 @@ class LikeController extends BaseController
             }
 
             $like->delete();
+
+            $notification = Notification::where('from_user_id', $user_id)->where('work_id', $entity_id)->where('like_id', $like->id)->first();
+
+            if (!empty($notification)) {
+                $notification->delete();
+            }
         }
 
         if ($entity == 'message') {

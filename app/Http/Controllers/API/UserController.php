@@ -1629,6 +1629,18 @@ class UserController extends BaseController
      */
     public function updateUserMembership(Request $request, $entity, $entity_id, $action, $id)
     {
+        // Groups
+        $notification_status_group = Group::where('group_name', 'Etat de la notification')->first();
+        $event_status_group = Group::where('group_name', 'Etat de l\'événement')->first();
+        $notification_type_group = Group::where('group_name', 'Type de notification')->first();
+        // Status
+        $unread_notification_status = Status::where([['status_name->fr', 'Non lue'], ['group_id', $notification_status_group->id]])->first();
+        // Type
+        $invitation_as_speaker_type = Type::where([['type_name->fr', 'Invitation en tant que speaker'], ['group_id', $notification_type_group->id]])->first();
+        $invitation_as_admin_type = Type::where([['type_name->fr', 'Invitation en tant qu\'administrateur'], ['group_id', $notification_type_group->id]])->first();
+        $invitation_type = Type::where([['type_name->fr', 'Invitation'], ['group_id', $notification_type_group->id]])->first();
+        // $request_for_membership_type = Type::where([['type_name->fr', 'Demande d\'adhésion'], ['group_id', $notification_type_group->id]])->first();
+        // Requests
         $user = User::find($id);
 
         if ($entity != 'organization' AND $entity != 'event' AND $entity != 'circle') {
@@ -1658,6 +1670,25 @@ class UserController extends BaseController
                 }
 
                 $user->events()->syncWithoutDetaching([$event->id => ['is_speaker' => $request->is_speaker, 'status_id' => $request->status_id]]);
+
+                if ($request->is_speaker == 1) {
+                    Notification::create([
+                        'type_id' => $invitation_as_speaker_type->id,
+                        'status_id' => $unread_notification_status->id,
+                        'from_user_id' => $event->organization?->user_id,
+                        'to_user_id' => $user->id,
+                        'event_id' => $event->id,
+                    ]);
+
+                } else {
+                    Notification::create([
+                        'type_id' => $invitation_type->id,
+                        'status_id' => $unread_notification_status->id,
+                        'from_user_id' => $event->organization?->user_id,
+                        'to_user_id' => $user->id,
+                        'event_id' => $event->id,
+                    ]);
+                }
             }
 
             if ($entity == 'circle') {
@@ -1668,6 +1699,25 @@ class UserController extends BaseController
                 }
 
                 $user->circles()->syncWithoutDetaching([$circle->id => ['is_admin' => $request->is_admin, 'status_id' => $request->status_id]]);
+
+                if ($request->is_speaker == 1) {
+                    Notification::create([
+                        'type_id' => $invitation_as_admin_type->id,
+                        'status_id' => $unread_notification_status->id,
+                        'from_user_id' => $event->organization?->user_id,
+                        'to_user_id' => $user->id,
+                        'circle_id' => $circle->id,
+                    ]);
+
+                } else {
+                    Notification::create([
+                        'type_id' => $invitation_type->id,
+                        'status_id' => $unread_notification_status->id,
+                        'from_user_id' => $event->organization?->user_id,
+                        'to_user_id' => $user->id,
+                        'circle_id' => $circle->id,
+                    ]);
+                }
             }
         }
 
@@ -1680,6 +1730,12 @@ class UserController extends BaseController
                 }
 
                 $user->events()->detach([$event->id]);
+
+                $notification = Notification::where('to_user_id', $user->id)->where('event_id', $event->id)->first();
+
+                if (!empty($notification)) {
+                    $notification->delete();
+                }
             }
 
             if ($entity == 'circle') {
@@ -1690,6 +1746,12 @@ class UserController extends BaseController
                 }
 
                 $user->circles()->detach([$circle->id]);
+
+                $notification = Notification::where('to_user_id', $user->id)->where('circle_id', $circle->id)->first();
+
+                if (!empty($notification)) {
+                    $notification->delete();
+                }
             }
         }
 

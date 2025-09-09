@@ -124,6 +124,7 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::resource('event', 'App\Http\Controllers\API\EventController');
     Route::resource('message', 'App\Http\Controllers\API\MessageController');
     Route::resource('notification', 'App\Http\Controllers\API\NotificationController');
+    Route::resource('read_notification', 'App\Http\Controllers\API\ReadNotificationController');
     Route::resource('toxic_content', 'App\Http\Controllers\API\ToxicContentController');
 
     // Work
@@ -214,6 +215,8 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::get('notification/select_by_status_user/{status_id}/{user_id}', 'App\Http\Controllers\API\NotificationController@selectByStatusUser')->name('notification.api.select_by_status_user');
     Route::put('notification/switch_status/{id}/{status_id}', 'App\Http\Controllers\API\NotificationController@switchStatus')->name('notification.api.switch_status');
     Route::put('notification/mark_all_read/{user_id}', 'App\Http\Controllers\API\NotificationController@markAllRead')->name('notification.api.mark_all_read');
+    // ReadNotification
+    Route::get('read_notification/select_by_user/{user_id}', 'App\Http\Controllers\API\NotificationController@selectByUser')->name('read_notification.api.select_by_user');
     // ToxicContent
     Route::put('toxic_content/unlock_user/{id}', 'App\Http\Controllers\API\ToxicContentController@unlockUser')->name('toxic_content.api.unlock_user');
 });
