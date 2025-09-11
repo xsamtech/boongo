@@ -23,7 +23,7 @@ class ActivationCode extends JsonResource
             'for_partner_id' => $this->for_partner_id,
             'code' => $this->code,
             'is_active' => $this->is_active,
-            'user' => User::make($this->user),
+            'user' => LiteUser::make($this->user),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'user_id' => $this->user_id,

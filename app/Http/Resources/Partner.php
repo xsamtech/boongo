@@ -30,7 +30,7 @@ class Partner extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'message' => $this->message,
-            'from_user' => !empty($from_user) ? User::make($from_user) : null,
+            'from_user' => !empty($from_user) ? LiteUser::make($from_user) : null,
             'from_organization' => !empty($from_organization) ? Organization::make($from_organization) : null,
             'image_url' => $this->image_url != null ? getWebURL() . $this->image_url : getWebURL() . '/public/assets/img/ad.png',
             'website_url' => $this->website_url,
