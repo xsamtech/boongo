@@ -73,7 +73,7 @@ class Work extends JsonResource
             'images' => !empty($imgs) ? File::collection($imgs) : null,
             'audios' => !empty($audios) ? File::collection($audios) : null,
             'documents' => !empty($docs) ? File::collection($docs) : null,
-            // 'currency' => Currency::make($this->currency),
+            'currency' => Currency::make($this->currency),
             // 'type' => Type::make($this->type),
             // 'status' => Status::make($this->status),
             // 'user_owner' => User::make($this->user_owner),
