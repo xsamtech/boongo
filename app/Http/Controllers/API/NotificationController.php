@@ -14,6 +14,7 @@ use App\Models\Group;
 use App\Models\Like;
 use App\Models\ReadNotification;
 use App\Models\Type;
+use App\Models\User;
 use App\Models\Work;
 
 /**
@@ -203,7 +204,7 @@ class NotificationController extends BaseController
 
         if (!empty($notification->work_id)) {
             $entity = 'work';
-            $work = Work::find($id);
+            $work = Work::find($notification->work_id);
 
             if (is_null($work)) {
                 return $this->handleError(__('notifications.find_work_404'));
@@ -230,7 +231,7 @@ class NotificationController extends BaseController
 
         } else if (!empty($notification->like_id)) {
             $entity = 'like';
-            $like = Like::find($id);
+            $like = Like::find($notification->like_id);
 
             if (is_null($like)) {
                 return $this->handleError(__('notifications.find_like_404'));
@@ -263,7 +264,7 @@ class NotificationController extends BaseController
 
         } else if (!empty($notification->event_id)) {
             $entity = 'event';
-            $event = Event::find($id);
+            $event = Event::find($notification->event_id);
 
             if (is_null($event)) {
                 return $this->handleError(__('notifications.find_event_404'));
@@ -275,7 +276,7 @@ class NotificationController extends BaseController
 
         } else if (!empty($notification->circle_id)) {
             $entity = 'circle';
-            $circle = Circle::find($id);
+            $circle = Circle::find($notification->circle_id);
 
             if (is_null($circle)) {
                 return $this->handleError(__('notifications.find_circle_404'));
@@ -284,25 +285,34 @@ class NotificationController extends BaseController
             $entity_id = $circle->id;
             $icon = 'fa-solid fa-users';
             $image_url = !empty($circle->profile_url) ? $circle->profile_url : getWebURL() . '/assets/img/banner-circle.png';
+
+        } else {
+            $entity = 'account';
+            $user = User::find($notification->to_user_id);
+
+            if (is_null($user)) {
+                return $this->handleError(__('notifications.find_user_404'));
+            }
+
+            $entity_id = $user->id;
+            $icon = 'fa-solid fa-user';
         }
 
         // If notification is marked as read, create "ReadNotification" object
         if ($status->id == $read_status->id) {
-            if (!empty($entity) AND !empty($entity_id)) {
-                ReadNotification::create([
-                    'text_content' => $request->text_content,
-                    'redirect_url' => $request->redirect_url,
-                    'screen' => $request->screen,
-                    'entity' => $entity,
-                    'entity_id' => $entity_id,
-                    'icon' => $icon,
-                    'image_url' => $image_url,
-                    'created_at' => $notification->created_at,
-                    'updated_at' => $notification->updated_at,
-                    'notification_id' => $notification->id,
-                    'user_id' => $notification->to_user_id,
-                ]);
-            }
+            ReadNotification::create([
+                'text_content' => $request->text_content,
+                'redirect_url' => $request->redirect_url,
+                'screen' => $request->screen,
+                'entity' => $entity,
+                'entity_id' => $entity_id,
+                'icon' => $icon,
+                'image_url' => $image_url,
+                'created_at' => $notification->created_at,
+                'updated_at' => $notification->updated_at,
+                'notification_id' => $notification->id,
+                'user_id' => $notification->to_user_id,
+            ]);
 
         // Otherwise, find existing "ReadNotification" object, and delete it
         } else {
