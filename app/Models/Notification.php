@@ -120,6 +120,6 @@ class Notification extends Model
      */
     public function read_notification(): HasOne
     {
-        return $this->hasOne(ReadNotification::class, 'notification_id');
+        return $this->hasOne(ReadNotification::class);
     }
 }

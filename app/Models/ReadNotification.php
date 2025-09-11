@@ -31,7 +31,7 @@ class ReadNotification extends Model
      */
     public function notification(): BelongsTo
     {
-        return $this->belongsTo(Notification::class, 'notification_id');
+        return $this->belongsTo(Notification::class);
     }
 
     /**
