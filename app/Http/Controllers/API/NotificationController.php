@@ -287,7 +287,7 @@ class NotificationController extends BaseController
             $image_url = !empty($circle->profile_url) ? $circle->profile_url : getWebURL() . '/assets/img/banner-circle.png';
 
         } else {
-            $entity = 'account';
+            $entity = 'about';
             $user = User::find($notification->to_user_id);
 
             if (is_null($user)) {
