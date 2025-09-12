@@ -213,7 +213,7 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     // Notification
     Route::get('notification/select_by_user/{user_id}', 'App\Http\Controllers\API\NotificationController@selectByUser')->name('notification.api.select_by_user');
     Route::get('notification/select_by_status_user/{status_id}/{user_id}', 'App\Http\Controllers\API\NotificationController@selectByStatusUser')->name('notification.api.select_by_status_user');
-    Route::put('notification/switch_status/{id}/{status_id}', 'App\Http\Controllers\API\NotificationController@switchStatus')->name('notification.api.switch_status');
+    Route::put('notification/switch_status/{ids}/{status_id}', 'App\Http\Controllers\API\NotificationController@switchStatus')->name('notification.api.switch_status');
     Route::put('notification/mark_all_read/{user_id}', 'App\Http\Controllers\API\NotificationController@markAllRead')->name('notification.api.mark_all_read');
     // ReadNotification
     Route::get('read_notification/select_by_user/{user_id}', 'App\Http\Controllers\API\ReadNotificationController@selectByUser')->name('read_notification.api.select_by_user');

@@ -170,11 +170,11 @@ class NotificationController extends BaseController
      * Change notification status.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  $id
-     * @param  $status_id
+     * @param  string $ids
+     * @param  int $status_id
      * @return \Illuminate\Http\Response
      */
-    public function switchStatus(Request $request, $id, $status_id)
+    public function switchStatus(Request $request, $ids, $status_id)
     {
         // Groups
         $notification_status_group = Group::where('group_name', 'Etat de la notification')->first();
@@ -185,57 +185,52 @@ class NotificationController extends BaseController
         $read_status = Status::where([['status_name->fr', 'Lue'], ['group_id', $notification_status_group->id]])->first();
         // Request
         $status = Status::find($status_id);
-        $entity = null;
-        $entity_id = null;
-        $icon = null;
-        $image_url = null;
 
         if (is_null($status)) {
             return $this->handleError(__('notifications.find_status_404'));
         }
 
-        $notification = Notification::find($id);
+        // 🧠 Découper les IDs depuis l'URL
+        $idArray = explode(',', $ids);
+        // 🔍 Charger toutes les notifications du groupe
+        $notifications = Notification::whereIn('id', $idArray)->get();
+
+        if ($notifications->isEmpty()) {
+            return $this->handleError(__('notifications.find_404'));
+        }
 
         // update "status_id" column
-        $notification->update([
+        Notification::whereIn('id', $idArray)->update([
             'status_id' => $status->id,
             'updated_at' => now()
         ]);
+
+        // 🧠 On va utiliser la dernière (ou première) comme "représentant"
+        $notification = $notifications->last(); // ou ->first() si tu préfères
+        // === Déduire l'entité
+        $entity = null;
+        $entity_id = null;
+        $icon = null;
+        $image_url = null;
 
         if (!empty($notification->work_id) AND empty($notification->like_id)) {
             $entity = 'work';
             $work = Work::find($notification->work_id);
 
-            if (is_null($work)) {
-                return $this->handleError(__('notifications.find_work_404'));
-            }
+            if (!$work) return $this->handleError(__('notifications.find_work_404'));
 
-            $imgs = File::where([['type_id', $img_type->id], ['work_id', $work->id]])->get();
-            $photo = null;
-
-            foreach ($imgs as $img) {
-                $url = $img->file_url;
-
-                if (isPhotoFile($url) && !$photo) {
-                    $photo = $img;
-                }
-
-                if ($photo) {
-                    break;
-                }
-            }
+            $photo = File::where([['type_id', $img_type->id],['work_id', $work->id]])
+                            ->get()->first(fn ($img) => isPhotoFile($img->file_url));
 
             $entity_id = $work->id;
             $icon = 'fa-solid fa-book';
-            $image_url = !empty($photo) ? $photo->file_url : getWebURL() . '/assets/img/cover.png';
+            $image_url = $photo ? $photo->file_url : getWebURL() . '/assets/img/cover.png';
 
         } else if (!empty($notification->like_id)) {
             $entity = 'like';
             $like = Like::find($notification->like_id);
 
-            if (is_null($like)) {
-                return $this->handleError(__('notifications.find_like_404'));
-            }
+            if (!$like) return $this->handleError(__('notifications.find_like_404'));
 
             $work = Work::find($like->for_work_id);
 
@@ -243,56 +238,38 @@ class NotificationController extends BaseController
                 return $this->handleError(__('notifications.find_work_404'));
             }
 
-            $imgs = File::where([['type_id', $img_type->id], ['work_id', $work->id]])->get();
-            $photo = null;
-
-            foreach ($imgs as $img) {
-                $url = $img->file_url;
-
-                if (isPhotoFile($url) && !$photo) {
-                    $photo = $img;
-                }
-
-                if ($photo) {
-                    break;
-                }
-            }
+            $photo = File::where([['type_id', $img_type->id], ['work_id', $work->id]])
+                            ->get()->first(fn ($img) => isPhotoFile($img->file_url));
 
             $entity_id = $work->id;
             $icon = 'fa-solid fa-heart';
-            $image_url = !empty($photo) ? $photo->file_url : getWebURL() . '/assets/img/cover.png';
+            $image_url = $photo ? $photo->file_url : getWebURL() . '/assets/img/cover.png';
 
         } else if (!empty($notification->event_id)) {
             $entity = 'event';
             $event = Event::find($notification->event_id);
 
-            if (is_null($event)) {
-                return $this->handleError(__('notifications.find_event_404'));
-            }
+            if (!$event) return $this->handleError(__('notifications.find_event_404'));
 
             $entity_id = $event->id;
             $icon = 'fa-solid fa-calendar';
-            $image_url = !empty($event->cover_url) ? $event->cover_url : getWebURL() . '/assets/img/banner-event.png';
+            $image_url = $event->cover_url ?? getWebURL() . '/assets/img/banner-event.png';
 
         } else if (!empty($notification->circle_id)) {
             $entity = 'circle';
             $circle = Circle::find($notification->circle_id);
 
-            if (is_null($circle)) {
-                return $this->handleError(__('notifications.find_circle_404'));
-            }
+            if (!$circle) return $this->handleError(__('notifications.find_circle_404'));
 
             $entity_id = $circle->id;
             $icon = 'fa-solid fa-users';
-            $image_url = !empty($circle->profile_url) ? $circle->profile_url : getWebURL() . '/assets/img/banner-circle.png';
+            $image_url = $circle->profile_url ?? getWebURL() . '/assets/img/banner-circle.png';
 
         } else {
             $entity = 'about';
             $user = User::find($notification->to_user_id);
 
-            if (is_null($user)) {
-                return $this->handleError(__('notifications.find_user_404'));
-            }
+            if (!$user) return $this->handleError(__('notifications.find_user_404'));
 
             $entity_id = $user->id;
             $icon = 'fa-solid fa-user';
@@ -310,18 +287,14 @@ class NotificationController extends BaseController
                 'image_url' => $image_url,
                 'created_at' => $notification->created_at,
                 'updated_at' => $notification->updated_at,
-                'notification_id' => $notification->id,
+                'notification_id' => $notification->id, // 🧠 Le représentant
                 'from_user_id' => $notification->from_user_id,
                 'to_user_id' => $notification->to_user_id
             ]);
 
-        // Otherwise, find existing "ReadNotification" object, and delete it
+        // Otherwise, find existing "ReadNotification" objects, and delete them
         } else {
-            $read_notification = ReadNotification::where('notification_id', $notification->id)->first();
-
-            if (!empty($read_notification)) {
-                $read_notification->delete();
-            }
+            ReadNotification::whereIn('notification_id', $idArray)->delete();
         }
 
         return $this->handleResponse(new ResourcesNotification($notification), __('notifications.update_status_success'));
