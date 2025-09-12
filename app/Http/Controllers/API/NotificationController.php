@@ -259,7 +259,7 @@ class NotificationController extends BaseController
             }
 
             $entity_id = $work->id;
-            $icon = 'fa-solid fa-book';
+            $icon = 'fa-solid fa-heart';
             $image_url = !empty($photo) ? $photo->file_url : getWebURL() . '/assets/img/cover.png';
 
         } else if (!empty($notification->event_id)) {
@@ -311,7 +311,8 @@ class NotificationController extends BaseController
                 'created_at' => $notification->created_at,
                 'updated_at' => $notification->updated_at,
                 'notification_id' => $notification->id,
-                'user_id' => $notification->to_user_id,
+                'from_user_id' => $notification->from_user_id,
+                'to_user_id' => $notification->to_user_id
             ]);
 
         // Otherwise, find existing "ReadNotification" object, and delete it

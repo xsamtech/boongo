@@ -36,12 +36,23 @@ class ReadNotification extends Model
 
     /**
      * ONE-TO-MANY
-     * One user for several notifications
+     * One from_user for several notifications
      * 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user(): BelongsTo
+    public function from_user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'from_user_id');
+    }
+
+    /**
+     * ONE-TO-MANY
+     * One to_user for several notifications
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function to_user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'to_user_id');
     }
 }
