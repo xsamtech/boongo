@@ -202,7 +202,7 @@ class NotificationController extends BaseController
             'updated_at' => now()
         ]);
 
-        if (!empty($notification->work_id)) {
+        if (!empty($notification->work_id) AND empty($notification->like_id)) {
             $entity = 'work';
             $work = Work::find($notification->work_id);
 
