@@ -142,8 +142,8 @@ class ReadNotificationController extends BaseController
      */
     public function selectByUser($user_id)
     {
-        $read_notifications = ReadNotification::where('user_id', $user_id)->get();
+        $read_notifications = ReadNotification::where('user_id', $user_id)->paginate(10);
 
-        return $this->handleResponse(ResourcesReadNotification::collection($read_notifications), __('notifications.find_all_notifications_success'));
+        return $this->handleResponse(ResourcesReadNotification::collection($read_notifications), __('notifications.find_all_notifications_success'), $read_notifications->lastPage(), $read_notifications->total());
     }
 }
