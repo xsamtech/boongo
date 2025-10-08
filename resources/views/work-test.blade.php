@@ -152,7 +152,7 @@
                 <img src="{{ asset('assets/img/brand.png') }}" alt="Boongo" width="300" class="mt-2 mb-4">
             </div>
 
-            <formid="workData" action="{{ route('admin.work.home') }}" method="POST" enctype="multipart/form-data">
+            <form id="workData" action="{{ route('admin.work.home') }}" method="POST" enctype="multipart/form-data">
                 <div class="row">
                     <div class="col-lg-7 d-flex justify-content-between align-items-center mx-auto mb-4">
                         <h1 class="m-0">@lang('miscellaneous.admin.work.add')</h1>
