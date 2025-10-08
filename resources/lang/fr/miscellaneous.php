@@ -66,6 +66,7 @@ return [
     'waiting_register' => 'Enregistrement en attente ...',
     'download' => 'Télécharger',
     'upload' => [
+        'multiple_files' => 'Uploader des fichiers',
         'use_camera' => 'Utiliser caméra',
         'upload_document' => 'Uploader document',
         'upload_image' => 'Uploader image (Photo/Video)',

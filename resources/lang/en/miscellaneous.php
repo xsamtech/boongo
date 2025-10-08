@@ -66,6 +66,7 @@ return [
     'waiting_register' => 'Waiting register ...',
     'download' => 'Download',
     'upload' => [
+        'multiple_files' => 'Upload files',
         'use_camera' => 'Use camera',
         'upload_document' => 'Upload document',
         'upload_image' => 'Upload image (Photo/Video)',

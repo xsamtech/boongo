@@ -18,6 +18,7 @@
         <!-- ============ Font Icons Files ============ -->
         {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"> --}}
         <link rel="stylesheet" href="{{ asset('assets/fonts/fontawesome/css/all.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/fonts/bootstrap-icons/bootstrap-icons.css') }}">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/css/flag-icons.min.css">
 
  		<!-- ============ Google font ============ -->
@@ -47,6 +48,13 @@
 
         <!-- ============ Custom CSS ============ -->
         <link type="text/css" rel="stylesheet" href="{{ asset('assets/css/style.custom.css') }}">
+
+        <style>
+            #file-previews { display: flex; flex-direction: column; gap: 8px; }
+            #file-previews .d-flex { justify-content: space-between; align-items: center; }
+            #file-previews i { font-size: 24px; }
+            #file-previews .btn-danger { margin-left: 10px; }
+        </style>
 
         <title>@lang('miscellaneous.admin.work.add')</title>
     </head>
@@ -141,11 +149,10 @@
         <!-- FORM START -->
         <div class="py-4">
             <div class="d-flex justify-content-center mb-1">
-                <img src="{{ asset('assets/img/brand-reverse.png') }}" alt="Boongo" width="200">
+                <img src="{{ asset('assets/img/brand.png') }}" alt="Boongo" width="300" class="mt-2 mb-4">
             </div>
 
-            <form action="{{ route('admin.work.home') }}" method="POST" enctype="multipart/form-data">
-            {{-- <form id="workData"> --}}
+            <formid="workData" action="{{ route('admin.work.home') }}" method="POST" enctype="multipart/form-data">
                 <div class="row">
                     <div class="col-lg-7 d-flex justify-content-between align-items-center mx-auto mb-4">
                         <h1 class="m-0">@lang('miscellaneous.admin.work.add')</h1>
@@ -190,21 +197,6 @@
                                     </div>
 
                                     <div class="form-group mb-3">
-                                        <label for="video_file_url">@lang('miscellaneous.upload.upload_video')</label>
-                                        <input type="file" name="video_file_url" id="video_file_url" class="form-control">
-                                    </div>
-
-                                    <div class="form-group mb-3">
-                                        <label for="document_file_url">@lang('miscellaneous.upload.upload_document')</label>
-                                        <input type="file" name="document_file_url" id="document_file_url" class="form-control">
-                                    </div>
-
-                                    <div class="form-group mb-3">
-                                        <label for="audio_file_url">@lang('miscellaneous.upload.upload_audio')</label>
-                                        <input type="file" name="audio_file_url" id="audio_file_url" class="form-control">
-                                    </div>
-
-                                    <div class="form-group mb-3">
                                         <label for="type_id">@lang('miscellaneous.menu.admin.group.type')</label>
                                         <select id="type_id" name="type_id" class="form-select" aria-label="@lang('miscellaneous.admin.work.data.choose_type')">
                                             <option class="small" selected disabled>@lang('miscellaneous.admin.work.data.choose_type')</option>
@@ -215,39 +207,29 @@
                                         </select>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label class="d-block text-center">@lang('miscellaneous.admin.work.data.choose_categories')</label>
-@forelse ($categories as $category)
-    @if ($category->category_name_fr != 'Scolaire' && $category->category_name_fr != 'Académique' && $category->category_name_fr != 'Publique')
-                                        <div class="form-check mx-3">
-                                            <input type="checkbox" name="categories_ids" id="category_{{ $category->id }}" class="form-check-input" value="{{ $category->id }}">
-                                            <label class="form-check-label bng-text-secondary" for="category_{{ $category->id }}">{{ $category->category_name }}</label>
-                                        </div>
-    @endif
-@empty
-@endforelse
+                                    <div class="form-group mb-3">
+                                        <label for="files_urls">@lang('miscellaneous.upload.multiple_files')</label>
+                                        <input type="file" name="files_urls[]" id="files_urls" class="form-control" multiple>
                                     </div>
+
+                                    <div id="file-previews" class="mt-2"></div> <!-- Zone pour afficher les aperçus -->
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-lg-4 col-sm-6 me-auto">
-                            <div class="card rounded-4">
-                                <div id="otherImageWrapper" class="card-body pb-4 text-center">
-                                    <p class="card-text m-0">@lang('miscellaneous.account.personal_infos.click_to_change_picture')</p>
-
-                                    <div class="bg-image hover-overlay mt-3">
-                                        <img src="{{ asset('assets/img/cover.png') }}" alt="@lang('miscellaneous.admin.work.data.work_title')" class="other-user-image img-fluid rounded-4">
-                                        <div class="mask rounded-4" style="background-color: rgba(5, 5, 5, 0.5);">
-                                            <label role="button" for="image_other" class="d-flex h-100 justify-content-center align-items-center">
-                                                <i class="fa-solid fa-pencil-alt text-white fs-2"></i>
-                                                <input type="file" name="image_other" id="image_other" class="d-none">
-                                            </label>
-                                            <input type="hidden" name="image_64" id="image_64">
-                                        </div>
+                            <div class="card card-body">
+                                <div class="form-group">
+                                    <label class="d-block text-center">@lang('miscellaneous.admin.work.data.choose_categories')</label>
+@forelse ($categories as $category)
+    @if ($category->category_name_fr != 'Scolaire' && $category->category_name_fr != 'Académique' && $category->category_name_fr != 'Publique')
+                                    <div class="form-check mx-3">
+                                        <input type="checkbox" name="categories_ids" id="category_{{ $category->id }}" class="form-check-input" value="{{ $category->id }}">
+                                        <label class="form-check-label bng-text-secondary" for="category_{{ $category->id }}">{{ $category->category_name }}</label>
                                     </div>
-
-                                    <p class="d-none mt-2 mb-0 small bng-text-primary fst-italic">@lang('miscellaneous.waiting_register')</p>
+    @endif
+@empty
+@endforelse
                                 </div>
                             </div>
 
@@ -356,6 +338,80 @@
         <script src="{{ asset('assets/addons/custom/wysiwyg-editor-master/js/froala_editor.min.js') }}"></script>
 		<script src="{{ asset('assets/js/script.custom.js') }}"></script>
 		<script type="text/javascript">
+            document.getElementById('files_urls').addEventListener('change', function(event) {
+                const files = event.target.files;
+                const previewContainer = document.getElementById('file-previews');
+
+                previewContainer.innerHTML = ''; // Réinitialise les aperçus précédents
+
+                Array.from(files).forEach(file => {
+                    const fileName = file.name;
+                    const fileType = file.type.split('/')[0]; // On récupère le type (ex: "image", "audio", "video", etc.)
+                    const truncatedName = fileName.length > 20 ? fileName.substring(0, 10) + '...' + fileName.substring(fileName.length - 10) : fileName;
+
+                    // Déterminer l'icône en fonction du type de fichier
+                    let iconClass = '';
+
+                    if (fileType === 'image') {
+                        iconClass = 'bi bi-image'; // Classe correcte pour l'image
+
+                    } else if (fileType === 'audio') {
+                        iconClass = 'bi bi-file-mic'; // Classe correcte pour l'audio
+
+                    } else if (fileType === 'video') {
+                        iconClass = 'bi bi-play-btn'; // Classe correcte pour la vidéo
+
+                    } else if (fileType === 'application' && fileName.endsWith('.pdf')) {
+                        iconClass = 'bi bi-file-earmark-text'; // Classe correcte pour le document PDF
+                    }
+
+                    // Créer le bloc d'aperçu pour ce fichier
+                    const previewBlock = document.createElement('div');
+
+                    previewBlock.classList.add('d-flex', 'align-items-center', 'mb-2');
+
+                    // Icône
+                    const icon = document.createElement('i');
+
+                    icon.classList.add(...iconClass.split(' ')); // Séparer les classes et les ajouter correctement
+
+                    // Nom du fichier
+                    const fileLabel = document.createElement('span');
+
+                    fileLabel.classList.add('flex-grow-1');
+                    fileLabel.classList.add('d-inline-block');
+                    fileLabel.classList.add('ms-2');
+                    fileLabel.textContent = truncatedName;
+
+                    // Bouton de suppression
+                    const removeBtn = document.createElement('button');
+
+                    removeBtn.classList.add('btn', 'btn-danger', 'btn-sm');
+                    removeBtn.innerHTML = '<i class="bi bi-x-lg"></i>';
+                    removeBtn.addEventListener('click', () => {
+                        previewBlock.remove(); // Supprimer l'aperçu du DOM
+
+                        removeFileFromInput(file); // Supprimer le fichier du champ input
+                    });
+
+                    previewBlock.appendChild(icon);
+                    previewBlock.appendChild(fileLabel);
+                    previewBlock.appendChild(removeBtn);
+                    previewContainer.appendChild(previewBlock);
+                });
+            });
+
+            // Fonction pour supprimer un fichier du champ input
+            function removeFileFromInput(fileToRemove) {
+                const input = document.getElementById('files_urls');
+                const files = Array.from(input.files);
+                const newFiles = files.filter(file => file !== fileToRemove);
+                const dataTransfer = new DataTransfer(); // Création d'un nouvel objet pour modifier les fichiers
+
+                newFiles.forEach(file => dataTransfer.items.add(file));
+                input.files = dataTransfer.files; // Mettre à jour la propriété files de l'input
+            }
+
             // $(function () {
             //     /* Register form-data */
             //     $('form#workData').submit(function (e) {
