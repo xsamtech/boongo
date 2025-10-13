@@ -161,7 +161,7 @@
                 </div>
 
                 <input type="hidden" name="image_type_id" id="image_type_id" value="6">
-                <input type="hidden" name="status_id" id="status_id" value="5">
+                <input type="hidden" name="status_id" id="status_id" value="17">
 @csrf
 
                 <!-- container -->

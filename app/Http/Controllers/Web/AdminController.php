@@ -156,7 +156,9 @@ class AdminController extends Controller
         $work = Work::create($inputs);
 
         if ($request->categories_ids != null) {
-            $work->categories()->sync($request->categories_ids);
+            $categories = $request->input('categories_ids', []);
+
+            $work->categories()->sync($categories);
         }
 
         if ($request->hasFile('files_urls')) {
