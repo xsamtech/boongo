@@ -58,7 +58,7 @@ class User extends JsonResource
             'has_valid_consultation' => $this->hasValidConsultation(),
             'has_valid_subscription' => $this->hasValidSubscription(),
             'partner' => $this->partner,
-            'last_organization' => $this->lastOrganization(),
+            'last_organization' => !empty($this->lastOrganization()) ? Organization::make($this->lastOrganization()) : null,
             'country' => Country::make($this->country),
             'currency' => Currency::make($this->currency),
             'status' => Status::make($this->status),
