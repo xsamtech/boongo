@@ -139,7 +139,7 @@ if (!function_exists('explicitDateTime')) {
         $formattedTime = Carbon::parse($date)->translatedFormat('H:i');
 
         // Traduction dynamique de "à" en fonction de la locale
-        $atWord = trans('messages.at');  // Exemple de fichier de langue messages.php avec 'at' comme clé
+        $atWord = __('miscellaneous.at_time');  // Exemple de fichier de langue messages.php avec 'at' comme clé
 
         return "{$formattedDate} {$atWord} {$formattedTime}";
     }
