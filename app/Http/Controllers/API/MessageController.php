@@ -440,6 +440,67 @@ class MessageController extends BaseController
     }
 
     /**
+     * Search a message in group (organization or circle).
+     *
+     * @param  string $entity
+     * @param  int $entity_id
+     * @return \Illuminate\Http\Response
+     */
+    public function findByGroup($entity, $entity_id)
+    {
+        if ($entity == 'organization') {
+            $organization = Organization::find($entity_id);
+
+            if (is_null($organization)) {
+                return $this->handleError(__('notifications.find_organization_404'));
+            }
+
+            $messages = Message::where('addressee_organization_id', $organization->id)->orderByDesc('created_at')->paginate(10);
+            $count_messages = Message::where('addressee_organization_id', $organization->id)->count();
+
+            if (is_null($messages)) {
+                return $this->handleResponse([], __('miscellaneous.empty_list'));
+            }
+
+            return $this->handleResponse(ResourcesMessage::collection($messages), __('notifications.find_all_messages_success'), $messages->lastPage(), $count_messages);
+        }
+
+        if ($entity == 'circle') {
+            $circle = Circle::find($entity_id);
+
+            if (is_null($circle)) {
+                return $this->handleError(__('notifications.find_circle_404'));
+            }
+
+            $messages = Message::where('addressee_circle_id', $circle->id)->orderByDesc('created_at')->paginate(10);
+            $count_messages = Message::where('addressee_circle_id', $circle->id)->count();
+
+            if (is_null($messages)) {
+                return $this->handleResponse([], __('miscellaneous.empty_list'));
+            }
+
+            return $this->handleResponse(ResourcesMessage::collection($messages), __('notifications.find_all_messages_success'), $messages->lastPage(), $count_messages);
+        }
+
+        if ($entity == 'event') {
+            $event = Event::find($entity_id);
+
+            if (is_null($event)) {
+                return $this->handleError(__('notifications.find_event_404'));
+            }
+
+            $messages = Message::where('event_id', $event->id)->orderByDesc('created_at')->paginate(10);
+            $count_messages = Message::where('event_id', $event->id)->count();
+
+            if (is_null($messages)) {
+                return $this->handleResponse([], __('miscellaneous.empty_list'));
+            }
+
+            return $this->handleResponse(ResourcesMessage::collection($messages), __('notifications.find_all_messages_success'), $messages->lastPage(), $count_messages);
+        }
+    }
+
+    /**
      * GET: Display user conversations.
      *
      * @param  \Illuminate\Http\Request  $request

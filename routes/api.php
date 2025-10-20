@@ -201,6 +201,7 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     // Message
     Route::get('message/search_in_chat/{locale}/{type_name}/{data}/{sender_id}/{addressee_id}', 'App\Http\Controllers\API\MessageController@searchInChat')->name('message.api.search_in_chat');
     Route::get('message/search_in_group/{entity}/{entity_id}/{member_id}/{data}', 'App\Http\Controllers\API\MessageController@searchInGroup')->name('message.api.search_in_group');
+    Route::get('message/find_by_group/{entity}/{entity_id}', 'App\Http\Controllers\API\MessageController@findByGroup')->name('message.api.find_by_group');
     Route::get('message/user_chats_list/{locale}/{type_name}/{user_id}', 'App\Http\Controllers\API\MessageController@userChatsList')->name('message.api.user_chats_list');
     Route::get('message/selected_chat/{locale}/{type_name}/{user_id}/{entity}/{entity_id}', 'App\Http\Controllers\API\MessageController@selectedChat')->name('message.api.selected_chat');
     Route::get('message/members_with_message_status/{locale}/{status_name}/{message_id}', 'App\Http\Controllers\API\MessageController@membersWithMessageStatus')->name('message.api.members_with_message_status');
