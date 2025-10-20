@@ -130,16 +130,16 @@ if (!function_exists('explicitDate')) {
 if (!function_exists('explicitDateTime')) {
     function explicitDateTime($date)
     {
-        // Récupère la locale actuelle
+        // Gets the current locale
         $locale = app()->getLocale();
         Carbon::setLocale($locale);
 
-        // Formate la date et l'heure avec "à" en fonction de la langue
+        // Formats the date and time with "à" according to the language
         $formattedDate = Carbon::parse($date)->translatedFormat('l d F Y');
         $formattedTime = Carbon::parse($date)->translatedFormat('H:i');
 
-        // Traduction dynamique de "à" en fonction de la locale
-        $atWord = __('miscellaneous.at_time');  // Exemple de fichier de langue messages.php avec 'at' comme clé
+        // Dynamic translate of "à" depending on the locale
+        $atWord = __('miscellaneous.at_time');
 
         return "{$formattedDate} {$atWord} {$formattedTime}";
     }
