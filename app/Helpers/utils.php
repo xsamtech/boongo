@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
@@ -122,6 +123,25 @@ if (!function_exists('explicitDate')) {
         Carbon::setLocale(app()->getLocale());
 
         return Carbon::parse($date)->translatedFormat('l d F Y');
+    }
+}
+
+// Date/Time fully readable
+if (!function_exists('explicitDateTime')) {
+    function explicitDateTime($date)
+    {
+        // Récupère la locale actuelle
+        $locale = app()->getLocale();
+        Carbon::setLocale($locale);
+
+        // Formate la date et l'heure avec "à" en fonction de la langue
+        $formattedDate = Carbon::parse($date)->translatedFormat('l d F Y');
+        $formattedTime = Carbon::parse($date)->translatedFormat('H:i');
+
+        // Traduction dynamique de "à" en fonction de la locale
+        $atWord = trans('messages.at');  // Exemple de fichier de langue messages.php avec 'at' comme clé
+
+        return "{$formattedDate} {$atWord} {$formattedTime}";
     }
 }
 
