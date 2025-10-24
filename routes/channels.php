@@ -25,7 +25,8 @@ Broadcast::channel('chat.{userId}', function ($user, $userId) {
         ]
     ]);
 
-    return (int) $user->id === (int) $userId;
+    return (int) $user->id === (int) $userId ? $user : false;
+    // return (int) $user->id === (int) $userId;
     // return true;
 });
 
