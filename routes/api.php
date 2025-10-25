@@ -222,7 +222,7 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::put('toxic_content/unlock_user/{id}', 'App\Http\Controllers\API\ToxicContentController@unlockUser')->name('toxic_content.api.unlock_user');
 });
 // Broadcasting endpoint
-Route::post('/broadcasting/auth', function (Request $request) {
+Route::post('broadcasting/auth', function (Request $request) {
     dd('OK');
     return Broadcast::auth($request);
 });
