@@ -223,6 +223,5 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
 });
 // Broadcasting endpoint
 Route::post('broadcasting/auth', function (Request $request) {
-    dd('OK');
     return Broadcast::auth($request);
-});
+})->middleware('auth:api');
