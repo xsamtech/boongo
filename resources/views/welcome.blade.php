@@ -102,7 +102,7 @@
                                         <!-- * * This can be a video, image, or just about anything else.-->
                                         <!-- * * Set the max width of your media to 100% and the height to-->
                                         <!-- * * 100% like the demo example below.-->
-                                        <img src="{{ asset('assets/img/snapshots/snpst-02.jpg') }}" alt="" class="img-fluid">
+                                        <img src="{{ asset('assets/img/snapshots/snpst-01.jpg') }}" alt="" class="img-fluid">
                                         {{-- <video muted="muted" autoplay="" loop="" style="max-width: 100%; height: 100%">
                                             <source src="assets/img/demo-screen.mp4" type="video/mp4" />
                                         </video> --}}
@@ -120,7 +120,7 @@
                 <div class="row gx-5 justify-content-center">
                     <div class="col-xl-8">
                         <div class="h2 fs-1 text-white mb-4">"Une appli taillée sur mesure pour le besoin du public congolais."</div>
-                        <img src="{{ asset('assets/img/snapshots/kt-1.jpg') }}" alt="..." style="height: 16rem" />
+                        <img src="{{ asset('assets/img/snapshots/kt-1.jpg') }}" alt="..." style="height: 32rem" />
                     </div>
                 </div>
             </div>
@@ -145,7 +145,7 @@
                                     <div class="text-center">
                                         <i class="bi-chat-dots icon-feature text-gradient d-block mb-3"></i>
                                         <h3 class="font-alt">Networking</h3>
-                                        <p class="text-muted mb-0">Echangez avec d'autres membres sur la plateforme et créez des cercles de discussion sur un sujet précis.</p>
+                                        <p class="text-muted mb-0">Echangez avec d'autres membres et créez des cercles de discussion sur un sujet précis.</p>
                                     </div>
                                 </div>
                             </div>
@@ -198,7 +198,7 @@
                                         <!-- * * This can be a video, image, or just about anything else.-->
                                         <!-- * * Set the max width of your media to 100% and the height to-->
                                         <!-- * * 100% like the demo example below.-->
-                                        <img src="{{ asset('assets/img/snapshots/snpst-03.jpg') }}" alt="..." class="img-fluid" />
+                                        <img src="{{ asset('assets/img/snapshots/snpst-02.jpg') }}" alt="..." class="img-fluid" />
                                         {{-- <video muted="muted" autoplay="" loop="" style="max-width: 100%; height: 100%">
                                             <source src="assets/img/demo-screen.mp4" type="video/mp4" />
                                         </video> --}}
