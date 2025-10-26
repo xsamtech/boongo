@@ -257,7 +257,11 @@
         <footer class="bg-black text-center py-5">
             <div class="container px-5">
                 <div class="text-white-50 small">
-                    <div class="mb-2">&copy; {{ date('Y') }} Reborn. Tous droits réservés.</div>
+                    <div class="mb-2">
+                        &copy; {{ date('Y') }} Reborn. Tous droits réservés.
+                        <span class="mx-1">&middot;</span>
+                        Designed by <a href="https://xsamtech.com" target="_blank">Xsam Technologies</a>
+                    </div>
                     <a href="#!">Politique de confidentialité</a>
                     <span class="mx-1">&middot;</span>
                     <a href="#!">Conditions d'utilisation</a>
