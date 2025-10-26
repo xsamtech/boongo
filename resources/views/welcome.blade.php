@@ -16,7 +16,7 @@
         <link rel="manifest" href="{{ asset('assets/img/favicon/site.webmanifest') }}">
 
         <!-- Bootstrap icons-->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
         <!-- Google fonts-->
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,600;1,600&amp;display=swap" />
@@ -44,7 +44,7 @@
                         <li class="nav-item"><a class="nav-link me-lg-3" href="#features">Fontionnalités</a></li>
                         <li class="nav-item"><a class="nav-link me-lg-3" href="#download">Téléchargement</a></li>
                     </ul>
-                    <button class="btn ktx-btn-yellow px-3 mb-2 mb-lg-0 rounded-pill" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+                    <button class="btn btn-warning px-3 mb-2 mb-lg-0 rounded-pill" data-bs-toggle="modal" data-bs-target="#feedbackModal">
                         <span class="d-flex align-items-center">
                             <i class="bi-chat-text-fill me-2"></i>
                             <span class="small">Contact</span>
@@ -60,7 +60,7 @@
                     <div class="col-lg-6">
                         <!-- Mashead text and app badges-->
                         <div class="mb-5 mb-lg-0 text-center text-lg-start">
-                            <h1 class="display-2 lh-1 mb-3">Une Bibliothèque Numérique au standard industriel</h1>
+                            <h1 class="display-3 lh-1 mb-3">Une Bibliothèque Numérique au standard industriel</h1>
                             <p class="lead fw-normal text-muted mb-5">
                                 Téléchargez l'appli Boongo, et commancez à consulter ou à publier des œuvres de tout type et toute catégorie.
                             </p>
@@ -334,7 +334,7 @@
                             </div>
                             <!-- Submit Button-->
                             <div class="d-grid">
-                                <button class="btn ktx-btn-yellow rounded-pill btn-lg" id="submitButton" type="submit">Envoyer</button>
+                                <button class="btn btn-warning rounded-pill btn-lg" id="submitButton" type="submit">Envoyer</button>
                             </div>
                         </form>
                     </div>
