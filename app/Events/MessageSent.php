@@ -64,7 +64,8 @@ class MessageSent implements ShouldBroadcast
         if ($this->message?->addressee_user_id) {
             $channels[] = new PrivateChannel('chat.' . $this->message?->addressee_user_id);
 
-            Log::info('📡 Diffusion sur canal', ['channel' => 'private-chat.' . $this->message?->addressee_user_id]);
+            // Log::info('📡 Diffusion sur canal', ['channel' => 'private-chat.' . $this->message?->addressee_user_id]);
+            Log::info('📡 Diffusion sur canal', ['channel' => 'private-chat.' . $this->message?->addressee_user_id, 'data' => $this->message?->message_content]);
         }
 
         if ($this->message?->addressee_circle_id) {
