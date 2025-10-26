@@ -227,7 +227,7 @@
             </div>
         </section>
         <!-- Call to action section-->
-        <section class="cta" style="background-size: cover; background-image: url({{ asset('assets/img/backgrounds/bg-01.png') }});">
+        <section class="cta" style="background-size: cover; background-image: url({{ asset('assets/img/backgrounds/bg-01.jpg') }});">
             <div class="cta-content">
                 <div class="container px-5">
                     <h2 class="text-white display-1 lh-1 mb-4">
