@@ -60,7 +60,7 @@
                     <div class="col-lg-6">
                         <!-- Mashead text and app badges-->
                         <div class="mb-5 mb-lg-0 text-center text-lg-start">
-                            <h1 class="display-3 lh-1 mb-3">Une Bibliothèque Numérique au standard industriel</h1>
+                            <h1 class="display-4 lh-1 mb-3">Première bibliothèque numérique en RDC, conçue pour répondre aux standards de votre industrie.</h1>
                             <p class="lead fw-normal text-muted mb-5">
                                 Téléchargez l'appli Boongo, et commancez à consulter ou à publier des œuvres de tout type et toute catégorie.
                             </p>
