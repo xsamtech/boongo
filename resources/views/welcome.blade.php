@@ -121,10 +121,10 @@
                     <div class="col-xl-8">
                         <div class="h2 fs-1 text-white mb-4">"Une appli taillée sur mesure pour le besoin du public congolais."</div>
                         <div class="row g-3">
-                            <div class="col-lg-4 col-sm-5 col-8 mx-auto">
+                            <div class="col-lg-5 col-sm-6 col-8 mx-auto">
                                 <img src="{{ asset('assets/img/snapshots/kt-1.jpg') }}" alt="..." class="img-fluid" />
                             </div>
-                            <div class="col-lg-4 col-sm-5 col-8 mx-auto">
+                            <div class="col-lg-5 col-sm-6 col-8 mx-auto">
                                 <img src="{{ asset('assets/img/snapshots/kt-2.jpg') }}" alt="..." class="img-fluid" />
                             </div>
                         </div>
