@@ -120,9 +120,13 @@
                 <div class="row gx-5 justify-content-center">
                     <div class="col-xl-8">
                         <div class="h2 fs-1 text-white mb-4">"Une appli taillée sur mesure pour le besoin du public congolais."</div>
-                        <div class="d-flex flex-sm-row justify-content-center">
-                            <img src="{{ asset('assets/img/snapshots/kt-1.jpg') }}" alt="..." style="height: 30rem;" /><br class="d-sm-none">
-                            <img src="{{ asset('assets/img/snapshots/kt-2.jpg') }}" alt="..." class="ms-sm-3" style="height: 30rem;" />
+                        <div class="row g-3">
+                            <div class="col-lg-4 col-sm-5 col-8 mx-auto">
+                                <img src="{{ asset('assets/img/snapshots/kt-1.jpg') }}" alt="..." class="img-fluid" />
+                            </div>
+                            <div class="col-lg-4 col-sm-5 col-8 mx-auto">
+                                <img src="{{ asset('assets/img/snapshots/kt-2.jpg') }}" alt="..." class="img-fluid" />
+                            </div>
                         </div>
                     </div>
                 </div>
