@@ -117,10 +117,10 @@
         <!-- Quote/testimonial aside-->
         <aside class="text-center bg-gradient-primary-to-secondary">
             <div class="container px-5">
-                <div class="row gx-5">
+                <div class="row gx-5 justify-content-center">
                     <div class="col-xl-8">
                         <div class="h2 fs-1 text-white mb-4">"Une appli taillée sur mesure pour le besoin du public congolais."</div>
-                        <div class="d-flex flex-column justify-content-center">
+                        <div class="d-flex flex-row justify-content-center">
                             <img src="{{ asset('assets/img/snapshots/kt-1.jpg') }}" alt="..." style="height: 30rem;" />
                             <img src="{{ asset('assets/img/snapshots/kt-2.jpg') }}" alt="..." class="ms-3" style="height: 30rem;" />
                         </div>
