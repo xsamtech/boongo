@@ -60,7 +60,7 @@
                     <div class="col-lg-6">
                         <!-- Mashead text and app badges-->
                         <div class="mb-5 mb-lg-0 text-center text-lg-start">
-                            <h1 class="display-4 lh-1 mb-3">Première bibliothèque numérique en RDC, conçue pour répondre aux standards de votre industrie.</h1>
+                            <h1 class="display-4 lh-1 mb-3">Première bibliothèque numérique en RDC, conçue pour répondre aux standards de votre industrie.</h1>
                             <p class="lead fw-normal text-muted mb-5">
                                 Téléchargez l'appli Boongo, et commancez à consulter ou à publier des œuvres de tout type et toute catégorie.
                             </p>
@@ -117,10 +117,13 @@
         <!-- Quote/testimonial aside-->
         <aside class="text-center bg-gradient-primary-to-secondary">
             <div class="container px-5">
-                <div class="row gx-5 justify-content-center">
+                <div class="row gx-5">
                     <div class="col-xl-8">
                         <div class="h2 fs-1 text-white mb-4">"Une appli taillée sur mesure pour le besoin du public congolais."</div>
-                        <img src="{{ asset('assets/img/snapshots/kt-1.jpg') }}" alt="..." style="height: 32rem" />
+                        <div class="d-flex flex-column justify-content-center">
+                            <img src="{{ asset('assets/img/snapshots/kt-1.jpg') }}" alt="..." style="height: 30rem;" />
+                            <img src="{{ asset('assets/img/snapshots/kt-2.jpg') }}" alt="..." class="ms-3" style="height: 30rem;" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -140,14 +143,14 @@
                                         <p class="text-muted mb-0">Abonnez-vous à moindre coût pour être en mesure de lire le contenu des œuvres que vous consultez.</p>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mb-5">
+                                {{-- <div class="col-md-6 mb-5">
                                     <!-- Feature item-->
                                     <div class="text-center">
                                         <i class="bi-chat-dots icon-feature text-gradient d-block mb-3"></i>
                                         <h3 class="font-alt">Networking</h3>
                                         <p class="text-muted mb-0">Echangez avec d'autres membres et créez des cercles de discussion sur un sujet précis.</p>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-5 mb-md-0">
@@ -220,7 +223,7 @@
                     </div>
                     <div class="col-sm-8 col-md-6">
                         <div class="px-5 px-sm-0">
-                            <img src="{{ asset('assets/img/snapshots/kt-2.jpg') }}" alt="..." class="img-fluid" />
+                            <img src="{{ asset('assets/img/drc-gouv.png') }}" alt="..." class="img-fluid" />
                         </div>
                     </div>
                 </div>
