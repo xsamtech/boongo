@@ -1669,55 +1669,85 @@ class UserController extends BaseController
                     return $this->handleError(__('notifications.find_event_404'));
                 }
 
-                $user->events()->syncWithoutDetaching([$event->id => ['is_speaker' => $request->is_speaker, 'status_id' => $request->status_id]]);
+                // $user->events()->syncWithoutDetaching([$event->id => ['is_speaker' => $request->is_speaker, 'status_id' => $request->status_id]]);
+                // Créer un tableau vide pour les relations à synchroniser
+                $syncData = [$event->id => []];
 
-                if ($request->is_speaker == 1) {
-                    Notification::create([
-                        'type_id' => $invitation_as_speaker_type->id,
-                        'status_id' => $unread_notification_status->id,
-                        'from_user_id' => $event->organization?->user_id,
-                        'to_user_id' => $user->id,
-                        'event_id' => $event->id,
-                    ]);
+                // Ajouter 'is_speaker' si envoyé dans la requête
+                if (!empty($request->is_speaker)) {
+                    $syncData[$event->id]['is_speaker'] = $request->is_speaker;
 
-                } else {
-                    Notification::create([
-                        'type_id' => $invitation_type->id,
-                        'status_id' => $unread_notification_status->id,
-                        'from_user_id' => $event->organization?->user_id,
-                        'to_user_id' => $user->id,
-                        'event_id' => $event->id,
-                    ]);
+                    if ($request->is_speaker == 1) {
+                        Notification::create([
+                            'type_id' => $invitation_as_speaker_type->id,
+                            'status_id' => $unread_notification_status->id,
+                            'from_user_id' => $event->organization?->user_id,
+                            'to_user_id' => $user->id,
+                            'event_id' => $event->id,
+                        ]);
+
+                    } else {
+                        Notification::create([
+                            'type_id' => $invitation_type->id,
+                            'status_id' => $unread_notification_status->id,
+                            'from_user_id' => $event->organization?->user_id,
+                            'to_user_id' => $user->id,
+                            'event_id' => $event->id,
+                        ]);
+                    }
                 }
+
+                // Ajouter 'status_id' si envoyé dans la requête
+                if (!empty($request->status_id)) {
+                    $syncData[$event->id]['status_id'] = $request->status_id;
+                }
+
+                // Synchroniser sans détacher
+                $user->events()->syncWithoutDetaching($syncData);
             }
 
             if ($entity == 'circle') {
-                $circle = Event::find($entity_id);
+                $circle = Circle::find($entity_id);
 
                 if (is_null($circle)) {
                     return $this->handleError(__('notifications.find_circle_404'));
                 }
 
-                $user->circles()->syncWithoutDetaching([$circle->id => ['is_admin' => $request->is_admin, 'status_id' => $request->status_id]]);
+                // $user->circles()->syncWithoutDetaching([$circle->id => ['is_admin' => $request->is_admin, 'status_id' => $request->status_id]]);
+                // Créer un tableau vide pour les relations à synchroniser
+                $syncData = [$circle->id => []];
 
-                if ($request->is_speaker == 1) {
-                    Notification::create([
-                        'type_id' => $invitation_as_admin_type->id,
-                        'status_id' => $unread_notification_status->id,
-                        'from_user_id' => $event->organization?->user_id,
-                        'to_user_id' => $user->id,
-                        'circle_id' => $circle->id,
-                    ]);
+                // Ajouter 'is_admin' si envoyé dans la requête
+                if (!empty($request->is_admin)) {
+                    $syncData[$circle->id]['is_admin'] = $request->is_admin;
 
-                } else {
-                    Notification::create([
-                        'type_id' => $invitation_type->id,
-                        'status_id' => $unread_notification_status->id,
-                        'from_user_id' => $event->organization?->user_id,
-                        'to_user_id' => $user->id,
-                        'circle_id' => $circle->id,
-                    ]);
+                    if ($request->is_admin == 1) {
+                        Notification::create([
+                            'type_id' => $invitation_as_admin_type->id,
+                            'status_id' => $unread_notification_status->id,
+                            'from_user_id' => $circle->user_id,
+                            'to_user_id' => $user->id,
+                            'circle_id' => $circle->id,
+                        ]);
+
+                    } else {
+                        Notification::create([
+                            'type_id' => $invitation_type->id,
+                            'status_id' => $unread_notification_status->id,
+                            'from_user_id' => $circle->user_id,
+                            'to_user_id' => $user->id,
+                            'circle_id' => $circle->id,
+                        ]);
+                    }
                 }
+
+                // Ajouter 'status_id' si envoyé dans la requête
+                if (!empty($request->status_id)) {
+                    $syncData[$circle->id]['status_id'] = $request->status_id;
+                }
+
+                // Synchroniser sans détacher
+                $user->circles()->syncWithoutDetaching($syncData);
             }
         }
 
