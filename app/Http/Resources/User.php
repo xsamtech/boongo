@@ -66,6 +66,8 @@ class User extends JsonResource
             'events' => Event::collection($this->events),
             'circles' => Event::collection($this->circles),
             'toxic_contents' => ToxicContent::collection($this->toxic_contents),
+            // Works favorites
+            'favorite_works_cart' => Cart::make($this->favoriteCart()),
             'favorite_works' => Work::collection($this->favoriteWorks()),
             // Works consultations
             'unpaid_consultation_cart' => Cart::make($this->unpaidConsultationCart()),

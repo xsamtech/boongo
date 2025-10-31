@@ -111,6 +111,15 @@ class Work extends Model
 
     /**
      * MANY-TO-ONE
+     * Several favorites for a work
+     */
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(Favorite::class, 'work_id');
+    }
+
+    /**
+     * MANY-TO-ONE
      * Several likes for a work
      */
     public function likes(): HasMany

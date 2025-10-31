@@ -256,6 +256,14 @@ class User extends Authenticatable
     }
 
     /**
+     * The favorite cart
+     */
+    public function favoriteCart()
+    {
+        return $this->carts()->where('entity', 'favorite')->latest()->first();
+    }
+
+    /**
      * The unpaid consultation cart
      */
     public function unpaidConsultationCart()
