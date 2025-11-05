@@ -78,13 +78,13 @@ class OrganizationController extends BaseController
             $image = str_replace($replace, '', $request->image_64);
             $image = str_replace(' ', '+', $image);
             // Create image URL
-            $image_url = 'images/organizations/' . $organization->id . '/' . Str::random(50) . '.png';
+            $image_path = 'images/organizations/' . $organization->id . '/' . Str::random(50) . '.png';
 
             // Upload image
-            Storage::url(Storage::disk('public')->put($image_url, base64_decode($image)));
+            Storage::disk('public')->put($image_path, base64_decode($image));
 
             $organization->update([
-                'cover_url' => $image_url,
+                'cover_url' => Storage::url($image_path),
                 'updated_at' => now()
             ]);
         }
@@ -242,13 +242,13 @@ class OrganizationController extends BaseController
             $image = str_replace($replace, '', $request->image_64);
             $image = str_replace(' ', '+', $image);
             // Create image URL
-            $image_url = 'images/organizations/' . $current_organization->id . '/' . Str::random(50) . '.png';
+            $image_path = 'images/organizations/' . $organization->id . '/' . Str::random(50) . '.png';
 
             // Upload image
-            Storage::url(Storage::disk('public')->put($image_url, base64_decode($image)));
+            Storage::disk('public')->put($image_path, base64_decode($image));
 
             $organization->update([
-                'cover_url' => $image_url,
+                'cover_url' => Storage::url($image_path),
                 'updated_at' => now()
             ]);
         }

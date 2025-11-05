@@ -104,14 +104,14 @@ class WorkController extends BaseController
             $fileNames = $request->input('files_names', []);
 
             // Types of extensions for different file types
-            $image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'avi', 'mov', 'mkv', 'webm'];
+            $image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'tif', 'svg', 'heif', 'heic', 'ico'];
             $document_extensions = ['pdf', 'doc', 'docx', 'txt'];
             $audio_extensions = ['mp3', 'wav', 'flac'];
 
             // File browsing
             foreach ($files as $key => $singleFile) {
                 // Checking the file extension
-                $file_extension = $singleFile->getClientOriginalExtension();
+                $file_extension = strtolower($singleFile->getClientOriginalExtension());
 
                 // File type check
                 $custom_uri = '';
@@ -147,6 +147,7 @@ class WorkController extends BaseController
                 // Upload file
                 try {
                     $singleFile->storeAs($custom_uri . '/' . $work->id, $cleaned_filename, 's3');
+                    // $singleFile->storeAs($custom_uri . '/' . $work->id, $cleaned_filename, 'public');
 
                 } catch (\Throwable $th) {
                     return $this->handleError($th, __('notifications.create_work_file_500'), 500);
@@ -156,6 +157,7 @@ class WorkController extends BaseController
                 File::create([
                     'file_name' => trim($fileNames[$key] ?? $cleaned_filename),
                     'file_url' => config('filesystems.disks.s3.url') . $file_url,
+                    // 'file_url' => Storage::url($file_url),
                     'type_id' => $file_type_id,
                     'work_id' => $work->id
                 ]);
@@ -948,167 +950,32 @@ class WorkController extends BaseController
      */
     public function search(Request $request)
     {
-        // Groups
-        $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
-        // Statuses
-        $active_status = Status::where([['status_name->fr', 'Actif'], ['group_id', $partnership_status_group->id]])->first();
-        // Get partners & sponsors IDs
-        $users_ids = User::whereHas('roles', function ($query) { $query->where('role_name', 'Partenaire')->orWhere('role_name', 'Sponsor'); })->pluck('id')->toArray();
+        $query = Work::query();
+        $categories = array_filter(Arr::wrap($request->input('categories_ids')));
 
-        if ($request->hasHeader('X-user-id') and $request->hasHeader('X-ip-address') or $request->hasHeader('X-user-id') and !$request->hasHeader('X-ip-address')) {
-            // Logged in user
-            $logged_in_user = User::find($request->header('X-user-id'));
-
-            if (is_null($logged_in_user)) {
-                return $this->handleError(__('notifications.find_user_404'));
-            }
-
-            // Subscription
-            $is_subscribed = $logged_in_user->hasValidSubscription();
-
-            // If user is subscribed, send only data of the same category as that in the subscription
-            if ($is_subscribed) {
-                $valid_subscription = $logged_in_user->validSubscriptions()->sortByDesc(function ($subscription) { return $subscription->pivot->created_at; })->first();
-                $query = Work::query();
-                $categories = array_filter(Arr::wrap($request->input('categories_ids')));
-
-                if (count($categories) > 0) {
-                    // Filter works having at least one of the specified categories
-                    $query->whereHas('categories', function ($q) use ($categories) {
-                        $q->whereIn('categories.id', $categories);
-                    });
-                }
-
-                // Include uncategorized works if no category is specified
-                $query->where('work_title', 'LIKE', '%' . $request->data . '%')->where('category_id', $valid_subscription->category_id)->orderByDesc('works.created_at');
-
-                // Add dynamic conditions
-                $query->when($request->type_id, function ($query) use ($request) {
-                    return $query->where('type_id', $request->type_id);
-                });
-
-                $query->when($request->status_id, function ($query) use ($request) {
-                    return $query->where('status_id', $request->status_id);
-                });
-
-                $session = Session::where('user_id', $logged_in_user->id)->first();
-
-                if (!empty($session)) {
-                    if (count($session->works) == 0) {
-                        $session->works()->attach($query->pluck('id')->toArray());
-                    }
-
-                    if (count($session->works) > 0) {
-                        $session->works()->syncWithoutDetaching($query->pluck('id')->toArray());
-                    }
-                }
-
-                $works = $query->paginate(10);
-                $count_all = $query->count();
-                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($valid_subscription, $active_status) {
-                                        $query->where('category_partner.category_id', $valid_subscription->category_id)->where('category_partner.status_id', $active_status->id);
-                                    })->where(function ($query) use ($users_ids) {
-                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->inRandomOrder()->first() : null;
-                $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
-
-                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
-
-            // Otherwise, send all data
-            } else {
-                $query = Work::query();
-                $categories = array_filter(Arr::wrap($request->input('categories_ids')));
-
-                if (count($categories) > 0) {
-                    // Filter works having at least one of the specified categories
-                    $query->whereHas('categories', function ($q) use ($categories) {
-                        $q->whereIn('categories.id', $categories);
-                    });
-                }
-
-                // Include uncategorized works if no category is specified
-                $query->where('work_title', 'LIKE', '%' . $request->data . '%')->orderByDesc('works.created_at');
-
-                // Add dynamic conditions
-                $query->when($request->type_id, function ($query) use ($request) {
-                    return $query->where('type_id', $request->type_id);
-                });
-
-                $query->when($request->status_id, function ($query) use ($request) {
-                    return $query->where('status_id', $request->status_id);
-                });
-
-                $session = Session::where('user_id', $logged_in_user->id)->first();
-
-                if (!empty($session)) {
-                    if (count($session->works) == 0) {
-                        $session->works()->attach($query->pluck('id')->toArray());
-                    }
-
-                    if (count($session->works) > 0) {
-                        $session->works()->syncWithoutDetaching($query->pluck('id')->toArray());
-                    }
-                }
-
-                $works = $query->paginate(10);
-                $count_all = $query->count();
-                $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                        $query->where('category_partner.status_id', $active_status->id);
-                                    })->where(function ($query) use ($users_ids) {
-                                        $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                    })->inRandomOrder()->first() : null;
-                $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
-
-                return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
-            }
+        if (count($categories) > 0) {
+            // Filter works having at least one of the specified categories
+            $query->whereHas('categories', function ($q) use ($categories) {
+                $q->whereIn('categories.id', $categories);
+            });
         }
 
-        if ($request->hasHeader('X-ip-address')) {
-            $query = Work::query();
-            $categories = array_filter(Arr::wrap($request->input('categories_ids')));
+        // Include uncategorized works if no category is specified
+        $query->where('work_title', 'LIKE', '%' . $request->data . '%')->orderByDesc('works.created_at');
 
-            if (count($categories) > 0) {
-                // Filter works having at least one of the specified categories
-                $query->whereHas('categories', function ($q) use ($categories) {
-                    $q->whereIn('categories.id', $categories);
-                });
-            }
+        // Add dynamic conditions
+        $query->when($request->type_id, function ($query) use ($request) {
+            return $query->where('type_id', $request->type_id);
+        });
 
-            // Include uncategorized works if no category is specified
-            $query->where('work_title', 'LIKE', '%' . $request->data . '%')->orderByDesc('works.created_at');
+        $query->when($request->status_id, function ($query) use ($request) {
+            return $query->where('status_id', $request->status_id);
+        });
 
-            // Add dynamic conditions
-            $query->when($request->type_id, function ($query) use ($request) {
-                return $query->where('type_id', $request->type_id);
-            });
+        $works = $query->paginate(10);
+        $count_all = $query->count();
 
-            $query->when($request->status_id, function ($query) use ($request) {
-                return $query->where('status_id', $request->status_id);
-            });
-
-            $session = Session::where('ip_address', $request->header('X-ip-address'))->first();
-
-            if (!empty($session)) {
-                if (count($session->works) == 0) {
-                    $session->works()->attach($query->pluck('id')->toArray());
-                }
-
-                if (count($session->works) > 0) {
-                    $session->works()->syncWithoutDetaching($query->pluck('id')->toArray());
-                }
-            }
-
-            $works = $query->paginate(10);
-            $count_all = $query->count();
-            $partner = Partner::whereHas('categories')->exists() ? Partner::whereHas('categories', function ($query) use ($active_status) {
-                                    $query->where('category_partner.status_id', $active_status->id);
-                                })->where(function ($query) use ($users_ids) {
-                                    $query->whereIn('from_user_id', $users_ids)->orWhereNotNull('from_organization_id');
-                                })->inRandomOrder()->first() : null;
-            $partnerResource = !empty($partner) ? new ResourcesPartner($partner) : null;
-
-            return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all, $partnerResource);
-        }
+        return $this->handleResponse(ResourcesWork::collection($works), __('notifications.find_all_works_success'), $works->lastPage(), $count_all);
     }
 
     /**
