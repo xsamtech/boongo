@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
@@ -541,72 +542,30 @@ return [
             // About content
             'content' =>
             [
+                'title' => 'A propos de nous',
+                'description' => '',
                 'titles' =>
                 [
                     [
-                        'ref' => 'story',
-                        'title' => 'Notre histoire',
+                        'ref' => '',
+                        'title' => 'A propos de nous',
                         'contents' =>
                         [
                             [
-                                'subtitle' => '',
-                                'content' => '',
+                                'subtitle' => 'La société',
+                                'content' => '<strong>REBORN</strong> est une société œuvrant dans le multisectoriel, nous avons pour vocation d’apporter des solutions flexible répondant aux besoins du marché des affaires, accompagner notre clientèle dans la consommation régulière de nos produits et services, et enfin bâtir une société plus durable afin de garantir l’arrivée des générations avenir.',
                             ],
                         ]
                     ],
                     [
-                        'ref' => 'mission',
-                        'title' => 'Notre mission',
+                        'ref' => '',
+                        'title' => '',
                         'contents' =>
                         [
                             [
-                                'subtitle' => '',
-                                'content' => '',
+                                'subtitle' => 'Le produit',
+                                'content' => '<strong>BOONGO</strong> est une bibliothèque en ligne (<strong>Application mobile</strong> : Android, iOS et Web), nous avons pour vocation de numériser et collecter (les ouvrages, journaux, revues et magazines, les cartes géographiques et les multimédias), la conservation de notre fonds documentaire est possible grâce au système de classification décimale de Dewey. Nous mettons à la disposition de l’abonné des contenus de choix collecter auprès de meilleure bibliothèque au niveau national et international. Et enfin baisser le rapport prix un de facteur métrie dans la consommation d’œuvre d’esprit. <strong>BOONGO TEACH</strong> est un programme d’accompagnement professionnelle centré sur la spécialisation dans un domaine de métier (entreprenariat, science informatique, droits, santé, agriculture, finances etc…), grâce à notre application mobile « <strong>BOONGO</strong> » l’abonné se retrouve devant un environnement d’apprentissage propices qui lui permet d’être compétitif et flexible à chaque migration observer au sein de la société. Notre programme d’accompagnement est adapté aux élèves, étudiants, salariés et autres tiers dans le but d’optimiser leurs productivités au sein de cette grande société en plein essor.',
                             ],
-                        ]
-                    ],
-                    [
-                        'ref' => 'vision',
-                        'title' => 'Notre vision',
-                        'contents' =>
-                        [
-                            [
-                                'subtitle' => '',
-                                'content' => '',
-                            ]
-                        ]
-                    ],
-                    [
-                        'ref' => 'legal_notice',
-                        'title' => 'Mentions légales',
-                        'contents' =>
-                        [
-                            [
-                                'subtitle' => '',
-                                'content' => 'Ce site web est publié par Reborn SARL. Kinshasa-RDC',
-                            ]
-                        ]
-                    ],
-                    [
-                        'ref' => 'publication_director',
-                        'title' => 'Directeur de publication',
-                        'contents' =>
-                        [
-                            [
-                                'subtitle' => '',
-                                'content' => '',
-                            ]
-                        ]
-                    ],
-                    [
-                        'ref' => 'intellectual_property',
-                        'title' => 'Propriété intellectuelle',
-                        'contents' =>
-                        [
-                            [
-                                'subtitle' => '',
-                                'content' => 'Tous droits réservés. Toute reproduction est interdite sans autorisation. Tous les textes, photos, vidéos, et autres éléments reproduits dans ce site sont protégés selon les réglementations des lois congolaises et internationales.',
-                            ]
                         ]
                     ],
                 ]
@@ -620,6 +579,248 @@ return [
                 [
                     [
                         'ref' => '',
+                        'title' => '1. Utilisation de l’application',
+                        'contents' =>
+                        [
+                            [
+                                'subtitle' => '',
+                                'content' => 'Vous êtes autorisé à utiliser l’application uniquement à des fins personnelles et non commerciales. Vous ne devez pas utiliser l’application de manière contraire aux lois en vigueur ou aux présentes conditions.'
+                            ],
+                        ]
+                    ],
+                    [
+                        'ref' => '',
+                        'title' => '2. Compte utilisateur',
+                        'contents' =>
+                        [
+                            [
+                                'subtitle' => '',
+                                'content' => 'Vous devez créer un compte utilisateur pour accéder à certaines fonctionnalités de l’application, telles que la réservation de livres, BOONGO TEACH et résumer des ouvrages. Vous êtes responsable de maintenir la confidentialité de votre compte et de vos informations d’identification.'
+                            ],
+                            [
+                                'subtitle' => '',
+                                'content' => 'Pour accéder à la consultation des ouvrages, multimédias et autres services, vous devez payes votre abonnement mensuel.'
+                            ],
+                            [
+                                'subtitle' => '2.1.  Accessibilité',
+                                'content' => 'L’application est accessible pour les enfants dès l’âge de 7 ans et sous le contrôle d’un adulte, les adolescents, adultes et vieillards peuvent aussi utiliser cette application.'
+                            ],
+                        ]
+                    ],
+                    [
+                        'ref' => '',
+                        'title' => '3. Réservation des ouvrages',
+                        'contents' =>
+                        [
+                            [
+                                'subtitle' => '',
+                                'content' => 'L’application permet de rechercher des ouvrages disponibles, de réserver des exemplaires. Vous vous engagez à respecter les règles définis par la bibliothèque.'
+                            ],
+                        ]
+                    ],
+                    [
+                        'ref' => '',
+                        'title' => '4. Contenu de l’application',
+                        'contents' =>
+                        [
+                            [
+                                'subtitle' => '',
+                                'content' => 'Tout le contenu disponible dans l’application, y compris les informations sur les ouvrages et les recommandations, est fourni à titre informatif seulement. Nous ne garantissons pas l’exactitude, la pertinence ou la disponibilité permanente du contenu.'
+                            ],
+                        ]
+                    ],
+                    [
+                        'ref' => '',
+                        'title' => '5. Protection des données',
+                        'contents' =>
+                        [
+                            [
+                                'subtitle' => '',
+                                'content' => 'Nous collectons, utilisons et protégeons vos informations personnelles conformément à notre politique de confidentialité. Vous consentez à ce que vos données soient traitées conformément à cette politique.'
+                            ],
+                        ]
+                    ],
+                    [
+                        'ref' => '',
+                        'title' => '6. Responsabilité',
+                        'contents' =>
+                        [
+                            [
+                                'subtitle' => '',
+                                'content' => 'L’utilisation de l’application est à vos propres risques. Nous déclinons toute responsabilité en cas de dommages directs, indirects, spéciaux, consécutifs ou incidentels résultant de l’utilisation de l’application ou de l’incapacité à l’utiliser.'
+                            ],
+                        ]
+                    ],
+                    [
+                        'ref' => '',
+                        'title' => '7. Modifications des conditions d’utilisation',
+                        'contents' =>
+                        [
+                            [
+                                'subtitle' => '',
+                                'content' => 'Nous nous réservons le droit de modifier ces conditions d’utilisation à tout moment. Les modifications entreront en vigueur dès leur publication dans l’application. Nous vous encourageons à consulter régulièrement les conditions d’utilisation pour être informé des mises à jour.'
+                            ],
+                        ]
+                    ],
+                    [
+                        'ref' => '',
+                        'title' => '8. Résiliation',
+                        'contents' =>
+                        [
+                            [
+                                'subtitle' => '',
+                                'content' => 'Nous nous réservons le droit de suspendre ou de résilier votre accès à l’application si vous enfreignez ces conditions d’utilisation ou si nous le jugeons nécessaire pour protéger nos intérêts légitimes.'
+                            ],
+                        ]
+                    ],
+                    [
+                        'ref' => '',
+                        'title' => '9. Contact',
+                        'contents' =>
+                        [
+                            [
+                                'subtitle' => '',
+                                'content' => 'Si vous avez des questions concernant ces conditions d’utilisation, veuillez nous contacter à l’adresse suivante :'
+                            ],
+                            [
+                                'subtitle' => '',
+                                'content' => '<strong>Adresse</strong> : Concession COTEX N° 63, Ave Colonel Mondjiba, Kinshasa<br><strong>E-mail</strong> : contact@boongo7.com<br><strong>Téléphone</strong> : +243 815 737 600'
+                            ],
+                        ]
+                    ],
+                ]
+            ],
+
+            // Privacy policy
+            'privacy_policy' => [
+                'title' => 'Politique de confidentialité',
+                'description' => 'La présente politique de confidentialité décrit comment Bibliothèque <strong>BOONGO</strong> collecte, utilise, protège et partage vos informations personnelles lorsque vous utilisez notre application mobile. Votre vie privée est très importante pour nous. Nous vous encourageons à lire attentivement cette politique pour comprendre nos pratiques concernant vos données personnelles et comment nous les traitons.',
+                'titles' =>
+                [
+                    [
+                        'ref' => '',
+                        'title' => '1.	Collecte des informations',
+                        'contents' =>
+                        [
+                            [
+                                'subtitle' => '',
+                                'content' => 'Nous pouvons collecter les types d’informations suivants lorsque vous utilisez notre application :'
+                            ],
+                            [
+                                'subtitle' => '',
+                                'content' => '- <strong>Informations personnelles</strong> : Lors de l’inscription ou de l’utilisation de certaines fonctionnalités de l’application, telles que la réservation de livres, nous pouvons collecter des informations telles que votre nom, adresse e-mail, numéro de téléphone, et d’autres informations de contact.'
+                            ],
+                            [
+                                'subtitle' => '',
+                                'content' => '- <strong>Informations d’utilisation</strong> : Nous recueillons des informations sur la manière dont vous utilisez l’application, telles que les livres consultés, les recherches effectuées, et les interactions avec les fonctionnalités de l’application.'
+                            ],
+                        ]
+                    ],
+                    [
+                        'ref' => '',
+                        'title' => '2. Utilisation des informations',
+                        'contents' =>
+                        [
+                            [
+                                'subtitle' => '',
+                                'content' => 'Les informations que nous collectons sont utilisées aux fins suivantes :'
+                            ],
+                            [
+                                'subtitle' => '',
+                                'content' => '- Pour fournir et gérer nos services, y compris pour vous permettre de rechercher et de réserver des ouvrages ou multimédias.'
+                            ],
+                            [
+                                'subtitle' => '',
+                                'content' => '- Pour personnaliser et améliorer l’expérience utilisateur en comprenant mieux comment vous utilisez notre application.'
+                            ],
+                            [
+                                'subtitle' => '',
+                                'content' => '- Pour communiquer avec vous, notamment pour vous envoyer des notifications relatives à vos réservations ou à des mises à jour importantes.'
+                            ],
+                        ]
+                    ],
+                    [
+                        'ref' => '',
+                        'title' => '3. Partage des informations',
+                        'contents' =>
+                        [
+                            [
+                                'subtitle' => '',
+                                'content' => 'Nous ne partageons pas vos informations personnelles avec des tiers, sauf dans les cas suivants :'
+                            ],
+                            [
+                                'subtitle' => '',
+                                'content' => '- Lorsque cela est nécessaire pour fournir nos services, comme avec nos prestataires de services tiers (par exemple, pour le traitement des paiements ou l’envoi de notifications).'
+                            ],
+                            [
+                                'subtitle' => '',
+                                'content' => '- Lorsque nous sommes légalement tenus de le faire, pour répondre aux demandes des autorités gouvernementales ou pour protéger nos droits légaux.'
+                            ],
+                        ]
+                    ],
+                    [
+                        'ref' => '',
+                        'title' => '4. Sécurité des informations',
+                        'contents' =>
+                        [
+                            [
+                                'subtitle' => '',
+                                'content' => 'Nous prenons des mesures de sécurité appropriées pour protéger vos informations personnelles contre tout accès non autorisé, modification ou destruction.'
+                            ],
+                        ]
+                    ],
+                    [
+                        'ref' => '',
+                        'title' => '5. Vos choix et droits',
+                        'contents' =>
+                        [
+                            [
+                                'subtitle' => '',
+                                'content' => 'Vous pouvez accéder à vos informations personnelles et les mettre à jour via les paramètres de l’application. Vous pouvez également demander la suppression de vos données en nous contactant à l’adresse fournie ci-dessous.'
+                            ],
+                            [
+                                'subtitle' => '',
+                                'content' => '<strong>Adresse</strong> : Concession COTEX N° 63, Ave Colonel Mondjiba, Kinshasa'
+                            ],
+                        ]
+                    ],
+                    [
+                        'ref' => '',
+                        'title' => '6. Modifications de la politique de confidentialité',
+                        'contents' =>
+                        [
+                            [
+                                'subtitle' => '',
+                                'content' => 'Nous pouvons mettre à jour cette politique de confidentialité de temps à autre. Nous vous informerons de toute modification importante par le biais de notifications dans l’application ou par d’autres moyens.'
+                            ],
+                        ]
+                    ],
+                    [
+                        'ref' => '',
+                        'title' => '7. Contact',
+                        'contents' =>
+                        [
+                            [
+                                'subtitle' => '',
+                                'content' => 'Si vous avez des questions concernant cette politique de confidentialité ou nos pratiques en matière de confidentialité, vous pouvez nous contacter à l’adresse suivante :'
+                            ],
+                            [
+                                'subtitle' => '',
+                                'content' => '<strong>Adresse</strong> : Concession COTEX N° 63, Ave Colonel Mondjiba, Kinshasa<br><strong>E-mail</strong> : contact@boongo7.com<br><strong>Téléphone</strong> : +243 815 737 600'
+                            ],
+                        ]
+                    ],
+                ]
+            ],
+
+            // FAQ
+            'faq' => [
+                'title' => 'Foire Aux Questions',
+                'description' => '',
+                'titles' =>
+                [
+                    [
+                        'ref' => '',
                         'title' => '',
                         'contents' =>
                         [
@@ -629,170 +830,6 @@ return [
                             ],
                         ]
                     ]
-                ]
-            ],
-
-            // Privacy policy
-            'privacy_policy' => [
-                'title' => 'Politique de confidentialité',
-                'description' => 'Bienvenue dans notre politique de confidentialité et de protection de vos données sur Boongo.',
-                'titles' =>
-                [
-                    [
-                        'ref' => 'information_collection',
-                        'title' => 'Collection d’information',
-                        'contents' =>
-                        [
-                            [
-                                'subtitle' => '',
-                                'content' => 'We collect information when you make a donation on our site or register to write a comment, to contact a speaker on the site or to register for an event or service offered. The information collected is only that which you have provided to us and varies from case to case.'
-                            ],
-                            [
-                                'subtitle' => '',
-                                'content' => 'As part of a donation for example, we ask you for your country (required), your first and last name (required), your email address (required), your telephone number, your postal address, your organization if applicable , and your payment method.'
-                            ],
-                            [
-                                'subtitle' => '',
-                                'content' => 'Additionally, we automatically receive and record information from your internet browser, including your IP address, software, hardware, and the page you are visiting.'
-                            ]
-                        ]
-                    ],
-                    [
-                        'ref' => 'data_use',
-                        'title' => 'Use of information',
-                        'contents' =>
-                        [
-                            [
-                                'subtitle' => 'Any information we collect from you may be used to:',
-                                'content' => 'Customize your experience and respond to your individual needs;'
-                            ],
-                            [
-                                'subtitle' => '',
-                                'content' => 'Improve our website;'
-                            ],
-                            [
-                                'subtitle' => '',
-                                'content' => 'Improve service to our users and donors and ensure their needs are taken care of;'
-                            ],
-                            [
-                                'subtitle' => '',
-                                'content' => 'Contact you by email or SMS;'
-                            ],
-                            [
-                                'subtitle' => '',
-                                'content' => 'Administer a contest, promotion, or survey.'
-                            ]
-                        ]
-                    ],
-                    [
-                        'ref' => 'third_party_disclosure',
-                        'title' => 'Disclosure to third parties',
-                        'contents' =>
-                        [
-                            [
-                                'subtitle' => '',
-                                'content' => 'We do not sell, trade, or otherwise transfer your personally identifiable information to outside parties. This does not include trusted third parties who assist us in operating our website, so long as those parties agree to keep this information confidential.'
-                            ],
-                            [
-                                'subtitle' => '',
-                                'content' => 'We believe it is necessary to share information in order to investigate, prevent, or take action regarding illegal activities, suspected fraud, situations involving potential threats to the physical safety of any person, violations of our terms of service. use, or when the law requires us to do so.'
-                            ],
-                            [
-                                'subtitle' => '',
-                                'content' => 'Non-private information, however, may be provided to other parties primarily for purposes of improving our website.'
-                            ]
-                        ]
-                    ],
-                    [
-                        'ref' => 'data_safety',
-                        'title' => 'Privacy',
-                        'contents' =>
-                        [
-                            [
-                                'subtitle' => '',
-                                'content' => 'We implement a variety of security measures to keep your personal information safe. Only employees who need to perform a specific job have access to personally identifiable information. Computers and servers used to store personally identifiable information are kept in a secure environment.'
-                            ],
-                            [
-                                'subtitle' => '',
-                                'content' => 'No banking information is recorded in our databases other than bank details.'
-                            ],
-                            [
-                                'subtitle' => '',
-                                'content' => 'Do we use cookies? Yes. Our cookies improve access to our site and identify repeat visitors. Additionally, our cookies improve the user experience by tracking and targeting their interests. However, this use of cookies is in no way linked to any personally identifiable information on our site.'
-                            ]
-                        ]
-                    ],
-                    [
-                        'ref' => 'data_retirement',
-                        'title' => 'Right of opposition, withdrawal of your information',
-                        'contents' =>
-                        [
-                            [
-                                'subtitle' => '',
-                                'content' => 'We are committed to offering you a right of opposition and withdrawal regarding your personal information. The right to object is understood as the possibility offered to Internet users to refuse that their personal information be used for certain purposes mentioned during collection. The right of withdrawal is understood as being the possibility offered to Internet users to request that their personal information no longer appear, for example, in a mailing list.'
-                            ],
-                            [
-                                'subtitle' => '',
-                                'content' => 'To exercise this right to withdraw your information, please write to us by going to the contact page of our website.'
-                            ]
-                        ]
-                    ],
-                    [
-                        'ref' => 'donation_refund',
-                        'title' => 'Withdrawal period, cancellation and reimbursement of your donation',
-                        'contents' =>
-                        [
-                            [
-                                'subtitle' => '',
-                                'content' => 'Online payments are not subject to a right of withdrawal. All payment is firm and final.'
-                            ],
-                            [
-                                'subtitle' => '',
-                                'content' => 'Payments made by donors do not give rise to any refund.'
-                            ]
-                        ]
-                    ],
-                    [
-                        'ref' => 'access_right',
-                        'title' => 'Permission to access',
-                        'contents' =>
-                        [
-                            [
-                                'subtitle' => '',
-                                'content' => 'We undertake to recognize a right of access and rectification to those concerned wishing to consult, modify or even delete information concerning them.'
-                            ],
-                            [
-                                'subtitle' => '',
-                                'content' => 'To exercise this right of access, please write to us by going to the contact page of our website.'
-                            ]
-                        ]
-                    ],
-                    [
-                        'ref' => 'unsuscribe',
-                        'title' => 'Unsubscribe',
-                        'contents' =>
-                        [
-                            [
-                                'subtitle' => '',
-                                'content' => 'We use the email address you provide to send you information and updates related to your donation, news from our ministry (if you have opted in to receive news from us), etc. If at any time you would like to unsubscribe from receiving emails, detailed unsubscribe instructions are included at the bottom of each email, or email us at<strong>contact @dikitivi.com</strong>.'
-                            ]
-                        ]
-                    ],
-                    [
-                        'ref' => 'consent',
-                        'title' => 'Consent',
-                        'contents' =>
-                        [
-                            [
-                                'subtitle' => '',
-                                'content' => 'By using our site or application, you implicitly agree to our general conditions of use, as well as those of YouTube.'
-                            ],
-                            [
-                                'subtitle' => '',
-                                'content' => 'We invite you to consult the YouTube general conditions of use at this address: <a href="https://policies.google.com/privacy?hl=en" class="dktv-text-blue">https://policies.google.com/privacy?hl=en</a>'
-                            ]
-                        ]
-                    ],
                 ]
             ],
 
@@ -818,14 +855,14 @@ return [
                 'anonyme' => 'Faites votre don',
                 'partner' => 'Devenir un partenaire',
                 'your_identity' => 'Votre identité',
-                'choosen_subscription' => 'Type d\'abonnement choisi :',
+                'choosen_subscription' => 'Type d’abonnement choisi :',
                 'period' => [
                     'title' => 'Period',
                     'choose' => 'Choose a period',
                     'unique' => 'One-time payment'
                 ],
                 'send_money' => [
-                    'title' => 'Envoyer de l\'argent',
+                    'title' => 'Envoyer de l’argent',
                     'description' => 'Choisir le mode de paiement',
                     'mobile_money' => 'Mobile money',
                     'bank_card' => 'Carte bancaire',
@@ -859,18 +896,18 @@ return [
 
         // Event
         'event' => [
-            'details' => 'Détails sur l\'événement',
+            'details' => 'Détails sur l’événement',
             'link' => 'Gérer les événements',
             'add' => 'Ajouter un événement',
-            'edit' => 'Editer l\'événement',
+            'edit' => 'Editer l’événement',
             'search' => 'Rechercher un événement',
             'list' => 'Liste des événements',
             'data' => [
-                'event_title' => 'Titre de l\'événement',
+                'event_title' => 'Titre de l’événement',
                 'event_description' => 'Description',
                 'start_at' => 'Heure de début',
                 'end_at' => 'Heure de fin',
-                'access_type' => 'Type d\'accès (Public ou Privé)'
+                'access_type' => 'Type d’accès (Public ou Privé)'
             ],
         ],
     ],

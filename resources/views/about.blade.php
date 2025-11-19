@@ -1,4 +1,4 @@
-@extends('layouts.guest')
+@extends('layouts.guest', ['page_title' => (!empty($entity_title) ? $entity_title : __('miscellaneous.public.about.content.titles.0.title'))])
 
 @section('guest-content')
 

@@ -129,6 +129,7 @@ class HomeController extends Controller
             'titles' => $titles,
             'entity' => $entity,
             'entity_title' => __('miscellaneous.public.about.' . $entity . '.title'),
+            'entity_description' => __('miscellaneous.public.about.' . $entity . '.description'),
             'entity_menu' => __('miscellaneous.menu.' . $entity),
         ]);
     }
