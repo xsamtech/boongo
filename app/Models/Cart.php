@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Http\JsonResponse;
 
 /**
  * @author Xanders
@@ -73,14 +72,14 @@ class Cart extends Model
     /**
      * Total price of consultation of works
      *
-     * @return float|\Illuminate\Http\JsonResponse
+     * @return float|string
      */
-    public function totalWorksConsultationsPrices($target_acronym): float|JsonResponse
+    public function totalWorksConsultationsPrices($target_acronym): float|string
     {
         $target_currency = Currency::where('currency_acronym', $target_acronym)->first();
 
         if (is_null($target_currency)) {
-            return response()->json(['success' => false, 'message' => __('notifications.find_currency_404')], 404);
+            return __('miscellaneous.error_label') . ' ' . __('notifications.find_currency_404');
         }
 
         // One query for all necessary rates
@@ -109,7 +108,7 @@ class Cart extends Model
                     $total += $converted;
 
                 } else {
-                    return response()->json(['success' => false, 'message' => __('notifications.find_currencies_rate_404')], 404);
+                    return __('miscellaneous.error_label') . ' ' . __('notifications.find_currencies_rate_404');
                 }
             }
         }
@@ -120,14 +119,14 @@ class Cart extends Model
     /**
      * Total price of subscriptions
      *
-     * @return float|\Illuminate\Http\JsonResponse
+     * @return float|string
      */
-    public function totalSubscriptionsPrices($target_acronym): float|JsonResponse
+    public function totalSubscriptionsPrices($target_acronym): float|string
     {
         $target_currency = Currency::where('currency_acronym', $target_acronym)->first();
 
         if (is_null($target_currency)) {
-            return response()->json(['success' => false, 'message' => __('notifications.find_currency_404')], 404);
+            return __('miscellaneous.error_label') . ' ' . __('notifications.find_currency_404');
         }
 
         // One query for all necessary rates
@@ -156,7 +155,7 @@ class Cart extends Model
                     $total += $converted;
 
                 } else {
-                    return response()->json(['success' => false, 'message' => __('notifications.find_currencies_rate_404')], 404);
+                    return __('miscellaneous.error_label') . ' ' . __('notifications.find_currencies_rate_404');
                 }
             }
         }
