@@ -527,7 +527,7 @@ class User extends Authenticatable
         // Retrieve all totals
         $totalUnpaidConsultations = !$last_consultation_cart ? 0 : $last_consultation_cart->totalWorksConsultationsPrices($this->currency->currency_acronym);
         $totalUnpaidSubscriptions = !$last_subscription_cart ? 0 : $last_subscription_cart->totalSubscriptionsPrices($this->currency->currency_acronym);
-        $grandTotalUnpaid = $totalUnpaidConsultations + $totalUnpaidSubscriptions;
+        $grandTotalUnpaid = is_numeric($totalUnpaidConsultations) && is_numeric($totalUnpaidSubscriptions) ? $totalUnpaidConsultations + $totalUnpaidSubscriptions : (!empty($totalUnpaidConsultations) ? $totalUnpaidConsultations : (!empty($totalUnpaidConsultations) ? $totalUnpaidConsultations : null));
 
         return [
             'total_unpaid_consultations' => $totalUnpaidConsultations,
