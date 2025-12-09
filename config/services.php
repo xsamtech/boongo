@@ -1,4 +1,8 @@
 <?php
+/**
+ * @author Xanders
+ * @see https://team.xsamtech.com/xanderssamoth
+ */
 
 return [
 
@@ -38,6 +42,12 @@ return [
         'gateway_card_v2' => env('FLEXPAY_GATEWAY_CARD_V2'),
         'gateway_check' => env('FLEXPAY_GATEWAY_CHECK'),
         'api_token' => env('FLEXPAY_API_TOKEN'),
+    ],
+
+    'twilio' => [
+        'sid' => env('TWILIO_AUTH_SID'),
+        'token' => env('TWILIO_AUTH_TOKEN'),
+        'whatsapp_from' => env('TWILIO_WHATSAPP_FROM')
     ],
 
 ];

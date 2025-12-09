@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\PasswordReset as ResourcesPasswordReset;
 use App\Http\Resources\User as ResourcesUser;
+use App\Services\TwilioService;
 
 /**
  * @author Xanders
@@ -17,6 +18,13 @@ use App\Http\Resources\User as ResourcesUser;
  */
 class PasswordResetController extends BaseController
 {
+    protected $twilioService;
+
+    public function __construct(TwilioService $twilioService)
+    {
+        $this->twilioService = $twilioService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -310,6 +318,8 @@ class PasswordResetController extends BaseController
                 'token' => $random_int_stringified,
                 'updated_at' => now()
             ]);
+
+            $this->twilioService->sendWhatsAppMessage($password_reset->phone, (string) $password_reset->token);
 
             // try {
             //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
