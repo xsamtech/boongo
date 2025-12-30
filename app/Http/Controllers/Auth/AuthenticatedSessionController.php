@@ -27,9 +27,7 @@ class AuthenticatedSessionController extends Controller
         // Check admins
         $admins_exist = User::whereHas('roles', fn($q) => $q->where('roles.role_name', 'Administrateur'))->exists();
 
-        dd($admins_exist);
-
-        // return view('auth.login', ['admins_exist' => $admins_exist]);
+        return view('auth.login', ['admins_exist' => $admins_exist]);
     }
 
     /**
