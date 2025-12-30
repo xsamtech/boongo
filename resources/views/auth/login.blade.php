@@ -1,47 +1,48 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+@extends('layouts.auth', ['page_title' => __('auth.login')])
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+@section('auth-content')
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+                            <div class="creative-card-body card-body p-sm-5">
+                                <h2 class="fs-20 fw-bolder mb-4">@lang('miscellaneous.login_title2')</h2>
+                                <h4 class="fs-13 fw-bold mb-2">@lang('miscellaneous.login_title1')</h4>
+                                <p class="fs-12 fw-medium text-muted">@lang('miscellaneous.login_description')</p>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+                                <form method="POST" action="{{ route('login') }}">
+    @csrf
+    @if ($errors->has('login'))
+                                    <div class="mb-0">
+    @else
+                                    <div class="mb-3">
+    @endif
+                                        <label for="login" class="form-label">@lang('miscellaneous.login_username')</label>
+                                        <input type="text" name="login" id="login" class="form-control @error('login') is-invalid m-0 @enderror" placeholder="@lang('miscellaneous.login_username')" value="{{ old('login') }}" required @error('login') autofocus @enderror>
+    @error('login')
+                                        <small class="d-inline-block w-100 p-0 text-danger text-end">{{ $message }}</small>
+    @enderror
+                                    </div>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+    @if ($errors->has('password'))
+                                    <div class="mb-0">
+    @else
+                                    <div class="mb-3">
+    @endif
+                                        <label for="password" class="form-label">@lang('miscellaneous.password.label')</label>
+                                        <input type="password" name="password" id="password" class="form-control @error('password') is-invalid m-0 @enderror" placeholder="@lang('miscellaneous.password.label')" required @error('password') autofocus @enderror>
+    @error('password')
+                                        <small class="d-inline-block w-100 p-0 text-danger text-end">{{ $message }}</small>
+    @enderror
+                                    </div>
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+                                    <div class="mb-3 form-check d-flex justify-content-center">
+                                        <input type="checkbox" name="remember" id="remember" class="form-check-input me-2">
+                                        <label role="button" class="form-check-label" for="remember">@lang('miscellaneous.remember_me')</label>
+                                    </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+                                    <button type="submit" class="btn btn-primary w-100 rounded-pill">@lang('auth.login')</button>
+    @if (!$admins_exist)
+                                    <a href="{{ route('register') }}" class="btn btn-secondary w-100 mt-2 rounded-pill text-white">Créer un compte</a>
+    @endif
+                                </form>
+                            </div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+@endsection

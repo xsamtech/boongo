@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
@@ -17,7 +18,9 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 // Generate symbolic link
-Route::get('/symlink', function () { return view('symlink'); })->name('generate_symlink');
+Route::get('/symlink', function () {
+    return view('symlink');
+})->name('generate_symlink');
 // Home
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/language/{locale}', [HomeController::class, 'changeLanguage'])->name('change_language');
@@ -68,4 +71,4 @@ Route::get('/partners/{id}', [AdminController::class, 'partnerDatas'])->whereNum
 Route::get('/users', [AdminController::class, 'users'])->name('admin.users.home');
 Route::get('/users/{id}', [AdminController::class, 'usersDatas'])->whereNumber('id')->name('admin.users.datas');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

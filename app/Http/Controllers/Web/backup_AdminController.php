@@ -24,7 +24,6 @@ class AdminController extends Controller
     public function __construct()
     {
         $this::$api_client_manager = new ApiClientManager();
-        $this->middleware('auth');
     }
 
     // ==================================== HTTP GET METHODS ====================================
@@ -34,21 +33,57 @@ class AdminController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\View\View
      */
-    public function dashboard(Request $request)
-    {
-
-        return view('dashboard');
-    }
-
-    /**
-     * GET: Partners page
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\View\View
-     */
     public function work(Request $request)
     {
-        return view('work');
+        if ($request->has('type')) {
+            if ($request->get('type') == 'empty') {
+                return redirect('/');
+            }
+
+            // Group names
+            $work_type_group = 'Type d\'œuvre';
+            // All types by group
+            $types_by_group = $this::$api_client_manager::call('GET', getApiURL() . '/type/find_by_group/' . $work_type_group);
+            // All categories by group
+            $categories = $this::$api_client_manager::call('GET', getApiURL() . '/category');
+            $works = $this::$api_client_manager::call('GET', getApiURL()  . '/work/find_all_by_type/fr/' . $request->get('type') . ($request->has('page') ? '?page=' . $request->get('page') : ''));
+
+            if ($works->success) {
+                return view('work-test', [
+                    'types' => $types_by_group->data,
+                    'categories' => $categories->data,
+                    'works' => $works->data,
+                    'lastPage' => $works->lastPage,
+                ]);
+
+            } else {
+                $all_works = $this::$api_client_manager::call('GET', getApiURL()  . '/work' . ($request->has('page') ? '?page=' . $request->get('page') : ''));
+                return view('work-test', [
+                    'types' => $types_by_group->data,
+                    'categories' => $categories->data,
+                    'works' => $all_works->data,
+                    'lastPage' => $all_works->lastPage,
+                ]);
+            }
+
+        } else {
+            // User by "username"
+            $user_profile = $this::$api_client_manager::call('GET', getApiURL() . '/user/profile/xanderssamoth');
+            // Group names
+            $work_type_group = 'Type d\'œuvre';
+            // All types by group
+            $types_by_group = $this::$api_client_manager::call('GET', getApiURL() . '/type/find_by_group/' . $work_type_group);
+            // All categories by group
+            $categories = $this::$api_client_manager::call('GET', getApiURL() . '/category', $user_profile->data->api_token);
+            $works = $this::$api_client_manager::call('GET', getApiURL()  . '/work' . ($request->has('page') ? '?page=' . $request->get('page') : ''), $user_profile->data->api_token);
+
+            return view('work-test', [
+                'types' => $types_by_group->data,
+                'categories' => $categories->data,
+                'works' => $works->data,
+                'lastPage' => $works->lastPage,
+            ]);
+        }
     }
 
     /**
