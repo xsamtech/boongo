@@ -19,7 +19,8 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
         <!-- ============ Stylesheet ============ -->
-        <link rel="stylesheet" type="text/css" href="assets/vendors/css/vendors.min.css">
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/duralux/bootstrap.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('templates/admin/assets/vendors/css/vendors.min.css') }}">
         <!-- Core theme CSS (includes Bootstrap)-->
         <link rel="stylesheet" type="text/css" href="">
         <link rel="stylesheet" href="{{ asset('templates/admin/assets/css/theme.min.css') }}" />
