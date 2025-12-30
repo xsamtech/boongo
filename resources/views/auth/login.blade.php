@@ -39,9 +39,9 @@
                                     </div>
 
                                     <button type="submit" class="btn btn-primary w-100 rounded-pill">@lang('auth.login')</button>
-    @empty($admins_exist)
+    @if (!$admins_exist)
                                     <a href="{{ route('register') }}" class="btn btn-secondary w-100 mt-2 rounded-pill text-white">@lang('miscellaneous.register_title2')</a>
-    @endempty
+    @endif
                                 </form>
                             </div>
 

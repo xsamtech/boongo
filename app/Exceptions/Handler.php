@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Models\User;
 use Throwable;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -76,7 +77,9 @@ class Handler extends ExceptionHandler
         $is_api_request = $request->route()->getPrefix() == 'api';
 
         if ($is_api_request == false) {
-            return response()->view('auth.login');
+            $admins_exist = User::whereHas('roles', fn($q) => $q->where('roles.role_name', 'Administrateur'))->exists();
+
+            return response()->view('auth.login', ['admins_exist' => $admins_exist]);
         }
 
         return response()->json(['message' => __('notifications.401_description')], 401);

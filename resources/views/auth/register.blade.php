@@ -1,52 +1,70 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+@extends('layouts.auth', ['page_title' => __('auth.login')])
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
-        </div>
+@section('auth-content')
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+                            <div class="creative-card-body card-body p-sm-5">
+                                <h2 class="fs-20 fw-bolder mb-4 text-center">@lang('miscellaneous.register_title1')</h2>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+                                <form method="POST" action="{{ route('register') }}">
+    @csrf
+                                    <div id="profileImageWrapper" class="row mb-3">
+                                        <div class="col-sm-7 col-9 mx-auto position-relative">
+                                            <p class="mb-1 text-center">Profil</p>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
+                                            <img src="{{ asset('assets/img/user.png') }}" alt="Avatar" class="other-user-image img-fluid img-thumbnail rounded-4">
+                                            <label role="button" for="image_profile" class="btn btn-secondary rounded-circle position-absolute end-0 bottom-0">
+                                                <i class="bi bi-pencil-fill text-white fs-5"></i>
+                                                <input type="file" name="image_profile" id="image_profile" class="d-none">
+                                            </label>
+                                            <input type="hidden" name="image_64" id="image_64">
+                                        </div>
+                                    </div>
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+                                    <div class="mb-3">
+                                        <label for="firstname" class="form-label">Prénom</label>
+                                        <input type="text" name="firstname" class="form-control @error('firstname') is-invalid @enderror" id="firstname" value="{{ old('firstname') }}" autofocus>
+    @error('firstname')
+                                        <small class="text-danger d-inline-block mt-1 float-end">{{ $message }}</small>
+    @enderror
+                                    </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+                                    <div class="mb-3">
+                                        <label for="lastname" class="form-label">Nom</label>
+                                        <input type="text" name="lastname" class="form-control" id="lastname">
+                                    </div>
 
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">E-mail</label>
+                                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" id="email" value="{{ old('email') }}">
+    @error('email')
+                                        <small class="text-danger d-inline-block mt-1 float-end">{{ $message }}</small>
+    @enderror
+                                    </div>
 
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
+                                    <div class="mb-3">
+                                        <label for="phone" class="form-label">N° de téléphone</label>
+                                        <input type="text" name="phone" class="form-control" id="phone" value="{{ old('phone') }}">
+                                    </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Mot de passe</label>
+                                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" id="password">
+    @error('password')
+                                        <small class="text-danger d-inline-block mt-1 float-end">{{ $message }}</small>
+    @enderror
+                                    </div>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+                                    <div class="mb-3">
+                                        <label for="password_confirmation" class="form-label">Confirmer mot de passe</label>
+                                        <input type="password" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" id="password_confirmation">
+    @error('password_confirmation')
+                                        <small class="text-danger d-inline-block mt-1 float-end">{{ $message }}</small>
+    @enderror
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary w-100 rounded-pill">Enregistrer</button>
+                                    <a href="{{ route('login') }}" class="btn btn-secondary w-100 mt-2 rounded-pill text-white">Annuler</a>
+                                </form>
+                            </div>
+
+@endsection
