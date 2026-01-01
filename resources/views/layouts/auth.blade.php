@@ -24,6 +24,8 @@
         <!-- Core theme CSS (includes Bootstrap)-->
         <link rel="stylesheet" type="text/css" href="">
         <link rel="stylesheet" href="{{ asset('templates/admin/assets/css/theme.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/addons/custom/jquery/jquery-ui/jquery-ui.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('assets/addons/custom/cropper/css/cropper.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('assets/css/style.custom.css') }}" />
 
         <!--! HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries !-->
@@ -45,7 +47,7 @@
     <body>
         <!-- MODALS-->
         <!-- ### Crop other user image ### -->
-        <div class="modal fade" id="cropModal_profile" tabindex="-1" aria-hidden="true" data-bs-backdrop="true">
+        <div class="modal fade" id="cropModalProfile" tabindex="-1" aria-hidden="true" data-bs-backdrop="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header py-0">
@@ -76,7 +78,7 @@
         <!--! ================================================================ !-->
         <!--! [Start] Main Content !-->
         <!--! ================================================================ !-->
-        <main class="auth-creative-wrapper">
+        <main class="auth-creative-wrapper menu-sidebar2__content">
             <div class="auth-creative-inner">
                 <div class="creative-card-wrapper">
                     <div class="card my-4 overflow-hidden" style="z-index: 1">
@@ -104,8 +106,12 @@
         <!--! ================================================================ !-->
 
         <!-- ============ JavaScript ============ -->
+        <!-- jQuery JS -->
+        <script src="{{ asset('assets/addons/custom/jquery/jquery.min.js') }}"></script>
+        <script src="{{ asset('assets/addons/custom/jquery/jquery-ui/jquery-ui.min.js') }}"></script>
         <!-- Bootstrap core JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="{{ asset('assets/addons/custom/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+        {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script> --}}
         <!-- Vendors JS -->
         <script src="{{ asset('templates/admin/assets/vendors/js/vendors.min.js') }}"></script>
         <!--Apps Init -->
@@ -113,6 +119,7 @@
         <!-- Theme Customizer -->
         <script src="{{ asset('templates/admin/assets/js/theme-customizer-init.min.js') }}"></script>
         <!-- Core theme JS-->
+        <script src="{{ asset('assets/addons/custom/autosize/js/autosize.min.js') }}"></script>
         <script src="{{ asset('assets/js/script.custom.js') }}"></script>
     </body>
 </html>

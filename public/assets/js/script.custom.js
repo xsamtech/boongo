@@ -15,6 +15,8 @@ const modalUser = $('#cropModalUser');
 const retrievedAvatar = document.getElementById('retrieved_image');
 const retrievedImageOther = document.getElementById('retrieved_image_other');
 const currentImageOther = document.querySelector('#otherImageWrapper img');
+const retrievedImageProfile = document.getElementById('retrieved_image_profile');
+const currentImageProfile = document.querySelector('#profileImageWrapper img');
 let cropper;
 
 /* Mobile user agent */
@@ -144,56 +146,14 @@ function tokenWritter(id) {
  * Dynamically load JS files
  */
 function loadAllJS() {
-    $.getScript('/assets/addons/custom/jquery/js/jquery.min.js');
-    $.getScript('/assets/addons/custom/jquery/js/jquery-ui.min.js');
-    $.getScript('/assets/addons/streamo/js/vendor/jquery-migrate-3.3.0.min.js');
-    $.getScript('/assets/addons/custom/bootstrap/js/popper.min.js');
-    $.getScript('/assets/addons/custom/mdb/js/mdb.min.js');
-    $.getScript('/assets/addons/custom/bootstrap/js/bootstrap.bundle.min.js');
-    $.getScript('/assets/addons/streamo/js/plugins.js');
-    $.getScript('/assets/addons/streamo/js/ajax-mail.js');
-    $.getScript('/assets/addons/custom/perfect-scrollbar/dist/perfect-scrollbar.min.js');
-    $.getScript('/assets/addons/custom/cropper/js/cropper.min.js');
-    $.getScript('/assets/addons/custom/sweetalert2/dist/sweetalert2.min.js');
-    $.getScript('/assets/addons/custom/jquery/scroll4ever/js/jquery.scroll4ever.js');
-    $.getScript('/assets/addons/custom/autosize/js/autosize.min.js');
-    $.getScript('/assets/addons/streamo/js/main.js');
-    $.getScript('/assets/addons/custom/biliap/js/biliap.cores.js');
-    $.getScript('/assets/js/script.js');
+    // $.getScript('/assets/...');
 }
 
 $(document).ready(function () {
-    /* Perfect scrollbar */
-    const ps = new PerfectScrollbar('.menu-sidebar2__content', {
-        wheelSpeed: 2,
-        wheelPropagation: true,
-        minScrollbarLength: 20
-    });
-
     /* Bootstrap Tooltip */
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl)
-    });
-
-
-    /* jQuery DataTable */
-    $('#dataList, .dataList').DataTable({
-        language: { url: currentHost + '/assets/addons/custom/dataTables/Plugins/i18n/' + $('html').attr('lang') + '.json' },
-        paging: 'matchMedia' in window ? (window.matchMedia('(min-width: 500px)').matches ? true : false) : false,
-        ordering: false,
-        info: 'matchMedia' in window ? (window.matchMedia('(min-width: 500px)').matches ? true : false) : false
-    });
-
-    /* jQuery scroll4ever */
-    $('#scope').scroll4ever({
-        trigger: '.next-page-link',
-        container: '#items',
-        selector: '.item',
-        distance: 100,
-        debug: true,
-        start: function () { $('.next-page-link').html('<div class="loader"><div class="loaderBar"></div></div>'); },
-        complete: function () { }
     });
 
     /* Custom Boostrap stylesheet */
@@ -369,6 +329,57 @@ $(document).ready(function () {
                 $(currentImageOther).attr('src', base64_data);
                 $('#image_64').attr('value', base64_data);
                 $('#otherImageWrapper p').removeClass('d-none');
+            };
+        });
+    });
+
+    /* Display cropped profile image */
+    $('#image_profile').on('change', function (e) {
+        var files = e.target.files;
+        var done = function (url) {
+            retrievedImageProfile.src = url;
+            var modal = new bootstrap.Modal(document.getElementById('cropModalProfile'), { keyboard: false });
+
+            modal.show();
+        };
+
+        if (files && files.length > 0) {
+            var reader = new FileReader();
+
+            reader.onload = function () {
+                done(reader.result);
+            };
+            reader.readAsDataURL(files[0]);
+        }
+    });
+
+    $('#cropModalProfile').on('shown.bs.modal', function () {
+        cropper = new Cropper(retrievedImageProfile, {
+            // aspectRatio: 1,
+            viewMode: 3,
+            preview: '#cropModalProfile .preview'
+        });
+
+    }).on('hidden.bs.modal', function () {
+        cropper.destroy();
+
+        cropper = null;
+    });
+
+    $('#cropModalProfile #crop_profile').on('click', function () {
+        var canvas = cropper.getCroppedCanvas({ width: 700, height: 700 });
+
+        canvas.toBlob(function (blob) {
+            URL.createObjectURL(blob);
+            var reader = new FileReader();
+
+            reader.readAsDataURL(blob);
+            reader.onloadend = function () {
+                var base64_data = reader.result;
+
+                $(currentImageOther).attr('src', base64_data);
+                $('#image_64').attr('value', base64_data);
+                $('#profileImageWrapper p').removeClass('d-none');
             };
         });
     });
