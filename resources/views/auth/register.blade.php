@@ -7,14 +7,14 @@
 
                                 <form method="POST" action="{{ route('register') }}">
     @csrf
-                                    <div id="profileImageWrapper" class="row mb-3">
+                                    <div id="otherImageWrapper" class="row mb-3">
                                         <div class="col-sm-7 col-9 mx-auto position-relative">
                                             <p class="mb-1 text-center">Profil</p>
 
                                             <img src="{{ asset('assets/img/user.png') }}" alt="Avatar" class="other-user-image img-fluid img-thumbnail rounded-4">
-                                            <label role="button" for="image_profile" class="btn btn-secondary rounded-circle position-absolute end-0 bottom-0">
+                                            <label role="button" for="image_other" class="btn btn-danger position-absolute end-0 bottom-0 rounded-circle p-0" style="width: 3rem; height: 3rem;">
                                                 <i class="bi bi-pencil-fill text-white fs-5"></i>
-                                                <input type="file" name="image_profile" id="image_profile" class="d-none">
+                                                <input type="file" name="image_other" id="image_other" class="d-none">
                                             </label>
                                             <input type="hidden" name="image_64" id="image_64">
                                         </div>
@@ -62,7 +62,7 @@
     @enderror
                                     </div>
 
-                                    <button type="submit" class="btn btn-primary w-100 rounded-pill">Enregistrer</button>
+                                    <button type="submit" class="btn btn-success w-100 rounded-pill">Enregistrer</button>
                                     <a href="{{ route('login') }}" class="btn btn-secondary w-100 mt-2 rounded-pill text-white">Annuler</a>
                                 </form>
                             </div>

@@ -15,8 +15,6 @@ const modalUser = $('#cropModalUser');
 const retrievedAvatar = document.getElementById('retrieved_image');
 const retrievedImageOther = document.getElementById('retrieved_image_other');
 const currentImageOther = document.querySelector('#otherImageWrapper img');
-const retrievedImageProfile = document.getElementById('retrieved_image_profile');
-const currentImageProfile = document.querySelector('#profileImageWrapper img');
 let cropper;
 
 /* Mobile user agent */
@@ -304,7 +302,7 @@ $(document).ready(function () {
 
     $('#cropModalOther').on('shown.bs.modal', function () {
         cropper = new Cropper(retrievedImageOther, {
-            // aspectRatio: 1,
+            aspectRatio: 1,
             viewMode: 3,
             preview: '#cropModalOther .preview'
         });
@@ -316,7 +314,10 @@ $(document).ready(function () {
     });
 
     $('#cropModalOther #crop_other').on('click', function () {
-        var canvas = cropper.getCroppedCanvas(/*{ width: 700, height: 700 }*/);
+        var canvas = cropper.getCroppedCanvas({
+            width: 700,
+            height: 700
+        });
 
         canvas.toBlob(function (blob) {
             URL.createObjectURL(blob);
@@ -329,57 +330,6 @@ $(document).ready(function () {
                 $(currentImageOther).attr('src', base64_data);
                 $('#image_64').attr('value', base64_data);
                 $('#otherImageWrapper p').removeClass('d-none');
-            };
-        });
-    });
-
-    /* Display cropped profile image */
-    $('#image_profile').on('change', function (e) {
-        var files = e.target.files;
-        var done = function (url) {
-            retrievedImageProfile.src = url;
-            var modal = new bootstrap.Modal(document.getElementById('cropModalProfile'), { keyboard: false });
-
-            modal.show();
-        };
-
-        if (files && files.length > 0) {
-            var reader = new FileReader();
-
-            reader.onload = function () {
-                done(reader.result);
-            };
-            reader.readAsDataURL(files[0]);
-        }
-    });
-
-    $('#cropModalProfile').on('shown.bs.modal', function () {
-        cropper = new Cropper(retrievedImageProfile, {
-            // aspectRatio: 1,
-            viewMode: 3,
-            preview: '#cropModalProfile .preview'
-        });
-
-    }).on('hidden.bs.modal', function () {
-        cropper.destroy();
-
-        cropper = null;
-    });
-
-    $('#cropModalProfile #crop_profile').on('click', function () {
-        var canvas = cropper.getCroppedCanvas({ width: 700, height: 700 });
-
-        canvas.toBlob(function (blob) {
-            URL.createObjectURL(blob);
-            var reader = new FileReader();
-
-            reader.readAsDataURL(blob);
-            reader.onloadend = function () {
-                var base64_data = reader.result;
-
-                $(currentImageOther).attr('src', base64_data);
-                $('#image_64').attr('value', base64_data);
-                $('#profileImageWrapper p').removeClass('d-none');
             };
         });
     });

@@ -47,7 +47,7 @@
     <body>
         <!-- MODALS-->
         <!-- ### Crop other user image ### -->
-        <div class="modal fade" id="cropModalProfile" tabindex="-1" aria-hidden="true" data-bs-backdrop="true">
+        <div class="modal fade" id="cropModalOther" tabindex="-1" aria-hidden="true" data-bs-backdrop="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header py-0">
@@ -60,7 +60,7 @@
                             <div class="row">
                                 <div class="col-12 mb-sm-0 mb-4">
                                     <div class="bg-image">
-                                        <img src="" id="retrieved_image_profile" class="img-fluid">
+                                        <img src="" id="retrieved_image_other" class="img-fluid">
                                     </div>
                                 </div>
                             </div>
@@ -68,7 +68,7 @@
                     </div>
                     <div class="modal-footer d-flex justify-content-between">
                         <button type="button" class="btn btn-secondary px-4 rounded-pill text-white" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" id="crop_profile" class="btn btn-primary px-4 rounded-pill" data-bs-dismiss="modal">Enregistrer</button>
+                        <button type="button" id="crop_other" class="btn btn-primary px-4 rounded-pill" data-bs-dismiss="modal">Enregistrer</button>
                     </div>
                 </div>
             </div>
@@ -78,25 +78,15 @@
         <!--! ================================================================ !-->
         <!--! [Start] Main Content !-->
         <!--! ================================================================ !-->
-        <main class="auth-creative-wrapper menu-sidebar2__content">
-            <div class="auth-creative-inner">
-                <div class="creative-card-wrapper">
-                    <div class="card my-4 overflow-hidden" style="z-index: 1">
-                        <div class="row flex-1 g-0">
-                            <div class="col-lg-6 h-100 my-auto order-1 order-lg-0">
-                                <div class="wd-50 bg-white p-2 rounded-circle shadow-lg position-absolute translate-middle top-50 start-50 d-none d-lg-block">
-                                    <img src="{{ asset('assets/img/logo.png') }}" alt="" class="img-fluid">
-                                </div>
+        <main class="auth-minimal-wrapper menu-sidebar2__content">
+            <div class="auth-minimal-inner">
+                <div class="minimal-card-wrapper">
+                    <div class="card mb-4 mt-5 mx-4 mx-sm-0 position-relative">
+                        <div class="wd-50 bg-white p-2 rounded-circle shadow-lg position-absolute translate-middle top-0 start-50">
+                            <img src="{{ asset('assets/img/logo.png') }}" alt="" class="img-fluid">
+                        </div>
 
 @yield('auth-content')
-
-                            </div>
-                            <div class="col-lg-6 bg-primary order-0 order-lg-1">
-                                <div class="h-100 d-flex align-items-center justify-content-center">
-                                    <img src="{{ asset('assets/img/auth-user.png') }}" alt="" class="img-fluid">
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -118,8 +108,10 @@
         <script src="{{ asset('templates/admin/assets/js/common-init.min.js') }}"></script>
         <!-- Theme Customizer -->
         <script src="{{ asset('templates/admin/assets/js/theme-customizer-init.min.js') }}"></script>
-        <!-- Core theme JS-->
+        <!-- Autosize JS-->
         <script src="{{ asset('assets/addons/custom/autosize/js/autosize.min.js') }}"></script>
+        <!-- Core theme JS-->
+        <script src="{{ asset('assets/addons/custom/cropper/js/cropper.min.js') }}"></script>
         <script src="{{ asset('assets/js/script.custom.js') }}"></script>
     </body>
 </html>
