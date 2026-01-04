@@ -50,6 +50,7 @@ class User extends JsonResource
             'is_incognito' => $this->is_incognito,
             'has_active_code' => $this->hasActiveCode(),
             'is_admin' => $this->hasRole('Administrateur'),
+            'is_manager' => $this->hasRole('Manager'),
             'is_partner' => $this->hasRole('Partenaire'),
             'is_sponsor' => $this->hasRole('Sponsor'),
             'is_publisher' => $this->hasRole('Publieur'),

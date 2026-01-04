@@ -29,7 +29,7 @@ class AdminController extends Controller
 
     // ==================================== HTTP GET METHODS ====================================
     /**
-     * GET: Partners page
+     * GET: Home page
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\View\View
@@ -41,7 +41,7 @@ class AdminController extends Controller
     }
 
     /**
-     * GET: Partners page
+     * GET: Work page
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\View\View

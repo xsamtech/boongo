@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Resources\LiteUser as ResourcesUser;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
@@ -84,6 +85,15 @@ class AuthenticatedSessionController extends Controller
             ]);
         }
 
+        $current_user = (new ResourcesUser($user))->resolve();
+
+        if ($current_user['is_admin'] == false AND $current_user['is_manager'] == false) {
+            // Erreur générique pour le login
+            throw ValidationException::withMessages([
+                'login' => __('notifications.403_description'),
+            ]);
+        }
+
         $request->session()->regenerate();
 
         return redirect()->intended(RouteServiceProvider::HOME);
@@ -100,6 +110,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/admin');
     }
 }

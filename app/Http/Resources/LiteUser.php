@@ -49,6 +49,7 @@ class LiteUser extends JsonResource
             'is_promoted' => $this->is_promoted,
             'is_incognito' => $this->is_incognito,
             'is_admin' => $this->hasRole('Administrateur'),
+            'is_manager' => $this->hasRole('Manager'),
             'is_partner' => $this->hasRole('Partenaire'),
             'is_sponsor' => $this->hasRole('Sponsor'),
             'is_publisher' => $this->hasRole('Publieur'),

@@ -286,16 +286,35 @@ return [
         'messages' => 'Messages',
         'notifications' => 'Notifications',
         'admin' => [
-            'role' => 'Role',
+            'country' => 'Country',
+            'currency' => [
+                'title' => 'Currencies',
+                'rate' => 'Rates',
+            ],
+            'role' => [
+                'title' => 'Roles',
+                'users' => 'Users',
+            ],
             'group' => [
                 'title' => 'Group',
                 'type' => 'Type',
                 'status' => 'Status',
                 'category' => 'Category'
             ],
+            'report-reason' => [
+                'title' => 'Report reasons',
+                'link' => 'Manage reasons',
+                'reported' => 'Data reported',
+            ],
             'subscription' => 'Subscription',
             'work' => 'Work',
-            'users' => 'Users',
+            'messages' => 'Messages',
+        ],
+        'manager' => [
+            'members' => 'Members',
+            'establishments' => 'Establishments',
+            'institutions' => 'Institutions',
+            'reported' => 'Data reported',
         ],
         'public' => [
             'books' => 'Books',

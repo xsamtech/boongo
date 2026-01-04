@@ -5,9 +5,9 @@
         <meta name="keywords" content="@lang('miscellaneous.keywords')">
         <meta name="bng-url" content="{{ getWebURL() }}">
         <meta name="bng-api-url" content="{{ getApiURL() }}">
-        <meta name="bng-visitor" content="{{ !empty(Auth::user()) ? Auth::user()->id : null }}">
+        <meta name="bng-visitor" content="">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <meta name="bng-ref" content="{{ !empty(Auth::user()) ? Auth::user()->api_token : null }}">
+        <meta name="bng-ref" content="">
 
         <!-- ============ Favicon ============ -->
         <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/img/favicon/apple-touch-icon.png') }}">

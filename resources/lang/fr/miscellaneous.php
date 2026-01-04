@@ -286,16 +286,35 @@ return [
         'messages' => 'Messages',
         'notifications' => 'Notifications',
         'admin' => [
-            'role' => 'Rôle',
+            'country' => 'Pays',
+            'currency' => [
+                'title' => 'Devises',
+                'rate' => 'Taux',
+            ],
+            'role' => [
+                'title' => 'Rôles',
+                'users' => 'Utilisateurs',
+            ],
             'group' => [
                 'title' => 'Groupe',
                 'type' => 'Type',
-                'status' => 'Etat',
-                'category' => 'Catégorie'
+                'status' => 'État',
+                'category' => 'Categorie'
+            ],
+            'report-reason' => [
+                'title' => 'Motifs de signalement',
+                'link' => 'Gérer les motifs',
+                'reported' => 'Données signalées',
             ],
             'subscription' => 'Abonnement',
             'work' => 'Œuvre',
-            'users' => 'Utilisateurs',
+            'messages' => 'Messages',
+        ],
+        'manager' => [
+            'members' => 'Membres',
+            'establishments' => 'Établissements',
+            'institutions' => 'Institutions',
+            'reported' => 'Données signalées',
         ],
         'public' => [
             'books' => 'Ouvrages',
