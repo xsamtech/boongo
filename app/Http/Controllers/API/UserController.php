@@ -233,6 +233,8 @@ class UserController extends BaseController
 
                 Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
+                $this->infobipService->sendMessage($password_reset->phone, (string) $password_reset->token, $inputs['firstname'], 'en');
+
                 // try {
                 //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
 
@@ -263,6 +265,8 @@ class UserController extends BaseController
                         'token' => $random_int_stringified,
                         'former_password' => Random::generate(10, 'a-zA-Z')
                     ]);
+
+                    $this->infobipService->sendMessage($password_reset->phone, (string) $password_reset->token, $inputs['firstname'], 'en');
 
                     // try {
                     //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
