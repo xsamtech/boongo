@@ -31,7 +31,7 @@ use App\Http\Resources\Partner as ResourcesPartner;
 use App\Http\Resources\PasswordReset as ResourcesPasswordReset;
 use App\Http\Resources\ToxicContent as ResourcesToxicContent;
 use App\Http\Resources\User as ResourcesUser;
-use App\Services\TwilioService;
+use App\Services\InfobipService;
 
 /**
  * @author Xanders
@@ -39,11 +39,11 @@ use App\Services\TwilioService;
  */
 class UserController extends BaseController
 {
-    protected $twilioService;
+    protected $infobipService;
 
-    public function __construct(TwilioService $twilioService)
+    public function __construct(InfobipService $infobipService)
     {
-        $this->twilioService = $twilioService;
+        $this->infobipService = $infobipService;
     }
 
     /**
@@ -173,7 +173,7 @@ class UserController extends BaseController
 
                 Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
-                $this->twilioService->sendWhatsAppMessage($password_reset->phone, (string) $password_reset->token);
+                $this->infobipService->sendMessage($password_reset->phone, (string) $password_reset->token, $inputs['firstname'], 'en');
 
                 // try {
                 //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
@@ -204,7 +204,7 @@ class UserController extends BaseController
                         'former_password' => $request->password
                     ]);
 
-                    $this->twilioService->sendWhatsAppMessage($password_reset->phone, (string) $password_reset->token);
+                    $this->infobipService->sendMessage($password_reset->phone, (string) $password_reset->token, $inputs['firstname'], 'en');
 
                     // try {
                     //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
