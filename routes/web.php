@@ -25,6 +25,7 @@ Route::get('/symlink', function () {
 // Home
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/language/{locale}', [HomeController::class, 'changeLanguage'])->name('change_language');
+Route::post('/download', [HomeController::class, 'download'])->name('download');
 Route::get('/notifications', [HomeController::class, 'notification'])->name('notification.home');
 Route::get('/about', [HomeController::class, 'about'])->name('about.home');
 Route::get('/about/{entity}', [HomeController::class, 'aboutEntity'])->name('about.entity');

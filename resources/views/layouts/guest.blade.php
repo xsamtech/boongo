@@ -60,12 +60,35 @@
             </div>
         </nav>
 
+@if (\Session::has('error_message'))
+        <!-- Alert Start -->
+        <div class="position-relative">
+            <div class="row position-fixed w-100" style="top: 70px; z-index: 9999;">
+                <div class="col-lg-4 col-sm-6 mx-auto">
+                    <div class="alert alert-danger alert-dismissible fade show rounded-0" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2 fs-4" style="vertical-align: -3px;"></i> {!! \Session::get('error_message') !!}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Alert End -->
+@endif
+
 @yield('guest-content')
 
         <!-- App badge section-->
         <section class="bg-gradient-primary-to-secondary{{ request()->has('app') ? ' d-none' : '' }}" id="download">
             <div class="container px-5">
                 <h2 class="text-center text-white font-alt mb-4">Téléchargez l'appli maintenant !</h2>
+
+                <form action="{{ route('download') }}" method="POST" class="mb-3 text-center">
+    @csrf
+                    <button class="btn btn-light">
+                        <i class="bi bi-android me-2 fs-5 align-middle"></i> Télécharger sur le site
+                    </button>
+                </form>
+
                 <div class="d-flex flex-column flex-lg-row align-items-center justify-content-center">
                     <a class="me-lg-3 mb-4 mb-lg-0" href="#!">
                         <img class="app-badge" src="{{ asset('templates/public/assets/img/google-play-badge.svg') }}" alt="..." />

@@ -9,6 +9,7 @@ use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @author Xanders
@@ -243,6 +244,23 @@ class HomeController extends Controller
     }
 
     // ==================================== HTTP POST METHODS ====================================
+    /**
+     * POST: Download app
+     *
+     * @param  $locale
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function download()
+    {
+        $path = public_path('assets/apps/boongo-release-0_0_2.apk');
+
+        if (! file_exists($path)) {
+             return redirect()->back()->with('error_message', 'Fichier non trouvé.');
+        }
+
+        return response()->download($path,'Boongo.apk');
+    }
+
     /**
      * POST: Register subscription
      *
