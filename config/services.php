@@ -44,10 +44,9 @@ return [
         'api_token' => env('FLEXPAY_API_TOKEN'),
     ],
 
-    'twilio' => [
-        'sid' => env('TWILIO_AUTH_SID'),
-        'token' => env('TWILIO_AUTH_TOKEN'),
-        'whatsapp_from' => env('TWILIO_WHATSAPP_FROM')
+    'infobip' => [
+        'base_url' => env('INFOBIP_BASE_URL'),
+        'api_key' => env('INFOBIP_API_KEY')
     ],
 
 ];

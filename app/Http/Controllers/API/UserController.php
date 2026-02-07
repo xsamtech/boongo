@@ -173,7 +173,11 @@ class UserController extends BaseController
 
                 Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
-                $this->infobipService->sendMessage($password_reset->phone, (string) $password_reset->token, $inputs['firstname'], 'en');
+                $sendSMS = $this->infobipService->sendMessage($password_reset->phone, (string) $password_reset->token);
+
+                if (!$sendSMS['success']) {
+                    return $this->handleError('Oups!', $sendSMS['message'], 500);
+                }
 
                 // try {
                 //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
@@ -204,7 +208,11 @@ class UserController extends BaseController
                         'former_password' => $request->password
                     ]);
 
-                    $this->infobipService->sendMessage($password_reset->phone, (string) $password_reset->token, $inputs['firstname'], 'en');
+                    $sendSMS = $this->infobipService->sendMessage($password_reset->phone, (string) $password_reset->token);
+
+                    if (!$sendSMS['success']) {
+                        return $this->handleError('Oups!', $sendSMS['message'], 500);
+                    }
 
                     // try {
                     //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
@@ -233,7 +241,11 @@ class UserController extends BaseController
 
                 Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
-                $this->infobipService->sendMessage($password_reset->phone, (string) $password_reset->token, $inputs['firstname'], 'en');
+                $sendSMS = $this->infobipService->sendMessage($password_reset->phone, (string) $password_reset->token);
+
+                if (!$sendSMS['success']) {
+                    return $this->handleError('Oups!', $sendSMS['message'], 500);
+                }
 
                 // try {
                 //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
@@ -266,7 +278,11 @@ class UserController extends BaseController
                         'former_password' => Random::generate(10, 'a-zA-Z')
                     ]);
 
-                    $this->infobipService->sendMessage($password_reset->phone, (string) $password_reset->token, $inputs['firstname'], 'en');
+                    $sendSMS = $this->infobipService->sendMessage($password_reset->phone, (string) $password_reset->token);
+
+                    if (!$sendSMS['success']) {
+                        return $this->handleError('Oups!', $sendSMS['message'], 500);
+                    }
 
                     // try {
                     //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));

@@ -191,6 +191,7 @@ return [
     'create_user_success' => 'Utilisateur créé',
     'login_user_success' => 'Vous êtes connecté(e)',
     'blocked_user' => 'Ce compte est encore bloqué',
+    'create_user_SMS_success' => 'Vous avez reçu un SMS',
     'create_user_SMS_failed' => 'Il y a un problème avec le service des SMS',
     'update_user_success' => 'Utilisateur modifié',
     'update_password_success' => 'Mot de passe modifié',
@@ -245,6 +246,7 @@ return [
     'unverified_token_phone' => 'Votre n° de téléphone n’est pas encore vérifié',
     'bad_token' => 'Le code OTP ne correspond pas',
     'token_label' => 'Votre code OTP :',
+    'token_label_sms' => 'Your verification code is :token. It expires in 2 minutes. "BOONGO: The Knowledge Guide"!',
     // PersonalAccessToken
     'find_all_personal_access_tokens_success' => 'Jetons personnels trouvés',
     'find_personal_access_token_success' => 'Jeton personnel trouvé',

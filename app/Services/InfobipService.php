@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
-use Exception;
-use GuzzleHttp\Client;
-use Illuminate\Support\Str;
+use Infobip\Api\SmsApi;
+use Infobip\ApiException;
+use Infobip\Configuration;
+use Infobip\Model\SmsAdvancedTextualRequest;
+use Infobip\Model\SmsDestination;
+use Infobip\Model\SmsTextualMessage;
 
 /**
  * @author Xanders
@@ -12,54 +15,39 @@ use Illuminate\Support\Str;
  */
 class InfobipService
 {
-    protected $apiUrl = 'https://vy6rne.api.infobip.com/whatsapp/1/message/template';
-    protected $apiKey = 'd7dc849ac3d0ebd6a297aaa3fcbcaf6a-26287075-fb02-4856-80be-51ff3560f380'; // Mets ta clé API ici (ou utilise un .env)
-    protected $from = '447860088970';  // Ton numéro WhatsApp ou un numéro autorisé
-
-    public function sendMessage($to, $templateName, $placeholder, $language = 'en')
+    public function sendMessage($to, $messageText)
     {
-        // Création du client Guzzle
-        $client = new Client();
+        $configuration = new Configuration(
+            host: config('services.infobip.base_url'),
+            apiKey: config('services.infobip.api_key')
+        );
 
-        // Préparer les données avec un seul placeholder
-        $data = [
-            'messages' => [
-                [
-                    'from' => $this->from,
-                    'to' => $to,
-                    'messageId' => (string) Str::uuid(),  // Génère un ID unique pour chaque message
-                    'content' => [
-                        'templateName' => $templateName,
-                        'templateData' => [
-                            'body' => [
-                                'placeholders' => [$placeholder]  // Un seul placeholder
-                            ]
-                        ],
-                        'language' => $language,
-                    ]
-                ]
-            ]
-        ];
+        $sendSmsApi = new SmsApi(config: $configuration);
+
+        $message = new SmsTextualMessage(
+            destinations: [
+                new SmsDestination(to: $to)
+            ],
+            from: 'Boongo',
+            text: __('notifications.token_label_sms', ['token' => $messageText]),
+        );
+
+        $request = new SmsAdvancedTextualRequest(messages: [$message]);
 
         try {
-            // Envoi de la requête POST via Guzzle
-            $response = $client->post($this->apiUrl, [
-                'headers' => [
-                    'Authorization' => 'App ' . $this->apiKey,
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                ],
-                'json' => $data,
-            ]);
+            $smsResponse = $sendSmsApi->sendSmsMessage($request);
 
-            // Vérification du statut de la réponse
-            if ($response->getStatusCode() == 200) {
-                return $response->getBody()->getContents();  // Retourner la réponse si tout s'est bien passé
-            } else {
-                throw new Exception('Unexpected HTTP status: ' . $response->getStatusCode());
-            }
-        } catch (Exception $e) {
-            return 'Error: ' . $e->getMessage();
+            return [
+                'success' => true,
+                'message' => __('notifications.sms_sent_successfully'),
+                'data'    => $smsResponse,
+            ];
+        } catch (ApiException $apiException) {
+            return [
+                'success' => false,
+                'message' => __('notifications.create_user_SMS_failed'),
+                'error'   => $apiException->getMessage(),
+            ];
         }
     }
 }
