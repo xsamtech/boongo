@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Redirect;
  * @author Xanders
  * @see https://team.xsamtech.com/xanderssamoth
  */
-class AdminController extends Controller
+class backup_AdminController extends Controller
 {
     public static $api_client_manager;
 
