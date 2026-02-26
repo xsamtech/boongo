@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\PasswordReset as ResourcesPasswordReset;
 use App\Http\Resources\User as ResourcesUser;
-use App\Services\InfobipService;
+use App\Services\LAfricaMobileService;
 
 /**
  * @author Xanders
@@ -18,11 +18,11 @@ use App\Services\InfobipService;
  */
 class PasswordResetController extends BaseController
 {
-    protected $infobipService;
+    protected $lafricamobileService;
 
-    public function __construct(InfobipService $infobipService)
+    public function __construct(LAfricaMobileService $lafricamobileService)
     {
-        $this->infobipService = $infobipService;
+        $this->lafricamobileService = $lafricamobileService;
     }
 
     /**
@@ -319,7 +319,7 @@ class PasswordResetController extends BaseController
                 'updated_at' => now()
             ]);
 
-            $sendSMS = $this->infobipService->sendMessage($password_reset->phone, (string) $password_reset->token);
+            $sendSMS = $this->lafricamobileService->sendMessage($password_reset->phone, (string) $password_reset->token);
 
             if (!$sendSMS['success']) {
                 return $this->handleError('Oups!', $sendSMS['message'], 500);

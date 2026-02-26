@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Services;
+
+use Exception;
+
+/**
+ * @author Xanders
+ * @see https://team.xsamtech.com/xanderssamoth
+ */
+class LAfricaMobileService
+{
+    public function sendMessage($to, $messageText)
+    {
+        try {
+            $accountid = config('services.lafricamobile.access_key');
+            $password = config('services.lafricamobile.access_password');
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://lamsms.lafricamobile.com/api',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => '{
+                    "accountid": ' . $accountid . ',
+                    "password": ' . $password . ',
+                    "sender": "BOONGO",
+                    "ret_id": "Push_1",
+                    "ret_url": "https://mon-site.com/reception",
+                    "priority": "2",
+                    "text": ' . $messageText . ',
+                    "to": [
+                        {
+                        "ret_id_1": ' . $to . '
+                        }
+                    ]
+                }',
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json',
+                ),
+            ));
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+
+            return [
+                'success' => true,
+                'message' => __('notifications.sms_sent_successfully'),
+                'data'    => $response,
+            ];
+
+        } catch (Exception $apiException) {
+            return [
+                'success' => false,
+                'message' => __('notifications.create_user_SMS_failed'),
+                'error'   => $apiException->getMessage(),
+            ];
+        }
+    }
+}

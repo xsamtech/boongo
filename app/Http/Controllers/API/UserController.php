@@ -31,7 +31,7 @@ use App\Http\Resources\Partner as ResourcesPartner;
 use App\Http\Resources\PasswordReset as ResourcesPasswordReset;
 use App\Http\Resources\ToxicContent as ResourcesToxicContent;
 use App\Http\Resources\User as ResourcesUser;
-use App\Services\InfobipService;
+use App\Services\LAfricaMobileService;
 
 /**
  * @author Xanders
@@ -39,11 +39,11 @@ use App\Services\InfobipService;
  */
 class UserController extends BaseController
 {
-    protected $infobipService;
+    protected $lafricamobileService;
 
-    public function __construct(InfobipService $infobipService)
+    public function __construct(LAfricaMobileService $lafricamobileService)
     {
-        $this->infobipService = $infobipService;
+        $this->lafricamobileService = $lafricamobileService;
     }
 
     /**
@@ -173,7 +173,7 @@ class UserController extends BaseController
 
                 Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
-                $sendSMS = $this->infobipService->sendMessage($password_reset->phone, (string) $password_reset->token);
+                $sendSMS = $this->lafricamobileService->sendMessage($password_reset->phone, (string) $password_reset->token);
 
                 if (!$sendSMS['success']) {
                     return $this->handleError('Oups!', $sendSMS['message'], 500);
@@ -208,7 +208,7 @@ class UserController extends BaseController
                         'former_password' => $request->password
                     ]);
 
-                    $sendSMS = $this->infobipService->sendMessage($password_reset->phone, (string) $password_reset->token);
+                    $sendSMS = $this->lafricamobileService->sendMessage($password_reset->phone, (string) $password_reset->token);
 
                     if (!$sendSMS['success']) {
                         return $this->handleError('Oups!', $sendSMS['message'], 500);
@@ -241,7 +241,7 @@ class UserController extends BaseController
 
                 Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
-                $sendSMS = $this->infobipService->sendMessage($password_reset->phone, (string) $password_reset->token);
+                $sendSMS = $this->lafricamobileService->sendMessage($password_reset->phone, (string) $password_reset->token);
 
                 if (!$sendSMS['success']) {
                     return $this->handleError('Oups!', $sendSMS['message'], 500);
@@ -278,7 +278,7 @@ class UserController extends BaseController
                         'former_password' => Random::generate(10, 'a-zA-Z')
                     ]);
 
-                    $sendSMS = $this->infobipService->sendMessage($password_reset->phone, (string) $password_reset->token);
+                    $sendSMS = $this->lafricamobileService->sendMessage($password_reset->phone, (string) $password_reset->token);
 
                     if (!$sendSMS['success']) {
                         return $this->handleError('Oups!', $sendSMS['message'], 500);

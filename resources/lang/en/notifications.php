@@ -43,6 +43,8 @@ return [
     'create_error' => 'The creation failed!',
     'update_error' => 'The change failed!',
     'registered_data' => 'Data registered',
+    'sms_sent_successfully' => 'SMS sent successfully',
+    'create_user_SMS_failed' => 'SMS sending failed',
     'required_fields' => 'Please check the required fields',
     'transaction_waiting' => 'Please confirm the message from your operator on your phone. Then press the button below.',
     'transaction_done' => 'Your transaction is complete!',

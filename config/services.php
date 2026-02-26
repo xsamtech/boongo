@@ -49,4 +49,9 @@ return [
         'api_key' => env('INFOBIP_API_KEY')
     ],
 
+    'lafricamobile' => [
+        'access_key' => env('LAFRICAMOBILE_ACCESS_KEY'),
+        'access_password' => env('LAFRICAMOBILE_ACCESS_PASSWORD')
+    ],
+
 ];

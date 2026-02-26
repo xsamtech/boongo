@@ -43,6 +43,8 @@ return [
     'create_error' => 'La création a échoué !',
     'update_error' => 'La modification a échoué !',
     'registered_data' => 'Données enregistrées',
+    'sms_sent_successfully' => 'SMS envoyé avec succès',
+    'create_user_SMS_failed' => 'Échec de l\'envoi du SMS',
     'required_fields' => 'Veuillez vérifier les champs obligatoires',
     'transaction_waiting' => 'Veuillez valider le message de votre opérateur sur votre téléphone. Ensuite appuyez sur le bouton ci-dessous.',
     'transaction_done' => 'Votre opération est terminée !',
