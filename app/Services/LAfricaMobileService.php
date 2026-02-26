@@ -20,25 +20,17 @@ class LAfricaMobileService
             curl_setopt_array($curl, array(
                 CURLOPT_URL => 'https://lamsms.lafricamobile.com/api',
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => '{
                     "accountid": ' . $accountid . ',
                     "password": ' . $password . ',
-                    "sender": "BOONGO",
+                    "sender": "LAM TEST",
                     "ret_id": "Push_1",
                     "ret_url": "https://mon-site.com/reception",
-                    "priority": "2",
                     "text": ' . $messageText . ',
-                    "to": [
-                        {
-                        "ret_id_1": ' . $to . '
-                        }
-                    ]
+                    "to": ' . $to . '
                 }',
                 CURLOPT_HTTPHEADER => array(
                     'Content-Type: application/json',
