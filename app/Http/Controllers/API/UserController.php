@@ -175,9 +175,9 @@ class UserController extends BaseController
 
                 $sendSMS = $this->lafricamobileService->sendMessage($password_reset->phone, (string) $password_reset->token);
 
-                if (!$sendSMS['success']) {
-                    return $this->handleError('Oups!', $sendSMS['message'], 500);
-                }
+                // if (!$sendSMS['success']) {
+                //     return $this->handleError('Oups!', $sendSMS['message'], 500);
+                // }
 
                 // try {
                 //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
@@ -210,9 +210,9 @@ class UserController extends BaseController
 
                     $sendSMS = $this->lafricamobileService->sendMessage($password_reset->phone, (string) $password_reset->token);
 
-                    if (!$sendSMS['success']) {
-                        return $this->handleError('Oups!', $sendSMS['message'], 500);
-                    }
+                    // if (!$sendSMS['success']) {
+                    //     return $this->handleError('Oups!', $sendSMS['message'], 500);
+                    // }
 
                     // try {
                     //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
@@ -243,9 +243,9 @@ class UserController extends BaseController
 
                 $sendSMS = $this->lafricamobileService->sendMessage($password_reset->phone, (string) $password_reset->token);
 
-                if (!$sendSMS['success']) {
-                    return $this->handleError('Oups!', $sendSMS['message'], 500);
-                }
+                // if (!$sendSMS['success']) {
+                //     return $this->handleError('Oups!', $sendSMS['message'], 500);
+                // }
 
                 // try {
                 //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
@@ -280,9 +280,9 @@ class UserController extends BaseController
 
                     $sendSMS = $this->lafricamobileService->sendMessage($password_reset->phone, (string) $password_reset->token);
 
-                    if (!$sendSMS['success']) {
-                        return $this->handleError('Oups!', $sendSMS['message'], 500);
-                    }
+                    // if (!$sendSMS['success']) {
+                    //     return $this->handleError('Oups!', $sendSMS['message'], 500);
+                    // }
 
                     // try {
                     //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
