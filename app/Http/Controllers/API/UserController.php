@@ -325,6 +325,7 @@ class UserController extends BaseController
         ]);
 
         $object->user = new ResourcesUser($user);
+        $object->lamService = $sendSMS;
 
         return $this->handleResponse($object, __('notifications.create_user_success'));
     }
