@@ -12,8 +12,8 @@ class LAfricaMobileService
 {
     public function sendMessage($to, $messageText)
     {
-        $accountid = 'REBORN_SARLU_01'; // config('services.lafricamobile.access_key');
-        $password = 'XRonxsjJHN9J0yX'; // config('services.lafricamobile.access_password');
+        // $accountid = 'REBORN_SARLU_01'; // config('services.lafricamobile.access_key');
+        // $password = 'XRonxsjJHN9J0yX'; // config('services.lafricamobile.access_password');
         $curl = curl_init();
         $to = ltrim($to, '+');
 
@@ -23,15 +23,15 @@ class LAfricaMobileService
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => "{
-                    \"accountid\": " . $accountid . ",
-                    \"password\": " . $password . ",
-                    \"sender\": \"LAM TEST\",
-                    \"ret_id\": \"Push_1\",
-                    \"ret_url\": \"https://mon-site.com/reception\",
-                    \"text\": " . $messageText . ",
-                    \"to\": " . $to . "
-                }",
+            CURLOPT_POSTFIELDS => '{
+                    "accountid": "REBORN_SARLU_01",
+                    "password": "XRonxsjJHN9J0yX",
+                    "sender": "LAM TEST",
+                    "ret_id": "Push_1",
+                    "ret_url": "https://mon-site.com/reception",
+                    "text": ' . $messageText . ',
+                    "to": ' . $to . '
+                }',
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
             ),
