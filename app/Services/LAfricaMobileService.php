@@ -13,8 +13,8 @@ class LAfricaMobileService
     public function sendMessage($to, $messageText)
     {
         try {
-            $accountid = config('services.lafricamobile.access_key');
-            $password = config('services.lafricamobile.access_password');
+            $accountid = 'REBORN_SARLU_01'; // config('services.lafricamobile.access_key');
+            $password = 'XRonxsjJHN9J0yX'; // config('services.lafricamobile.access_password');
             $curl = curl_init();
             $to = ltrim($to, '+');
 
