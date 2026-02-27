@@ -23,15 +23,15 @@ class LAfricaMobileService
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => '{
-                    "accountid": ' . $accountid . ',
-                    "password": ' . $password . ',
-                    "sender": "LAM TEST",
-                    "ret_id": "Push_1",
-                    "ret_url": "https://mon-site.com/reception",
-                    "text": ' . $messageText . ',
-                    "to": ' . $to . '
-                }',
+            CURLOPT_POSTFIELDS => "{
+                    \"accountid\": " . $accountid . ",
+                    \"password\": " . $password . ",
+                    \"sender\": \"LAM TEST\",
+                    \"ret_id\": \"Push_1\",
+                    \"ret_url\": \"https://mon-site.com/reception\",
+                    \"text\": " . $messageText . ",
+                    \"to\": " . $to . "
+                }",
             CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
             ),
