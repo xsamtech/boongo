@@ -99,6 +99,7 @@ class UserController extends BaseController
         $users = User::all();
         $password_resets = PasswordReset::all();
         $object = new stdClass();
+        $sendSMS = null;
         // $basic  = new \Vonage\Client\Credentials\Basic(config('vonage.api_key'), config('vonage.api_secret'));
         // $client = new \Vonage\Client($basic);
 
