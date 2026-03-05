@@ -11,7 +11,7 @@
                         <div class="mb-5 mb-lg-0 text-center text-lg-start">
                             <h1 class="display-4 lh-1 mb-3">Première bibliothèque numérique en RDC, conçue pour répondre aux standards de votre industrie.</h1>
                             <p class="lead fw-normal text-muted mb-5">
-                                Téléchargez l'appli Boongo, et commancez à consulter ou à publier des œuvres de tout type et toute catégorie.
+                                Téléchargez l'appli Boongo, et commencez à consulter ou à publier des œuvres de tout type et toute catégorie.
                             </p>
                             <form action="{{ route('download') }}" method="POST" class="mb-3">
     @csrf
@@ -83,6 +83,8 @@
                                 <img src="{{ asset('assets/img/snapshots/kt-2.jpg') }}" alt="..." class="img-fluid" />
                             </div>
                         </div>
+                        <div class="h3 text-white mt-4 mb-1 fw-bold">Ambitions 2036</div>
+                        <p class="text-white mb-0">Nous devons générer 900 trillions de Franc Congolais, au profit de notre clientèle et de la République Démocratique du Congo.</p>
                     </div>
                 </div>
             </div>
@@ -182,7 +184,10 @@
                     </div>
                     <div class="col-sm-8 col-md-6 col-12">
                         <div class="px-lg-5 px-sm-0">
-                            <img src="{{ asset('assets/img/drc-gouv.png') }}" alt="..." class="img-fluid" />
+                            <div class="card card-body px-sm-5 px-4 pb-0 border border-2 rounded-5 text-center">
+                                <img src="{{ asset('assets/img/animated-flag-drc.gif') }}" alt="..." width="160" style="margin: 0 auto;" />
+                                <img src="{{ asset('assets/img/share-home.png') }}" alt="..." class="img-fluid" />
+                            </div>
                         </div>
                     </div>
                 </div>
