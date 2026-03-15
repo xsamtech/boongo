@@ -1533,19 +1533,19 @@ class UserController extends BaseController
             }
 
             // Check if email is verified
-            if (!empty($user->email)) {
-                if ($inputs['username'] == $user->email) {
-                    if ($user->email_verified_at == null) {
-                        $password_reset = PasswordReset::where('email', $user->email)->first();
-                        $object = new stdClass();
+            // if (!empty($user->email)) {
+            //     if ($inputs['username'] == $user->email) {
+            //         if ($user->email_verified_at == null) {
+            //             $password_reset = PasswordReset::where('email', $user->email)->first();
+            //             $object = new stdClass();
 
-                        $object->password_reset = new ResourcesPasswordReset($password_reset);
-                        $object->user = new ResourcesUser($user);
+            //             $object->password_reset = new ResourcesPasswordReset($password_reset);
+            //             $object->user = new ResourcesUser($user);
 
-                        return $this->handleError($object, __('notifications.unverified_token_email'), 400);
-                    }
-                }
-            }
+            //             return $this->handleError($object, __('notifications.unverified_token_email'), 400);
+            //         }
+            //     }
+            // }
 
             // Check if user is blocked
             $is_toxic = ToxicContent::where([['for_user_id', $user->id], ['is_unlocked', 0]])->exists();
@@ -1589,11 +1589,17 @@ class UserController extends BaseController
         /*
             HISTORY AND/OR NOTIFICATION MANAGEMENT
         */
-        $status_activated = Status::where('status_name->fr', 'Activé')->first();
-        $status_disabled = Status::where('status_name->fr', 'Désactivé')->first();
-        $status_blocked = Status::where('status_name->fr', 'Bloqué')->first();
-        $status_unread = Status::where('status_name->fr', 'Non lue')->first();
-        $type_user_return = Type::where('type_name->fr', 'Utilisateur de retour')->first();
+        // Groups
+        $user_status_group = Group::where('group_name', 'Etat de l\'utilisateur')->first();
+        $notification_status_group = Group::where('group_name', 'Etat de la notification')->first();
+        $notification_type_group = Group::where('group_name', 'Type de notification')->first();
+        // Statuses
+        $status_activated = Status::where('status_name->fr', 'Activé')->where('group_id', $user_status_group->id)->first();
+        $status_disabled = Status::where('status_name->fr', 'Désactivé')->where('group_id', $user_status_group->id)->first();
+        $status_blocked = Status::where('status_name->fr', 'Bloqué')->where('group_id', $user_status_group->id)->first();
+        $status_deleted = Status::where('status_name->fr', 'Supprimé')->where('group_id', $user_status_group->id)->first();
+        $status_unread = Status::where('status_name->fr', 'Non lue')->where('group_id', $notification_status_group->id)->first();
+        $type_user_return = Type::where('type_name->fr', 'Utilisateur de retour')->where('group_id', $notification_type_group->id)->first();
 
         if ($status_id == $status_activated->id) {
             Notification::create([
@@ -1625,7 +1631,15 @@ class UserController extends BaseController
             ]);
         }
 
-        return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
+        if ($status_id == $status_deleted->id) {
+            // update "status_id" column
+            $user->update([
+                'status_id' => $status_deleted->id,
+                'updated_at' => now()
+            ]);
+        }
+
+        return $this->handleResponse(new ResourcesUser($user), __('notifications.update_status_success'));
     }
 
     /**

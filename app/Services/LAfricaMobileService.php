@@ -26,7 +26,7 @@ class LAfricaMobileService
             CURLOPT_POSTFIELDS => '{
                                         "accountid": "REBORN_SARLU_01",
                                         "password": "XRonxsjJHN9J0yX",
-                                        "sender": "LAM TEST",
+                                        "sender": "BOONGO",
                                         "ret_id": "Push_1",
                                         "ret_url": "https://mon-site.com/reception",
                                         "text": "Votre code de vérification : ' . $messageText . '. Boongo, le Guide du savoir !",
