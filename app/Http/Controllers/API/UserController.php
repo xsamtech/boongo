@@ -31,7 +31,7 @@ use App\Http\Resources\Partner as ResourcesPartner;
 use App\Http\Resources\PasswordReset as ResourcesPasswordReset;
 use App\Http\Resources\ToxicContent as ResourcesToxicContent;
 use App\Http\Resources\User as ResourcesUser;
-use App\Services\LAfricaMobileService;
+use App\Services\D7MessagingService;
 
 /**
  * @author Xanders
@@ -39,11 +39,11 @@ use App\Services\LAfricaMobileService;
  */
 class UserController extends BaseController
 {
-    protected $lafricamobileService;
+    protected D7MessagingService $d7MessagingService;
 
-    public function __construct(LAfricaMobileService $lafricamobileService)
+    public function __construct(D7MessagingService $d7MessagingService)
     {
-        $this->lafricamobileService = $lafricamobileService;
+        $this->d7MessagingService = $d7MessagingService;
     }
 
     /**
@@ -99,7 +99,7 @@ class UserController extends BaseController
         $users = User::all();
         $password_resets = PasswordReset::all();
         $object = new stdClass();
-        $sendSMS = null;
+        $sendOTP = null;
         // $basic  = new \Vonage\Client\Credentials\Basic(config('vonage.api_key'), config('vonage.api_secret'));
         // $client = new \Vonage\Client($basic);
 
@@ -174,11 +174,12 @@ class UserController extends BaseController
 
                 Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
-                $sendSMS = $this->lafricamobileService->sendMessage($password_reset->phone, (string) $password_reset->token);
+                $channel = $this->getChannelFromPhone($password_reset->phone);
+                $sendOTP = $this->d7MessagingService->sendMessage($channel, $password_reset->phone, (string) $password_reset->token);
 
-                // if (!$sendSMS['success']) {
-                //     return $this->handleError('Oups!', $sendSMS['message'], 500);
-                // }
+                if (!$sendOTP['success']) {
+                    return $this->handleError('Oups!', $sendOTP['message'], 500);
+                }
 
                 // try {
                 //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
@@ -209,11 +210,12 @@ class UserController extends BaseController
                         'former_password' => $request->password
                     ]);
 
-                    $sendSMS = $this->lafricamobileService->sendMessage($password_reset->phone, (string) $password_reset->token);
+                    $channel = $this->getChannelFromPhone($password_reset->phone);
+                    $sendOTP = $this->d7MessagingService->sendMessage($channel, $password_reset->phone, (string) $password_reset->token);
 
-                    // if (!$sendSMS['success']) {
-                    //     return $this->handleError('Oups!', $sendSMS['message'], 500);
-                    // }
+                    if (!$sendOTP['success']) {
+                        return $this->handleError('Oups!', $sendOTP['message'], 500);
+                    }
 
                     // try {
                     //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
@@ -242,11 +244,12 @@ class UserController extends BaseController
 
                 Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
-                $sendSMS = $this->lafricamobileService->sendMessage($password_reset->phone, (string) $password_reset->token);
+                $channel = $this->getChannelFromPhone($password_reset->phone);
+                $sendOTP = $this->d7MessagingService->sendMessage($channel, $password_reset->phone, (string) $password_reset->token);
 
-                // if (!$sendSMS['success']) {
-                //     return $this->handleError('Oups!', $sendSMS['message'], 500);
-                // }
+                if (!$sendOTP['success']) {
+                    return $this->handleError('Oups!', $sendOTP['message'], 500);
+                }
 
                 // try {
                 //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
@@ -279,11 +282,12 @@ class UserController extends BaseController
                         'former_password' => Random::generate(10, 'a-zA-Z')
                     ]);
 
-                    $sendSMS = $this->lafricamobileService->sendMessage($password_reset->phone, (string) $password_reset->token);
+            $channel = $this->getChannelFromPhone($password_reset->phone);
+                    $sendOTP = $this->d7MessagingService->sendMessage($channel, $password_reset->phone, (string) $password_reset->token);
 
-                    // if (!$sendSMS['success']) {
-                    //     return $this->handleError('Oups!', $sendSMS['message'], 500);
-                    // }
+                    if (!$sendOTP['success']) {
+                        return $this->handleError('Oups!', $sendOTP['message'], 500);
+                    }
 
                     // try {
                     //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
@@ -326,7 +330,7 @@ class UserController extends BaseController
         ]);
 
         $object->user = new ResourcesUser($user);
-        $object->lamService = $sendSMS;
+        $object->d7MessagingService = $sendOTP;
 
         return $this->handleResponse($object, __('notifications.create_user_success'));
     }
@@ -334,7 +338,7 @@ class UserController extends BaseController
     /**
      * Display the specified resource.
      *
-     * @param  $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -1574,8 +1578,8 @@ class UserController extends BaseController
     /**
      * Switch between user statuses.
      *
-     * @param  $id
-     * @param  $status_id
+     * @param  int  $id
+     * @param  int  $status_id
      * @return \Illuminate\Http\Response
      */
     public function switchStatus($id, $status_id)
@@ -1840,7 +1844,7 @@ class UserController extends BaseController
      * Update user password in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function updatePassword(Request $request, $id)
@@ -2216,7 +2220,7 @@ class UserController extends BaseController
      * Update user avatar picture in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function updateAvatarPicture(Request $request, $id)
@@ -2248,5 +2252,18 @@ class UserController extends BaseController
         ]);
 
         return $this->handleResponse(new ResourcesUser($user), __('notifications.update_user_success'));
+    }
+
+    /**
+     * Méthode d'aide pour obtenir le canal selon le numéro.
+     * Accessible partout dans ce contrôleur avec $this->getChannelFromPhone(...)
+     */
+    private function getChannelFromPhone(string $phone): string
+    {
+        if (str_starts_with($phone, '+243') || str_starts_with($phone, '243')) {
+            return 'sms';
+        }
+
+        return 'whatsapp';
     }
 }

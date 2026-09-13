@@ -54,4 +54,10 @@ return [
         'access_password' => env('LAFRICAMOBILE_ACCESS_PASSWORD')
     ],
 
+    'd7' => [
+        'token' => env('D7_API_TOKEN'),
+        'sms_originator' => env('D7_SMS_ORIGINATOR'),
+        'whatsapp_originator' => env('D7_WHATSAPP_ORIGINATOR')
+    ],
+
 ];

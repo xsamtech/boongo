@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\PasswordReset as ResourcesPasswordReset;
 use App\Http\Resources\User as ResourcesUser;
-use App\Services\LAfricaMobileService;
+use App\Services\D7MessagingService;
 
 /**
  * @author Xanders
@@ -18,11 +18,11 @@ use App\Services\LAfricaMobileService;
  */
 class PasswordResetController extends BaseController
 {
-    protected $lafricamobileService;
+    protected D7MessagingService $d7MessagingService;
 
-    public function __construct(LAfricaMobileService $lafricamobileService)
+    public function __construct(D7MessagingService $d7MessagingService)
     {
-        $this->lafricamobileService = $lafricamobileService;
+        $this->d7MessagingService = $d7MessagingService;
     }
 
     /**
@@ -319,10 +319,11 @@ class PasswordResetController extends BaseController
                 'updated_at' => now()
             ]);
 
-            $sendSMS = $this->lafricamobileService->sendMessage($password_reset->phone, (string) $password_reset->token);
+            $channel = $this->getChannelFromPhone($password_reset->phone);
+            $sendOTP = $this->d7MessagingService->sendMessage($channel, $password_reset->phone, (string) $password_reset->token);
 
-            if (!$sendSMS['success']) {
-                return $this->handleError('Oups!', $sendSMS['message'], 500);
+            if (!$sendOTP['success']) {
+                return $this->handleError('Oups!', $sendOTP['message'], 500);
             }
 
             // try {
@@ -443,5 +444,18 @@ class PasswordResetController extends BaseController
 
             return $this->handleResponse($object, __('notifications.verified_token'));
         }
+    }
+
+    /**
+     * Méthode d'aide pour obtenir le canal selon le numéro.
+     * Accessible partout dans ce contrôleur avec $this->getChannelFromPhone(...)
+     */
+    private function getChannelFromPhone(string $phone): string
+    {
+        if (str_starts_with($phone, '+243') || str_starts_with($phone, '243')) {
+            return 'sms';
+        }
+
+        return 'whatsapp';
     }
 }
