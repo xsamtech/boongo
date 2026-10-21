@@ -15,6 +15,7 @@ use App\Models\Type;
 use App\Models\User;
 use App\Models\Work;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Resources\Like as ResourcesLike;
@@ -50,7 +51,28 @@ class WorkController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     * @requestMediaType multipart/form-data
      */
+    #[BodyParameter('work_title', description: 'Colonne works.work_title : TEXT; NULL autorisé.', required: true, type: 'string')]
+    #[BodyParameter('work_content', description: 'Colonne works.work_content : LONGTEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('work_url', description: 'Colonne works.work_url : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('video_source', description: 'Colonne works.video_source : ENUM(\'YouTube\', \'AWS\'); NOT NULL. Défaut SQL : \'YouTube\'.', required: false, type: 'string')]
+    #[BodyParameter('media_length', description: 'Colonne works.media_length : INT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('author', description: 'Colonne works.author : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('editor', description: 'Colonne works.editor : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('is_public', description: 'Colonne works.is_public : TINYINT; NOT NULL. Défaut SQL : 0.', required: false, type: 'integer')]
+    #[BodyParameter('number_of_hours', description: 'Colonne works.number_of_hours : INT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('type_id', description: 'Colonne works.type_id : BIGINT; NULL autorisé.', required: true, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne works.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne works.user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('organization_id', description: 'Colonne works.organization_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('category_id', description: 'Colonne works.category_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('categories_ids', description: 'Liste des identifiants.', required: false, type: 'integer[]')]
+    #[BodyParameter('consultation_price', description: 'Colonne works.consultation_price : DECIMAL(9,2); NULL autorisé.', required: false, type: 'float')]
+    #[BodyParameter('currency_id', description: 'Colonne works.currency_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('files_urls', description: 'Liste de fichiers à téléverser (multipart/form-data).', required: false, type: 'string[]')]
+    #[BodyParameter('files_urls.*', description: 'Fichier à téléverser.', required: false, type: 'string', format: 'binary')]
+    #[BodyParameter('files_names', description: 'Liste des valeurs.', required: false, type: 'string[]')]
     public function store(Request $request)
     {
         // Group
@@ -239,6 +261,23 @@ class WorkController extends BaseController
      * @param  \App\Models\Work  $work
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('work_title', description: 'Colonne works.work_title : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('work_content', description: 'Colonne works.work_content : LONGTEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('work_url', description: 'Colonne works.work_url : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('video_source', description: 'Colonne works.video_source : ENUM(\'YouTube\', \'AWS\'); NOT NULL. Défaut SQL : \'YouTube\'.', required: false, type: 'string')]
+    #[BodyParameter('media_length', description: 'Colonne works.media_length : INT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('author', description: 'Colonne works.author : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('editor', description: 'Colonne works.editor : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('is_public', description: 'Colonne works.is_public : TINYINT; NOT NULL. Défaut SQL : 0.', required: false, type: 'integer')]
+    #[BodyParameter('consultation_price', description: 'Colonne works.consultation_price : DECIMAL(9,2); NULL autorisé.', required: false, type: 'float')]
+    #[BodyParameter('number_of_hours', description: 'Colonne works.number_of_hours : INT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('currency_id', description: 'Colonne works.currency_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('type_id', description: 'Colonne works.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne works.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne works.user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('organization_id', description: 'Colonne works.organization_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('category_id', description: 'Colonne works.category_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('categories_ids', description: 'Liste des identifiants.', required: false, type: 'integer[]')]
     public function update(Request $request, Work $work)
     {
         // Get inputs
@@ -263,116 +302,13 @@ class WorkController extends BaseController
         ];
         // $current_work = Work::find($inputs['id']);
 
-        if ($inputs['work_title'] != null) {
-            $work->update([
-                'work_title' => $inputs['work_title'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['work_content'] != null) {
-            $work->update([
-                'work_content' => $inputs['work_content'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['work_url'] != null) {
-            $work->update([
-                'work_url' => $inputs['work_url'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['video_source'] != null) {
-            $work->update([
-                'video_source' => $inputs['video_source'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['media_length'] != null) {
-            $work->update([
-                'media_length' => $inputs['media_length'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['author'] != null) {
-            $work->update([
-                'author' => $inputs['author'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['editor'] != null) {
-            $work->update([
-                'editor' => $inputs['editor'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['is_public'] != null) {
-            $work->update([
-                'is_public' => $inputs['is_public'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['consultation_price'] != null) {
-            $work->update([
-                'consultation_price' => $inputs['consultation_price'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['number_of_hours'] != null) {
-            $work->update([
-                'number_of_hours' => $inputs['number_of_hours'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['currency_id'] != null) {
-            $work->update([
-                'currency_id' => $inputs['currency_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['type_id'] != null) {
-            $work->update([
-                'type_id' => $inputs['type_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['status_id'] != null) {
-            $work->update([
-                'status_id' => $inputs['status_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['user_id'] != null) {
-            $work->update([
-                'user_id' => $inputs['user_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['organization_id'] != null) {
-            $work->update([
-                'organization_id' => $inputs['organization_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['category_id'] != null) {
-            $work->update([
-                'category_id' => $inputs['category_id'],
-                'updated_at' => now(),
-            ]);
+        foreach ($inputs as $field => $value) {
+            if ($value != null) {
+                $work->update([
+                    $field => $value,
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         if ($request->categories_ids == null) {
@@ -948,6 +884,10 @@ class WorkController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('data', description: 'Terme de recherche.', required: false, type: 'string')]
+    #[BodyParameter('type_id', description: 'Colonne works.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne works.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('categories_ids', description: 'Liste des identifiants.', required: false, type: 'integer[]')]
     public function search(Request $request)
     {
         $query = Work::query();
@@ -985,7 +925,16 @@ class WorkController extends BaseController
      * @param  int $type_id
      * @param  int $work_id
      * @return \Illuminate\Http\Response
+     * @requestMediaType multipart/form-data
      */
+    #[BodyParameter('work_id', description: 'Colonne work_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('image_file_type_id', description: 'Identifiant utilisé par cette opération.', required: false, type: 'integer')]
+    #[BodyParameter('file_name', description: 'Colonne file_name : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('document_file_type_id', description: 'Identifiant utilisé par cette opération.', required: false, type: 'integer')]
+    #[BodyParameter('audio_file_type_id', description: 'Identifiant utilisé par cette opération.', required: false, type: 'integer')]
+    #[BodyParameter('video_file_url', description: 'Fichier à téléverser (multipart/form-data).', required: false, type: 'string', format: 'binary')]
+    #[BodyParameter('document_file_url', description: 'Fichier à téléverser (multipart/form-data).', required: false, type: 'string', format: 'binary')]
+    #[BodyParameter('audio_file_url', description: 'Fichier à téléverser (multipart/form-data).', required: false, type: 'string', format: 'binary')]
     public function uploadFiles(Request $request)
     {
         // Group
@@ -1117,6 +1066,11 @@ class WorkController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('type_id', description: 'Colonne works.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne works.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne works.user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('organization_id', description: 'Colonne works.organization_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('categories_ids', description: 'Liste des identifiants.', required: false, type: 'integer[]')]
     public function filterByCategories(Request $request)
     {
         // Groups
@@ -1374,6 +1328,9 @@ class WorkController extends BaseController
      * @param  $id
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('work_id', description: 'Colonne work_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('image_64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]
+    #[BodyParameter('file_name', description: 'Colonne file_name : TEXT; NULL autorisé.', required: false, type: 'string')]
     public function addImage(Request $request, $id)
     {
         $file_type_group = Group::where('group_name', 'Type de fichier')->first();

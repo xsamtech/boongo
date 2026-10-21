@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\Category;
 use App\Models\Group;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use App\Http\Resources\Category as ResourcesCategory;
 
 /**
@@ -31,6 +32,13 @@ class CategoryController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('category_name_en', description: 'Colonne categories.category_name : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('category_name_fr', description: 'Colonne categories.category_name : JSON; NOT NULL. Traduction fr transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('category_name_ln', description: 'Colonne categories.category_name : JSON; NOT NULL. Traduction ln transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('category_description', description: 'Colonne categories.category_description : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('icon', description: 'Colonne categories.icon : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('color', description: 'Colonne categories.color : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('group_id', description: 'Colonne categories.group_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function store(Request $request)
     {
         // Get inputs
@@ -89,6 +97,14 @@ class CategoryController extends BaseController
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne categories.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('category_name_en', description: 'Colonne categories.category_name : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('category_name_fr', description: 'Colonne categories.category_name : JSON; NOT NULL. Traduction fr transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('category_name_ln', description: 'Colonne categories.category_name : JSON; NOT NULL. Traduction ln transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('category_description', description: 'Colonne categories.category_description : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('icon', description: 'Colonne categories.icon : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('color', description: 'Colonne categories.color : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('group_id', description: 'Colonne categories.group_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function update(Request $request, Category $category)
     {
         // Get inputs
@@ -110,10 +126,8 @@ class CategoryController extends BaseController
 
         if ($inputs['category_name'] != null) {
             foreach ($categories as $another_category):
-                if ($current_category->category_name != $inputs['category_name']) {
-                    if ($another_category->category_name == $inputs['category_name']) {
-                        return $this->handleError($inputs['category_name'], __('validation.custom.category_name.exists'), 400);
-                    }
+                if (($current_category->category_name != $inputs['category_name']) && ($another_category->category_name == $inputs['category_name'])) {
+                    return $this->handleError($inputs['category_name'], __('validation.custom.category_name.exists'), 400);
                 }
             endforeach;
 
@@ -127,32 +141,13 @@ class CategoryController extends BaseController
             ]);
         }
 
-        if ($inputs['category_description'] != null) {
-            $category->update([
-                'category_description' => $request->category_description,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['icon'] != null) {
-            $category->update([
-                'icon' => $request->icon,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['color'] != null) {
-            $category->update([
-                'color' => $request->color,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['group_id'] != null) {
-            $category->update([
-                'group_id' => $request->group_id,
-                'updated_at' => now(),
-            ]);
+        foreach (['category_description', 'icon', 'color', 'group_id'] as $field) {
+            if ($inputs[$field] != null) {
+                $category->update([
+                    $field => $inputs[$field],
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         return $this->handleResponse(new ResourcesCategory($category), __('notifications.update_category_success'));

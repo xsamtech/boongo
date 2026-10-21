@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Models\ReadNotification;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ReadNotification as ResourcesReadNotification;
 
@@ -31,6 +32,17 @@ class ReadNotificationController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('text_content', description: 'Colonne read_notifications.text_content : TEXT; NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('redirect_url', description: 'Colonne read_notifications.redirect_url : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('screen', description: 'Colonne read_notifications.screen : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('entity', description: 'Colonne read_notifications.entity : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('entity_id', description: 'Colonne read_notifications.entity_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('icon', description: 'Colonne read_notifications.icon : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('image_url', description: 'Colonne read_notifications.image_url : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('created_at', description: 'Colonne read_notifications.created_at : TIMESTAMP; NOT NULL. Défaut SQL : CURRENT_TIMESTAMP.', required: false, type: 'string', format: 'date-time')]
+    #[BodyParameter('updated_at', description: 'Colonne read_notifications.updated_at : TIMESTAMP; NOT NULL. Défaut SQL : CURRENT_TIMESTAMP.', required: false, type: 'string', format: 'date-time')]
+    #[BodyParameter('notification_id', description: 'Colonne read_notifications.notification_id : BIGINT; NULL autorisé.', required: true, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne user_id : BIGINT; NOT NULL.', required: true, type: 'integer')]
     public function store(Request $request)
     {
         // Get inputs
@@ -86,6 +98,18 @@ class ReadNotificationController extends BaseController
      * @param  \App\Models\ReadNotification  $read_notification
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne read_notifications.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('text_content', description: 'Colonne read_notifications.text_content : TEXT; NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('redirect_url', description: 'Colonne read_notifications.redirect_url : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('screen', description: 'Colonne read_notifications.screen : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('entity', description: 'Colonne read_notifications.entity : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('entity_id', description: 'Colonne read_notifications.entity_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('icon', description: 'Colonne read_notifications.icon : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('image_url', description: 'Colonne read_notifications.image_url : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('created_at', description: 'Colonne read_notifications.created_at : TIMESTAMP; NOT NULL. Défaut SQL : CURRENT_TIMESTAMP.', required: false, type: 'string', format: 'date-time')]
+    #[BodyParameter('updated_at', description: 'Colonne read_notifications.updated_at : TIMESTAMP; NOT NULL. Défaut SQL : CURRENT_TIMESTAMP.', required: false, type: 'string', format: 'date-time')]
+    #[BodyParameter('notification_id', description: 'Colonne read_notifications.notification_id : BIGINT; NULL autorisé.', required: true, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne user_id : BIGINT; NOT NULL.', required: true, type: 'integer')]
     public function update(Request $request, ReadNotification $read_notification)
     {
         // Get inputs

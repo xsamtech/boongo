@@ -10,6 +10,7 @@ use App\Models\Status;
 use App\Models\Type;
 use App\Models\Work;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use App\Http\Resources\Like as ResourcesLike;
 
 /**
@@ -37,6 +38,9 @@ class LikeController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('user_id', description: 'Colonne likes.user_id : BIGINT; NOT NULL.', required: true, type: 'integer')]
+    #[BodyParameter('for_work_id', description: 'Colonne likes.for_work_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('for_message_id', description: 'Colonne likes.for_message_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function store(Request $request)
     {
         // Groups
@@ -119,6 +123,9 @@ class LikeController extends BaseController
      * @param  \App\Models\Like  $like
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('user_id', description: 'Colonne likes.user_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('for_work_id', description: 'Colonne likes.for_work_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('for_message_id', description: 'Colonne likes.for_message_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function update(Request $request, Like $like)
     {
         // Get inputs
@@ -128,25 +135,13 @@ class LikeController extends BaseController
             'for_message_id' => $request->for_message_id
         ];
 
-        if ($inputs['user_id'] != null) {
-            $like->update([
-                'user_id' => $inputs['user_id'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['for_work_id'] != null) {
-            $like->update([
-                'for_work_id' => $inputs['for_work_id'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['for_message_id'] != null) {
-            $like->update([
-                'for_message_id' => $inputs['for_message_id'],
-                'updated_at' => now(),
-            ]);
+        foreach ($inputs as $field => $value) {
+            if ($value != null) {
+                $like->update([
+                    $field => $value,
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         return $this->handleResponse(new ResourcesLike($like), __('notifications.update_like_success'));

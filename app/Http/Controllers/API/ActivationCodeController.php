@@ -8,6 +8,7 @@ use App\Models\Partner;
 use App\Models\Status;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ActivationCode as ResourcesActivationCode;
 use App\Http\Resources\User as ResourcesUser;
@@ -37,6 +38,10 @@ class ActivationCodeController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('for_partner_id', description: 'Colonne activation_codes.for_partner_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('code', description: 'Colonne activation_codes.code : VARCHAR(45); NOT NULL.', required: true, type: 'string')]
+    #[BodyParameter('is_active', description: 'Colonne activation_codes.is_active : TINYINT; NOT NULL. Défaut SQL : 1.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne activation_codes.user_id : BIGINT; NOT NULL.', required: true, type: 'integer')]
     public function store(Request $request)
     {
         // Get inputs
@@ -85,6 +90,10 @@ class ActivationCodeController extends BaseController
      * @param  \App\Models\ActivationCode  $activation_code
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('for_partner_id', description: 'Colonne activation_codes.for_partner_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('code', description: 'Colonne activation_codes.code : VARCHAR(45); NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('is_active', description: 'Colonne activation_codes.is_active : TINYINT; NOT NULL. Défaut SQL : 1.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne activation_codes.user_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
     public function update(Request $request, ActivationCode $activation_code)
     {
         // Get inputs
@@ -95,32 +104,13 @@ class ActivationCodeController extends BaseController
             'user_id' => $request->user_id
         ];
 
-        if ($inputs['for_partner_id'] != null) {
-            $activation_code->update([
-                'for_partner_id' => $inputs['for_partner_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['code'] != null) {
-            $activation_code->update([
-                'code' => $inputs['code'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['is_active'] != null) {
-            $activation_code->update([
-                'is_active' => $inputs['is_active'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['user_id'] != null) {
-            $activation_code->update([
-                'user_id' => $inputs['user_id'],
-                'updated_at' => now(),
-            ]);
+        foreach ($inputs as $field => $value) {
+            if ($value != null) {
+                $activation_code->update([
+                    $field => $value,
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         return $this->handleResponse(new ResourcesActivationCode($activation_code), __('notifications.update_activation_code_success'));

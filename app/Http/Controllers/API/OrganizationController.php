@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Resources\Organization as ResourcesOrganization;
@@ -36,6 +37,21 @@ class OrganizationController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('org_name', description: 'Colonne organizations.org_name : TEXT; NULL autorisé.', required: true, type: 'string')]
+    #[BodyParameter('org_acronym', description: 'Colonne organizations.org_acronym : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('org_description', description: 'Colonne organizations.org_description : LONGTEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('id_number', description: 'Colonne organizations.id_number : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('phone', description: 'Colonne organizations.phone : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('email', description: 'Colonne organizations.email : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('address', description: 'Colonne organizations.address : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('p_o_box', description: 'Colonne organizations.p_o_box : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('legal_status', description: 'Colonne organizations.legal_status : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('year_of_creation', description: 'Colonne organizations.year_of_creation : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('website_url', description: 'Colonne organizations.website_url : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('type_id', description: 'Colonne organizations.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne organizations.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne organizations.user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('image_64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]
     public function store(Request $request)
     {
         // Get inputs
@@ -116,6 +132,22 @@ class OrganizationController extends BaseController
      * @param  \App\Models\Organization  $organization
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne organizations.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('org_name', description: 'Colonne organizations.org_name : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('org_acronym', description: 'Colonne organizations.org_acronym : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('org_description', description: 'Colonne organizations.org_description : LONGTEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('id_number', description: 'Colonne organizations.id_number : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('phone', description: 'Colonne organizations.phone : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('email', description: 'Colonne organizations.email : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('address', description: 'Colonne organizations.address : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('p_o_box', description: 'Colonne organizations.p_o_box : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('legal_status', description: 'Colonne organizations.legal_status : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('year_of_creation', description: 'Colonne organizations.year_of_creation : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('website_url', description: 'Colonne organizations.website_url : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('type_id', description: 'Colonne organizations.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne organizations.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne organizations.user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('image_64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]
     public function update(Request $request, Organization $organization)
     {
         // Get inputs
@@ -146,10 +178,8 @@ class OrganizationController extends BaseController
             }
     
             foreach ($organizations as $another_organization):
-                if ($current_organization->org_name != $inputs['org_name']) {
-                    if ($another_organization->org_name == $inputs['org_name']) {
-                        return $this->handleError($inputs['org_name'], __('validation.custom.name.exists'), 400);
-                    }
+                if (($current_organization->org_name != $inputs['org_name']) && ($another_organization->org_name == $inputs['org_name'])) {
+                    return $this->handleError($inputs['org_name'], __('validation.custom.name.exists'), 400);
                 }
             endforeach;
 
@@ -159,74 +189,24 @@ class OrganizationController extends BaseController
             ]);
         }
 
-        if ($inputs['org_acronym'] != null) {
-            $organization->update([
-                'org_acronym' => $inputs['org_acronym'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['org_description'] != null) {
-            $organization->update([
-                'org_description' => $inputs['org_description'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['id_number'] != null) {
-            $organization->update([
-                'id_number' => $inputs['id_number'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['phone'] != null) {
-            $organization->update([
-                'phone' => $inputs['phone'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['email'] != null) {
-            $organization->update([
-                'email' => $inputs['email'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['address'] != null) {
-            $organization->update([
-                'address' => $inputs['address'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['p_o_box'] != null) {
-            $organization->update([
-                'p_o_box' => $inputs['p_o_box'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['legal_status'] != null) {
-            $organization->update([
-                'legal_status' => $inputs['legal_status'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['year_of_creation'] != null) {
-            $organization->update([
-                'year_of_creation' => $inputs['year_of_creation'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['website_url'] != null) {
-            $organization->update([
-                'website_url' => $inputs['website_url'],
-                'updated_at' => now(),
-            ]);
+        foreach ([
+            'org_acronym',
+            'org_description',
+            'id_number',
+            'phone',
+            'email',
+            'address',
+            'p_o_box',
+            'legal_status',
+            'year_of_creation',
+            'website_url',
+        ] as $field) {
+            if ($inputs[$field] != null) {
+                $organization->update([
+                    $field => $inputs[$field],
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         if ($request->image_64 != null) {
@@ -278,6 +258,10 @@ class OrganizationController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('data', description: 'Terme de recherche.', required: false, type: 'string')]
+    #[BodyParameter('type_id', description: 'Colonne organizations.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne organizations.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne organizations.user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function search(Request $request)
     {
         $query = Organization::query();

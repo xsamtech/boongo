@@ -8,6 +8,7 @@ use App\Models\Status;
 use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\Subscription as ResourcesSubscription;
 use App\Http\Resources\User as ResourcesUser;
@@ -49,6 +50,11 @@ class SubscriptionController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('number_of_hours', description: 'Colonne subscriptions.number_of_hours : INT; NULL autorisé.', required: true, type: 'integer')]
+    #[BodyParameter('price', description: 'Colonne subscriptions.price : DECIMAL(9,2); NULL autorisé.', required: true, type: 'float')]
+    #[BodyParameter('currency_id', description: 'Colonne subscriptions.currency_id : BIGINT; NULL autorisé.', required: true, type: 'integer')]
+    #[BodyParameter('type_id', description: 'Colonne subscriptions.type_id : BIGINT; NULL autorisé.', required: true, type: 'integer')]
+    #[BodyParameter('category_id', description: 'Colonne subscriptions.category_id : BIGINT; NULL autorisé.', required: true, type: 'integer')]
     public function store(Request $request)
     {
         // Get inputs
@@ -101,6 +107,11 @@ class SubscriptionController extends BaseController
      * @param  \App\Models\Subscription  $subscription
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('number_of_hours', description: 'Colonne subscriptions.number_of_hours : INT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('price', description: 'Colonne subscriptions.price : DECIMAL(9,2); NULL autorisé.', required: false, type: 'float')]
+    #[BodyParameter('currency_id', description: 'Colonne subscriptions.currency_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('type_id', description: 'Colonne subscriptions.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('category_id', description: 'Colonne subscriptions.category_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function update(Request $request, Subscription $subscription)
     {
         // Get inputs
@@ -112,39 +123,13 @@ class SubscriptionController extends BaseController
             'category_id' => $request->category_id
         ];
 
-        if ($inputs['number_of_hours'] != null) {
-            $subscription->update([
-                'number_of_hours' => $inputs['number_of_hours'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['price'] != null) {
-            $subscription->update([
-                'price' => $inputs['price'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['currency_id'] != null) {
-            $subscription->update([
-                'currency_id' => $inputs['currency_id'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['type_id'] != null) {
-            $subscription->update([
-                'type_id' => $inputs['type_id'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['category_id'] != null) {
-            $subscription->update([
-                'category_id' => $inputs['category_id'],
-                'updated_at' => now()
-            ]);
+        foreach ($inputs as $field => $value) {
+            if ($value != null) {
+                $subscription->update([
+                    $field => $value,
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         return $this->handleResponse(new ResourcesSubscription($subscription), __('notifications.update_subscription_success'));

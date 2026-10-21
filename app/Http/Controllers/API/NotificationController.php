@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\Notification;
 use App\Models\Status;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\Notification as ResourcesNotification;
 use App\Models\Circle;
@@ -41,6 +42,14 @@ class NotificationController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('type_id', description: 'Colonne notifications.type_id : BIGINT; NULL autorisé.', required: true, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne notifications.status_id : BIGINT; NULL autorisé.', required: true, type: 'integer')]
+    #[BodyParameter('from_user_id', description: 'Colonne notifications.from_user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('to_user_id', description: 'Colonne notifications.to_user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('work_id', description: 'Colonne notifications.work_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('like_id', description: 'Colonne notifications.like_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('event_id', description: 'Colonne notifications.event_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('circle_id', description: 'Colonne notifications.circle_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function store(Request $request)
     {
         // Get inputs
@@ -93,6 +102,15 @@ class NotificationController extends BaseController
      * @param  \App\Models\Notification  $notification
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne notifications.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('type_id', description: 'Colonne notifications.type_id : BIGINT; NULL autorisé.', required: true, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne notifications.status_id : BIGINT; NULL autorisé.', required: true, type: 'integer')]
+    #[BodyParameter('from_user_id', description: 'Colonne notifications.from_user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('to_user_id', description: 'Colonne notifications.to_user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('work_id', description: 'Colonne notifications.work_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('like_id', description: 'Colonne notifications.like_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('event_id', description: 'Colonne notifications.event_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('circle_id', description: 'Colonne notifications.circle_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function update(Request $request, Notification $notification)
     {
         // Get inputs
@@ -174,6 +192,9 @@ class NotificationController extends BaseController
      * @param  int $status_id
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('text_content', description: 'Colonne text_content : TEXT; NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('redirect_url', description: 'Colonne redirect_url : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('screen', description: 'Colonne screen : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
     public function switchStatus(Request $request, $ids, $status_id)
     {
         // Groups

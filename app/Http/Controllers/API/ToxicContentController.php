@@ -7,6 +7,7 @@ use App\Models\ReportReason;
 use App\Models\ToxicContent;
 use App\Models\Work;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use App\Http\Resources\ToxicContent as ResourcesToxicContent;
 
 /**
@@ -33,6 +34,16 @@ class ToxicContentController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('is_reportedt', description: 'Champ is_reportedt de la requête.', required: false, type: 'string')]
+    #[BodyParameter('is_reported', description: 'Colonne toxic_contents.is_reported : TINYINT; NOT NULL. Défaut SQL : 1.', required: false, type: 'integer')]
+    #[BodyParameter('for_user_id', description: 'Colonne toxic_contents.for_user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('for_work_id', description: 'Colonne toxic_contents.for_work_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('for_message_id', description: 'Colonne toxic_contents.for_message_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('explanation', description: 'Colonne toxic_contents.explanation : LONGTEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('is_unlocked', description: 'Colonne toxic_contents.is_unlocked : TINYINT; NOT NULL. Défaut SQL : 1.', required: false, type: 'integer')]
+    #[BodyParameter('is_archived', description: 'Colonne toxic_contents.is_archived : TINYINT; NOT NULL. Défaut SQL : 0.', required: false, type: 'integer')]
+    #[BodyParameter('report_reason_id', description: 'Colonne toxic_contents.report_reason_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne toxic_contents.user_id : BIGINT; NOT NULL.', required: true, type: 'integer')]
     public function store(Request $request)
     {
         // Get inputs
@@ -131,6 +142,15 @@ class ToxicContentController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\ToxicContent  $toxic_content
      */
+    #[BodyParameter('is_reported', description: 'Colonne toxic_contents.is_reported : TINYINT; NOT NULL. Défaut SQL : 1.', required: false, type: 'integer')]
+    #[BodyParameter('for_user_id', description: 'Colonne toxic_contents.for_user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('for_work_id', description: 'Colonne toxic_contents.for_work_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('for_message_id', description: 'Colonne toxic_contents.for_message_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('explanation', description: 'Colonne toxic_contents.explanation : LONGTEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('is_unlocked', description: 'Colonne toxic_contents.is_unlocked : TINYINT; NOT NULL. Défaut SQL : 1.', required: false, type: 'integer')]
+    #[BodyParameter('is_archived', description: 'Colonne toxic_contents.is_archived : TINYINT; NOT NULL. Défaut SQL : 0.', required: false, type: 'integer')]
+    #[BodyParameter('report_reason_id', description: 'Colonne toxic_contents.report_reason_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne toxic_contents.user_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
     public function update(Request $request, ToxicContent $toxic_content)
     {
         // Get inputs
@@ -146,67 +166,13 @@ class ToxicContentController extends BaseController
             'user_id' => $request->user_id,
         ];
 
-        if ($inputs['is_reported'] != null) {
-            $toxic_content->update([
-                'is_reported' => $request->is_reported,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['for_user_id'] != null) {
-            $toxic_content->update([
-                'for_user_id' => $request->for_user_id,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['for_work_id'] != null) {
-            $toxic_content->update([
-                'for_work_id' => $request->for_work_id,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['for_message_id'] != null) {
-            $toxic_content->update([
-                'for_message_id' => $request->for_message_id,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['explanation'] != null) {
-            $toxic_content->update([
-                'explanation' => $request->explanation,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['is_unlocked'] != null) {
-            $toxic_content->update([
-                'is_unlocked' => $request->is_unlocked,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['is_archived'] != null) {
-            $toxic_content->update([
-                'is_archived' => $request->is_archived,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['report_reason_id'] != null) {
-            $toxic_content->update([
-                'report_reason_id' => $request->report_reason_id,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['user_id'] != null) {
-            $toxic_content->update([
-                'user_id' => $request->user_id,
-                'updated_at' => now(),
-            ]);
+        foreach ($inputs as $field => $value) {
+            if ($value != null) {
+                $toxic_content->update([
+                    $field => $value,
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         return $this->handleResponse(new ResourcesToxicContent($toxic_content), __('notifications.update_toxic_content_success'));

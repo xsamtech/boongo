@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\Payment;
 use App\Models\Status;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use App\Http\Resources\Payment as ResourcesPayment;
 use App\Models\Group;
 use App\Models\Type;
@@ -30,6 +31,17 @@ class PaymentController extends BaseController
     /**
      * Store a newly created resource in storage.
      */
+    #[BodyParameter('reference', description: 'Colonne payments.reference : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('orderNumber', description: 'Colonne payments.order_number : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('provider_reference', description: 'Colonne payments.provider_reference : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('amount', description: 'Colonne payments.amount : DECIMAL(9,2); NULL autorisé.', required: false, type: 'float')]
+    #[BodyParameter('amountCustomer', description: 'Colonne payments.amount_customer : DECIMAL(9,2); NULL autorisé.', required: false, type: 'float')]
+    #[BodyParameter('phone', description: 'Colonne payments.phone : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('currency', description: 'Colonne payments.currency : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('channel', description: 'Colonne payments.channel : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('type', description: 'Mode de paiement : 1 pour Mobile money, autre valeur pour Carte bancaire. Converti en payments.type_id.', required: false, type: 'integer')]
+    #[BodyParameter('code', description: 'Code du statut enregistré dans payments.status_id (BIGINT, NULL autorisé).', required: false, type: 'integer')]
+    #[BodyParameter('createdAt', description: 'Colonne payments.created_at : TIMESTAMP; NOT NULL. Défaut SQL : CURRENT_TIMESTAMP.', required: false, type: 'string', format: 'date-time')]
     public function store(Request $request)
     {
         // Groups
@@ -105,10 +117,21 @@ class PaymentController extends BaseController
      * @param  \App\Models\Payment  $payment
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne payments.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('reference', description: 'Colonne payments.reference : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('provider_reference', description: 'Colonne payments.provider_reference : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('order_number', description: 'Colonne payments.order_number : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('amount', description: 'Colonne payments.amount : DECIMAL(9,2); NULL autorisé.', required: false, type: 'float')]
+    #[BodyParameter('amount_customer', description: 'Colonne payments.amount_customer : DECIMAL(9,2); NULL autorisé.', required: false, type: 'float')]
+    #[BodyParameter('phone', description: 'Colonne payments.phone : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('currency', description: 'Colonne payments.currency : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('channel', description: 'Colonne payments.channel : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('type_id', description: 'Colonne payments.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne payments.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne payments.user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function update(Request $request, Payment $payment)
     {
-        // Get inputs
-        $inputs = [
+        $payment->update([
             'id' => $request->id,
             'reference' => $request->reference,
             'provider_reference' => $request->provider_reference,
@@ -122,9 +145,7 @@ class PaymentController extends BaseController
             'status_id' => $request->status_id,
             'user_id' => $request->user_id,
             'updated_at' => now()
-        ];
-
-        $payment->update($inputs);
+        ]);
 
         return $this->handleResponse(new ResourcesPayment($payment), __('notifications.update_payment_success'));
     }

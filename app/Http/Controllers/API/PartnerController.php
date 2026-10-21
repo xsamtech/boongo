@@ -6,6 +6,7 @@ use App\Models\Group;
 use App\Models\Partner;
 use App\Models\Status;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Resources\Partner as ResourcesPartner;
@@ -39,6 +40,16 @@ class PartnerController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('name', description: 'Colonne partners.name : TEXT; NULL autorisé.', required: true, type: 'string')]
+    #[BodyParameter('message', description: 'Colonne partners.message : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('from_user_id', description: 'Colonne partners.from_user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('from_organization_id', description: 'Colonne partners.from_organization_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('website_url', description: 'Colonne partners.website_url : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('image_64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]
+    #[BodyParameter('category_id', description: 'Colonne category_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('number_of_days', description: 'Colonne number_of_days : BIGINT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('entity', description: 'Champ entity de la requête.', required: false, type: 'string')]
+    #[BodyParameter('codes_count', description: 'Nombre de codes à générer.', required: false, type: 'integer')]
     public function store(Request $request)
     {
         $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
@@ -165,6 +176,17 @@ class PartnerController extends BaseController
      * @param  \App\Models\Partner  $partner
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne partners.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('name', description: 'Colonne partners.name : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('message', description: 'Colonne partners.message : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('from_user_id', description: 'Colonne partners.from_user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('from_organization_id', description: 'Colonne partners.from_organization_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('image_64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]
+    #[BodyParameter('website_url', description: 'Colonne partners.website_url : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('category_id', description: 'Colonne category_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('number_of_days', description: 'Colonne number_of_days : BIGINT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('entity', description: 'Champ entity de la requête.', required: false, type: 'string')]
+    #[BodyParameter('codes_count', description: 'Nombre de codes à générer.', required: false, type: 'integer')]
     public function update(Request $request, Partner $partner)
     {
         $partnership_status_group = Group::where('group_name', 'Etat du partenariat')->first();
@@ -189,10 +211,8 @@ class PartnerController extends BaseController
             }
     
             foreach ($partners as $another_partner):
-                if ($current_partner->name != $inputs['name']) {
-                    if ($another_partner->name == $inputs['name']) {
-                        return $this->handleError($inputs['name'], __('validation.custom.name.exists'), 400);
-                    }
+                if (($current_partner->name != $inputs['name']) && ($another_partner->name == $inputs['name'])) {
+                    return $this->handleError($inputs['name'], __('validation.custom.name.exists'), 400);
                 }
             endforeach;
 
@@ -202,32 +222,13 @@ class PartnerController extends BaseController
             ]);
         }
 
-        if ($inputs['message'] != null) {
-            $partner->update([
-                'message' => $inputs['message'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['from_user_id'] != null) {
-            $partner->update([
-                'from_user_id' => $inputs['from_user_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['from_organization_id'] != null) {
-            $partner->update([
-                'from_organization_id' => $inputs['from_organization_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['website_url'] != null) {
-            $partner->update([
-                'website_url' => $inputs['website_url'],
-                'updated_at' => now(),
-            ]);
+        foreach (['message', 'from_user_id', 'from_organization_id', 'website_url'] as $field) {
+            if ($inputs[$field] != null) {
+                $partner->update([
+                    $field => $inputs[$field],
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         if ($inputs['image_64'] != null) {
@@ -401,6 +402,7 @@ class PartnerController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('categories_ids', description: 'Liste des identifiants.', required: false, type: 'integer[]')]
     public function withdrawSomeCategories(Request $request, $id)
     {
         $partner = Partner::find($id);

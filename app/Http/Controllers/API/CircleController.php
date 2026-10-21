@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\Circle;
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\Circle as ResourcesCircle;
@@ -34,6 +35,10 @@ class CircleController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('circle_name', description: 'Colonne circles.circle_name : LONGTEXT; NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('type_id', description: 'Colonne circles.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('image_64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]
+    #[BodyParameter('image_type_id', description: 'Identifiant utilisé par cette opération.', required: false, type: 'integer')]
     public function store(Request $request)
     {
         $inputs = [
@@ -92,6 +97,11 @@ class CircleController extends BaseController
      * @param  \App\Models\Circle  $circle
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne circles.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('circle_name', description: 'Colonne circles.circle_name : LONGTEXT; NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('type_id', description: 'Colonne circles.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('image_64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]
+    #[BodyParameter('image_type_id', description: 'Identifiant utilisé par cette opération.', required: false, type: 'integer')]
     public function update(Request $request, Circle $circle)
     {
         // Get inputs
@@ -170,6 +180,9 @@ class CircleController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('data', description: 'Terme de recherche.', required: false, type: 'string')]
+    #[BodyParameter('type_id', description: 'Colonne circles.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne user_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
     public function search(Request $request)
     {
         $query = Circle::query();

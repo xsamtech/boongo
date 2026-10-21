@@ -7,6 +7,7 @@ use App\Models\Group;
 use App\Models\Program;
 use App\Models\Type;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Resources\Program as ResourcesProgram;
@@ -37,7 +38,14 @@ class ProgramController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     * @requestMediaType multipart/form-data
      */
+    #[BodyParameter('class', description: 'Colonne programs.class : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('course_year_id', description: 'Colonne programs.course_year_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('organization_id', description: 'Colonne programs.organization_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('file_type_id', description: 'Identifiant utilisé par cette opération.', required: false, type: 'integer')]
+    #[BodyParameter('file_name', description: 'Colonne file_name : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('file_url', description: 'Fichier à téléverser (multipart/form-data).', required: false, type: 'string', format: 'binary')]
     public function store(Request $request)
     {
         $inputs = [
@@ -110,7 +118,14 @@ class ProgramController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Program  $program
      * @return \Illuminate\Http\Response
+     * @requestMediaType multipart/form-data
      */
+    #[BodyParameter('class', description: 'Colonne programs.class : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('course_year_id', description: 'Colonne programs.course_year_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('organization_id', description: 'Colonne programs.organization_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('file_type_id', description: 'Identifiant utilisé par cette opération.', required: false, type: 'integer')]
+    #[BodyParameter('file_name', description: 'Colonne file_name : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('file_url', description: 'Fichier à téléverser (multipart/form-data).', required: false, type: 'string', format: 'binary')]
     public function update(Request $request, Program $program)
     {
         // Get inputs
@@ -120,25 +135,13 @@ class ProgramController extends BaseController
             'organization_id' => $request->organization_id
         ];
 
-        if ($inputs['class'] != null) {
-            $program->update([
-                'class' => $inputs['class'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['course_year_id'] != null) {
-            $program->update([
-                'course_year_id' => $inputs['course_year_id'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['organization_id'] != null) {
-            $program->update([
-                'organization_id' => $inputs['organization_id'],
-                'updated_at' => now(),
-            ]);
+        foreach ($inputs as $field => $value) {
+            if ($value != null) {
+                $program->update([
+                    $field => $value,
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         if ($request->hasFile('file_url')) {
@@ -229,7 +232,11 @@ class ProgramController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $organization_id
      * @return \Illuminate\Http\Response
+     * @requestMediaType multipart/form-data
      */
+    #[BodyParameter('course_year', description: 'Champ course_year de la requête.', required: false, type: 'string')]
+    #[BodyParameter('class', description: 'Colonne programs.class : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('document_url', description: 'Fichier à téléverser (multipart/form-data).', required: false, type: 'string', format: 'binary')]
     public function addOrganizationProgram(Request $request, $organization_id)
     {
         // Group

@@ -20,6 +20,7 @@ use App\Models\User;
 use Nette\Utils\Random;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -64,6 +65,24 @@ class UserController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('firstname', description: 'Colonne users.firstname : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('lastname', description: 'Colonne users.lastname : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('surname', description: 'Colonne users.surname : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('gender', description: 'Colonne users.gender : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('password', description: 'Colonne users.password : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('birthdate', description: 'Colonne users.birthdate : DATE; NULL autorisé.', required: false, type: 'string', format: 'date')]
+    #[BodyParameter('city', description: 'Colonne users.city : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('address_1', description: 'Colonne users.address_1 : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('address_2', description: 'Colonne users.address_2 : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('p_o_box', description: 'Colonne users.p_o_box : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('email', description: 'Colonne users.email : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('phone', description: 'Colonne users.phone : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('username', description: 'Colonne users.username : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('country_id', description: 'Colonne users.country_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('currency_id', description: 'Colonne users.currency_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('confirm_password', description: 'Champ confirm_password de la requête.', required: false, type: 'string')]
+    #[BodyParameter('role_id', description: 'Colonne role_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('organization_id', description: 'Colonne organization_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function store(Request $request)
     {
         // Groups
@@ -377,6 +396,36 @@ class UserController extends BaseController
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne users.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('firstname', description: 'Colonne users.firstname : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('lastname', description: 'Colonne users.lastname : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('surname', description: 'Colonne users.surname : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('gender', description: 'Colonne users.gender : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('birthdate', description: 'Colonne users.birthdate : DATE; NULL autorisé.', required: false, type: 'string', format: 'date')]
+    #[BodyParameter('city', description: 'Colonne users.city : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('address_1', description: 'Colonne users.address_1 : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('address_2', description: 'Colonne users.address_2 : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('p_o_box', description: 'Colonne users.p_o_box : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('email', description: 'Colonne users.email : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('phone', description: 'Colonne users.phone : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('username', description: 'Colonne users.username : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('password', description: 'Colonne users.password : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('confirm_password', description: 'Champ confirm_password de la requête.', required: false, type: 'string')]
+    #[BodyParameter('email_verified_at', description: 'Colonne users.email_verified_at : DATETIME; NULL autorisé.', required: false, type: 'string', format: 'date-time')]
+    #[BodyParameter('phone_verified_at', description: 'Colonne users.phone_verified_at : DATETIME; NULL autorisé.', required: false, type: 'string', format: 'date-time')]
+    #[BodyParameter('email_frequency', description: 'Colonne users.email_frequency : TINYINT; NOT NULL. Défaut SQL : 100.', required: false, type: 'integer')]
+    #[BodyParameter('two_factor_secret', description: 'Colonne users.two_factor_secret : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('two_factor_recovery_codes', description: 'Colonne users.two_factor_recovery_codes : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('two_factor_confirmed_at', description: 'Colonne users.two_factor_confirmed_at : TIMESTAMP; NULL autorisé.', required: false, type: 'string', format: 'date-time')]
+    #[BodyParameter('two_factor_phone_confirmed_at', description: 'Colonne users.two_factor_phone_confirmed_at : TIMESTAMP; NULL autorisé.', required: false, type: 'string', format: 'date-time')]
+    #[BodyParameter('is_incognito', description: 'Colonne users.is_incognito : TINYINT; NOT NULL. Défaut SQL : 0.', required: false, type: 'integer')]
+    #[BodyParameter('promo_code', description: 'Colonne users.promo_code : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('is_promoted', description: 'Colonne users.is_promoted : TINYINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('country_id', description: 'Colonne users.country_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('currency_id', description: 'Colonne users.currency_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne users.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('role_id', description: 'Colonne role_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('organization_id', description: 'Colonne organization_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function update(Request $request, User $user)
     {
         // Get inputs
@@ -413,78 +462,30 @@ class UserController extends BaseController
         $users = User::all();
         $current_user = User::find($inputs['id']);
 
-        if ($inputs['firstname'] != null) {
-            $user->update([
-                'firstname' => $inputs['firstname'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['lastname'] != null) {
-            $user->update([
-                'lastname' => $inputs['lastname'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['surname'] != null) {
-            $user->update([
-                'surname' => $inputs['surname'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['gender'] != null) {
-            $user->update([
-                'gender' => $inputs['gender'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['birthdate'] != null) {
-            $user->update([
-                'birthdate' => $inputs['birthdate'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['city'] != null) {
-            $user->update([
-                'city' => $inputs['city'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['address_1'] != null) {
-            $user->update([
-                'address_1' => $inputs['address_1'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['address_2'] != null) {
-            $user->update([
-                'address_2' => $inputs['address_2'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['p_o_box'] != null) {
-            $user->update([
-                'p_o_box' => $inputs['p_o_box'],
-                'updated_at' => now(),
-            ]);
+        foreach ([
+            'firstname',
+            'lastname',
+            'surname',
+            'gender',
+            'birthdate',
+            'city',
+            'address_1',
+            'address_2',
+            'p_o_box',
+        ] as $field) {
+            if ($inputs[$field] != null) {
+                $user->update([
+                    $field => $inputs[$field],
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         if ($inputs['email'] != null) {
             // Check if email already exists
             foreach ($users as $another_user):
-                if (!empty($current_user->email)) {
-                    if ($current_user->email != $inputs['email']) {
-                        if ($another_user->email == $inputs['email']) {
-                            return $this->handleError($inputs['email'], __('validation.custom.email.exists'), 400);
-                        }
-                    }
+                if (((!empty($current_user->email)) && ($current_user->email != $inputs['email'])) && ($another_user->email == $inputs['email'])) {
+                    return $this->handleError($inputs['email'], __('validation.custom.email.exists'), 400);
                 }
             endforeach;
 
@@ -507,14 +508,12 @@ class UserController extends BaseController
                 $random_int_stringified = (string) random_int(1000000, 9999999);
 
                 if ($password_reset_by_phone != null) {
-                    if (!empty($password_reset_by_phone->email)) {
-                        if ($password_reset_by_phone->email != $inputs['email']) {
-                            $password_reset_by_phone->update([
-                                'email' => $inputs['email'],
-                                'former_password' => $inputs['password'] != null ? $inputs['password'] : Random::generate(10, '0-9a-zA-Z'),
-                                'updated_at' => now(),
-                            ]);
-                        }
+                    if ((!empty($password_reset_by_phone->email)) && ($password_reset_by_phone->email != $inputs['email'])) {
+                        $password_reset_by_phone->update([
+                            'email' => $inputs['email'],
+                            'former_password' => $inputs['password'] != null ? $inputs['password'] : Random::generate(10, '0-9a-zA-Z'),
+                            'updated_at' => now(),
+                        ]);
                     }
 
                     if (empty($password_reset_by_phone->email)) {
@@ -553,12 +552,8 @@ class UserController extends BaseController
         if ($inputs['phone'] != null) {
             // Check if phone already exists
             foreach ($users as $another_user):
-                if (!empty($current_user->phone)) {
-                    if ($current_user->phone != $inputs['phone']) {
-                        if ($another_user->phone == $inputs['phone']) {
-                            return $this->handleError($inputs['phone'], __('validation.custom.phone.exists'), 400);
-                        }
-                    }
+                if (((!empty($current_user->phone)) && ($current_user->phone != $inputs['phone'])) && ($another_user->phone == $inputs['phone'])) {
+                    return $this->handleError($inputs['phone'], __('validation.custom.phone.exists'), 400);
                 }
             endforeach;
 
@@ -581,14 +576,12 @@ class UserController extends BaseController
                 $random_int_stringified = (string) random_int(1000000, 9999999);
 
                 if ($password_reset_by_email != null) {
-                    if (!empty($password_reset_by_email->phone)) {
-                        if ($password_reset_by_email->phone != $inputs['phone']) {
-                            $password_reset_by_email->update([
-                                'phone' => $inputs['phone'],
-                                'former_password' => $inputs['password'] != null ? $inputs['password'] : Random::generate(10, '0-9a-zA-Z'),
-                                'updated_at' => now(),
-                            ]);
-                        }
+                    if ((!empty($password_reset_by_email->phone)) && ($password_reset_by_email->phone != $inputs['phone'])) {
+                        $password_reset_by_email->update([
+                            'phone' => $inputs['phone'],
+                            'former_password' => $inputs['password'] != null ? $inputs['password'] : Random::generate(10, '0-9a-zA-Z'),
+                            'updated_at' => now(),
+                        ]);
                     }
 
                     if (empty($password_reset_by_email->phone)) {
@@ -627,12 +620,8 @@ class UserController extends BaseController
         if ($inputs['username'] != null) {
             // Check if username already exists
             foreach ($users as $another_user):
-                if (!empty($current_user->username)) {
-                    if ($current_user->username != $inputs['username']) {
-                        if ($another_user->username == $inputs['username']) {
-                            return $this->handleError($inputs['username'], __('validation.custom.username.exists'), 400);
-                        }
-                    }
+                if (((!empty($current_user->username)) && ($current_user->username != $inputs['username'])) && ($another_user->username == $inputs['username'])) {
+                    return $this->handleError($inputs['username'], __('validation.custom.username.exists'), 400);
                 }
             endforeach;
 
@@ -642,18 +631,13 @@ class UserController extends BaseController
             ]);
         }
 
-        if ($inputs['email_verified_at'] != null) {
-            $user->update([
-                'email_verified_at' => $inputs['email_verified_at'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['phone_verified_at'] != null) {
-            $user->update([
-                'phone_verified_at' => $inputs['phone_verified_at'],
-                'updated_at' => now(),
-            ]);
+        foreach (['email_verified_at', 'phone_verified_at'] as $field) {
+            if ($inputs[$field] != null) {
+                $user->update([
+                    $field => $inputs[$field],
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         if ($inputs['password'] != null) {
@@ -700,81 +684,25 @@ class UserController extends BaseController
             ]);
         }
 
-        if ($inputs['email_frequency'] != null) {
-            $user->update([
-                'email_frequency' => $inputs['email_frequency'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['two_factor_secret'] != null) {
-            $user->update([
-                'two_factor_secret' => $inputs['two_factor_secret'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['two_factor_recovery_codes'] != null) {
-            $user->update([
-                'two_factor_recovery_codes' => $inputs['two_factor_recovery_codes'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['two_factor_confirmed_at'] != null) {
-            $user->update([
-                'two_factor_confirmed_at' => $inputs['two_factor_confirmed_at'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['two_factor_phone_confirmed_at'] != null) {
-            $user->update([
-                'two_factor_phone_confirmed_at' => $inputs['two_factor_phone_confirmed_at'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['is_incognito'] != null) {
-            $user->update([
-                'is_incognito' => $inputs['is_incognito'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['promo_code'] != null) {
-            $user->update([
-                'promo_code' => $inputs['promo_code'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['is_promoted'] != null) {
-            $user->update([
-                'is_promoted' => $inputs['is_promoted'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['country_id'] != null) {
-            $user->update([
-                'country_id' => $inputs['country_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['currency_id'] != null) {
-            $user->update([
-                'currency_id' => $inputs['currency_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['status_id'] != null) {
-            $user->update([
-                'status_id' => $inputs['status_id'],
-                'updated_at' => now(),
-            ]);
+        foreach ([
+            'email_frequency',
+            'two_factor_secret',
+            'two_factor_recovery_codes',
+            'two_factor_confirmed_at',
+            'two_factor_phone_confirmed_at',
+            'is_incognito',
+            'promo_code',
+            'is_promoted',
+            'country_id',
+            'currency_id',
+            'status_id',
+        ] as $field) {
+            if ($inputs[$field] != null) {
+                $user->update([
+                    $field => $inputs[$field],
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         if ($request->role_id != null) {
@@ -862,6 +790,9 @@ class UserController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('data', description: 'Terme de recherche.', required: false, type: 'string')]
+    #[BodyParameter('roles_ids', description: 'Liste des identifiants.', required: false, type: 'integer[]')]
+    #[BodyParameter('not_roles_ids', description: 'Liste des identifiants.', required: false, type: 'integer[]')]
     public function search(Request $request)
     {
         // A more surgical search
@@ -1465,6 +1396,8 @@ class UserController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('username', description: 'Colonne users.username : VARCHAR(255); NULL autorisé.', required: true, type: 'string')]
+    #[BodyParameter('password', description: 'Colonne users.password : TEXT; NULL autorisé.', required: true, type: 'string')]
     public function login(Request $request)
     {
         // Get inputs
@@ -1654,6 +1587,7 @@ class UserController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('role_id', description: 'Colonne role_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
     public function updateRole(Request $request, $action, $id)
     {
         $user = User::find($id);
@@ -1679,6 +1613,9 @@ class UserController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('is_speaker', description: 'Colonne is_speaker : TINYINT; NOT NULL. Défaut SQL : 0.', required: false, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne users.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('is_admin', description: 'Colonne is_admin : TINYINT; NOT NULL. Défaut SQL : 0.', required: false, type: 'integer')]
     public function updateUserMembership(Request $request, $entity, $entity_id, $action, $id)
     {
         // Groups
@@ -1847,6 +1784,9 @@ class UserController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('former_password', description: 'Colonne former_password : TEXT; NOT NULL.', required: true, type: 'string')]
+    #[BodyParameter('new_password', description: 'Champ new_password de la requête.', required: true, type: 'string')]
+    #[BodyParameter('confirm_new_password', description: 'Champ confirm_new_password de la requête.', required: true, type: 'string')]
     public function updatePassword(Request $request, $id)
     {
         // Get inputs
@@ -1970,6 +1910,8 @@ class UserController extends BaseController
      * @param  int  $addressee_id
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('circle_id', description: 'Colonne circle_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('event_id', description: 'Colonne event_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function subscribeToGroup(Request $request, $id, $addressee_id)
     {
         // Groups
@@ -2118,6 +2060,8 @@ class UserController extends BaseController
      * @param  int  $addressee_id
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('circle_id', description: 'Colonne circle_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('event_id', description: 'Colonne event_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function unsubscribeToGroup(Request $request, $id, $addressee_id)
     {
         // Groups
@@ -2223,6 +2167,8 @@ class UserController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('user_id', description: 'Colonne user_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('image_64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]
     public function updateAvatarPicture(Request $request, $id)
     {
         $inputs = [

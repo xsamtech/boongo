@@ -7,6 +7,7 @@ use App\Mail\OTPCode;
 use App\Models\PasswordReset;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\PasswordReset as ResourcesPasswordReset;
 use App\Http\Resources\User as ResourcesUser;
@@ -43,6 +44,9 @@ class PasswordResetController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('email', description: 'Colonne password_resets.email : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('phone', description: 'Colonne password_resets.phone : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('former_password', description: 'Colonne password_resets.former_password : TEXT; NOT NULL.', required: false, type: 'string')]
     public function store(Request $request)
     {
         $random_int_stringified = (string) random_int(1000000, 9999999);
@@ -108,6 +112,11 @@ class PasswordResetController extends BaseController
      * @param  \App\Models\PasswordReset  $password_reset
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne password_resets.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('email', description: 'Colonne password_resets.email : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('phone', description: 'Colonne password_resets.phone : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('token', description: 'Colonne password_resets.token : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('former_password', description: 'Colonne password_resets.former_password : TEXT; NOT NULL.', required: false, type: 'string')]
     public function update(Request $request, PasswordReset $password_reset)
     {
         // Get inputs
@@ -125,12 +134,8 @@ class PasswordResetController extends BaseController
 
             // Check if email already exists
             foreach ($password_resets as $another_password_reset):
-                if (!empty($current_password_reset->email)) {
-                    if ($current_password_reset->email != $inputs['email']) {
-                        if ($another_password_reset->email == $inputs['email']) {
-                            return $this->handleError($inputs['email'], __('validation.custom.email.exists'), 400);
-                        }
-                    }
+                if (((!empty($current_password_reset->email)) && ($current_password_reset->email != $inputs['email'])) && ($another_password_reset->email == $inputs['email'])) {
+                    return $this->handleError($inputs['email'], __('validation.custom.email.exists'), 400);
                 }
             endforeach;
 
@@ -147,12 +152,8 @@ class PasswordResetController extends BaseController
 
             // Check if phone already exists
             foreach ($password_resets as $another_password_reset):
-                if (!empty($current_password_reset->phone)) {
-                    if ($current_password_reset->phone != $inputs['phone']) {
-                        if ($another_password_reset->phone == $inputs['phone']) {
-                            return $this->handleError($inputs['phone'], __('validation.custom.phone.exists'), 400);
-                        }
-                    }
+                if (((!empty($current_password_reset->phone)) && ($current_password_reset->phone != $inputs['phone'])) && ($another_password_reset->phone == $inputs['phone'])) {
+                    return $this->handleError($inputs['phone'], __('validation.custom.phone.exists'), 400);
                 }
             endforeach;
 
@@ -162,18 +163,13 @@ class PasswordResetController extends BaseController
             ]);
         }
 
-        if ($inputs['token'] != null) {
-            $password_reset->update([
-                'token' => $inputs['token'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['former_password'] != null) {
-            $password_reset->update([
-                'former_password' => $inputs['former_password'],
-                'updated_at' => now(),
-            ]);
+        foreach (['token', 'former_password'] as $field) {
+            if ($inputs[$field] != null) {
+                $password_reset->update([
+                    $field => $inputs[$field],
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         return $this->handleResponse(new ResourcesPasswordReset($password_reset), __('notifications.update_password_reset_success'));
@@ -350,6 +346,9 @@ class PasswordResetController extends BaseController
      * @param  string  $entity
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('email', description: 'Colonne password_resets.email : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('token', description: 'Colonne password_resets.token : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('phone', description: 'Colonne password_resets.phone : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
     public function checkToken(Request $request, $entity)
     {
         $random_int_stringified = (string) random_int(1000000, 9999999);

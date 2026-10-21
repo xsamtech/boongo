@@ -12,6 +12,7 @@ use App\Models\Type;
 use App\Models\User;
 use App\Models\Work;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use App\Http\Resources\Cart as ResourcesCart;
 use App\Http\Resources\User as ResourcesUser;
 use Illuminate\Support\Facades\Http;
@@ -40,6 +41,11 @@ class CartController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('payment_code', description: 'Colonne carts.payment_code : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('entity', description: 'Colonne carts.entity : ENUM(\'favorite\', \'subscription\', \'consultation\'); NOT NULL. Défaut SQL : \'favorite\'.', required: false, type: 'string')]
+    #[BodyParameter('status_id', description: 'Colonne carts.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne carts.user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('payment_id', description: 'Colonne carts.payment_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function store(Request $request)
     {
         // Get inputs
@@ -94,6 +100,12 @@ class CartController extends BaseController
      * @param  \App\Models\Cart  $cart
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne carts.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('payment_code', description: 'Colonne carts.payment_code : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('entity', description: 'Colonne carts.entity : ENUM(\'favorite\', \'subscription\', \'consultation\'); NOT NULL. Défaut SQL : \'favorite\'.', required: false, type: 'string')]
+    #[BodyParameter('status_id', description: 'Colonne carts.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne carts.user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('payment_id', description: 'Colonne carts.payment_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function update(Request $request, Cart $cart)
     {
         // Get inputs
@@ -112,10 +124,8 @@ class CartController extends BaseController
             $current_cart = Cart::find($inputs['id']);
 
             foreach ($carts as $another_cart):
-                if ($current_cart->payment_code != $inputs['payment_code']) {
-                    if ($another_cart->payment_code == $inputs['payment_code']) {
-                        return $this->handleError($inputs['payment_code'], __('validation.custom.code.exists'), 400);
-                    }
+                if (($current_cart->payment_code != $inputs['payment_code']) && ($another_cart->payment_code == $inputs['payment_code'])) {
+                    return $this->handleError($inputs['payment_code'], __('validation.custom.code.exists'), 400);
                 }
             endforeach;
 
@@ -125,32 +135,13 @@ class CartController extends BaseController
             ]);
         }
 
-        if ($inputs['entity'] != null) {
-            $cart->update([
-                'entity' => $inputs['entity'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['status_id'] != null) {
-            $cart->update([
-                'status_id' => $inputs['status_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['user_id'] != null) {
-            $cart->update([
-                'user_id' => $inputs['user_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['payment_id'] != null) {
-            $cart->update([
-                'payment_id' => $inputs['payment_id'],
-                'updated_at' => now(),
-            ]);
+        foreach (['entity', 'status_id', 'user_id', 'payment_id'] as $field) {
+            if ($inputs[$field] != null) {
+                $cart->update([
+                    $field => $inputs[$field],
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         return $this->handleResponse(new ResourcesCart($cart), __('notifications.update_cart_success'));
@@ -179,6 +170,9 @@ class CartController extends BaseController
      * @param  string $entity
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('user_id', description: 'Colonne carts.user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('work_id', description: 'Colonne work_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('subscription_id', description: 'Colonne subscription_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
     public function addToCart(Request $request, $entity)
     {
         $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
@@ -271,6 +265,8 @@ class CartController extends BaseController
      * @param  int $cart_id
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('work_id', description: 'Colonne work_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('subscription_id', description: 'Colonne subscription_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
     public function removeFromCart(Request $request, int $cart_id)
     {
         $cart = Cart::find($cart_id);
@@ -313,6 +309,10 @@ class CartController extends BaseController
      * @param  int $user_id
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('transaction_type_id', description: 'Identifiant utilisé par cette opération.', required: false, type: 'integer')]
+    #[BodyParameter('other_phone', description: 'Champ other_phone de la requête.', required: false, type: 'string')]
+    #[BodyParameter('channel', description: 'Colonne channel : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('app_url', description: 'Champ app_url de la requête.', required: false, type: 'string')]
     public function purchase(Request $request, int $user_id)
     {
         // FlexPay accessing data

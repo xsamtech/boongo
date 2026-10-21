@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\Group;
 use App\Models\Type;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use App\Http\Resources\Type as ResourcesType;
 
 /**
@@ -31,6 +32,13 @@ class TypeController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('type_name_en', description: 'Colonne types.type_name : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('type_name_fr', description: 'Colonne types.type_name : JSON; NOT NULL. Traduction fr transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('type_name_ln', description: 'Colonne types.type_name : JSON; NOT NULL. Traduction ln transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('type_description', description: 'Colonne types.type_description : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('alias', description: 'Colonne types.alias : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('icon', description: 'Colonne types.icon : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('group_id', description: 'Colonne types.group_id : BIGINT; NULL autorisé.', required: true, type: 'integer')]
     public function store(Request $request)
     {
         // Get inputs
@@ -93,6 +101,14 @@ class TypeController extends BaseController
      * @param  \App\Models\Type  $type
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne types.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('type_name_en', description: 'Colonne types.type_name : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('type_name_fr', description: 'Colonne types.type_name : JSON; NOT NULL. Traduction fr transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('type_name_ln', description: 'Colonne types.type_name : JSON; NOT NULL. Traduction ln transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('type_description', description: 'Colonne types.type_description : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('alias', description: 'Colonne types.alias : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('icon', description: 'Colonne types.icon : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('group_id', description: 'Colonne types.group_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function update(Request $request, Type $type)
     {
         // Get inputs
@@ -115,10 +131,8 @@ class TypeController extends BaseController
             $current_type = Type::find($inputs['id']);
 
             foreach ($types as $another_type):
-                if ($current_type->type_name != $inputs['type_name']) {
-                    if ($another_type->type_name == $inputs['type_name']) {
-                        return $this->handleError($inputs['type_name'], __('validation.custom.type_name.exists'), 400);
-                    }
+                if (($current_type->type_name != $inputs['type_name']) && ($another_type->type_name == $inputs['type_name'])) {
+                    return $this->handleError($inputs['type_name'], __('validation.custom.type_name.exists'), 400);
                 }
             endforeach;
 
@@ -132,32 +146,13 @@ class TypeController extends BaseController
             ]);
         }
 
-        if ($inputs['type_description'] != null) {
-            $type->update([
-                'type_description' => $request->type_description,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['alias'] != null) {
-            $type->update([
-                'alias' => $request->alias,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['icon'] != null) {
-            $type->update([
-                'icon' => $request->icon,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['group_id'] != null) {
-            $type->update([
-                'group_id' => $request->group_id,
-                'updated_at' => now(),
-            ]);
+        foreach (['type_description', 'alias', 'icon', 'group_id'] as $field) {
+            if ($inputs[$field] != null) {
+                $type->update([
+                    $field => $inputs[$field],
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         return $this->handleResponse(new ResourcesType($type), __('notifications.update_type_success'));

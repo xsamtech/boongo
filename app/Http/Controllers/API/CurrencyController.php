@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Currency;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use App\Http\Resources\Currency as ResourcesCurrency;
 
 /**
@@ -30,6 +31,11 @@ class CurrencyController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('currency_name_en', description: 'Colonne currencies.currency_name : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('currency_name_fr', description: 'Colonne currencies.currency_name : JSON; NOT NULL. Traduction fr transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('currency_name_ln', description: 'Colonne currencies.currency_name : JSON; NOT NULL. Traduction ln transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('currency_acronym', description: 'Colonne currencies.currency_acronym : VARCHAR(45); NOT NULL.', required: true, type: 'string')]
+    #[BodyParameter('currency_icon', description: 'Colonne currencies.currency_icon : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
     public function store(Request $request)
     {
         // Get inputs
@@ -90,6 +96,11 @@ class CurrencyController extends BaseController
      * @param  \App\Models\Currency  $currency
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('currency_name_en', description: 'Colonne currencies.currency_name : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('currency_name_fr', description: 'Colonne currencies.currency_name : JSON; NOT NULL. Traduction fr transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('currency_name_ln', description: 'Colonne currencies.currency_name : JSON; NOT NULL. Traduction ln transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('currency_acronym', description: 'Colonne currencies.currency_acronym : VARCHAR(45); NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('currency_icon', description: 'Colonne currencies.currency_icon : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
     public function update(Request $request, Currency $currency)
     {
         // Get inputs
@@ -109,10 +120,8 @@ class CurrencyController extends BaseController
             $current_currency = Currency::find($inputs['id']);
 
             foreach ($currencies as $another_currency):
-                if ($current_currency->currency_name != $inputs['currency_name']) {
-                    if ($another_currency->currency_name == $inputs['currency_name']) {
-                        return $this->handleError($inputs['currency_name'], __('validation.custom.name.exists'), 400);
-                    }
+                if (($current_currency->currency_name != $inputs['currency_name']) && ($another_currency->currency_name == $inputs['currency_name'])) {
+                    return $this->handleError($inputs['currency_name'], __('validation.custom.name.exists'), 400);
                 }
             endforeach;
 
@@ -126,18 +135,13 @@ class CurrencyController extends BaseController
             ]);
         }
 
-        if ($inputs['currency_acronym'] != null) {
-            $currency->update([
-                'currency_acronym' => $inputs['currency_acronym'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['currency_icon'] != null) {
-            $currency->update([
-                'currency_icon' => $inputs['currency_icon'],
-                'updated_at' => now(),
-            ]);
+        foreach (['currency_acronym', 'currency_icon'] as $field) {
+            if ($inputs[$field] != null) {
+                $currency->update([
+                    $field => $inputs[$field],
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         return $this->handleResponse(new ResourcesCurrency($currency), __('notifications.update_currency_success'));

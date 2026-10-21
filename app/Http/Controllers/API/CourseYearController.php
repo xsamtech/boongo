@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Models\CourseYear;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use App\Http\Resources\CourseYear as ResourcesCourseYear;
 
 /**
@@ -31,6 +32,7 @@ class CourseYearController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('year', description: 'Colonne course_years.year : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
     public function store(Request $request)
     {
         $inputs = [
@@ -73,6 +75,8 @@ class CourseYearController extends BaseController
      * @param  \App\Models\CourseYear  $course_year
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne course_years.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('year', description: 'Colonne course_years.year : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
     public function update(Request $request, CourseYear $course_year)
     {
         // Get inputs
@@ -87,10 +91,8 @@ class CourseYearController extends BaseController
             $current_course_year = CourseYear::find($inputs['id']);
 
             foreach ($course_years as $another_year):
-                if ($current_course_year->year != $inputs['year']) {
-                    if ($another_year->year == $inputs['year']) {
-                        return $this->handleError($inputs['year'], __('validation.custom.course_year.exists'), 400);
-                    }
+                if (($current_course_year->year != $inputs['year']) && ($another_year->year == $inputs['year'])) {
+                    return $this->handleError($inputs['year'], __('validation.custom.course_year.exists'), 400);
                 }
             endforeach;
 

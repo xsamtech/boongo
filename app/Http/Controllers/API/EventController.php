@@ -10,6 +10,7 @@ use App\Models\Status;
 use App\Models\Type;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\Event as ResourcesEvent;
 use App\Http\Resources\User as ResourcesUser;
@@ -39,6 +40,16 @@ class EventController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('event_title', description: 'Colonne events.event_title : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('event_description', description: 'Colonne events.event_description : LONGTEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('start_at', description: 'Colonne events.start_at : DATETIME; NULL autorisé.', required: false, type: 'string', format: 'date-time')]
+    #[BodyParameter('end_at', description: 'Colonne events.end_at : DATETIME; NULL autorisé.', required: false, type: 'string', format: 'date-time')]
+    #[BodyParameter('event_place', description: 'Colonne events.event_place : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('event_place_address', description: 'Colonne events.event_place_address : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('type_id', description: 'Colonne events.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne events.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('organization_id', description: 'Colonne events.organization_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('image_64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]
     public function store(Request $request)
     {
         // Groups
@@ -170,6 +181,16 @@ class EventController extends BaseController
      * @param  \App\Models\Event  $event
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne events.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('event_title', description: 'Colonne events.event_title : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('event_description', description: 'Colonne events.event_description : LONGTEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('start_at', description: 'Colonne events.start_at : DATETIME; NULL autorisé.', required: false, type: 'string', format: 'date-time')]
+    #[BodyParameter('end_at', description: 'Colonne events.end_at : DATETIME; NULL autorisé.', required: false, type: 'string', format: 'date-time')]
+    #[BodyParameter('event_place', description: 'Colonne events.event_place : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('type_id', description: 'Colonne events.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne events.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('organization_id', description: 'Colonne events.organization_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('event_place_address', description: 'Colonne events.event_place_address : TEXT; NULL autorisé.', required: false, type: 'string')]
     public function update(Request $request, Event $event)
     {
         // Groups
@@ -199,10 +220,8 @@ class EventController extends BaseController
         }
 
         if ($inputs['event_title'] != null) {
-            if ($current_event->event_title != $inputs['event_title']) {
-                if (trim($inputs['event_title']) == null) {
-                    return $this->handleError(__('miscellaneous.public.event.data.event_title'), __('validation.required'), 400);
-                }
+            if (($current_event->event_title != $inputs['event_title']) && (trim($inputs['event_title']) == null)) {
+                return $this->handleError(__('miscellaneous.public.event.data.event_title'), __('validation.required'), 400);
             }
 
             $event->update([
@@ -246,10 +265,8 @@ class EventController extends BaseController
         }
 
         if ($inputs['start_at'] != null) {
-            if ($current_event->start_at != $inputs['start_at']) {
-                if (trim($inputs['start_at']) == null) {
-                    return $this->handleError(__('miscellaneous.public.event.data.start_at'), __('validation.required'), 400);
-                }
+            if (($current_event->start_at != $inputs['start_at']) && (trim($inputs['start_at']) == null)) {
+                return $this->handleError(__('miscellaneous.public.event.data.start_at'), __('validation.required'), 400);
             }
 
             $event->update([
@@ -273,25 +290,13 @@ class EventController extends BaseController
             ]);
         }
 
-        if ($inputs['type_id'] != null) {
-            $event->update([
-                'type_id' => $inputs['type_id'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['status_id'] != null) {
-            $event->update([
-                'status_id' => $inputs['status_id'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['organization_id'] != null) {
-            $event->update([
-                'organization_id' => $inputs['organization_id'],
-                'updated_at' => now()
-            ]);
+        foreach (['type_id', 'status_id', 'organization_id'] as $field) {
+            if ($inputs[$field] != null) {
+                $event->update([
+                    $field => $inputs[$field],
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         return $this->handleResponse(new ResourcesEvent($event), __('notifications.update_event_success'));
@@ -328,6 +333,10 @@ class EventController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('data', description: 'Terme de recherche.', required: false, type: 'string')]
+    #[BodyParameter('date_from', description: 'Champ date_from de la requête.', required: false, type: 'string')]
+    #[BodyParameter('date_to', description: 'Champ date_to de la requête.', required: false, type: 'string')]
+    #[BodyParameter('type_id', description: 'Colonne events.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function search(Request $request)
     {
         $query = Event::query();
@@ -448,6 +457,9 @@ class EventController extends BaseController
      * @param  int $organization_id
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('type_id', description: 'Colonne events.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne events.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('category_id', description: 'Colonne events.category_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function filterForOrganization(Request $request, $organization_id)
     {
         $organization = Organization::find($organization_id);
@@ -488,6 +500,9 @@ class EventController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('type_id', description: 'Colonne events.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne events.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('category_id', description: 'Colonne events.category_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function filterForEverybody(Request $request)
     {
         $query = Event::query();
@@ -519,6 +534,8 @@ class EventController extends BaseController
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('event_id', description: 'Colonne event_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('image_64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]
     public function updateCover(Request $request, $id)
     {
         $inputs = [

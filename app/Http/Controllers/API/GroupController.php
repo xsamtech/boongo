@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Group;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use App\Http\Resources\Group as ResourcesGroup;
 
 /**
@@ -30,6 +31,8 @@ class GroupController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('group_name', description: 'Colonne groups.group_name : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('group_description', description: 'Colonne groups.group_description : TEXT; NULL autorisé.', required: false, type: 'string')]
     public function store(Request $request)
     {
         // Get inputs
@@ -81,6 +84,9 @@ class GroupController extends BaseController
      * @param  \App\Models\Group  $group
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne groups.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('group_name', description: 'Colonne groups.group_name : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('group_description', description: 'Colonne groups.group_description : TEXT; NULL autorisé.', required: false, type: 'string')]
     public function update(Request $request, Group $group)
     {
         // Get inputs
@@ -96,10 +102,8 @@ class GroupController extends BaseController
             $current_group = Group::find($inputs['id']);
 
             foreach ($groups as $another_group):
-                if ($current_group->group_name != $inputs['group_name']) {
-                    if ($another_group->group_name == $inputs['group_name']) {
-                        return $this->handleError($inputs['group_name'], __('validation.custom.group_name.exists'), 400);
-                    }
+                if (($current_group->group_name != $inputs['group_name']) && ($another_group->group_name == $inputs['group_name'])) {
+                    return $this->handleError($inputs['group_name'], __('validation.custom.group_name.exists'), 400);
                 }
             endforeach;
 

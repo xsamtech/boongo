@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Models\ReportReason;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use App\Http\Resources\ReportReason as ResourcesReportReason;
 
 /**
@@ -30,6 +31,12 @@ class ReportReasonController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('reason_content_en', description: 'Colonne report_reasons.reason_content : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('reason_content_fr', description: 'Colonne report_reasons.reason_content : JSON; NOT NULL. Traduction fr transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('reason_content_ln', description: 'Colonne report_reasons.reason_content : JSON; NOT NULL. Traduction ln transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('reports_count', description: 'Colonne report_reasons.reports_count : INT; NOT NULL.', required: true, type: 'integer')]
+    #[BodyParameter('blocked_for', description: 'Colonne report_reasons.blocked_for : INT; NOT NULL.', required: true, type: 'integer')]
+    #[BodyParameter('entity', description: 'Colonne report_reasons.entity : ENUM(\'work\', \'user\', \'message\'); NULL autorisé. Défaut SQL : \'user\'.', required: false, type: 'string')]
     public function store(Request $request)
     {
         // Get inputs
@@ -95,6 +102,13 @@ class ReportReasonController extends BaseController
      * @param  \App\Models\ReportReason  $report_reason
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne report_reasons.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('reason_content_en', description: 'Colonne report_reasons.reason_content : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('reason_content_fr', description: 'Colonne report_reasons.reason_content : JSON; NOT NULL. Traduction fr transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('reason_content_ln', description: 'Colonne report_reasons.reason_content : JSON; NOT NULL. Traduction ln transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('reports_count', description: 'Colonne report_reasons.reports_count : INT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('blocked_for', description: 'Colonne report_reasons.blocked_for : INT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('entity', description: 'Colonne report_reasons.entity : ENUM(\'work\', \'user\', \'message\'); NULL autorisé. Défaut SQL : \'user\'.', required: false, type: 'string')]
     public function update(Request $request, ReportReason $report_reason)
     {
         // Get inputs
@@ -115,10 +129,8 @@ class ReportReasonController extends BaseController
 
         if ($inputs['reason_content'] != null) {
             foreach ($report_reasons as $another_reason):
-                if ($current_report_reason->reason_content != $inputs['reason_content']) {
-                    if ($another_reason->reason_content == $inputs['reason_content']) {
-                        return $this->handleError($inputs['reason_content'], __('validation.custom.content.exists'), 400);
-                    }
+                if (($current_report_reason->reason_content != $inputs['reason_content']) && ($another_reason->reason_content == $inputs['reason_content'])) {
+                    return $this->handleError($inputs['reason_content'], __('validation.custom.content.exists'), 400);
                 }
             endforeach;
 
@@ -132,25 +144,13 @@ class ReportReasonController extends BaseController
             ]);
         }
 
-        if ($inputs['reports_count'] != null) {
-            $report_reason->update([
-                'reports_count' => $request->reports_count,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['blocked_for'] != null) {
-            $report_reason->update([
-                'blocked_for' => $request->blocked_for,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['entity'] != null) {
-            $report_reason->update([
-                'entity' => $request->entity,
-                'updated_at' => now(),
-            ]);
+        foreach (['reports_count', 'blocked_for', 'entity'] as $field) {
+            if ($inputs[$field] != null) {
+                $report_reason->update([
+                    $field => $inputs[$field],
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         return $this->handleResponse(new ResourcesReportReason($report_reason), __('notifications.update_report_reason_success'));

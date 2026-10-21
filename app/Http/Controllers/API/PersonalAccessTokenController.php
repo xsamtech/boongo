@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Models\PersonalAccessToken;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use App\Http\Resources\PersonalAccessToken as ResourcesPersonalAccessToken;
 
 /**
@@ -30,6 +31,13 @@ class PersonalAccessTokenController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('tokenable_type', description: 'Colonne personal_access_tokens.tokenable_type : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('tokenable_id', description: 'Colonne personal_access_tokens.tokenable_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('name', description: 'Colonne personal_access_tokens.name : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('token', description: 'Colonne personal_access_tokens.token : VARCHAR(64); NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('abilities', description: 'Colonne personal_access_tokens.abilities : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('last_used_at', description: 'Colonne personal_access_tokens.last_used_at : TIMESTAMP; NULL autorisé.', required: false, type: 'string', format: 'date-time')]
+    #[BodyParameter('expires_at', description: 'Colonne personal_access_tokens.expires_at : TIMESTAMP; NULL autorisé.', required: false, type: 'string', format: 'date-time')]
     public function store(Request $request)
     {
         // Get inputs
@@ -86,6 +94,14 @@ class PersonalAccessTokenController extends BaseController
      * @param  \App\Models\Notification  $notification
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne personal_access_tokens.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('tokenable_type', description: 'Colonne personal_access_tokens.tokenable_type : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('tokenable_id', description: 'Colonne personal_access_tokens.tokenable_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('name', description: 'Colonne personal_access_tokens.name : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('token', description: 'Colonne personal_access_tokens.token : VARCHAR(64); NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('abilities', description: 'Colonne personal_access_tokens.abilities : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('last_used_at', description: 'Colonne personal_access_tokens.last_used_at : TIMESTAMP; NULL autorisé.', required: false, type: 'string', format: 'date-time')]
+    #[BodyParameter('expires_at', description: 'Colonne personal_access_tokens.expires_at : TIMESTAMP; NULL autorisé.', required: false, type: 'string', format: 'date-time')]
     public function update(Request $request, PersonalAccessToken $personal_access_token)
     {
         // Get inputs
@@ -103,33 +119,19 @@ class PersonalAccessTokenController extends BaseController
         $personal_access_tokens = PersonalAccessToken::all();
         $current_personal_access_token = PersonalAccessToken::find($inputs['id']);
 
-        if ($inputs['tokenable_type'] != null) {
-            $personal_access_token->update([
-                'tokenable_type' => $request->tokenable_type,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['tokenable_id'] != null) {
-            $personal_access_token->update([
-                'tokenable_id' => $request->tokenable_id,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['name'] != null) {
-            $personal_access_token->update([
-                'name' => $request->name,
-                'updated_at' => now(),
-            ]);
+        foreach (['tokenable_type', 'tokenable_id', 'name'] as $field) {
+            if ($inputs[$field] != null) {
+                $personal_access_token->update([
+                    $field => $inputs[$field],
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         if ($inputs['token'] != null) {
             foreach ($personal_access_tokens as $another_personal_access_token):
-                if ($current_personal_access_token->token != $inputs['token']) {
-                    if ($another_personal_access_token->token == $inputs['token']) {
-                        return $this->handleError($inputs['token'], __('validation.custom.token.exists'), 400);
-                    }
+                if (($current_personal_access_token->token != $inputs['token']) && ($another_personal_access_token->token == $inputs['token'])) {
+                    return $this->handleError($inputs['token'], __('validation.custom.token.exists'), 400);
                 }
             endforeach;
 
@@ -139,25 +141,13 @@ class PersonalAccessTokenController extends BaseController
             ]);
         }
 
-        if ($inputs['abilities'] != null) {
-            $personal_access_token->update([
-                'abilities' => $request->abilities,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['last_used_at'] != null) {
-            $personal_access_token->update([
-                'last_used_at' => $request->last_used_at,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['expires_at'] != null) {
-            $personal_access_token->update([
-                'expires_at' => $request->expires_at,
-                'updated_at' => now(),
-            ]);
+        foreach (['abilities', 'last_used_at', 'expires_at'] as $field) {
+            if ($inputs[$field] != null) {
+                $personal_access_token->update([
+                    $field => $inputs[$field],
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         return $this->handleResponse(new ResourcesPersonalAccessToken($personal_access_token), __('notifications.update_personal_access_token_success'));

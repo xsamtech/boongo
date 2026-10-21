@@ -16,6 +16,7 @@ use App\Models\Status;
 use App\Models\Type;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Resources\Message as ResourcesMessage;
@@ -47,7 +48,21 @@ class MessageController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     * @requestMediaType multipart/form-data
      */
+    #[BodyParameter('message_content', description: 'Colonne messages.message_content : LONGTEXT; NOT NULL.', required: true, type: 'string')]
+    #[BodyParameter('doc_title', description: 'Colonne messages.doc_title : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('doc_uri', description: 'Colonne messages.doc_uri : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('answered_for', description: 'Colonne messages.answered_for : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('type_id', description: 'Colonne messages.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne messages.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne messages.user_id : BIGINT; NULL autorisé.', required: true, type: 'integer')]
+    #[BodyParameter('addressee_user_id', description: 'Colonne messages.addressee_user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('addressee_organization_id', description: 'Colonne messages.addressee_organization_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('addressee_circle_id', description: 'Colonne messages.addressee_circle_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('event_id', description: 'Colonne messages.event_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('files_names', description: 'Champ files_names de la requête.', required: false, type: 'string')]
+    #[BodyParameter('files_urls', description: 'Fichier à téléverser (multipart/form-data).', required: false, type: 'string', format: 'binary')]
     public function store(Request $request)
     {
         // Groups
@@ -232,6 +247,17 @@ class MessageController extends BaseController
      * @param  \App\Models\Message  $message
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('message_content', description: 'Colonne messages.message_content : LONGTEXT; NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('doc_title', description: 'Colonne messages.doc_title : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('doc_uri', description: 'Colonne messages.doc_uri : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('answered_for', description: 'Colonne messages.answered_for : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('type_id', description: 'Colonne messages.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('status_id', description: 'Colonne messages.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne messages.user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('addressee_user_id', description: 'Colonne messages.addressee_user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('addressee_organization_id', description: 'Colonne messages.addressee_organization_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('addressee_circle_id', description: 'Colonne messages.addressee_circle_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('event_id', description: 'Colonne messages.event_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function update(Request $request, Message $message)
     {
         // Get inputs
@@ -249,81 +275,13 @@ class MessageController extends BaseController
             'event_id' => $request->event_id
         ];
 
-        if ($inputs['message_content'] != null) {
-            $message->update([
-                'message_content' => $inputs['message_content'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['doc_title'] != null) {
-            $message->update([
-                'doc_title' => $inputs['doc_title'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['doc_uri'] != null) {
-            $message->update([
-                'doc_uri' => $inputs['doc_uri'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['answered_for'] != null) {
-            $message->update([
-                'answered_for' => $inputs['answered_for'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['type_id'] != null) {
-            $message->update([
-                'type_id' => $inputs['type_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['status_id'] != null) {
-            $message->update([
-                'status_id' => $inputs['status_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['user_id'] != null) {
-            $message->update([
-                'user_id' => $inputs['user_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['addressee_user_id'] != null) {
-            $message->update([
-                'addressee_user_id' => $inputs['addressee_user_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['addressee_organization_id'] != null) {
-            $message->update([
-                'addressee_organization_id' => $inputs['addressee_organization_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['addressee_circle_id'] != null) {
-            $message->update([
-                'addressee_circle_id' => $inputs['addressee_circle_id'],
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['event_id'] != null) {
-            $message->update([
-                'event_id' => $inputs['event_id'],
-                'updated_at' => now(),
-            ]);
+        foreach ($inputs as $field => $value) {
+            if ($value != null) {
+                $message->update([
+                    $field => $value,
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         return $this->handleResponse(new ResourcesMessage($message), __('notifications.update_message_success'));

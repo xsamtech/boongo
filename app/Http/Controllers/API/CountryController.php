@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Country;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use App\Http\Resources\Country as ResourcesCountry;
 
 /**
@@ -30,6 +31,9 @@ class CountryController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('country_name', description: 'Colonne countries.country_name : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('country_phone_code', description: 'Colonne countries.country_phone_code : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('country_lang_code', description: 'Colonne countries.country_lang_code : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
     public function store(Request $request)
     {
         // Get inputs
@@ -82,6 +86,10 @@ class CountryController extends BaseController
      * @param  \App\Models\Country  $country
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne countries.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('country_name', description: 'Colonne countries.country_name : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('country_phone_code', description: 'Colonne countries.country_phone_code : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('country_lang_code', description: 'Colonne countries.country_lang_code : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
     public function update(Request $request, Country $country)
     {
         // Get inputs
@@ -98,10 +106,8 @@ class CountryController extends BaseController
             $current_country = Country::find($inputs['id']);
 
             foreach ($countries as $another_country):
-                if ($current_country->country_name != $inputs['country_name']) {
-                    if ($another_country->country_name == $inputs['country_name']) {
-                        return $this->handleError($inputs['country_name'], __('validation.custom.country_name.exists'), 400);
-                    }
+                if (($current_country->country_name != $inputs['country_name']) && ($another_country->country_name == $inputs['country_name'])) {
+                    return $this->handleError($inputs['country_name'], __('validation.custom.country_name.exists'), 400);
                 }
             endforeach;
 
@@ -111,18 +117,13 @@ class CountryController extends BaseController
             ]);
         }
 
-        if ($inputs['country_phone_code'] != null) {
-            $country->update([
-                'country_phone_code' => $inputs['country_phone_code'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['country_lang_code'] != null) {
-            $country->update([
-                'country_lang_code' => $inputs['country_lang_code'],
-                'updated_at' => now()
-            ]);
+        foreach (['country_phone_code', 'country_lang_code'] as $field) {
+            if ($inputs[$field] != null) {
+                $country->update([
+                    $field => $inputs[$field],
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         return $this->handleResponse(new ResourcesCountry($country), __('notifications.update_country_success'));

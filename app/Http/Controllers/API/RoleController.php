@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use App\Http\Resources\Role as ResourcesRole;
 
 /**
@@ -30,6 +31,8 @@ class RoleController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('role_name', description: 'Colonne roles.role_name : VARCHAR(255); NOT NULL.', required: true, type: 'string')]
+    #[BodyParameter('role_description', description: 'Colonne roles.role_description : TEXT; NULL autorisé.', required: false, type: 'string')]
     public function store(Request $request)
     {
         // Get inputs
@@ -81,6 +84,9 @@ class RoleController extends BaseController
      * @param  \App\Models\Role  $role
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne roles.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('role_name', description: 'Colonne roles.role_name : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('role_description', description: 'Colonne roles.role_description : TEXT; NULL autorisé.', required: false, type: 'string')]
     public function update(Request $request, Role $role)
     {
         // Get inputs
@@ -96,10 +102,8 @@ class RoleController extends BaseController
             $current_role = Role::find($inputs['id']);
 
             foreach ($roles as $another_role):
-                if ($current_role->role_name != $inputs['role_name']) {
-                    if ($another_role->role_name == $inputs['role_name']) {
-                        return $this->handleError($inputs['role_name'], __('validation.custom.role_name.exists'), 400);
-                    }
+                if (($current_role->role_name != $inputs['role_name']) && ($another_role->role_name == $inputs['role_name'])) {
+                    return $this->handleError($inputs['role_name'], __('validation.custom.role_name.exists'), 400);
                 }
             endforeach;
 

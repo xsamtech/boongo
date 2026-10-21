@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\CurrenciesRate;
 use App\Models\Currency;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\CurrenciesRate as ResourcesCurrenciesRate;
 
@@ -32,6 +33,9 @@ class CurrenciesRateController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('rate', description: 'Colonne currencies_rates.rate : DECIMAL(9,5); NOT NULL.', required: true, type: 'float')]
+    #[BodyParameter('from_currency_id', description: 'Colonne currencies_rates.from_currency_id : BIGINT; NOT NULL.', required: true, type: 'integer')]
+    #[BodyParameter('to_currency_id', description: 'Colonne currencies_rates.to_currency_id : BIGINT; NOT NULL.', required: true, type: 'integer')]
     public function store(Request $request)
     {
         // Get inputs
@@ -92,6 +96,10 @@ class CurrenciesRateController extends BaseController
      * @param  \App\Models\Notification  $notification
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne currencies_rates.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('rate', description: 'Colonne currencies_rates.rate : DECIMAL(9,5); NOT NULL.', required: false, type: 'float')]
+    #[BodyParameter('from_currency_id', description: 'Colonne currencies_rates.from_currency_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
+    #[BodyParameter('to_currency_id', description: 'Colonne currencies_rates.to_currency_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
     public function update(Request $request, CurrenciesRate $currencies_rate)
     {
         // Get inputs
@@ -122,10 +130,8 @@ class CurrenciesRateController extends BaseController
             }
 
             foreach ($currencies_rates as $another_currencies_rate):
-                if ($current_currencies_rate->from_currency_id != $inputs['from_currency_id']) {
-                    if ($another_currencies_rate->from_currency_id == $inputs['from_currency_id'] && $another_currencies_rate->to_currency_id == $current_currencies_rate->to_currency_id) {
-                        return $this->handleError($inputs['from_currency_id'] . ' & ' . $current_currencies_rate->to_currency_id, __('validation.custom.currency.exists'), 400);
-                    }
+                if (($current_currencies_rate->from_currency_id != $inputs['from_currency_id']) && ($another_currencies_rate->from_currency_id == $inputs['from_currency_id'] && $another_currencies_rate->to_currency_id == $current_currencies_rate->to_currency_id)) {
+                    return $this->handleError($inputs['from_currency_id'] . ' & ' . $current_currencies_rate->to_currency_id, __('validation.custom.currency.exists'), 400);
                 }
             endforeach;
 
@@ -148,10 +154,8 @@ class CurrenciesRateController extends BaseController
             }
 
             foreach ($currencies_rates as $another_currencies_rate):
-                if ($current_currencies_rate->to_currency_id != $inputs['to_currency_id']) {
-                    if ($another_currencies_rate->to_currency_id == $inputs['to_currency_id'] && $another_currencies_rate->from_currency_id == $current_currencies_rate->from_currency_id) {
-                        return $this->handleError($current_currencies_rate->from_currency_id . ' & ' . $inputs['to_currency_id'], __('validation.custom.currency.exists'), 400);
-                    }
+                if (($current_currencies_rate->to_currency_id != $inputs['to_currency_id']) && ($another_currencies_rate->to_currency_id == $inputs['to_currency_id'] && $another_currencies_rate->from_currency_id == $current_currencies_rate->from_currency_id)) {
+                    return $this->handleError($current_currencies_rate->from_currency_id . ' & ' . $inputs['to_currency_id'], __('validation.custom.currency.exists'), 400);
                 }
             endforeach;
 

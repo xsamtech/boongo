@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\File;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use App\Http\Resources\File as ResourcesFile;
 use App\Models\Group;
 use App\Models\Type;
@@ -35,7 +36,16 @@ class FileController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     * @requestMediaType multipart/form-data
      */
+    #[BodyParameter('part_title', description: 'Colonne files.part_title : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('position', description: 'Colonne files.position : INT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('media_length', description: 'Colonne files.media_length : INT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('work_id', description: 'Colonne files.work_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('program_id', description: 'Colonne files.program_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('message_id', description: 'Colonne files.message_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('part_cover_image64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]
+    #[BodyParameter('file_content', description: 'Fichier à téléverser (multipart/form-data).', required: false, type: 'string', format: 'binary')]
     public function store(Request $request)
     {
         // Group
@@ -175,6 +185,17 @@ class FileController extends BaseController
      * @param  \App\Models\File  $file
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne files.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('file_name', description: 'Colonne files.file_name : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('file_url', description: 'Colonne files.file_url : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('part_title', description: 'Colonne files.part_title : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('part_cover_image64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]
+    #[BodyParameter('position', description: 'Colonne files.position : INT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('media_length', description: 'Colonne files.media_length : INT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('type_id', description: 'Colonne files.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('work_id', description: 'Colonne files.work_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('program_id', description: 'Colonne files.program_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('message_id', description: 'Colonne files.message_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function update(Request $request, File $file)
     {
         // Get inputs
@@ -207,47 +228,26 @@ class FileController extends BaseController
                     return $this->handleError(__('notifications.find_file_404'));
                 }
 
-                if ($files != null) {
-                    foreach ($files as $another_file):
-                        if ($current_file->file_name != $inputs['file_name']) {
-                            if ($another_file->file_name == $inputs['file_name']) {
-                                return $this->handleError($inputs['file_name'], __('validation.custom.file_name.exists'), 400);
-                            }
-                        }
-                    endforeach;
-
-                    $file->update([
-                        'file_name' => $inputs['file_name'],
-                        'updated_at' => now()
-                    ]);
-
-                } else {
-                    $file->update([
-                        'file_name' => $inputs['file_name'],
-                        'updated_at' => now()
-                    ]);
+                foreach ($files as $another_file) {
+                    if ($current_file->file_name != $inputs['file_name'] && $another_file->file_name == $inputs['file_name']) {
+                        return $this->handleError($inputs['file_name'], __('validation.custom.file_name.exists'), 400);
+                    }
                 }
+            }
 
-            } else {
+            $file->update([
+                'file_name' => $inputs['file_name'],
+                'updated_at' => now()
+            ]);
+        }
+
+        foreach (['file_url', 'part_title'] as $field) {
+            if ($inputs[$field] != null) {
                 $file->update([
-                    'file_name' => $inputs['file_name'],
+                    $field => $inputs[$field],
                     'updated_at' => now()
                 ]);
             }
-        }
-
-        if ($inputs['file_url'] != null) {
-            $file->update([
-                'file_url' => $inputs['file_url'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['part_title'] != null) {
-            $file->update([
-                'part_title' => $inputs['part_title'],
-                'updated_at' => now()
-            ]);
         }
 
         if ($inputs['part_cover_image64'] != null) {
@@ -284,46 +284,13 @@ class FileController extends BaseController
             ]);
         }
 
-        if ($inputs['position'] != null) {
-            $file->update([
-                'position' => $inputs['position'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['media_length'] != null) {
-            $file->update([
-                'media_length' => $inputs['media_length'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['type_id'] != null) {
-            $file->update([
-                'type_id' => $inputs['type_id'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['work_id'] != null) {
-            $file->update([
-                'work_id' => $inputs['work_id'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['program_id'] != null) {
-            $file->update([
-                'program_id' => $inputs['program_id'],
-                'updated_at' => now()
-            ]);
-        }
-
-        if ($inputs['message_id'] != null) {
-            $file->update([
-                'message_id' => $inputs['message_id'],
-                'updated_at' => now()
-            ]);
+        foreach (['position', 'media_length', 'type_id', 'work_id', 'program_id', 'message_id'] as $field) {
+            if ($inputs[$field] != null) {
+                $file->update([
+                    $field => $inputs[$field],
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         return $this->handleResponse(new ResourcesFile($file), __('notifications.update_file_success'));

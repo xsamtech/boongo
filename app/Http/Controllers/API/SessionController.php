@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Session;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Http\Resources\Session as ResourcesSession;
@@ -32,6 +33,12 @@ class SessionController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne sessions.id : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
+    #[BodyParameter('ip_address', description: 'Colonne sessions.ip_address : VARCHAR(45); NULL autorisé.', required: true, type: 'string')]
+    #[BodyParameter('user_agent', description: 'Colonne sessions.user_agent : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('payload', description: 'Colonne sessions.payload : LONGTEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('last_activity', description: 'Colonne sessions.last_activity : INT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne sessions.user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function store(Request $request)
     {
         // Get inputs
@@ -81,6 +88,11 @@ class SessionController extends BaseController
      * @param  \App\Models\Notification  $notification
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('ip_address', description: 'Colonne sessions.ip_address : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('user_agent', description: 'Colonne sessions.user_agent : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('payload', description: 'Colonne sessions.payload : LONGTEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('last_activity', description: 'Colonne sessions.last_activity : INT; NULL autorisé.', required: false, type: 'integer')]
+    #[BodyParameter('user_id', description: 'Colonne sessions.user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function update(Request $request, Session $session)
     {
         // Get inputs
@@ -92,34 +104,12 @@ class SessionController extends BaseController
             'user_id' => $request->user_id
         ];
 
-        if ($inputs['ip_address'] != null) {
-            $session->update([
-                'ip_address' => $request->ip_address
-            ]);
-        }
-
-        if ($inputs['user_agent'] != null) {
-            $session->update([
-                'user_agent' => $request->user_agent
-            ]);
-        }
-
-        if ($inputs['payload'] != null) {
-            $session->update([
-                'payload' => $request->payload
-            ]);
-        }
-
-        if ($inputs['last_activity'] != null) {
-            $session->update([
-                'last_activity' => $request->last_activity
-            ]);
-        }
-
-        if ($inputs['user_id'] != null) {
-            $session->update([
-                'user_id' => $request->user_id
-            ]);
+        foreach ($inputs as $field => $value) {
+            if ($value != null) {
+                $session->update([
+                    $field => $value
+                ]);
+            }
         }
 
         $session->update($inputs);

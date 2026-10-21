@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Models\Group;
 use App\Models\Status;
 use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\BodyParameter;
 use App\Http\Resources\Status as ResourcesStatus;
 
 /**
@@ -31,6 +32,13 @@ class StatusController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('status_name_en', description: 'Colonne statuses.status_name : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('status_name_fr', description: 'Colonne statuses.status_name : JSON; NOT NULL. Traduction fr transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('status_name_ln', description: 'Colonne statuses.status_name : JSON; NOT NULL. Traduction ln transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('status_description', description: 'Colonne statuses.status_description : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('icon', description: 'Colonne statuses.icon : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('color', description: 'Colonne statuses.color : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('group_id', description: 'Colonne statuses.group_id : BIGINT; NULL autorisé.', required: true, type: 'integer')]
     public function store(Request $request)
     {
         // Get inputs
@@ -93,6 +101,14 @@ class StatusController extends BaseController
      * @param  \App\Models\Status  $status
      * @return \Illuminate\Http\Response
      */
+    #[BodyParameter('id', description: 'Colonne statuses.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
+    #[BodyParameter('status_name_en', description: 'Colonne statuses.status_name : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('status_name_fr', description: 'Colonne statuses.status_name : JSON; NOT NULL. Traduction fr transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('status_name_ln', description: 'Colonne statuses.status_name : JSON; NOT NULL. Traduction ln transmise séparément.', required: false, type: 'string')]
+    #[BodyParameter('status_description', description: 'Colonne statuses.status_description : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('icon', description: 'Colonne statuses.icon : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('color', description: 'Colonne statuses.color : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('group_id', description: 'Colonne statuses.group_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function update(Request $request, Status $status)
     {
         // Get inputs
@@ -115,10 +131,8 @@ class StatusController extends BaseController
             $current_status = Status::find($inputs['id']);
 
             foreach ($statuses as $another_status):
-                if ($current_status->status_name != $inputs['status_name']) {
-                    if ($another_status->status_name == $inputs['status_name']) {
-                        return $this->handleError($inputs['status_name'], __('validation.custom.status_name.exists'), 400);
-                    }
+                if (($current_status->status_name != $inputs['status_name']) && ($another_status->status_name == $inputs['status_name'])) {
+                    return $this->handleError($inputs['status_name'], __('validation.custom.status_name.exists'), 400);
                 }
             endforeach;
 
@@ -132,32 +146,13 @@ class StatusController extends BaseController
             ]);
         }
 
-        if ($inputs['status_description'] != null) {
-            $status->update([
-                'status_description' => $request->status_description,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['icon'] != null) {
-            $status->update([
-                'icon' => $request->icon,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['color'] != null) {
-            $status->update([
-                'color' => $request->color,
-                'updated_at' => now(),
-            ]);
-        }
-
-        if ($inputs['group_id'] != null) {
-            $status->update([
-                'group_id' => $request->group_id,
-                'updated_at' => now(),
-            ]);
+        foreach (['status_description', 'icon', 'color', 'group_id'] as $field) {
+            if ($inputs[$field] != null) {
+                $status->update([
+                    $field => $inputs[$field],
+                    'updated_at' => now()
+                ]);
+            }
         }
 
         return $this->handleResponse(new ResourcesStatus($status), __('notifications.update_status_success'));
