@@ -1391,13 +1391,14 @@ class WorkController extends BaseController
 		$image_url = 'images/works/' . $id . '/' . Str::random(50) . '.png';
 
 		// Upload image
-		Storage::url(Storage::disk('public')->put($image_url, base64_decode($image)));
+		Storage::url(Storage::disk('s3')->put($image_url, base64_decode($image)));
 
 		$work = Work::find($id);
 
         File::create([
             'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
-            'file_url' => getWebURL() . '/storage/' . $image_url,
+            'file_url' => config('filesystems.disks.s3.url') . $image_url,
+            // 'file_url' => getWebURL() . '/storage/' . $image_url,
             'type_id' => $type->id,
             'work_id' => $work->id
         ]);

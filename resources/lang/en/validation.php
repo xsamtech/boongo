@@ -152,7 +152,8 @@ return [
             'exists' => 'The provided phone number already exists',
         ],
         'code' => [
-            'incorrect' => 'Write a valid code please'
+            'incorrect' => 'Write a valid code please',
+            'exists' => 'This code already exists',
         ],
         'former_password' => [
             'empty' => 'Please enter your old password!',
@@ -177,8 +178,8 @@ return [
         'file_name' => [
             'exists' => 'This file name already exists'
         ],
-        'code' => [
-            'exists' => 'This code already exists'
+        'id' => [
+            'required' => 'The "id" field is required',
         ],
         'course_year' => [
             'exists' => 'This course year already exists'

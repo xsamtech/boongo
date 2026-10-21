@@ -153,6 +153,7 @@ return [
         ],
         'code' => [
             'incorrect' => 'Ecrivez un code valide s\'il vous plait',
+            'exists' => 'Ce code existe déjà'
         ],
         'former_password' => [
             'empty' => 'Veuillez mettre votre ancien mot de passe !',
@@ -177,8 +178,8 @@ return [
         'file_name' => [
             'exists' => 'Ce nom de fichier existe déjà'
         ],
-        'code' => [
-            'exists' => 'Ce code existe déjà'
+        'id' => [
+            'required' => 'Le champ "id" est obligatoire',
         ],
         'course_year' => [
             'exists' => 'Cette année d\'étude existe déjà'

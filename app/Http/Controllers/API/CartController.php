@@ -14,6 +14,7 @@ use App\Models\Work;
 use Illuminate\Http\Request;
 use App\Http\Resources\Cart as ResourcesCart;
 use App\Http\Resources\User as ResourcesUser;
+use Illuminate\Support\Facades\Http;
 
 /**
  * @author Xanders
@@ -204,7 +205,7 @@ class CartController extends BaseController
                 return $this->handleError(__('notifications.find_work_404'));
             }
 
-            $cart = $entity == 'favorite' ? 
+            $cart = $entity == 'favorite' ?
                         Cart::where([['entity', $entity], ['user_id', $user->id]])->first() :
                         Cart::where([['entity', $entity], ['status_id', $status->id], ['user_id', $user->id]])->first();
 
@@ -270,7 +271,7 @@ class CartController extends BaseController
      * @param  int $cart_id
      * @return \Illuminate\Http\Response
      */
-    public function removeFromCart(Request $request, $cart_id)
+    public function removeFromCart(Request $request, int $cart_id)
     {
         $cart = Cart::find($cart_id);
 
@@ -309,18 +310,14 @@ class CartController extends BaseController
      * Purchase ordered product/service.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int $cart_id
-     * @param  string $entity
+     * @param  int $user_id
      * @return \Illuminate\Http\Response
      */
-    public function purchase(Request $request, $user_id)
+    public function purchase(Request $request, int $user_id)
     {
         // FlexPay accessing data
         $gateway_mobile = config('services.flexpay.gateway_mobile');
         $gateway_card = config('services.flexpay.gateway_card_v2');
-        // Vonage accessing data
-        // $basic  = new \Vonage\Client\Credentials\Basic(config('vonage.api_key'), config('vonage.api_secret'));
-        // $client = new \Vonage\Client($basic);
         // Groups
         $cart_status_group = Group::where('group_name', 'Etat du panier')->first();
         $payment_status_group = Group::where('group_name', 'Etat du paiement')->first();
@@ -340,14 +337,13 @@ class CartController extends BaseController
         $cart_subscription = null;
 
         if (is_null($mobile_money_type)) {
-            return $this->handleError(__('miscellaneous.public.home.posts.boost.transaction_type.mobile_money'), __('notifications.find_type_404'), 404);
+            return $this->handleError(__('miscellaneous.public.about.subscribe.send_money.mobile_money'), __('notifications.find_type_404'), 404);
         }
 
         if (is_null($bank_card_type)) {
-            return $this->handleError(__('miscellaneous.public.home.posts.boost.transaction_type.bank_card'), __('notifications.find_type_404'), 404);
+            return $this->handleError(__('miscellaneous.public.about.subscribe.send_money.bank_card'), __('notifications.find_type_404'), 404);
         }
 
-        // Get user currency
         $current_user = User::find($user_id);
 
         if (is_null($current_user)) {
@@ -356,244 +352,174 @@ class CartController extends BaseController
 
         $user_currency = $current_user->currency->currency_acronym;
 
-        // Get total prices in the cart
-        $total_to_pay = 0;
         $cart_totals = $current_user->totalsUnpaid();
+        $total_to_pay = $cart_totals['total_unpaid_consultations'] + $cart_totals['total_unpaid_subscriptions'];
 
-        if ($current_user->unpaidConsultations()->isNotEmpty()) {
-            $total_to_pay += $cart_totals['total_unpaid_consultations'];
-        }
-
-        if ($current_user->unpaidSubscriptions()->isNotEmpty()) {
-            $total_to_pay += $cart_totals['total_unpaid_subscriptions'];
-        }
-
-        // Validations
-        if ($request->transaction_type_id == null OR !is_numeric($request->transaction_type_id)) {
+        if ($request->transaction_type_id == null || !is_numeric($request->transaction_type_id)) {
             return $this->handleError($request->transaction_type_id, __('validation.required'), 400);
         }
 
-        // If the transaction is via mobile money
-        if ($request->transaction_type_id == $mobile_money_type->id) {
-            $reference_code = 'REF-' . ((string) random_int(10000000, 99999999)) . '-' . $current_user->id;
-
-            // Create response by sending request to FlexPay
-            $data = array(
-                'merchant' => config('services.flexpay.merchant'),
-                'type' => 1,
-                'phone' => $request->other_phone,
-                'reference' => $reference_code,
-                'amount' => round($total_to_pay),
-                'currency' => $user_currency,
-                'callbackUrl' => getApiURL() . '/payment/store'
+        /*
+         * Fonctions communes
+         */
+        $createPayment = function ($orderNumber, $reference) use ($current_user, $request, $total_to_pay, $user_currency, $in_progress_status) {
+            return Payment::firstOrCreate(
+                ['order_number' => $orderNumber],
+                [
+                    'reference' => $reference,
+                    'amount' => round($total_to_pay),
+                    'phone' => str_replace('+', '', $request->other_phone),
+                    'currency' => $user_currency,
+                    'channel' => $request->channel,
+                    'type_id' => $request->transaction_type_id,
+                    'status_id' => $in_progress_status->id,
+                    'user_id' => $current_user->id,
+                ]
             );
-            $data = json_encode($data);
-            $ch = curl_init();
+        };
 
-            curl_setopt($ch, CURLOPT_URL, $gateway_mobile);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, Array(
-                'Content-Type: application/json',
-                'Authorization: Bearer ' . config('services.flexpay.api_token')
-            ));
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 300);
-
-            $response = curl_exec($ch);
-
-            if (curl_errno($ch)) {
-                return $this->handleError(curl_errno($ch), __('notifications.transaction_request_failed'), 400);
-
-            } else {
-                curl_close($ch); 
-
-                $jsonRes = json_decode($response, true);
-                $code = $jsonRes['code']; // Push sending status
-
-                if ($code != '0') {
-                    return $this->handleError(__('miscellaneous.error_label'), __('notifications.transaction_push_failed'), 400);
-
-                } else {
-                    // Register payment, even if FlexPay will
-                    $payment = Payment::where('order_number', $jsonRes['orderNumber'])->first();
-
-                    if (is_null($payment)) {
-                        $payment = Payment::create([
-                            'reference' => $reference_code,
-                            'order_number' => $jsonRes['orderNumber'],
-                            'amount' => round($total_to_pay),
-                            'phone' => $request->other_phone,
-                            'currency' => $user_currency,
-                            'channel' => $request->channel,
-                            'type_id' => $request->transaction_type_id,
-                            'status_id' => $in_progress_status->id,
-                            'user_id' => $current_user->id
-                        ]);
-                    }
-
-                    // If user has promotional code, update "is_promoted" column
-                    if ($current_user->promo_code != null) {
-                        $current_user->update(['is_promoted' => 0]);
-                    }
-
-                    // The cart is updated only if the processing succeed
-                    if ($current_user->unpaidConsultations()->isNotEmpty()) {
-                        $random_string = (string) random_int(1000000, 9999999);
-                        $generated_number = 'BNG-' . $random_string . '-' . date('Y.m.d');
-                        $cart_consultation = Cart::where([['entity', 'consultation'], ['status_id', $ongoing_status->id], ['user_id', $current_user->id]])->latest()->first();
-
-                        $cart_consultation->update([
-                            'payment_code' => $generated_number,
-                            'status_id' => $paid_status->id,
-                            'payment_id' => $payment->id,
-                            'updated_at' => now()
-                        ]);
-
-                        foreach ($cart_consultation->works as $work) {
-                            $cart_consultation->works()->updateExistingPivot($work->id, ['status_id' => $pending_status->id]);
-                        }
-                    }
-
-                    if ($current_user->unpaidSubscriptions()->isNotEmpty()) {
-                        $random_string = (string) random_int(1000000, 9999999);
-                        $generated_number = 'BNG-' . $random_string . '-' . date('Y.m.d');
-                        $cart_subscription = Cart::where([['entity', 'subscription'], ['status_id', $ongoing_status->id], ['user_id', $current_user->id]])->latest()->first();
-
-                        $cart_subscription->update([
-                            'payment_code' => $generated_number,
-                            'status_id' => $paid_status->id,
-                            'payment_id' => $payment->id,
-                            'updated_at' => now()
-                        ]);
-
-                        foreach ($cart_subscription->subscriptions as $subscription) {
-                            $cart_subscription->subscriptions()->updateExistingPivot($subscription->id, ['status_id' => $pending_status->id]);
-                        }
-                    }
-
-                    $object->user = new ResourcesUser($current_user);
-                    $object->result_response = [
-                        'message' => $jsonRes['message'],
-                        'order_number' => $jsonRes['orderNumber']
-                    ];
-                }
+        $updateCart = function ($cart, $relation, $payment, $paymentCode) use ($paid_status, $pending_status) {
+            if (!$cart) {
+                return;
             }
-        }
 
-        // If the transaction is via bank card
-        if ($request->transaction_type_id == $bank_card_type->id) {
+            $cart->update([
+                'payment_code' => $paymentCode,
+                'status_id' => $paid_status->id,
+                'payment_id' => $payment->id,
+                'updated_at' => now(),
+            ]);
+
+            foreach ($cart->{$relation} as $item) {
+                $cart->{$relation}()->updateExistingPivot($item->id, ['status_id' => $pending_status->id]);
+            }
+        };
+
+        $prepareUser = function () use ($current_user) {
+            if ($current_user->promo_code != null) {
+                $current_user->update(['is_promoted' => 0]);
+            }
+        };
+
+        $generatePaymentCode = fn() => 'BNG-' . random_int(1000000, 9999999) . '-' . date('Y.m.d');
+
+        /*
+         * Mobile Money
+         */
+        if ($request->transaction_type_id == $mobile_money_type->id) {
+            $reference_code = 'REF-' . random_int(10000000, 99999999) . '-' . $current_user->id;
+            $response = Http::timeout(300)
+                            ->withToken(config('services.flexpay.api_token'))
+                            ->post($gateway_mobile, [
+                                'merchant' => config('services.flexpay.merchant'),
+                                'type' => '1',
+                                'phone' => str_replace('+', '', $request->other_phone),
+                                'reference' => $reference_code,
+                                'amount' => round($total_to_pay),
+                                'currency' => $user_currency,
+                                'callback_url' => getApiURL() . '/payment/store',
+                            ]);
+
+            $jsonRes = $response->json();
+
+            if ($jsonRes['code'] != '0') {
+                return $this->handleError(__('miscellaneous.error_label'), __('notifications.transaction_push_failed'), 400);
+            }
+
+            $payment = $createPayment($jsonRes['orderNumber'], $reference_code);
+
+            $prepareUser();
+
+            $paymentCode = $generatePaymentCode();
+
             if ($current_user->unpaidConsultations()->isNotEmpty()) {
-                $cart_consultation = Cart::where([['entity', 'consultation'], ['status_id', $ongoing_status->id], ['user_id', $current_user->id]])->latest()->first();
+                $cart_consultation = Cart::where([
+                    ['entity', 'consultation'],
+                    ['status_id', $ongoing_status->id],
+                    ['user_id', $current_user->id],
+                ])->latest()->first();
+
+                $updateCart($cart_consultation, 'works', $payment, $paymentCode);
             }
 
             if ($current_user->unpaidSubscriptions()->isNotEmpty()) {
-                $cart_subscription = Cart::where([['entity', 'subscription'], ['status_id', $ongoing_status->id], ['user_id', $current_user->id]])->latest()->first();
+                $cart_subscription = Cart::where([
+                    ['entity', 'subscription'],
+                    ['status_id', $ongoing_status->id],
+                    ['user_id', $current_user->id],
+                ])->latest()->first();
+
+                $updateCart($cart_subscription, 'subscriptions', $payment, $paymentCode);
             }
 
-            $reference_code = 'REF-' . ((string) random_int(10000000, 99999999)) . '-' . $current_user->id;
+            $object->user = new ResourcesUser($current_user);
+            $object->result_response = [
+                'message' => $jsonRes['message'],
+                'order_number' => $jsonRes['orderNumber'],
+            ];
+        }
 
-            // Create response by sending request to FlexPay
-            $body = json_encode(array(
-                'authorization' => 'Bearer ' . config('services.flexpay.api_token'),
-                'merchant' => config('services.flexpay.merchant'),
-                'reference' => $reference_code,
-                'amount' => round($total_to_pay),
-                'currency' => $user_currency,
-                'description' => __('miscellaneous.bank_transaction_description'),
-                'callback_url' => getApiURL() . '/payment/store',
-                'approve_url' => $request->app_url . '/subscribed/' . round($total_to_pay) . '/USD/0/' . $current_user->_id . '?app_id=',
-                'cancel_url' => $request->app_url . '/subscribed/' . round($total_to_pay) . '/USD/1/' . $current_user->id . '?app_id=',
-                'decline_url' => $request->app_url . '/subscribed/' . round($total_to_pay) . '/USD/2/' . $current_user->id . '?app_id=',
-                'home_url' => $request->app_url . '/subscribe?app_id=&cart_consultation_id=' . (!empty($cart_consultation) ? $cart_consultation->id : 0) . '&cart_subscription_id=' . (!empty($cart_subscription) ? $cart_subscription->id : 0) . '&user_id=' . $current_user->id . '&api_token=' . $current_user->api_token,
-            ));
+        /*
+         * Carte bancaire
+         */
+        if ($request->transaction_type_id == $bank_card_type->id) {
+            $cart_consultation = $current_user->unpaidConsultations()->isNotEmpty()
+                ? Cart::where([['entity', 'consultation'], ['status_id', $ongoing_status->id], ['user_id', $current_user->id],])->latest()->first()
+                : null;
 
-            $curl = curl_init($gateway_card);
+            $cart_subscription = $current_user->unpaidSubscriptions()->isNotEmpty()
+                ? Cart::where([['entity', 'subscription'], ['status_id', $ongoing_status->id], ['user_id', $current_user->id],])->latest()->first()
+                : null;
 
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $body);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            $reference_code = 'REF-' . random_int(10000000, 99999999) . '-' . $current_user->id;
 
-            $curlResponse = curl_exec($curl);
+            $response = Http::timeout(300)
+                            ->withToken(config('services.flexpay.api_token'))
+                            ->post($gateway_mobile, [
+                                'merchant' => config('services.flexpay.merchant'),
+                                'type' => '2',
+                                'reference' => $reference_code,
+                                'amount' => round($total_to_pay),
+                                'currency' => $user_currency,
+                                'description' => __('miscellaneous.bank_transaction_description'),
+                                'callback_url' => getApiURL() . '/payment/store',
+                                'approve_url' => $request->app_url . '/subscribed/' . round($total_to_pay) . '/USD/0/' . $current_user->_id . '?app_id=',
+                                'cancel_url' => $request->app_url . '/subscribed/' . round($total_to_pay) . '/USD/1/' . $current_user->id . '?app_id=',
+                                'decline_url' => $request->app_url . '/subscribed/' . round($total_to_pay) . '/USD/2/' . $current_user->id . '?app_id=',
+                                'home_url' => $request->app_url . '/subscribe?app_id=' . '&cart_consultation_id=' . ($cart_consultation?->id ?? 0) . '&cart_subscription_id=' . ($cart_subscription?->id ?? 0) . '&user_id=' . $current_user->id . '&api_token=' . $current_user->api_token,]);
 
-            $jsonRes = json_decode($curlResponse, true);
+            $jsonRes = $response->json();
+
             $code = $jsonRes['code'];
             $message = $jsonRes['message'];
 
             if (!empty($jsonRes['error'])) {
                 return $this->handleError($jsonRes['error'], $message, $jsonRes['status']);
-
-            } else {
-                if ($code != '0') {
-                    return $this->handleError($code, $message, 400);
-
-                } else {
-                    $url = $jsonRes['url'];
-                    $orderNumber = $jsonRes['orderNumber'];
-                    // Register payment, even if FlexPay will
-                    $payment = Payment::where('order_number', $orderNumber)->first();
-
-                    if (is_null($payment)) {
-                        $payment = Payment::create([
-                            'reference' => $reference_code,
-                            'order_number' => $orderNumber,
-                            'amount' => round($total_to_pay),
-                            'phone' => $request->other_phone,
-                            'currency' => $user_currency,
-                            'channel' => $request->channel,
-                            'type_id' => $request->transaction_type_id,
-                            'status_id' => $in_progress_status->id,
-                            'user_id' => $current_user->id
-                        ]);
-                    }
-
-                    // If user has promotional code, update "is_promoted" column
-                    if ($current_user->promo_code != null) {
-                        $current_user->update(['is_promoted' => 0]);
-                    }
-
-                    // The cart is updated only if the processing succeed
-                    $random_string = (string) random_int(1000000, 9999999);
-                    $generated_number = 'BNG-' . $random_string . '-' . date('Y.m.d');
-
-                    if ($cart_consultation != null) {
-                        $cart_consultation->update([
-                            'payment_code' => $generated_number,
-                            'status_id' => $paid_status->id,
-                            'payment_id' => $payment->id,
-                            'updated_at' => now()
-                        ]);
-
-                        foreach ($cart_consultation->works as $work) {
-                            $cart_consultation->works()->updateExistingPivot($work->id, ['status_id' => $pending_status->id]);
-                        }
-                    }
-
-                    if ($cart_subscription != null) {
-                        $cart_subscription->update([
-                            'payment_code' => $generated_number,
-                            'status_id' => $paid_status->id,
-                            'payment_id' => $payment->id,
-                            'updated_at' => now()
-                        ]);
-
-                        foreach ($cart_subscription->subscriptions as $subscription) {
-                            $cart_subscription->subscriptions()->updateExistingPivot($subscription->id, ['status_id' => $pending_status->id]);
-                        }
-                    }
-
-                    $object->user = new ResourcesUser($current_user);
-                    $object->result_response = [
-                        'message' => $message,
-                        'order_number' => $orderNumber,
-                        'url' => $url
-                    ];
-                }
             }
+
+            if ($code != '0') {
+                return $this->handleError($code, $message, 400);
+            }
+
+            $payment = $createPayment($jsonRes['orderNumber'], $reference_code);
+
+            $prepareUser();
+
+            $paymentCode = $generatePaymentCode();
+
+            $updateCart($cart_consultation, 'works', $payment, $paymentCode);
+            $updateCart($cart_subscription, 'subscriptions', $payment, $paymentCode);
+
+            $object->user = new ResourcesUser($current_user);
+            $object->result_response = [
+                'message' => $message,
+                'order_number' => $jsonRes['orderNumber'],
+                'url' => $jsonRes['url'],
+            ];
         }
 
-        $object->cart_consultation = !empty($cart_consultation) ? new ResourcesCart($cart_consultation) : null;
-        $object->cart_subscription = !empty($cart_subscription) ? new ResourcesCart($cart_subscription) : null;
+        $object->cart_consultation = $cart_consultation ? new ResourcesCart($cart_consultation) : null;
+        $object->cart_subscription = $cart_subscription ? new ResourcesCart($cart_subscription) : null;
 
         return $this->handleResponse($object, __('notifications.ready_for_payment'));
     }
