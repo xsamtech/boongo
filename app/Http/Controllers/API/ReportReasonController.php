@@ -16,7 +16,6 @@ class ReportReasonController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -29,7 +28,6 @@ class ReportReasonController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('reason_content_en', description: 'Colonne report_reasons.reason_content : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
     #[BodyParameter('reason_content_fr', description: 'Colonne report_reasons.reason_content : JSON; NOT NULL. Traduction fr transmise séparément.', required: false, type: 'string')]
@@ -82,7 +80,6 @@ class ReportReasonController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -100,7 +97,6 @@ class ReportReasonController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\ReportReason  $report_reason
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne report_reasons.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('reason_content_en', description: 'Colonne report_reasons.reason_content : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
@@ -160,7 +156,6 @@ class ReportReasonController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\ReportReason  $report_reason
-     * @return \Illuminate\Http\Response
      */
     public function destroy(ReportReason $report_reason)
     {
@@ -176,7 +171,6 @@ class ReportReasonController extends BaseController
      * Find all type by entity.
      *
      * @param  string $entity
-     * @return \Illuminate\Http\Response
      */
     public function findByEntity($entity)
     {

@@ -29,7 +29,6 @@ class PasswordResetController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -42,7 +41,6 @@ class PasswordResetController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('email', description: 'Colonne password_resets.email : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
     #[BodyParameter('phone', description: 'Colonne password_resets.phone : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
@@ -92,7 +90,6 @@ class PasswordResetController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -110,7 +107,6 @@ class PasswordResetController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\PasswordReset  $password_reset
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne password_resets.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('email', description: 'Colonne password_resets.email : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
@@ -179,7 +175,6 @@ class PasswordResetController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\PasswordReset  $password_reset
-     * @return \Illuminate\Http\Response
      */
     public function destroy(PasswordReset $password_reset)
     {
@@ -195,7 +190,6 @@ class PasswordResetController extends BaseController
      * Search a password reset by e-mail or phone number
      *
      * @param  string $data
-     * @return \Illuminate\Http\Response
      */
     public function searchByEmailOrPhone($data)
     {
@@ -253,7 +247,6 @@ class PasswordResetController extends BaseController
      * Search a password reset by e-mail
      *
      * @param  string $data
-     * @return \Illuminate\Http\Response
      */
     public function searchByEmail($data)
     {
@@ -290,7 +283,6 @@ class PasswordResetController extends BaseController
      * Search a password reset by phone
      *
      * @param  string $data
-     * @return \Illuminate\Http\Response
      */
     public function searchByPhone($data)
     {
@@ -344,7 +336,6 @@ class PasswordResetController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string  $entity
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('email', description: 'Colonne password_resets.email : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
     #[BodyParameter('token', description: 'Colonne password_resets.token : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]

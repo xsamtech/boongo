@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\File as ModelsFile;
+use App\Support\FileOrdering;
 use App\Models\Group as ModelsGroup;
 use App\Models\ToxicContent as ModelsToxicContent;
 use App\Models\Type as ModelType;
@@ -22,7 +22,7 @@ class Work extends JsonResource
      */
     public function toArray($request)
     {
-        $files = File::collection($this->files)->sortByDesc('created_at')->toArray();
+        $files = FileOrdering::sort($this->files);
         // Group
         $file_type_group = ModelsGroup::where('group_name', 'Type de fichier')->first();
         // Types
@@ -31,11 +31,11 @@ class Work extends JsonResource
         $audio_type = ModelType::where([['type_name->fr', 'Audio'], ['group_id', $file_type_group->id]])->first();
         // Requests
         $is_toxic = !empty($this->user_id) ? ModelsToxicContent::where([['for_user_id', $this->user_id], ['is_unlocked', 0]])->exists() : false;
-        $doc = ModelsFile::where([['type_id', $doc_type->id], ['work_id', $this->id]])->first();
-        $docs = ModelsFile::where([['type_id', $doc_type->id], ['work_id', $this->id]])->get();
-        $audio = ModelsFile::where([['type_id', $audio_type->id], ['work_id', $this->id]])->first();
-        $audios = ModelsFile::where([['type_id', $audio_type->id], ['work_id', $this->id]])->get();
-        $imgs = ModelsFile::where([['type_id', $img_type->id], ['work_id', $this->id]])->get();
+        $docs = $files->where('type_id', $doc_type->id)->values();
+        $doc = $docs->first();
+        $audios = $files->where('type_id', $audio_type->id)->values();
+        $audio = $audios->first();
+        $imgs = $files->where('type_id', $img_type->id)->values();
         $photo = null;
         $video = null;
 
@@ -68,8 +68,8 @@ class Work extends JsonResource
             'is_owner_blocked' => $is_toxic,
             'photo_url' => !empty($photo) ? $photo->file_url : getWebURL() . '/assets/img/cover.png',
             'video_url' => !empty($video) ? $video->file_url : null,
-            'document_url' => !empty($files) ? (inArrayR($doc_type->id, $files, 'type_id') ? $doc->file_url : null) : null,
-            'audio_url' => !empty($files) ? (inArrayR($audio_type->id, $files, 'type_id') ? $audio->file_url : null) : null,
+            'document_url' => $doc?->file_url,
+            'audio_url' => $audio?->file_url,
             'images' => !empty($imgs) ? File::collection($imgs) : null,
             'audios' => !empty($audios) ? File::collection($audios) : null,
             'documents' => !empty($docs) ? File::collection($docs) : null,

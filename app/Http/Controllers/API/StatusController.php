@@ -17,7 +17,6 @@ class StatusController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -30,7 +29,6 @@ class StatusController extends BaseController
      * Store a resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('status_name_en', description: 'Colonne statuses.status_name : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
     #[BodyParameter('status_name_fr', description: 'Colonne statuses.status_name : JSON; NOT NULL. Traduction fr transmise séparément.', required: false, type: 'string')]
@@ -81,7 +79,6 @@ class StatusController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -99,7 +96,6 @@ class StatusController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Status  $status
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne statuses.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('status_name_en', description: 'Colonne statuses.status_name : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
@@ -162,7 +158,6 @@ class StatusController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Status  $status
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Status $status)
     {
@@ -179,7 +174,6 @@ class StatusController extends BaseController
      *
      * @param  string $locale
      * @param  string $data
-     * @return \Illuminate\Http\Response
      */
     public function search($locale, $data)
     {
@@ -196,7 +190,6 @@ class StatusController extends BaseController
      * Find all type by group.
      *
      * @param  string $group_name
-     * @return \Illuminate\Http\Response
      */
     public function findByGroup($group_name)
     {

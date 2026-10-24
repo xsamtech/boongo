@@ -17,7 +17,6 @@ class CategoryController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -30,7 +29,6 @@ class CategoryController extends BaseController
      * Store a resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('category_name_en', description: 'Colonne categories.category_name : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
     #[BodyParameter('category_name_fr', description: 'Colonne categories.category_name : JSON; NOT NULL. Traduction fr transmise séparément.', required: false, type: 'string')]
@@ -77,7 +75,6 @@ class CategoryController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -95,7 +92,6 @@ class CategoryController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne categories.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('category_name_en', description: 'Colonne categories.category_name : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
@@ -157,7 +153,6 @@ class CategoryController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Category $category)
     {
@@ -174,7 +169,6 @@ class CategoryController extends BaseController
      *
      * @param  string $locale
      * @param  string $data
-     * @return \Illuminate\Http\Response
      */
     public function search($locale, $data)
     {
@@ -191,7 +185,6 @@ class CategoryController extends BaseController
      * Find all type by group.
      *
      * @param  string $group_name
-     * @return \Illuminate\Http\Response
      */
     public function findByGroup($group_name)
     {
@@ -209,7 +202,6 @@ class CategoryController extends BaseController
     /**
      * Find all categories used in works.
      *
-     * @return \Illuminate\Http\Response
      */
     public function allUsedInWorks()
     {
@@ -222,7 +214,6 @@ class CategoryController extends BaseController
      * Find all categories used in works type, .
      *
      * @param  int  $type_id
-     * @return \Illuminate\Http\Response
      */
     public function allUsedInWorksType($type_id)
     {

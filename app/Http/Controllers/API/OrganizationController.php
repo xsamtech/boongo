@@ -22,7 +22,6 @@ class OrganizationController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -35,7 +34,6 @@ class OrganizationController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('org_name', description: 'Colonne organizations.org_name : TEXT; NULL autorisé.', required: true, type: 'string')]
     #[BodyParameter('org_acronym', description: 'Colonne organizations.org_acronym : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
@@ -112,7 +110,6 @@ class OrganizationController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -130,7 +127,6 @@ class OrganizationController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Organization  $organization
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne organizations.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('org_name', description: 'Colonne organizations.org_name : TEXT; NULL autorisé.', required: false, type: 'string')]
@@ -240,7 +236,6 @@ class OrganizationController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Organization  $organization
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Organization $organization)
     {
@@ -256,7 +251,6 @@ class OrganizationController extends BaseController
      * Search (by filtering or not) an organization
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('data', description: 'Terme de recherche.', required: false, type: 'string')]
     #[BodyParameter('type_id', description: 'Colonne organizations.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
@@ -307,7 +301,6 @@ class OrganizationController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $type_id
-     * @return \Illuminate\Http\Response
      */
     public function findAllByType(Request $request, $type_id)
     {
@@ -344,7 +337,6 @@ class OrganizationController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $user_id
-     * @return \Illuminate\Http\Response
      */
     public function findAllByOwner(Request $request, $user_id)
     {

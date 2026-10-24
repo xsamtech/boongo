@@ -18,7 +18,6 @@ class CurrenciesRateController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -31,7 +30,6 @@ class CurrenciesRateController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('rate', description: 'Colonne currencies_rates.rate : DECIMAL(9,5); NOT NULL.', required: true, type: 'float')]
     #[BodyParameter('from_currency_id', description: 'Colonne currencies_rates.from_currency_id : BIGINT; NOT NULL.', required: true, type: 'integer')]
@@ -76,7 +74,6 @@ class CurrenciesRateController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -94,7 +91,6 @@ class CurrenciesRateController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Notification  $notification
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne currencies_rates.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('rate', description: 'Colonne currencies_rates.rate : DECIMAL(9,5); NOT NULL.', required: false, type: 'float')]
@@ -172,7 +168,6 @@ class CurrenciesRateController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\CurrenciesRate  $currencies_rate
-     * @return \Illuminate\Http\Response
      */
     public function destroy(CurrenciesRate $currencies_rate)
     {
@@ -189,7 +184,6 @@ class CurrenciesRateController extends BaseController
      *
      * @param  string $from_currency_acronym
      * @param  string $to_currency_acronym
-     * @return \Illuminate\Http\Response
      */
     public function findCurrencyRate($from_currency_acronym, $to_currency_acronym)
     {

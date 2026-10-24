@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Dedoc\Scramble\Attributes\BodyParameter;
 use App\Http\Resources\File as ResourcesFile;
+use App\Http\Resources\FileGroups;
 use App\Models\Group;
 use App\Models\Type;
 use App\Models\Work;
@@ -21,21 +22,19 @@ class FileController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $files = File::orderBy('created_at')->paginate(10);
+        $files = File::orderedForApi()->paginate(10);
         $count_files = File::count();
 
-        return $this->handleResponse(ResourcesFile::collection($files), __('notifications.find_all_files_success'), $files->lastPage(), $count_files);
+        return $this->handleResponse(new FileGroups($files->getCollection()), __('notifications.find_all_files_success'), $files->lastPage(), $count_files);
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      * @requestMediaType multipart/form-data
      */
     #[BodyParameter('part_title', description: 'Colonne files.part_title : TEXT; NULL autorisé.', required: false, type: 'string')]
@@ -82,7 +81,7 @@ class FileController extends BaseController
             }
 
             // Types of extensions for different file types
-            $image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'tif', 'svg', 'heif', 'heic', 'ico'];
+            $image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'tif', 'svg', 'heif', 'heic', 'ico', 'mp4', 'm4v', 'mov', 'avi', 'wmv', 'flv', 'mkv', 'webm', 'mpeg', 'mpg', 'mpe', 'mpv', '3gp', '3g2', 'mts', 'm2ts', 'ts', 'vob', 'ogv', 'ogg', 'rm', 'rmvb', 'asf', 'divx', 'f4v', 'mxf', 'm2v', 'm4v', 'hevc'];
             $document_extensions = ['pdf', 'doc', 'docx', 'txt'];
             $audio_extensions = ['mp3', 'wav', 'flac'];
 
@@ -141,7 +140,7 @@ class FileController extends BaseController
             // $extension = explode('/', explode(':', substr($request->part_cover_image64, 0, strpos($request->part_cover_image64, ';')))[1])[1];
             $replace = substr($request->part_cover_image64, 0, strpos($request->part_cover_image64, ',') + 1);
             // Find substring from replace here eg: data:image/png;base64,
-            $image = str_replace($replace, '', $inputs['image_64']);
+            $image = str_replace($replace, '', $request->part_cover_image64);
             $image = str_replace(' ', '+', $image);
             // Create image URL
             $image_url = 'images/works/' . $file->work_id . '/' . Str::random(50) . '.png';
@@ -165,7 +164,6 @@ class FileController extends BaseController
      * Display the specified resource.
      *
      * @param  int $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -183,11 +181,10 @@ class FileController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\File  $file
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne files.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('file_name', description: 'Colonne files.file_name : TEXT; NULL autorisé.', required: false, type: 'string')]
-    #[BodyParameter('file_url', description: 'Colonne files.file_url : TEXT; NULL autorisé.', required: false, type: 'string')]
+    #[BodyParameter('file_content', description: 'Fichier à téléverser (multipart/form-data).', required: false, type: 'string', format: 'binary')]
     #[BodyParameter('part_title', description: 'Colonne files.part_title : TEXT; NULL autorisé.', required: false, type: 'string')]
     #[BodyParameter('part_cover_image64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]
     #[BodyParameter('position', description: 'Colonne files.position : INT; NULL autorisé.', required: false, type: 'integer')]
@@ -198,11 +195,16 @@ class FileController extends BaseController
     #[BodyParameter('message_id', description: 'Colonne files.message_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     public function update(Request $request, File $file)
     {
+        // Group
+        $file_type_group = Group::where('group_name', 'Type de fichier')->first();
+        // Types
+        $image_type = Type::where([['type_name->fr', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
+        $document_type = Type::where([['type_name->fr', 'Document'], ['group_id', $file_type_group->id]])->first();
+        $audio_type = Type::where([['type_name->fr', 'Audio'], ['group_id', $file_type_group->id]])->first();
         // Get inputs
         $inputs = [
             'id' => $request->id,
             'file_name' => $request->file_name,
-            'file_url' => $request->file_url,
             'part_title' => $request->part_title,
             'part_cover_image64' => $request->part_cover_image64,
             'position' => $request->position,
@@ -241,13 +243,67 @@ class FileController extends BaseController
             ]);
         }
 
-        foreach (['file_url', 'part_title'] as $field) {
-            if ($inputs[$field] != null) {
-                $file->update([
-                    $field => $inputs[$field],
-                    'updated_at' => now()
-                ]);
+        if ($request->hasFile('file_content')) {
+            $singleFile = $request->file('file_content');
+            $current_file = File::find($inputs['id']);
+            $work = Work::find($current_file->work_id);
+
+            if (is_null($work)) {
+                return $this->handleError(__('notifications.find_work_404'));
             }
+
+            // Types of extensions for different file types
+            $image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'tif', 'svg', 'heif', 'heic', 'ico', 'mp4', 'm4v', 'mov', 'avi', 'wmv', 'flv', 'mkv', 'webm', 'mpeg', 'mpg', 'mpe', 'mpv', '3gp', '3g2', 'mts', 'm2ts', 'ts', 'vob', 'ogv', 'ogg', 'rm', 'rmvb', 'asf', 'divx', 'f4v', 'mxf', 'm2v', 'm4v', 'hevc'];
+            $document_extensions = ['pdf', 'doc', 'docx', 'txt'];
+            $audio_extensions = ['mp3', 'wav', 'flac'];
+
+            $file_extension = strtolower($singleFile->getClientOriginalExtension());
+
+            // File type check
+            $custom_uri = '';
+            $is_valid_type = false;
+            $file_type_id = null;
+
+            if (in_array($file_extension, $image_extensions)) { // File is an image
+                $custom_uri = 'images/works';
+                $file_type_id = $image_type->id;
+                $is_valid_type = true;
+
+            } elseif (in_array($file_extension, $document_extensions)) { // File is a document
+                $custom_uri = 'documents/works';
+                $file_type_id = $document_type->id;
+                $is_valid_type = true;
+
+            } elseif (in_array($file_extension, $audio_extensions)) { // File is an audio
+                $custom_uri = 'audios/works';
+                $file_type_id = $audio_type->id;
+                $is_valid_type = true;
+            }
+
+            // If the extension does not match any valid type
+            if (!$is_valid_type) {
+                return $this->handleError(__('notifications.type_is_not_file'));
+            }
+
+            // Generate a unique path for the file
+            $filename = $singleFile->getClientOriginalName();
+            $cleaned_filename = sanitizeFileName($filename);
+            $file_url =  $custom_uri . '/' . $work->id . '/' . $cleaned_filename ;
+
+            // Upload file
+            try {
+                $singleFile->storeAs($custom_uri . '/' . $work->id, $cleaned_filename, 's3');
+
+            } catch (\Throwable $th) {
+                return $this->handleError($th, __('notifications.create_work_file_500'), 500);
+            }
+
+            $file->update([
+                'file_name' => $cleaned_filename,
+                'part_cover_url' => config('filesystems.disks.s3.url') . $file_url,
+                'type_id' => $file_type_id,
+                'work_id' => $work->id
+            ]);
         }
 
         if ($inputs['part_cover_image64'] != null) {
@@ -262,8 +318,6 @@ class FileController extends BaseController
                 return $this->handleError(__('notifications.find_file_404'));
             }
 
-            $file_type_group = Group::where('group_name', 'Type de fichier')->first();
-            $type = Type::where([['type_name->fr', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
             // $extension = explode('/', explode(':', substr($inputs['part_cover_image64'], 0, strpos($inputs['part_cover_image64'], ';')))[1])[1];
             $replace = substr($inputs['part_cover_image64'], 0, strpos($inputs['part_cover_image64'], ',') + 1);
             // Find substring from replace here eg: data:image/png;base64,
@@ -276,10 +330,7 @@ class FileController extends BaseController
             Storage::url(Storage::disk('s3')->put($image_url, base64_decode($image)));
 
             $file->update([
-                'file_name' => 'PART COVER',
                 'part_cover_url' => config('filesystems.disks.s3.url') . $image_url,
-                'type_id' => $type->id,
-                'work_id' => $curr_file->work_id,
                 'updated_at' => now()
             ]);
         }
@@ -300,15 +351,14 @@ class FileController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\File  $file
-     * @return \Illuminate\Http\Response
      */
     public function destroy(File $file)
     {
         $file->delete();
 
-        $files = File::orderBy('created_at')->paginate(10);
+        $files = File::orderedForApi()->paginate(10);
         $count_files = File::count();
 
-        return $this->handleResponse(ResourcesFile::collection($files), __('notifications.delete_file_success'), $files->lastPage(), $count_files);
+        return $this->handleResponse(new FileGroups($files->getCollection()), __('notifications.delete_file_success'), $files->lastPage(), $count_files);
     }
 }

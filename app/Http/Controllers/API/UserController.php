@@ -50,7 +50,6 @@ class UserController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -63,7 +62,6 @@ class UserController extends BaseController
      * Store a resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('firstname', description: 'Colonne users.firstname : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
     #[BodyParameter('lastname', description: 'Colonne users.lastname : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
@@ -358,7 +356,6 @@ class UserController extends BaseController
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -394,7 +391,6 @@ class UserController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne users.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('firstname', description: 'Colonne users.firstname : VARCHAR(255); NULL autorisé.', required: false, type: 'string')]
@@ -720,7 +716,6 @@ class UserController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
      */
     public function destroy(User $user)
     {
@@ -771,7 +766,6 @@ class UserController extends BaseController
      * Find by "username"
      *
      * @param  string $username
-     * @return \Illuminate\Http\Response
      */
     public function profile($username)
     {
@@ -788,7 +782,6 @@ class UserController extends BaseController
      * Search (by filtering or not) a user
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('data', description: 'Terme de recherche.', required: false, type: 'string')]
     #[BodyParameter('roles_ids', description: 'Liste des identifiants.', required: false, type: 'integer[]')]
@@ -838,7 +831,6 @@ class UserController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string $role_name
-     * @return \Illuminate\Http\Response
      */
     public function findByRole(Request $request, $role_name)
     {
@@ -901,7 +893,6 @@ class UserController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string $role_name
-     * @return \Illuminate\Http\Response
      */
     public function findByNotRole(Request $request, $role_name)
     {
@@ -964,7 +955,6 @@ class UserController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int $id
-     * @return \Illuminate\Http\Response
      */
     public function worksSubscribers(Request $request, $id)
     {
@@ -1038,7 +1028,6 @@ class UserController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $organization_id
      * @param  string  $role_name
-     * @return \Illuminate\Http\Response
      */
     public function organizationMembers(Request $request, $organization_id, $role_name)
     {
@@ -1112,7 +1101,6 @@ class UserController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @param  string  $entity
      * @param  int  $entity_id
-     * @return \Illuminate\Http\Response
      */
     public function groupMembers(Request $request, $entity, $entity_id)
     {
@@ -1195,7 +1183,6 @@ class UserController extends BaseController
      * @param  string $entity
      * @param  int $id
      * @param  int $status_id
-     * @return \Illuminate\Http\Response
      */
     public function memberGroups($entity, $id, $status_id = null)
     {
@@ -1302,7 +1289,6 @@ class UserController extends BaseController
      * @param  string $entity
      * @param  int $entity_id
      * @param  int $id
-     * @return \Illuminate\Http\Response
      */
     public function isMainMember($entity, $entity_id, $id)
     {
@@ -1355,7 +1341,6 @@ class UserController extends BaseController
      * Check if user is partner.
      *
      * @param  int $user_id
-     * @return \Illuminate\Http\Response
      */
     public function isPartner($user_id)
     {
@@ -1381,7 +1366,6 @@ class UserController extends BaseController
      * Search all users having specific status.
      *
      * @param  int $status_id
-     * @return \Illuminate\Http\Response
      */
     public function findByStatus($status_id)
     {
@@ -1394,7 +1378,6 @@ class UserController extends BaseController
      * Handle an incoming authentication request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('username', description: 'Colonne users.username : VARCHAR(255); NULL autorisé.', required: true, type: 'string')]
     #[BodyParameter('password', description: 'Colonne users.password : TEXT; NULL autorisé.', required: true, type: 'string')]
@@ -1513,7 +1496,6 @@ class UserController extends BaseController
      *
      * @param  int  $id
      * @param  int  $status_id
-     * @return \Illuminate\Http\Response
      */
     public function switchStatus($id, $status_id)
     {
@@ -1585,7 +1567,6 @@ class UserController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @param  string  $action
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('role_id', description: 'Colonne role_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
     public function updateRole(Request $request, $action, $id)
@@ -1611,7 +1592,6 @@ class UserController extends BaseController
      * @param  int  $entity_id
      * @param  string  $action
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('is_speaker', description: 'Colonne is_speaker : TINYINT; NOT NULL. Défaut SQL : 0.', required: false, type: 'integer')]
     #[BodyParameter('status_id', description: 'Colonne users.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
@@ -1782,7 +1762,6 @@ class UserController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('former_password', description: 'Colonne former_password : TEXT; NOT NULL.', required: true, type: 'string')]
     #[BodyParameter('new_password', description: 'Champ new_password de la requête.', required: true, type: 'string')]
@@ -1908,7 +1887,6 @@ class UserController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @param  int  $addressee_id
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('circle_id', description: 'Colonne circle_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     #[BodyParameter('event_id', description: 'Colonne event_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
@@ -2058,7 +2036,6 @@ class UserController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @param  int  $addressee_id
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('circle_id', description: 'Colonne circle_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     #[BodyParameter('event_id', description: 'Colonne event_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
@@ -2165,7 +2142,6 @@ class UserController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('user_id', description: 'Colonne user_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
     #[BodyParameter('image_64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]

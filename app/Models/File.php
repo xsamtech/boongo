@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @author Xanders
+ *
  * @see https://team.xsamtech.com/xanderssamoth
  */
 class File extends Model
@@ -22,6 +24,19 @@ class File extends Model
      * @var array<int, string>
      */
     protected $guarded = [];
+
+    /** Sort before pagination so page boundaries follow the same order as API resources. */
+    public function scopeOrderedForApi(Builder $query): Builder
+    {
+        $type = $this->qualifyColumn('type_id');
+        $position = $this->qualifyColumn('position');
+
+        return $query->orderByRaw($type.' IS NULL')
+            ->orderBy($type)
+            ->orderByRaw($position.' IS NULL')
+            ->orderBy($position)
+            ->orderBy($this->qualifyColumn('id'));
+    }
 
     /**
      * ONE-TO-MANY

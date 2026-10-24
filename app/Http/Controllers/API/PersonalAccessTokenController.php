@@ -16,7 +16,6 @@ class PersonalAccessTokenController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -29,7 +28,6 @@ class PersonalAccessTokenController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('tokenable_type', description: 'Colonne personal_access_tokens.tokenable_type : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
     #[BodyParameter('tokenable_id', description: 'Colonne personal_access_tokens.tokenable_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
@@ -74,7 +72,6 @@ class PersonalAccessTokenController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -92,7 +89,6 @@ class PersonalAccessTokenController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Notification  $notification
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne personal_access_tokens.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('tokenable_type', description: 'Colonne personal_access_tokens.tokenable_type : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
@@ -157,7 +153,6 @@ class PersonalAccessTokenController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\PersonalAccessToken  $personal_access_token
-     * @return \Illuminate\Http\Response
      */
     public function destroy(PersonalAccessToken $personal_access_token)
     {

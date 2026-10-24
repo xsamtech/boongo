@@ -19,7 +19,6 @@ class PaymentController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -97,7 +96,6 @@ class PaymentController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -115,7 +113,6 @@ class PaymentController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Payment  $payment
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne payments.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('reference', description: 'Colonne payments.reference : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
@@ -154,7 +151,6 @@ class PaymentController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Payment  $payment
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Payment $payment)
     {
@@ -170,7 +166,6 @@ class PaymentController extends BaseController
      * find all payments having a same phone number.
      *
      * @param  string $phone_number
-     * @return \Illuminate\Http\Response
      */
     public function findByPhone($phone_number)
     {
@@ -184,7 +179,6 @@ class PaymentController extends BaseController
      *
      * @param  string $order_number
      * @param  string $user_id
-     * @return \Illuminate\Http\Response
      */
     public function findByOrderNumber($order_number)
     {
@@ -202,7 +196,6 @@ class PaymentController extends BaseController
      *
      * @param  string $order_number
      * @param  string $user_id
-     * @return \Illuminate\Http\Response
      */
     public function findByOrderNumberUser($order_number, $user_id)
     {
@@ -220,7 +213,6 @@ class PaymentController extends BaseController
      *
      * @param  $id
      * @param  $status_id
-     * @return \Illuminate\Http\Response
      */
     public function switchStatus($id, $status_id)
     {

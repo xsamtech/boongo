@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Group as ModelsGroup;
 use App\Models\Type as ModelsType;
+use App\Support\FileOrdering;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,6 +22,7 @@ class Message extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $files = FileOrdering::sort($this->files);
         // Group
         $file_type_group = ModelsGroup::where('group_name', 'Type de fichier')->first();
         // Types
@@ -43,9 +45,9 @@ class Message extends JsonResource
             'addressee_circle' => Circle::make($this->addressee_circle),
             'event' => Event::make($this->event),
             'likes' => Like::collection($this->likes),
-            'documents' => File::collection($this->files->where('type_id', $doc_type->id)->values()),
-            'images' => File::collection($this->files->where('type_id', $image_type->id)->values()),
-            'audios' => File::collection($this->files->where('type_id', $audio_type->id)->values()),
+            'documents' => File::collection($files->where('type_id', $doc_type->id)->values()),
+            'images' => File::collection($files->where('type_id', $image_type->id)->values()),
+            'audios' => File::collection($files->where('type_id', $audio_type->id)->values()),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'created_at_explicit' => $this->created_at->format('Y') == date('Y') ? explicitDayMonth($this->created_at->format('Y-m-d H:i:s')) : explicitDate($this->created_at->format('Y-m-d H:i:s')),

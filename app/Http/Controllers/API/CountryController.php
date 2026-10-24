@@ -16,7 +16,6 @@ class CountryController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -29,7 +28,6 @@ class CountryController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('country_name', description: 'Colonne countries.country_name : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
     #[BodyParameter('country_phone_code', description: 'Colonne countries.country_phone_code : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
@@ -66,7 +64,6 @@ class CountryController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -84,7 +81,6 @@ class CountryController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Country  $country
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne countries.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('country_name', description: 'Colonne countries.country_name : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
@@ -133,7 +129,6 @@ class CountryController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Country  $country
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Country $country)
     {
@@ -149,7 +144,6 @@ class CountryController extends BaseController
      * Search a country by its real name.
      *
      * @param  string $data
-     * @return \Illuminate\Http\Response
      */
     public function search($data)
     {

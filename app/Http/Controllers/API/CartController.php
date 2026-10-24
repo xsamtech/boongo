@@ -26,7 +26,6 @@ class CartController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -39,7 +38,6 @@ class CartController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('payment_code', description: 'Colonne carts.payment_code : TEXT; NULL autorisé.', required: false, type: 'string')]
     #[BodyParameter('entity', description: 'Colonne carts.entity : ENUM(\'favorite\', \'subscription\', \'consultation\'); NOT NULL. Défaut SQL : \'favorite\'.', required: false, type: 'string')]
@@ -80,7 +78,6 @@ class CartController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -98,7 +95,6 @@ class CartController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Cart  $cart
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne carts.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('payment_code', description: 'Colonne carts.payment_code : TEXT; NULL autorisé.', required: false, type: 'string')]
@@ -151,7 +147,6 @@ class CartController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Cart  $cart
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Cart $cart)
     {
@@ -168,7 +163,6 @@ class CartController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string $entity
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('user_id', description: 'Colonne carts.user_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     #[BodyParameter('work_id', description: 'Colonne work_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
@@ -263,7 +257,6 @@ class CartController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int $cart_id
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('work_id', description: 'Colonne work_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
     #[BodyParameter('subscription_id', description: 'Colonne subscription_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
@@ -307,7 +300,6 @@ class CartController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int $user_id
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('transaction_type_id', description: 'Identifiant utilisé par cette opération.', required: false, type: 'integer')]
     #[BodyParameter('other_phone', description: 'Champ other_phone de la requête.', required: false, type: 'string')]

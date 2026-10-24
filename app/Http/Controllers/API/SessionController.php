@@ -18,7 +18,6 @@ class SessionController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -31,7 +30,6 @@ class SessionController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne sessions.id : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
     #[BodyParameter('ip_address', description: 'Colonne sessions.ip_address : VARCHAR(45); NULL autorisé.', required: true, type: 'string')]
@@ -68,7 +66,6 @@ class SessionController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -86,7 +83,6 @@ class SessionController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Notification  $notification
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('ip_address', description: 'Colonne sessions.ip_address : VARCHAR(45); NULL autorisé.', required: false, type: 'string')]
     #[BodyParameter('user_agent', description: 'Colonne sessions.user_agent : TEXT; NULL autorisé.', required: false, type: 'string')]
@@ -121,7 +117,6 @@ class SessionController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  string $ip_address
-     * @return \Illuminate\Http\Response
      */
     public function destroy($ip_address)
     {

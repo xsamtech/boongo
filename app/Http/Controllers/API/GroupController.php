@@ -16,7 +16,6 @@ class GroupController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -29,7 +28,6 @@ class GroupController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('group_name', description: 'Colonne groups.group_name : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
     #[BodyParameter('group_description', description: 'Colonne groups.group_description : TEXT; NULL autorisé.', required: false, type: 'string')]
@@ -64,7 +62,6 @@ class GroupController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -82,7 +79,6 @@ class GroupController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Group  $group
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne groups.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('group_name', description: 'Colonne groups.group_name : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
@@ -129,7 +125,6 @@ class GroupController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Group  $group
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Group $group)
     {

@@ -34,7 +34,6 @@ class MessageController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -47,7 +46,6 @@ class MessageController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      * @requestMediaType multipart/form-data
      */
     #[BodyParameter('message_content', description: 'Colonne messages.message_content : LONGTEXT; NOT NULL.', required: true, type: 'string')]
@@ -211,7 +209,6 @@ class MessageController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show(Request $request, $id)
     {
@@ -245,7 +242,6 @@ class MessageController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Message  $message
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('message_content', description: 'Colonne messages.message_content : LONGTEXT; NOT NULL.', required: false, type: 'string')]
     #[BodyParameter('doc_title', description: 'Colonne messages.doc_title : TEXT; NULL autorisé.', required: false, type: 'string')]
@@ -291,7 +287,6 @@ class MessageController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Message  $message
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Message $message)
     {
@@ -311,7 +306,6 @@ class MessageController extends BaseController
      * @param  string $data
      * @param  int $sender_id
      * @param  int $addressee_id
-     * @return \Illuminate\Http\Response
      */
     public function searchInChat($locale, $type_name, $data, $sender_id, $addressee_id)
     {
@@ -351,7 +345,6 @@ class MessageController extends BaseController
      * @param  int $entity_id
      * @param  int $member_id
      * @param  string $data
-     * @return \Illuminate\Http\Response
      */
     public function searchInGroup($entity, $entity_id, $member_id, $data)
     {
@@ -402,7 +395,6 @@ class MessageController extends BaseController
      *
      * @param  string $entity
      * @param  int $entity_id
-     * @return \Illuminate\Http\Response
      */
     public function findByGroup($entity, $entity_id)
     {
@@ -466,7 +458,6 @@ class MessageController extends BaseController
      * @param  string $type_name
      * @param  int $user_id
      * @param  string $status_name
-     * @return \Illuminate\Http\Response
      */
     public function userChatsList(Request $request, $locale, $type_name, $user_id)
     {
@@ -693,7 +684,6 @@ class MessageController extends BaseController
      * @param  string $locale
      * @param  string $type_name
      * @param  int $user_id
-     * @return \Illuminate\Http\Response
      */
     public function selectedChat($locale, $type_name, $user_id, $entity, $entity_id)
     {
@@ -803,7 +793,6 @@ class MessageController extends BaseController
      * @param  string $locale
      * @param  string $status_name
      * @param  int $message_id
-     * @return \Illuminate\Http\Response
      */
     public function membersWithMessageStatus($locale, $status_name, $message_id)
     {
@@ -833,7 +822,6 @@ class MessageController extends BaseController
      *
      * @param  int $message_id
      * @param  int $user_id
-     * @return \Illuminate\Http\Response
      */
     public function switchLike($message_id, $user_id)
     {
@@ -873,7 +861,6 @@ class MessageController extends BaseController
      * @param  int $user_id
      * @param  int $message_id
      * @param  string $entity
-     * @return \Illuminate\Http\Response
      */
     public function deleteForMyself($user_id, $message_id)
     {
@@ -900,7 +887,6 @@ class MessageController extends BaseController
      * Delete message for everybody.
      *
      * @param  int $message_id
-     * @return \Illuminate\Http\Response
      */
     public function deleteForEverybody($message_id)
     {
@@ -923,7 +909,6 @@ class MessageController extends BaseController
      * @param  string $type_name
      * @param  int $sender_id
      * @param  int $addressee_user_id
-     * @return \Illuminate\Http\Response
      */
     public function markAllReadUser($locale, $type_name, $sender_id, $addressee_user_id)
     {
@@ -970,7 +955,6 @@ class MessageController extends BaseController
      * @param  int $user_id
      * @param  string $entity
      * @param  int $entity_id
-     * @return \Illuminate\Http\Response
      */
     public function markAllReadGroup($user_id, $entity, $entity_id)
     {

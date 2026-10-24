@@ -24,7 +24,6 @@ class EventController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -38,7 +37,6 @@ class EventController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('event_title', description: 'Colonne events.event_title : TEXT; NULL autorisé.', required: false, type: 'string')]
     #[BodyParameter('event_description', description: 'Colonne events.event_description : LONGTEXT; NULL autorisé.', required: false, type: 'string')]
@@ -161,7 +159,6 @@ class EventController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -179,7 +176,6 @@ class EventController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Event  $event
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne events.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('event_title', description: 'Colonne events.event_title : TEXT; NULL autorisé.', required: false, type: 'string')]
@@ -306,7 +302,6 @@ class EventController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Event  $event
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Event $event)
     {
@@ -331,7 +326,6 @@ class EventController extends BaseController
      * Search a event by its title.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('data', description: 'Terme de recherche.', required: false, type: 'string')]
     #[BodyParameter('date_from', description: 'Champ date_from de la requête.', required: false, type: 'string')]
@@ -373,7 +367,6 @@ class EventController extends BaseController
      *
      * @param  string $locale
      * @param  string $type_name
-     * @return \Illuminate\Http\Response
      */
     public function findByType($locale, $type_name)
     {
@@ -394,7 +387,6 @@ class EventController extends BaseController
      *
      * @param  string $locale
      * @param  string $status_name
-     * @return \Illuminate\Http\Response
      */
     public function findByStatus($locale, $status_name)
     {
@@ -414,7 +406,6 @@ class EventController extends BaseController
      * Find all organization events.
      *
      * @param  int $organization_id
-     * @return \Illuminate\Http\Response
      */
     public function findByOrganization($organization_id)
     {
@@ -434,7 +425,6 @@ class EventController extends BaseController
      * Find all event speakers.
      *
      * @param  int $id
-     * @return \Illuminate\Http\Response
      */
     public function findSpeakers($id)
     {
@@ -455,7 +445,6 @@ class EventController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int $organization_id
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('type_id', description: 'Colonne events.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     #[BodyParameter('status_id', description: 'Colonne events.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
@@ -498,7 +487,6 @@ class EventController extends BaseController
      * Find all events filtered.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('type_id', description: 'Colonne events.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     #[BodyParameter('status_id', description: 'Colonne events.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
@@ -532,7 +520,6 @@ class EventController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int $id
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('event_id', description: 'Colonne event_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     #[BodyParameter('image_64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]

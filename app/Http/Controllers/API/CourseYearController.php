@@ -16,7 +16,6 @@ class CourseYearController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -30,7 +29,6 @@ class CourseYearController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('year', description: 'Colonne course_years.year : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
     public function store(Request $request)
@@ -55,7 +53,6 @@ class CourseYearController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -73,7 +70,6 @@ class CourseYearController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\CourseYear  $course_year
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne course_years.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('year', description: 'Colonne course_years.year : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
@@ -109,7 +105,6 @@ class CourseYearController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\CourseYear  $course_year
-     * @return \Illuminate\Http\Response
      */
     public function destroy(CourseYear $course_year)
     {

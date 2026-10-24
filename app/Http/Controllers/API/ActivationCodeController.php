@@ -23,7 +23,6 @@ class ActivationCodeController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -36,7 +35,6 @@ class ActivationCodeController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('for_partner_id', description: 'Colonne activation_codes.for_partner_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     #[BodyParameter('code', description: 'Colonne activation_codes.code : VARCHAR(45); NOT NULL.', required: true, type: 'string')]
@@ -70,7 +68,6 @@ class ActivationCodeController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -88,7 +85,6 @@ class ActivationCodeController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\ActivationCode  $activation_code
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('for_partner_id', description: 'Colonne activation_codes.for_partner_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     #[BodyParameter('code', description: 'Colonne activation_codes.code : VARCHAR(45); NOT NULL.', required: false, type: 'string')]
@@ -120,7 +116,6 @@ class ActivationCodeController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\ActivationCode  $activation_code
-     * @return \Illuminate\Http\Response
      */
     public function destroy(ActivationCode $activation_code)
     {
@@ -138,7 +133,6 @@ class ActivationCodeController extends BaseController
      * @param  int $user_id
      * @param  string $code
      * @param  string $partner_id
-     * @return \Illuminate\Http\Response
      */
     public function findUsersByPartner($partner_id)
     {
@@ -172,7 +166,6 @@ class ActivationCodeController extends BaseController
      * @param  int $user_id
      * @param  string $code
      * @param  string $partner_id
-     * @return \Illuminate\Http\Response
      */
     public function activateSubscription($user_id, $code, $partner_id)
     {
@@ -225,7 +218,6 @@ class ActivationCodeController extends BaseController
      * Disable subscription got via a activation code given by a partner
      *
      * @param  int $user_id
-     * @return \Illuminate\Http\Response
      */
     public function disableSubscription($user_id)
     {

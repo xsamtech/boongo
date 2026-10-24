@@ -23,7 +23,6 @@ class ProgramController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -37,7 +36,6 @@ class ProgramController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      * @requestMediaType multipart/form-data
      */
     #[BodyParameter('class', description: 'Colonne programs.class : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
@@ -99,7 +97,6 @@ class ProgramController extends BaseController
      * Display the specified resource.
      * 
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -117,7 +114,6 @@ class ProgramController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Program  $program
-     * @return \Illuminate\Http\Response
      * @requestMediaType multipart/form-data
      */
     #[BodyParameter('class', description: 'Colonne programs.class : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
@@ -187,7 +183,6 @@ class ProgramController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Program  $program
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Program $program)
     {
@@ -204,7 +199,6 @@ class ProgramController extends BaseController
      *
      * @param  string  $course_year
      * @param  int  $organization_id
-     * @return \Illuminate\Http\Response
      */
     public function findAllByYearAndOrganization($course_year, $organization_id)
     {
@@ -231,7 +225,6 @@ class ProgramController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $organization_id
-     * @return \Illuminate\Http\Response
      * @requestMediaType multipart/form-data
      */
     #[BodyParameter('course_year', description: 'Champ course_year de la requête.', required: false, type: 'string')]

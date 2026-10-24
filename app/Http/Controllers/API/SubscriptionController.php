@@ -23,7 +23,6 @@ class SubscriptionController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -48,7 +47,6 @@ class SubscriptionController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('number_of_hours', description: 'Colonne subscriptions.number_of_hours : INT; NULL autorisé.', required: true, type: 'integer')]
     #[BodyParameter('price', description: 'Colonne subscriptions.price : DECIMAL(9,2); NULL autorisé.', required: true, type: 'float')]
@@ -87,7 +85,6 @@ class SubscriptionController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -105,7 +102,6 @@ class SubscriptionController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Subscription  $subscription
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('number_of_hours', description: 'Colonne subscriptions.number_of_hours : INT; NULL autorisé.', required: false, type: 'integer')]
     #[BodyParameter('price', description: 'Colonne subscriptions.price : DECIMAL(9,2); NULL autorisé.', required: false, type: 'float')]
@@ -139,7 +135,6 @@ class SubscriptionController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Subscription  $subscription
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Subscription $subscription)
     {
@@ -155,7 +150,6 @@ class SubscriptionController extends BaseController
      * Check if user is subscribed
      *
      * @param  int $user_id
-     * @return \Illuminate\Http\Response
      */
     public function isSubscribed($user_id)
     {

@@ -17,7 +17,6 @@ class TypeController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -30,7 +29,6 @@ class TypeController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('type_name_en', description: 'Colonne types.type_name : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
     #[BodyParameter('type_name_fr', description: 'Colonne types.type_name : JSON; NOT NULL. Traduction fr transmise séparément.', required: false, type: 'string')]
@@ -81,7 +79,6 @@ class TypeController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -99,7 +96,6 @@ class TypeController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Type  $type
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne types.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('type_name_en', description: 'Colonne types.type_name : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
@@ -162,7 +158,6 @@ class TypeController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Type  $type
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Type $type)
     {
@@ -179,7 +174,6 @@ class TypeController extends BaseController
      *
      * @param  string $locale
      * @param  string $data
-     * @return \Illuminate\Http\Response
      */
     public function search($locale, $data)
     {
@@ -196,7 +190,6 @@ class TypeController extends BaseController
      * Find all type by group.
      *
      * @param  string $group_name
-     * @return \Illuminate\Http\Response
      */
     public function findByGroup($group_name)
     {

@@ -19,7 +19,6 @@ class CircleController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -33,7 +32,6 @@ class CircleController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('circle_name', description: 'Colonne circles.circle_name : LONGTEXT; NOT NULL.', required: false, type: 'string')]
     #[BodyParameter('type_id', description: 'Colonne circles.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
@@ -77,7 +75,6 @@ class CircleController extends BaseController
      * Display the specified resource.
 
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -95,7 +92,6 @@ class CircleController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Circle  $circle
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne circles.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('circle_name', description: 'Colonne circles.circle_name : LONGTEXT; NOT NULL.', required: false, type: 'string')]
@@ -154,7 +150,6 @@ class CircleController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Circle  $circle
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Circle $circle)
     {
@@ -178,7 +173,6 @@ class CircleController extends BaseController
      * Search (by filtering or not) an organization
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('data', description: 'Terme de recherche.', required: false, type: 'string')]
     #[BodyParameter('type_id', description: 'Colonne circles.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]

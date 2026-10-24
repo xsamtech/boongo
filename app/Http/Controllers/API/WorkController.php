@@ -14,7 +14,9 @@ use App\Models\Subscription;
 use App\Models\Type;
 use App\Models\User;
 use App\Models\Work;
+use App\Http\Requests\WorkFilesRequest;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -36,7 +38,6 @@ class WorkController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -50,7 +51,6 @@ class WorkController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      * @requestMediaType multipart/form-data
      */
     #[BodyParameter('work_title', description: 'Colonne works.work_title : TEXT; NULL autorisé.', required: true, type: 'string')]
@@ -72,8 +72,13 @@ class WorkController extends BaseController
     #[BodyParameter('currency_id', description: 'Colonne works.currency_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     #[BodyParameter('files_urls', description: 'Liste de fichiers à téléverser (multipart/form-data).', required: false, type: 'string[]')]
     #[BodyParameter('files_urls.*', description: 'Fichier à téléverser.', required: false, type: 'string', format: 'binary')]
-    #[BodyParameter('files_names', description: 'Liste des valeurs.', required: false, type: 'string[]')]
-    public function store(Request $request)
+    #[BodyParameter('part_titles', description: 'Liste de titres de parties.', required: false, type: 'string[]')]
+    #[BodyParameter('positions', description: 'Liste de positions.', required: false, type: 'string[]')]
+    #[BodyParameter('media_lengths', description: 'Liste de durées média.', required: false, type: 'string[]')]
+    #[BodyParameter('files_names', description: 'Liste des noms de fichiers.', required: false, type: 'string[]')]
+    #[BodyParameter('part_covers', description: 'Photos de couverture facultatives, aux mêmes index que files_urls. Chaque photo remplit files.part_cover_url sans modifier files.type_id.', required: false, type: 'string[]')]
+    #[BodyParameter('part_covers.*', description: 'Photo uniquement : JPEG, PNG, BMP, GIF ou WebP. Fichier principal files_urls au même index obligatoire.', required: false, type: 'string', format: 'binary')]
+    public function store(WorkFilesRequest $request)
     {
         // Group
         $file_type_group = Group::where('group_name', 'Type de fichier')->first();
@@ -123,10 +128,14 @@ class WorkController extends BaseController
 
         if ($request->hasFile('files_urls')) {
             $files = $request->file('files_urls', []);
+            $partCovers = $request->file('part_covers', []);
             $fileNames = $request->input('files_names', []);
+            $partTitles = $request->input('part_titles', []);
+            $positions = $request->input('positions', []);
+            $mediaLengths = $request->input('media_lengths', []);
 
             // Types of extensions for different file types
-            $image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'tif', 'svg', 'heif', 'heic', 'ico'];
+            $image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'tif', 'svg', 'heif', 'heic', 'ico', 'mp4', 'm4v', 'mov', 'avi', 'wmv', 'flv', 'mkv', 'webm', 'mpeg', 'mpg', 'mpe', 'mpv', '3gp', '3g2', 'mts', 'm2ts', 'ts', 'vob', 'ogv', 'ogg', 'rm', 'rmvb', 'asf', 'divx', 'f4v', 'mxf', 'm2v', 'm4v', 'hevc'];
             $document_extensions = ['pdf', 'doc', 'docx', 'txt'];
             $audio_extensions = ['mp3', 'wav', 'flac'];
 
@@ -171,6 +180,11 @@ class WorkController extends BaseController
                     $singleFile->storeAs($custom_uri . '/' . $work->id, $cleaned_filename, 's3');
                     // $singleFile->storeAs($custom_uri . '/' . $work->id, $cleaned_filename, 'public');
 
+                    $part_cover_url = null;
+                    if (isset($partCovers[$key])) {
+                        $part_cover_url = $this->storePartCover($partCovers[$key], $work);
+                    }
+
                 } catch (\Throwable $th) {
                     return $this->handleError($th, __('notifications.create_work_file_500'), 500);
                 }
@@ -179,8 +193,11 @@ class WorkController extends BaseController
                 File::create([
                     'file_name' => trim($fileNames[$key] ?? $cleaned_filename),
                     'file_url' => config('filesystems.disks.s3.url') . $file_url,
-                    // 'file_url' => Storage::url($file_url),
-                    'type_id' => $file_type_id,
+                    'part_title' => $partTitles[$key] ?? null,
+                    'part_cover_url' => $part_cover_url,
+                    'position' => $positions[$key] ?? null,
+                    'media_length' => $mediaLengths[$key] ?? null,
+                    'type_id' => $file_type_id, // The type describes file_url, never the cover.
                     'work_id' => $work->id
                 ]);
             }
@@ -194,7 +211,6 @@ class WorkController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show(Request $request, $id)
     {
@@ -259,7 +275,6 @@ class WorkController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Work  $work
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('work_title', description: 'Colonne works.work_title : TEXT; NULL autorisé.', required: false, type: 'string')]
     #[BodyParameter('work_content', description: 'Colonne works.work_content : LONGTEXT; NULL autorisé.', required: false, type: 'string')]
@@ -327,7 +342,6 @@ class WorkController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Work  $work
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Work $work)
     {
@@ -352,7 +366,6 @@ class WorkController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int $year
-     * @return \Illuminate\Http\Response
      */
     public function trends(Request $request, $year)
     {
@@ -434,7 +447,6 @@ class WorkController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @param  string $entity
      * @param  int $entity_id
-     * @return \Illuminate\Http\Response
      */
     public function findAllByEntity(Request $request, $entity, $entity_id)
     {
@@ -655,7 +667,6 @@ class WorkController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @param  string $locale
      * @param  string $type_name
-     * @return \Illuminate\Http\Response
      */
     public function findAllByType(Request $request, $locale, $type_name)
     {
@@ -754,7 +765,6 @@ class WorkController extends BaseController
      * Find work views.
      *
      * @param  int  $work_id
-     * @return \Illuminate\Http\Response
      */
     public function findViews($work_id)
     {
@@ -782,7 +792,6 @@ class WorkController extends BaseController
      * Find work likes.
      *
      * @param  int  $work_id
-     * @return \Illuminate\Http\Response
      */
     public function findLikes($work_id)
     {
@@ -803,7 +812,6 @@ class WorkController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int $work_id
-     * @return \Illuminate\Http\Response
      */
     public function switchView(Request $request, $work_id)
     {
@@ -882,7 +890,6 @@ class WorkController extends BaseController
      * Get all by title.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('data', description: 'Terme de recherche.', required: false, type: 'string')]
     #[BodyParameter('type_id', description: 'Colonne works.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
@@ -919,23 +926,21 @@ class WorkController extends BaseController
     }
 
     /**
-     * Edit some files in storage.
+     * Upload files for specific work.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int $type_id
-     * @param  int $work_id
-     * @return \Illuminate\Http\Response
      * @requestMediaType multipart/form-data
      */
     #[BodyParameter('work_id', description: 'Colonne work_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
-    #[BodyParameter('image_file_type_id', description: 'Identifiant utilisé par cette opération.', required: false, type: 'integer')]
-    #[BodyParameter('file_name', description: 'Colonne file_name : TEXT; NULL autorisé.', required: false, type: 'string')]
-    #[BodyParameter('document_file_type_id', description: 'Identifiant utilisé par cette opération.', required: false, type: 'integer')]
-    #[BodyParameter('audio_file_type_id', description: 'Identifiant utilisé par cette opération.', required: false, type: 'integer')]
-    #[BodyParameter('video_file_url', description: 'Fichier à téléverser (multipart/form-data).', required: false, type: 'string', format: 'binary')]
-    #[BodyParameter('document_file_url', description: 'Fichier à téléverser (multipart/form-data).', required: false, type: 'string', format: 'binary')]
-    #[BodyParameter('audio_file_url', description: 'Fichier à téléverser (multipart/form-data).', required: false, type: 'string', format: 'binary')]
-    public function uploadFiles(Request $request)
+    #[BodyParameter('files_urls', description: 'Liste de fichiers à téléverser (multipart/form-data).', required: false, type: 'string[]')]
+    #[BodyParameter('files_urls.*', description: 'Fichier à téléverser.', required: false, type: 'string', format: 'binary')]
+    #[BodyParameter('files_names', description: 'Liste des noms de fichiers.', required: false, type: 'string[]')]
+    #[BodyParameter('part_titles', description: 'Liste de titres de parties.', required: false, type: 'string[]')]
+    #[BodyParameter('positions', description: 'Liste de positions.', required: false, type: 'string[]')]
+    #[BodyParameter('media_lengths', description: 'Liste de durées média.', required: false, type: 'string[]')]
+    #[BodyParameter('part_covers', description: 'Photos de couverture facultatives, aux mêmes index que files_urls. Chaque photo remplit files.part_cover_url sans modifier files.type_id.', required: false, type: 'string[]')]
+    #[BodyParameter('part_covers.*', description: 'Photo uniquement : JPEG, PNG, BMP, GIF ou WebP. Fichier principal files_urls au même index obligatoire.', required: false, type: 'string', format: 'binary')]
+    public function uploadFiles(WorkFilesRequest $request)
     {
         // Group
         $file_type_group = Group::where('group_name', 'Type de fichier')->first();
@@ -950,113 +955,82 @@ class WorkController extends BaseController
             return $this->handleError(__('notifications.find_work_404'));
         }
 
-        if ($request->hasFile('video_file_url')) {
-            if ($request->image_file_type_id == null) {
-                return $this->handleError($request->image_file_type_id, __('validation.required') . ' (' . __('miscellaneous.file_type') . ') ', 400);
+        if ($request->hasFile('files_urls')) {
+            $files = $request->file('files_urls', []);
+            $partCovers = $request->file('part_covers', []);
+            $fileNames = $request->input('files_names', []);
+            $partTitles = $request->input('part_titles', []);
+            $positions = $request->input('positions', []);
+            $mediaLengths = $request->input('media_lengths', []);
+
+            // Types of extensions for different file types
+            $image_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'tiff', 'tif', 'svg', 'heif', 'heic', 'ico', 'mp4', 'm4v', 'mov', 'avi', 'wmv', 'flv', 'mkv', 'webm', 'mpeg', 'mpg', 'mpe', 'mpv', '3gp', '3g2', 'mts', 'm2ts', 'ts', 'vob', 'ogv', 'ogg', 'rm', 'rmvb', 'asf', 'divx', 'f4v', 'mxf', 'm2v', 'm4v', 'hevc'];
+            $document_extensions = ['pdf', 'doc', 'docx', 'txt'];
+            $audio_extensions = ['mp3', 'wav', 'flac'];
+
+            // File browsing
+            foreach ($files as $key => $singleFile) {
+                // Checking the file extension
+                $file_extension = strtolower($singleFile->getClientOriginalExtension());
+
+                // File type check
+                $custom_uri = '';
+                $is_valid_type = false;
+                $file_type_id = null;
+
+                if (in_array($file_extension, $image_extensions)) { // File is an image
+                    $custom_uri = 'images/works';
+                    $file_type_id = $image_type->id;
+                    $is_valid_type = true;
+
+                } elseif (in_array($file_extension, $document_extensions)) { // File is a document
+                    $custom_uri = 'documents/works';
+                    $file_type_id = $document_type->id;
+                    $is_valid_type = true;
+
+                } elseif (in_array($file_extension, $audio_extensions)) { // File is an audio
+                    $custom_uri = 'audios/works';
+                    $file_type_id = $audio_type->id;
+                    $is_valid_type = true;
+                }
+
+                // If the extension does not match any valid type
+                if (!$is_valid_type) {
+                    return $this->handleError(__('notifications.type_is_not_file'));
+                }
+
+                // Generate a unique path for the file
+                $filename = $singleFile->getClientOriginalName();
+                $cleaned_filename = sanitizeFileName($filename);
+                $file_url =  $custom_uri . '/' . $work->id . '/' . $cleaned_filename ;
+
+                // Upload file
+                try {
+                    $singleFile->storeAs($custom_uri . '/' . $work->id, $cleaned_filename, 's3');
+
+                    $part_cover_url = null;
+                    if (isset($partCovers[$key])) {
+                        $part_cover_url = $this->storePartCover($partCovers[$key], $work);
+                    }
+
+                } catch (\Throwable $th) {
+                    return $this->handleError($th, __('notifications.create_work_file_500'), 500);
+                }
+
+                // Creating the database record for the file
+                File::create([
+                    'file_name' => trim($fileNames[$key] ?? $cleaned_filename),
+                    'file_url' => config('filesystems.disks.s3.url') . $file_url,
+                    'part_title' => $partTitles[$key] ?? null,
+                    'part_cover_url' => $part_cover_url,
+                    'position' => $positions[$key] ?? null,
+                    'media_length' => $mediaLengths[$key] ?? null,
+                    'type_id' => $file_type_id, // The type describes file_url, never the cover.
+                    'work_id' => $work->id
+                ]);
             }
-
-            $type = Type::find($request->image_file_type_id);
-
-            if (is_null($type)) {
-                return $this->handleError(__('notifications.find_type_404'));
-            }
-
-            if ($type->id != $image_type->id) {
-                return $this->handleError(__('notifications.type_is_not_file') . ' ' . $image_type->type_name);
-            }
-
-            $file = $request->file('video_file_url');
-            $filename = $file->getClientOriginalName();
-            $file_url =  'images/works/' . $work->id . '/' . $filename;
-
-            // Upload file
-            // $dir_result = Storage::url(Storage::disk('public')->put($file_url, $file));
-            try {
-                $file->storeAs('images/works/' . $work->id, $filename, 's3');
-
-            } catch (\Throwable $th) {
-                return $this->handleError($th, __('notifications.create_work_file_500'), 500);
-            }
-
-            File::create([
-                'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
-                'file_url' => config('filesystems.disks.s3.url') . $file_url, // $dir_result
-                'type_id' => $type->id,
-                'work_id' => $work->id
-            ]);
         }
 
-        if ($request->hasFile('document_file_url')) {
-            if ($request->document_file_type_id == null) {
-                return $this->handleError($request->document_file_type_id, __('validation.required') . ' (' . __('miscellaneous.file_type') . ') ', 400);
-            }
-
-            $type = Type::find($request->document_file_type_id);
-
-            if (is_null($type)) {
-                return $this->handleError(__('notifications.find_type_404'));
-            }
-
-            if ($type->id != $document_type->id) {
-                return $this->handleError(__('notifications.type_is_not_file') . ' ' . $document_type->type_name);
-            }
-
-            $file = $request->file('document_file_url');
-            $filename = $file->getClientOriginalName();
-            $file_url =  'documents/works/' . $work->id . '/' . $filename;
-
-            // Upload file
-            // $dir_result = Storage::url(Storage::disk('public')->put($file_url, $file));
-            try {
-                $file->storeAs('documents/works/' . $work->id, $filename, 's3');
-
-            } catch (\Throwable $th) {
-                return $this->handleError($th, __('notifications.create_work_file_500'), 500);
-            }
-
-            File::create([
-                'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
-                'file_url' => config('filesystems.disks.s3.url') . $file_url, // $dir_result
-                'type_id' => $type->id,
-                'work_id' => $work->id
-            ]);
-        }
-
-        if ($request->hasFile('audio_file_url')) {
-            if ($request->audio_file_type_id == null) {
-                return $this->handleError($request->audio_file_type_id, __('validation.required') . ' (' . __('miscellaneous.file_type') . ') ', 400);
-            }
-
-            $type = Type::find($request->audio_file_type_id);
-
-            if (is_null($type)) {
-                return $this->handleError(__('notifications.find_type_404'));
-            }
-
-            if ($type->id != $audio_type->id) {
-                return $this->handleError(__('notifications.type_is_not_file') . ' ' . $audio_type->type_name);
-            }
-
-            $file = $request->file('audio_file_url');
-            $filename = $file->getClientOriginalName();
-            $file_url =  'audios/works/' . $work->id . '/' . $filename;
-
-            // Upload file
-            // $dir_result = Storage::url(Storage::disk('public')->put($file_url, $file));
-            try {
-                $file->storeAs('audios/works/' . $work->id, $filename, 's3');
-
-            } catch (\Throwable $th) {
-                return $this->handleError($th, __('notifications.create_work_file_500'), 500);
-            }
-
-            File::create([
-                'file_name' => trim($request->file_name) != null ? $request->file_name : $work->work_title,
-                'file_url' => config('filesystems.disks.s3.url') . $file_url, // $dir_result
-                'type_id' => $type->id,
-                'work_id' => $work->id
-            ]);
-        }
         return $this->handleResponse(new ResourcesWork($work), __('notifications.update_work_success'));
     }
 
@@ -1064,7 +1038,6 @@ class WorkController extends BaseController
      * Filter works by categories.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('type_id', description: 'Colonne works.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     #[BodyParameter('status_id', description: 'Colonne works.status_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
@@ -1326,7 +1299,6 @@ class WorkController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('work_id', description: 'Colonne work_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
     #[BodyParameter('image_64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]
@@ -1362,4 +1334,15 @@ class WorkController extends BaseController
 
         return $this->handleResponse(new ResourcesWork($work), __('notifications.update_work_success'));
     }
+
+    private function storePartCover(UploadedFile $cover, Work $work): string
+    {
+        $path = $cover->storeAs('images/works/' . $work->id . '/covers', Str::uuid() . '.' . $cover->extension(), 's3');
+        if ($path === false) {
+            throw new \RuntimeException('Unable to store the part cover.');
+        }
+
+        return Storage::disk('s3')->url($path);
+    }
+
 }

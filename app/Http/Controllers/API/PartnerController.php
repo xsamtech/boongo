@@ -25,7 +25,6 @@ class PartnerController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -38,7 +37,6 @@ class PartnerController extends BaseController
      * Store a resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('name', description: 'Colonne partners.name : TEXT; NULL autorisé.', required: true, type: 'string')]
     #[BodyParameter('message', description: 'Colonne partners.message : TEXT; NULL autorisé.', required: false, type: 'string')]
@@ -156,7 +154,6 @@ class PartnerController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -174,7 +171,6 @@ class PartnerController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Partner  $partner
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne partners.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('name', description: 'Colonne partners.name : TEXT; NULL autorisé.', required: false, type: 'string')]
@@ -287,7 +283,6 @@ class PartnerController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Partner  $partner
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Partner $partner)
     {
@@ -303,7 +298,6 @@ class PartnerController extends BaseController
      * Search a partner
      *
      * @param  string $data
-     * @return \Illuminate\Http\Response
      */
     public function search($data)
     {
@@ -317,7 +311,6 @@ class PartnerController extends BaseController
      *
      * @param  string $locale
      * @param  string $status_name
-     * @return \Illuminate\Http\Response
      */
     public function partnershipsByStatus($locale, $status_name)
     {
@@ -342,7 +335,6 @@ class PartnerController extends BaseController
      *
      * @param  string $locale
      * @param  string $status_name
-     * @return \Illuminate\Http\Response
      */
     public function partnersWithActivationCode($locale, $status_name)
     {
@@ -364,7 +356,6 @@ class PartnerController extends BaseController
      * All users having promotional code of a specific partner
      *
      * @param  int $partner_id
-     * @return \Illuminate\Http\Response
      */
     public function usersWithPromoCode($partner_id)
     {
@@ -400,7 +391,6 @@ class PartnerController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('categories_ids', description: 'Liste des identifiants.', required: false, type: 'integer[]')]
     public function withdrawSomeCategories(Request $request, $id)
@@ -419,7 +409,6 @@ class PartnerController extends BaseController
     /**
      * Withdraw some categories partnership.
      *
-     * @return \Illuminate\Http\Response
      */
     public function withdrawAllCategories($id)
     {
@@ -438,7 +427,6 @@ class PartnerController extends BaseController
      * Terminate partnership
      *
      * @param  int $partner_id
-     * @return \Illuminate\Http\Response
      */
     public function terminatePartnership($partner_id)
     {

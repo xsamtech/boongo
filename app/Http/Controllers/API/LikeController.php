@@ -22,7 +22,6 @@ class LikeController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -36,7 +35,6 @@ class LikeController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('user_id', description: 'Colonne likes.user_id : BIGINT; NOT NULL.', required: true, type: 'integer')]
     #[BodyParameter('for_work_id', description: 'Colonne likes.for_work_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
@@ -103,7 +101,6 @@ class LikeController extends BaseController
      * Display the specified resource.
      * 
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -121,7 +118,6 @@ class LikeController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Like  $like
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('user_id', description: 'Colonne likes.user_id : BIGINT; NOT NULL.', required: false, type: 'integer')]
     #[BodyParameter('for_work_id', description: 'Colonne likes.for_work_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
@@ -151,7 +147,6 @@ class LikeController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Like  $like
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Like $like)
     {
@@ -177,7 +172,6 @@ class LikeController extends BaseController
      * @param  int $user_id
      * @param  string $entity
      * @param  int $entity_id
-     * @return \Illuminate\Http\Response
      */
     public function unlikeEntity($user_id, $entity, $entity_id)
     {

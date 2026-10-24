@@ -19,7 +19,6 @@ class ToxicContentController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -32,7 +31,6 @@ class ToxicContentController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('is_reportedt', description: 'Champ is_reportedt de la requête.', required: false, type: 'string')]
     #[BodyParameter('is_reported', description: 'Colonne toxic_contents.is_reported : TINYINT; NOT NULL. Défaut SQL : 1.', required: false, type: 'integer')]
@@ -123,7 +121,6 @@ class ToxicContentController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -182,7 +179,6 @@ class ToxicContentController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\ReportReason  $report_reason
-     * @return \Illuminate\Http\Response
      */
     public function destroy(ToxicContent $toxic_content)
     {
@@ -199,7 +195,6 @@ class ToxicContentController extends BaseController
      *
      * @param  int $is_reported
      * @param  int $is_unlocked
-     * @return \Illuminate\Http\Response
      */
     public function findByIsReported($is_reported, $is_unlocked)
     {
@@ -214,7 +209,6 @@ class ToxicContentController extends BaseController
      * @param  int $user_id
      * @param  string $entity
      * @param  int $entity_id
-     * @return \Illuminate\Http\Response
      */
     public function findBlockedEntity($user_id, $entity, $entity_id)
     {
@@ -241,7 +235,6 @@ class ToxicContentController extends BaseController
      * Unlock user.
      *
      * @param  int $user_id
-     * @return \Illuminate\Http\Response
      */
     public function unlockUser($user_id)
     {

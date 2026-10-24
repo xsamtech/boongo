@@ -27,7 +27,6 @@ class NotificationController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -40,7 +39,6 @@ class NotificationController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('type_id', description: 'Colonne notifications.type_id : BIGINT; NULL autorisé.', required: true, type: 'integer')]
     #[BodyParameter('status_id', description: 'Colonne notifications.status_id : BIGINT; NULL autorisé.', required: true, type: 'integer')]
@@ -82,7 +80,6 @@ class NotificationController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -100,7 +97,6 @@ class NotificationController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Notification  $notification
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne notifications.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('type_id', description: 'Colonne notifications.type_id : BIGINT; NULL autorisé.', required: true, type: 'integer')]
@@ -145,7 +141,6 @@ class NotificationController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Notification  $notification
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Notification $notification)
     {
@@ -161,7 +156,6 @@ class NotificationController extends BaseController
      * Select all user notifications.
      *
      * @param  $user_id
-     * @return \Illuminate\Http\Response
      */
     public function selectByUser($user_id)
     {
@@ -175,7 +169,6 @@ class NotificationController extends BaseController
      *
      * @param  $user_id
      * @param  $status_id
-     * @return \Illuminate\Http\Response
      */
     public function selectByStatusUser($status_id, $user_id)
     {
@@ -190,7 +183,6 @@ class NotificationController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @param  string $ids
      * @param  int $status_id
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('text_content', description: 'Colonne text_content : TEXT; NOT NULL.', required: false, type: 'string')]
     #[BodyParameter('redirect_url', description: 'Colonne redirect_url : TEXT; NULL autorisé.', required: false, type: 'string')]
@@ -241,7 +233,7 @@ class NotificationController extends BaseController
             if (!$work) return $this->handleError(__('notifications.find_work_404'));
 
             $photo = File::where([['type_id', $img_type->id],['work_id', $work->id]])
-                            ->get()->first(fn ($img) => isPhotoFile($img->file_url));
+                            ->orderedForApi()->get()->first(fn ($img) => isPhotoFile($img->file_url));
 
             $entity_id = $work->id;
             $icon = 'fa-solid fa-book';
@@ -260,7 +252,7 @@ class NotificationController extends BaseController
             }
 
             $photo = File::where([['type_id', $img_type->id], ['work_id', $work->id]])
-                            ->get()->first(fn ($img) => isPhotoFile($img->file_url));
+                            ->orderedForApi()->get()->first(fn ($img) => isPhotoFile($img->file_url));
 
             $entity_id = $work->id;
             $icon = 'fa-solid fa-heart';
@@ -325,7 +317,6 @@ class NotificationController extends BaseController
      * Change notification status.
      *
      * @param  $user_id
-     * @return \Illuminate\Http\Response
      */
     public function markAllRead($user_id)
     {

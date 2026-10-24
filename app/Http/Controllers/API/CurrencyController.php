@@ -16,7 +16,6 @@ class CurrencyController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -29,7 +28,6 @@ class CurrencyController extends BaseController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('currency_name_en', description: 'Colonne currencies.currency_name : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
     #[BodyParameter('currency_name_fr', description: 'Colonne currencies.currency_name : JSON; NOT NULL. Traduction fr transmise séparément.', required: false, type: 'string')]
@@ -76,7 +74,6 @@ class CurrencyController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -94,7 +91,6 @@ class CurrencyController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Currency  $currency
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('currency_name_en', description: 'Colonne currencies.currency_name : JSON; NOT NULL. Traduction en transmise séparément.', required: false, type: 'string')]
     #[BodyParameter('currency_name_fr', description: 'Colonne currencies.currency_name : JSON; NOT NULL. Traduction fr transmise séparément.', required: false, type: 'string')]
@@ -151,7 +147,6 @@ class CurrencyController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Currency  $currency
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Currency $currency)
     {
@@ -168,7 +163,6 @@ class CurrencyController extends BaseController
      *
      * @param  string $locale
      * @param  string $data
-     * @return \Illuminate\Http\Response
      */
     public function search($locale, $data)
     {

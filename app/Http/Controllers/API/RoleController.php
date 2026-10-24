@@ -16,7 +16,6 @@ class RoleController extends BaseController
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -29,7 +28,6 @@ class RoleController extends BaseController
      * Store a resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('role_name', description: 'Colonne roles.role_name : VARCHAR(255); NOT NULL.', required: true, type: 'string')]
     #[BodyParameter('role_description', description: 'Colonne roles.role_description : TEXT; NULL autorisé.', required: false, type: 'string')]
@@ -64,7 +62,6 @@ class RoleController extends BaseController
      * Display the specified resource.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -82,7 +79,6 @@ class RoleController extends BaseController
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Role  $role
-     * @return \Illuminate\Http\Response
      */
     #[BodyParameter('id', description: 'Colonne roles.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('role_name', description: 'Colonne roles.role_name : VARCHAR(255); NOT NULL.', required: false, type: 'string')]
@@ -129,7 +125,6 @@ class RoleController extends BaseController
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Role  $role
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Role $role)
     {
@@ -145,7 +140,6 @@ class RoleController extends BaseController
      * Search a role by its real name.
      *
      * @param  string $data
-     * @return \Illuminate\Http\Response
      */
     public function search($data)
     {

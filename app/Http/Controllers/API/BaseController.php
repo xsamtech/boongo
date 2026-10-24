@@ -18,7 +18,7 @@ class BaseController extends Controller
      * @param  $lastPage
      * @param  $count
      * @param  $ad
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function handleResponse($result, $msg, $lastPage = null, $count = null, $ad = null)
     {
@@ -49,7 +49,7 @@ class BaseController extends Controller
      * @param  $error
      * @param array  $errorMsg
      * @param  $code
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function handleError($error, $errorMsg = [], $code = 404)
     {
