@@ -43,8 +43,8 @@ class FileController extends BaseController
     #[BodyParameter('work_id', description: 'Colonne files.work_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     #[BodyParameter('program_id', description: 'Colonne files.program_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
     #[BodyParameter('message_id', description: 'Colonne files.message_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
-    #[BodyParameter('part_cover_image64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]
-    #[BodyParameter('file_content', description: 'Fichier à téléverser (multipart/form-data).', required: false, type: 'string', format: 'binary')]
+    #[BodyParameter('part_cover_image64', description: 'Image encodée en base64 (data:image/...;base64,...) pour la colonne "files.part_cover_url".', required: false, type: 'string')]
+    #[BodyParameter('file_content', description: 'Fichier à téléverser (multipart/form-data) pour la colonne "files.file_url".', required: false, type: 'string', format: 'binary')]
     public function store(Request $request)
     {
         // Group
@@ -66,6 +66,12 @@ class FileController extends BaseController
         // Validate required fields
         if (trim($inputs['part_title']) != null) {
             if ($inputs['work_id'] == null OR $inputs['work_id'] == ' ') {
+                return $this->handleError($inputs['work_id'], __('validation.required_with', ['attribute' => 'part_title']), 400);
+            }
+
+            $work = Work::find($inputs['work_id']);
+
+            if (is_null($work)) {
                 return $this->handleError(__('notifications.find_work_404'));
             }
         }
@@ -128,7 +134,7 @@ class FileController extends BaseController
 
             $file->update([
                 'file_name' => $cleaned_filename,
-                'part_cover_url' => config('filesystems.disks.s3.url') . $file_url,
+                'file_url' => config('filesystems.disks.s3.url') . $file_url,
                 'type_id' => $file_type_id,
                 'work_id' => $work->id
             ]);
@@ -136,24 +142,26 @@ class FileController extends BaseController
 
         if ($request->part_cover_image64 != null) {
             $file_type_group = Group::where('group_name', 'Type de fichier')->first();
-            $type = Type::where([['type_name->fr', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
+            // $type = Type::where([['type_name->fr', 'Image (Photo/Vidéo)'], ['group_id', $file_type_group->id]])->first();
             // $extension = explode('/', explode(':', substr($request->part_cover_image64, 0, strpos($request->part_cover_image64, ';')))[1])[1];
             $replace = substr($request->part_cover_image64, 0, strpos($request->part_cover_image64, ',') + 1);
             // Find substring from replace here eg: data:image/png;base64,
             $image = str_replace($replace, '', $request->part_cover_image64);
             $image = str_replace(' ', '+', $image);
+            $work = Work::find($file->work_id);
+
+            if (is_null($work)) {
+                return $this->handleError(__('notifications.find_work_404'));
+            }
+
             // Create image URL
-            $image_url = 'images/works/' . $file->work_id . '/' . Str::random(50) . '.png';
+            $image_url = 'images/works/' . $work->id . '/' . Str::random(50) . '.png';
 
             // Upload image
             Storage::url(Storage::disk('s3')->put($image_url, base64_decode($image)));
 
             $file->update([
-                'file_name' => 'PART COVER',
-                'part_cover_url' => config('filesystems.disks.s3.url') . $image_url,
-                'type_id' => $type->id,
-                'work_id' => $file->work_id,
-                'updated_at' => now()
+                'part_cover_url' => config('filesystems.disks.s3.url') . $image_url
             ]);
         }
 
@@ -184,9 +192,9 @@ class FileController extends BaseController
      */
     #[BodyParameter('id', description: 'Colonne files.id : BIGINT; NOT NULL. Identifiant du corps utilisé par les contrôles existants, distinct du paramètre de route.', required: false, type: 'integer')]
     #[BodyParameter('file_name', description: 'Colonne files.file_name : TEXT; NULL autorisé.', required: false, type: 'string')]
-    #[BodyParameter('file_content', description: 'Fichier à téléverser (multipart/form-data).', required: false, type: 'string', format: 'binary')]
+    #[BodyParameter('file_content', description: 'Fichier à téléverser (multipart/form-data) pour la colonne "files.file_url".', required: false, type: 'string', format: 'binary')]
     #[BodyParameter('part_title', description: 'Colonne files.part_title : TEXT; NULL autorisé.', required: false, type: 'string')]
-    #[BodyParameter('part_cover_image64', description: 'Image encodée en base64 (data:image/...;base64,...).', required: false, type: 'string')]
+    #[BodyParameter('part_cover_image64', description: 'Image encodée en base64 (data:image/...;base64,...) pour la colonne "files.part_cover_url".', required: false, type: 'string')]
     #[BodyParameter('position', description: 'Colonne files.position : INT; NULL autorisé.', required: false, type: 'integer')]
     #[BodyParameter('media_length', description: 'Colonne files.media_length : INT; NULL autorisé.', required: false, type: 'integer')]
     #[BodyParameter('type_id', description: 'Colonne files.type_id : BIGINT; NULL autorisé.', required: false, type: 'integer')]
@@ -335,7 +343,7 @@ class FileController extends BaseController
             ]);
         }
 
-        foreach (['position', 'media_length', 'type_id', 'work_id', 'program_id', 'message_id'] as $field) {
+        foreach (['part_title', 'position', 'media_length', 'type_id', 'work_id', 'program_id', 'message_id'] as $field) {
             if ($inputs[$field] != null) {
                 $file->update([
                     $field => $inputs[$field],

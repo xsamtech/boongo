@@ -11,7 +11,8 @@ use Dedoc\Scramble\Attributes\BodyParameter;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\PasswordReset as ResourcesPasswordReset;
 use App\Http\Resources\User as ResourcesUser;
-use App\Services\D7MessagingService;
+// use App\Services\D7MessagingService;
+use App\Services\KeccelSmsService;
 
 /**
  * @author Xanders
@@ -19,11 +20,11 @@ use App\Services\D7MessagingService;
  */
 class PasswordResetController extends BaseController
 {
-    protected D7MessagingService $d7MessagingService;
+    protected KeccelSmsService $keccel_sms_service;
 
-    public function __construct(D7MessagingService $d7MessagingService)
+    public function __construct(KeccelSmsService $keccel_sms_service)
     {
-        $this->d7MessagingService = $d7MessagingService;
+        $this->keccel_sms_service = $keccel_sms_service;
     }
 
     /**
@@ -307,12 +308,17 @@ class PasswordResetController extends BaseController
                 'updated_at' => now()
             ]);
 
-            $channel = $this->getChannelFromPhone($password_reset->phone);
-            $sendOTP = $this->d7MessagingService->sendMessage($channel, $password_reset->phone, (string) $password_reset->token);
-
-            if (!$sendOTP['success']) {
-                return $this->handleError('Oups!', $sendOTP['message'], 500);
+            // $channel = $this->getChannelFromPhone($password_reset->phone);
+            // $sendOTP =
+            try {
+                $this->keccel_sms_service->sendSMS($password_reset->phone, (string) $password_reset->token, "Votre code de vérification est : " . $password_reset->token);
+            } catch (\Throwable $th) {
+                return $this->handleError('Oups!', $th->getMessage(), 500);
             }
+
+            // if (!$sendOTP['success']) {
+            //     return $this->handleError('Oups!', $sendOTP['message'], 500);
+            // }
 
             // try {
             //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
