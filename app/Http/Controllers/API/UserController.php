@@ -32,8 +32,8 @@ use App\Http\Resources\Partner as ResourcesPartner;
 use App\Http\Resources\PasswordReset as ResourcesPasswordReset;
 use App\Http\Resources\ToxicContent as ResourcesToxicContent;
 use App\Http\Resources\User as ResourcesUser;
-// use App\Services\D7MessagingService;
-use App\Services\KeccelSmsService;
+use App\Services\D7MessagingService;
+// use App\Services\KeccelSmsService;
 
 /**
  * @author Xanders
@@ -41,11 +41,11 @@ use App\Services\KeccelSmsService;
  */
 class UserController extends BaseController
 {
-    protected KeccelSmsService $keccel_sms_service;
+    protected D7MessagingService $d7_messaging_service;
 
-    public function __construct(KeccelSmsService $keccel_sms_service)
+    public function __construct(D7MessagingService $d7_messaging_service)
     {
-        $this->keccel_sms_service = $keccel_sms_service;
+        $this->d7_messaging_service = $d7_messaging_service;
     }
 
     /**
@@ -192,10 +192,11 @@ class UserController extends BaseController
 
                 Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
-                // $channel = $this->getChannelFromPhone($password_reset->phone);
+                $channel = $this->getChannelFromPhone($password_reset->phone);
                 // $sendOTP =
                 try {
-                    $this->keccel_sms_service->sendSMS($password_reset->phone, (string) $password_reset->token, "Votre code de vérification est : " . $password_reset->token);
+                    // $this->keccel_sms_service->sendSMS($password_reset->phone, (string) $password_reset->token, "Votre code de vérification est : " . $password_reset->token);
+                    $this->d7_messaging_service->sendMessage($channel, (string) $password_reset->phone, "Votre code de vérification est : " . $password_reset->token);
                 } catch (\Throwable $th) {
                     return $this->handleError('Oups!', $th->getMessage(), 500);
                 }
@@ -233,10 +234,11 @@ class UserController extends BaseController
                         'former_password' => $request->password
                     ]);
 
-                    // $channel = $this->getChannelFromPhone($password_reset->phone);
+                    $channel = $this->getChannelFromPhone($password_reset->phone);
                     // $sendOTP =
                     try {
-                        $this->keccel_sms_service->sendSMS($password_reset->phone, (string) $password_reset->token, "Votre code de vérification est : " . $password_reset->token);
+                        // $this->keccel_sms_service->sendSMS($password_reset->phone, (string) $password_reset->token, "Votre code de vérification est : " . $password_reset->token);
+                        $this->d7_messaging_service->sendMessage($channel, (string) $password_reset->phone, "Votre code de vérification est : " . $password_reset->token);
                     } catch (\Throwable $th) {
                         return $this->handleError('Oups!', $th->getMessage(), 500);
                     }
@@ -272,10 +274,11 @@ class UserController extends BaseController
 
                 Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
-                // $channel = $this->getChannelFromPhone($password_reset->phone);
+                $channel = $this->getChannelFromPhone($password_reset->phone);
                 // $sendOTP =
                 try {
-                    $this->keccel_sms_service->sendSMS($password_reset->phone, (string) $password_reset->token, "Votre code de vérification est : " . $password_reset->token);
+                    // $this->keccel_sms_service->sendSMS($password_reset->phone, (string) $password_reset->token, "Votre code de vérification est : " . $password_reset->token);
+                    $this->d7_messaging_service->sendMessage($channel, (string) $password_reset->phone, "Votre code de vérification est : " . $password_reset->token);
                 } catch (\Throwable $th) {
                     return $this->handleError('Oups!', $th->getMessage(), 500);
                 }
@@ -315,10 +318,11 @@ class UserController extends BaseController
                         'former_password' => Random::generate(10, 'a-zA-Z')
                     ]);
 
-                    // $channel = $this->getChannelFromPhone($password_reset->phone);
+                    $channel = $this->getChannelFromPhone($password_reset->phone);
                     // $sendOTP =
                     try {
-                        $this->keccel_sms_service->sendSMS($password_reset->phone, (string) $password_reset->token, "Votre code de vérification est : " . $password_reset->token);
+                        // $this->keccel_sms_service->sendSMS($password_reset->phone, (string) $password_reset->token, "Votre code de vérification est : " . $password_reset->token);
+                        $this->d7_messaging_service->sendMessage($channel, (string) $password_reset->phone, "Votre code de vérification est : " . $password_reset->token);
                     } catch (\Throwable $th) {
                         return $this->handleError('Oups!', $th->getMessage(), 500);
                     }
