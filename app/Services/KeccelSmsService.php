@@ -24,7 +24,7 @@ class KeccelSmsService
         $data = [
             "campaignId" => 1,
             "routeId" => 1,
-            "sender" => env('KECCEL_API_SENDER'), // Sender ID
+            "sender" => "boongo", // Sender ID "env('KECCEL_API_SENDER')"
             "mode" => "text",
             "message" => $message,
             "contacts" => [
@@ -37,7 +37,7 @@ class KeccelSmsService
 
         // Envoi de la requête via HTTP client de Laravel
         $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . env('KECCEL_API_TOKEN'), // Utiliser une clé API via .env
+            'Authorization' => "Bearer A64YP3KD9M59MF9", // Utiliser une clé API via .env "env('KECCEL_API_TOKEN')"
             'Content-Type' => 'application/json',
         ])->post('https://sms.keccel.com/api/v2/sms', $data);
 
