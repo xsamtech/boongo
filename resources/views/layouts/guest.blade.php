@@ -90,10 +90,10 @@
                 </form>
 
                 <div class="d-flex flex-column flex-lg-row align-items-center justify-content-center">
-                    <a class="me-lg-3 mb-4 mb-lg-0" href="#!">
+                    <a class="me-lg-3 mb-4 mb-lg-0" href="https://play.google.com/store/apps/details?id=com.boongo_app_2&pcampaignid=web_share">
                         <img class="app-badge" src="{{ asset('templates/public/assets/img/google-play-badge.svg') }}" alt="..." />
                     </a>
-                    <a href="#!">
+                    <a href="https://apps.apple.com/cd/app/boongo-app/id6790836550">
                         <img class="app-badge" src="{{ asset('templates/public/assets/img/app-store-badge.svg') }}" alt="..." />
                     </a>
                 </div>
