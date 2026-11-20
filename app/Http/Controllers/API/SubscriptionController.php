@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Documentation\DirectPurchaseSchemas;
+use Dedoc\Scramble\Attributes\Response;
+use App\Exceptions\DirectPurchaseException;
+use App\Http\Requests\DirectPurchaseRequest;
+use App\Services\FlexPayDirectPurchase;
+
 use App\Models\Group;
 use App\Models\Payment;
 use App\Models\Status;
@@ -146,6 +152,33 @@ class SubscriptionController extends BaseController
     }
 
     // ==================================== CUSTOM METHODS ====================================
+
+    /** Initiate payment for this subscription only, converting its price to USD. */
+    #[Response(200, type: DirectPurchaseSchemas::SUCCESS)]
+    #[Response(404, description: 'Abonnement, devise ou taux introuvable.', type: DirectPurchaseSchemas::ERROR)]
+    #[Response(422, description: 'Paramètres ou montant invalides.', type: DirectPurchaseSchemas::INVALID)]
+    #[Response(502, description: 'Demande FlexPay refusée, injoignable ou réponse invalide.', type: DirectPurchaseSchemas::ERROR)]
+    #[Response(503, description: 'Configuration FlexPay ou statuts manquants.', type: DirectPurchaseSchemas::ERROR)]
+    #[BodyParameter('transaction_type_id', description: 'Type de paiement : Mobile money ou Carte bancaire.', required: true, type: 'integer')]
+    #[BodyParameter('other_phone', description: 'Numéro international, obligatoire pour Mobile money.', required: false, type: 'string')]
+    #[BodyParameter('channel', description: 'Canal du paiement.', required: false, type: 'string')]
+    #[BodyParameter('app_url', description: 'URL HTTP(S) de retour, obligatoire pour la carte bancaire.', required: false, type: 'string')]
+    public function purchase(DirectPurchaseRequest $request, int $subscription_id, FlexPayDirectPurchase $payments)
+    {
+        $subscription = Subscription::with('currency')->find($subscription_id);
+        if ($subscription === null) {
+            return $this->handleError(__('notifications.find_subscription_404'));
+        }
+
+        try {
+            $result = $payments->purchase($request->user(), $subscription, $request->validated());
+        } catch (DirectPurchaseException $exception) {
+            return $this->handleError($exception->getMessage(), [], $exception->status);
+        }
+
+        return $this->handleResponse($result, __('notifications.ready_for_payment'));
+    }
+
     /**
      * Check if user is subscribed
      *

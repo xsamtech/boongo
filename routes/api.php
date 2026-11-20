@@ -128,6 +128,7 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::resource('toxic_content', 'App\Http\Controllers\API\ToxicContentController');
 
     // Work
+    Route::post('work/purchase/{work_id}', 'App\Http\Controllers\API\WorkController@purchase')->name('work.api.purchase');
     Route::get('work/trends/{year}', 'App\Http\Controllers\API\WorkController@trends')->name('work.api.trends');
     Route::get('work/find_all_by_entity/{entity}/{entity_id}', 'App\Http\Controllers\API\WorkController@findAllByEntity')->name('work.api.find_all_by_entity');
     Route::get('work/find_all_by_type/{locale}/{type_name}', 'App\Http\Controllers\API\WorkController@findAllByType')->name('work.api.find_all_by_type');
@@ -158,6 +159,7 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::put('cart/remove_from_cart/{cart_id}', 'App\Http\Controllers\API\CartController@removeFromCart')->name('cart.api.remove_from_cart');
     Route::post('cart/add_to_cart/{entity}', 'App\Http\Controllers\API\CartController@addToCart')->name('cart.api.add_to_cart');
     Route::post('cart/purchase/{user_id}', 'App\Http\Controllers\API\CartController@purchase')->name('cart.api.purchase');
+    Route::post('subscription/purchase/{subscription_id}', 'App\Http\Controllers\API\SubscriptionController@purchase')->name('subscription.api.purchase');
     // Subscription
     Route::get('subscription/is_subscribed/{user_id}', 'App\Http\Controllers\API\SubscriptionController@isSubscribed')->name('subscription.api.is_subscribed');
     Route::put('subscription/validate_subscription/{user_id}', 'App\Http\Controllers\API\SubscriptionController@validateSubscription')->name('subscription.api.validate_subscription');

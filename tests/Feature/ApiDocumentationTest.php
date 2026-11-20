@@ -8,6 +8,8 @@ use Tests\TestCase;
 
 class ApiDocumentationTest extends TestCase
 {
+    use \Tests\Support\BootsWithoutMysql;
+
     public function test_generated_bodies_include_sql_types_translations_and_uploads(): void
     {
         $config = Scramble::getGeneratorConfig('default');
@@ -63,6 +65,20 @@ class ApiDocumentationTest extends TestCase
         $programGroups = $spec['components']['schemas']['Program']['properties']['files'];
         $this->assertSame('object', $programGroups['type']);
         $this->assertSame('#/components/schemas/File', $programGroups['additionalProperties']['items']['$ref']);
+
+        foreach (['/work/purchase/{work_id}', '/subscription/purchase/{subscription_id}'] as $path) {
+            $purchase = $spec['paths'][$path]['post'];
+            $body = $this->resolveSchema($purchase['requestBody']['content']['application/json']['schema'], $spec);
+            $this->assertContains('transaction_type_id', $body['required']);
+            $this->assertArrayHasKey('other_phone', $body['properties']);
+            $this->assertArrayHasKey('app_url', $body['properties']);
+            $data = $purchase['responses']['200']['content']['application/json']['schema']['properties']['data'];
+            $this->assertSame('USD', $data['properties']['currency']['const']);
+            $this->assertArrayHasKey('order_number', $data['properties']['result_response']['properties']);
+            foreach (['401', '404', '422', '502', '503'] as $status) {
+                $this->assertArrayHasKey($status, $purchase['responses']);
+            }
+        }
 
         foreach ($spec['paths'] as $path => $operations) {
             // Broadcasting is provided by Laravel, outside the API controllers.
