@@ -171,208 +171,209 @@ class UserController extends BaseController
             endforeach;
         }
 
-        if ($inputs['password'] != null) {
-            if ($request->confirm_password != $request->password OR $request->confirm_password == null) {
-                return $this->handleError($request->confirm_password, __('notifications.confirm_password_error'), 400);
-            }
+        // if ($inputs['password'] != null) {
+        //     if ($request->confirm_password != $request->password OR $request->confirm_password == null) {
+        //         return $this->handleError($request->confirm_password, __('notifications.confirm_password_error'), 400);
+        //     }
 
-            // if (preg_match('#^\S*(?=\S{8,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])\S*$#', $inputs['password']) == 0) {
-            //     return $this->handleError($inputs['password'], __('miscellaneous.password.error'), 400);
-            // }
+        //     // if (preg_match('#^\S*(?=\S{8,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])\S*$#', $inputs['password']) == 0) {
+        //     //     return $this->handleError($inputs['password'], __('miscellaneous.password.error'), 400);
+        //     // }
 
-            $random_int_stringified = (string) random_int(1000000, 9999999);
+        //     $random_int_stringified = (string) random_int(1000000, 9999999);
 
-            if ($inputs['email'] != null AND $inputs['phone'] != null) {
-                $password_reset = PasswordReset::create([
-                    'email' => $inputs['email'],
-                    'phone' => $inputs['phone'],
-                    'token' => $random_int_stringified,
-                    'former_password' => $request->password
-                ]);
+        //     if ($inputs['email'] != null AND $inputs['phone'] != null) {
+        //         $password_reset = PasswordReset::create([
+        //             'email' => $inputs['email'],
+        //             'phone' => $inputs['phone'],
+        //             'token' => $random_int_stringified,
+        //             'former_password' => $request->password
+        //         ]);
 
-                Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
+        //         Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
-                $channel = $this->getChannelFromPhone($password_reset->phone);
-                // $sendOTP =
-                try {
-                    $this->keccel_sms_service->sendSMS($password_reset->phone, "Le code OTP est : " . $password_reset->token);
-                    // $this->d7_messaging_service->sendMessage($channel, (string) $password_reset->phone, "Votre code de vérification est : " . $password_reset->token);
-                } catch (\Throwable $th) {
-                    return $this->handleError('Oups!', $th->getMessage(), 500);
-                }
+        //         $sendOTP = $this->keccel_sms_service->sendSMS($password_reset->phone, "Le code OTP est : " . $password_reset->token);
+        //         // $channel = $this->getChannelFromPhone($password_reset->phone);
 
-                // if (!$sendOTP['success']) {
-                //     return $this->handleError('Oups!', $sendOTP['message'], 500);
-                // }
+        //         // try {
+        //         //     $this->d7_messaging_service->sendMessage($channel, (string) $password_reset->phone, "Votre code de vérification est : " . $password_reset->token);
+        //         // } catch (\Throwable $th) {
+        //         //     return $this->handleError('Oups!', $th->getMessage(), 500);
+        //         // }
 
-                // try {
-                //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
+        //         // if (!$sendOTP['success']) {
+        //         //     return $this->handleError('Oups!', $sendOTP['message'], 500);
+        //         // }
 
-                // } catch (\Throwable $th) {
-                //     return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
-                // }
+        //         // try {
+        //         //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
 
-                $object->password_reset = new ResourcesPasswordReset($password_reset);
+        //         // } catch (\Throwable $th) {
+        //         //     return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
+        //         // }
 
-            } else {
-                if ($inputs['email'] != null AND $inputs['phone'] == null) {
-                    $password_reset = PasswordReset::create([
-                        'email' => $inputs['email'],
-                        'token' => $random_int_stringified,
-                        'former_password' => $request->password
-                    ]);
+        //         $object->password_reset = new ResourcesPasswordReset($password_reset);
 
-                    Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
+        //     } else {
+        //         if ($inputs['email'] != null AND $inputs['phone'] == null) {
+        //             $password_reset = PasswordReset::create([
+        //                 'email' => $inputs['email'],
+        //                 'token' => $random_int_stringified,
+        //                 'former_password' => $request->password
+        //             ]);
 
-                    $object->password_reset = new ResourcesPasswordReset($password_reset);
-                }
+        //             Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
-                if ($inputs['email'] == null AND $inputs['phone'] != null) {
-                    $password_reset = PasswordReset::create([
-                        'phone' => $inputs['phone'],
-                        'token' => $random_int_stringified,
-                        'former_password' => $request->password
-                    ]);
+        //             $object->password_reset = new ResourcesPasswordReset($password_reset);
+        //         }
 
-                    $channel = $this->getChannelFromPhone($password_reset->phone);
-                    // $sendOTP =
-                    try {
-                        $this->keccel_sms_service->sendSMS($password_reset->phone, "Le code OTP est : " . $password_reset->token);
-                        // $this->d7_messaging_service->sendMessage($channel, (string) $password_reset->phone, "Votre code de vérification est : " . $password_reset->token);
-                    } catch (\Throwable $th) {
-                        return $this->handleError('Oups!', $th->getMessage(), 500);
-                    }
+        //         if ($inputs['email'] == null AND $inputs['phone'] != null) {
+        //             $password_reset = PasswordReset::create([
+        //                 'phone' => $inputs['phone'],
+        //                 'token' => $random_int_stringified,
+        //                 'former_password' => $request->password
+        //             ]);
 
-                    // if (!$sendOTP['success']) {
-                    //     return $this->handleError('Oups!', $sendOTP['message'], 500);
-                    // }
+        //             $channel = $this->getChannelFromPhone($password_reset->phone);
+        //             // $sendOTP =
+        //             try {
+        //                 $this->keccel_sms_service->sendSMS($password_reset->phone, "Le code OTP est : " . $password_reset->token);
+        //                 // $this->d7_messaging_service->sendMessage($channel, (string) $password_reset->phone, "Votre code de vérification est : " . $password_reset->token);
+        //             } catch (\Throwable $th) {
+        //                 return $this->handleError('Oups!', $th->getMessage(), 500);
+        //             }
 
-                    // try {
-                    //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
+        //             // if (!$sendOTP['success']) {
+        //             //     return $this->handleError('Oups!', $sendOTP['message'], 500);
+        //             // }
 
-                    // } catch (\Throwable $th) {
-                    //     return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
-                    // }
+        //             // try {
+        //             //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
 
-                    $object->password_reset = new ResourcesPasswordReset($password_reset);
-                }
-            }
-        }
+        //             // } catch (\Throwable $th) {
+        //             //     return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
+        //             // }
 
-        if ($inputs['password'] == null) {
-            $random_int_stringified = (string) random_int(1000000, 9999999);
+        //             $object->password_reset = new ResourcesPasswordReset($password_reset);
+        //         }
+        //     }
+        // }
 
-            if ($inputs['email'] != null AND $inputs['phone'] != null) {
-                $password_reset = PasswordReset::create([
-                    'email' => $inputs['email'],
-                    'phone' => $inputs['phone'],
-                    'token' => $random_int_stringified,
-                    'former_password' => Random::generate(10, 'a-zA-Z'),
-                ]);
+        // if ($inputs['password'] == null) {
+        //     $random_int_stringified = (string) random_int(1000000, 9999999);
 
-                $inputs['password'] = Hash::make($password_reset->former_password);
+        //     if ($inputs['email'] != null AND $inputs['phone'] != null) {
+        //         $password_reset = PasswordReset::create([
+        //             'email' => $inputs['email'],
+        //             'phone' => $inputs['phone'],
+        //             'token' => $random_int_stringified,
+        //             'former_password' => Random::generate(10, 'a-zA-Z'),
+        //         ]);
 
-                Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
+        //         $inputs['password'] = Hash::make($password_reset->former_password);
 
-                $channel = $this->getChannelFromPhone($password_reset->phone);
-                // $sendOTP =
-                try {
-                    $this->keccel_sms_service->sendSMS($password_reset->phone, "Le code OTP est : " . $password_reset->token);
-                    // $this->d7_messaging_service->sendMessage($channel, (string) $password_reset->phone, "Votre code de vérification est : " . $password_reset->token);
-                } catch (\Throwable $th) {
-                    return $this->handleError('Oups!', $th->getMessage(), 500);
-                }
+        //         Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
-                // if (!$sendOTP['success']) {
-                //     return $this->handleError('Oups!', $sendOTP['message'], 500);
-                // }
+        //         $channel = $this->getChannelFromPhone($password_reset->phone);
+        //         // $sendOTP =
+        //         try {
+        //             $this->keccel_sms_service->sendSMS($password_reset->phone, "Le code OTP est : " . $password_reset->token);
+        //             // $this->d7_messaging_service->sendMessage($channel, (string) $password_reset->phone, "Votre code de vérification est : " . $password_reset->token);
+        //         } catch (\Throwable $th) {
+        //             return $this->handleError('Oups!', $th->getMessage(), 500);
+        //         }
 
-                // try {
-                //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
+        //         // if (!$sendOTP['success']) {
+        //         //     return $this->handleError('Oups!', $sendOTP['message'], 500);
+        //         // }
 
-                // } catch (\Throwable $th) {
-                //     return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
-                // }
+        //         // try {
+        //         //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
 
-                $object->password_reset = new ResourcesPasswordReset($password_reset);
+        //         // } catch (\Throwable $th) {
+        //         //     return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
+        //         // }
 
-            } else {
-                if ($inputs['email'] != null AND $inputs['phone'] == null) {
-                    $password_reset = PasswordReset::create([
-                        'email' => $inputs['email'],
-                        'token' => $random_int_stringified,
-                        'former_password' => Random::generate(10, 'a-zA-Z')
-                    ]);
+        //         $object->password_reset = new ResourcesPasswordReset($password_reset);
 
-                    Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
+        //     } else {
+        //         if ($inputs['email'] != null AND $inputs['phone'] == null) {
+        //             $password_reset = PasswordReset::create([
+        //                 'email' => $inputs['email'],
+        //                 'token' => $random_int_stringified,
+        //                 'former_password' => Random::generate(10, 'a-zA-Z')
+        //             ]);
 
-                    $object->password_reset = new ResourcesPasswordReset($password_reset);
+        //             Mail::to($inputs['email'])->send(new OTPCode($password_reset->token));
 
-                    $inputs['password'] = Hash::make($password_reset->former_password);
-                }
+        //             $object->password_reset = new ResourcesPasswordReset($password_reset);
 
-                if ($inputs['email'] == null AND $inputs['phone'] != null) {
-                    $password_reset = PasswordReset::create([
-                        'phone' => $inputs['phone'],
-                        'token' => $random_int_stringified,
-                        'former_password' => Random::generate(10, 'a-zA-Z')
-                    ]);
+        //             $inputs['password'] = Hash::make($password_reset->former_password);
+        //         }
 
-                    $channel = $this->getChannelFromPhone($password_reset->phone);
-                    // $sendOTP =
-                    try {
-                        $this->keccel_sms_service->sendSMS($password_reset->phone, "Le code OTP est : " . $password_reset->token);
-                        // $this->d7_messaging_service->sendMessage($channel, (string) $password_reset->phone, "Votre code de vérification est : " . $password_reset->token);
-                    } catch (\Throwable $th) {
-                        return $this->handleError('Oups!', $th->getMessage(), 500);
-                    }
+        //         if ($inputs['email'] == null AND $inputs['phone'] != null) {
+        //             $password_reset = PasswordReset::create([
+        //                 'phone' => $inputs['phone'],
+        //                 'token' => $random_int_stringified,
+        //                 'former_password' => Random::generate(10, 'a-zA-Z')
+        //             ]);
 
-                    // if (!$sendOTP['success']) {
-                    //     return $this->handleError('Oups!', $sendOTP['message'], 500);
-                    // }
+        //             $channel = $this->getChannelFromPhone($password_reset->phone);
+        //             // $sendOTP =
+        //             try {
+        //                 $this->keccel_sms_service->sendSMS($password_reset->phone, "Le code OTP est : " . $password_reset->token);
+        //                 // $this->d7_messaging_service->sendMessage($channel, (string) $password_reset->phone, "Votre code de vérification est : " . $password_reset->token);
+        //             } catch (\Throwable $th) {
+        //                 return $this->handleError('Oups!', $th->getMessage(), 500);
+        //             }
 
-                    // try {
-                    //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
+        //             // if (!$sendOTP['success']) {
+        //             //     return $this->handleError('Oups!', $sendOTP['message'], 500);
+        //             // }
 
-                    // } catch (\Throwable $th) {
-                    //     return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
-                    // }
+        //             // try {
+        //             //     $client->sms()->send(new \Vonage\SMS\Message\SMS($password_reset->phone, 'Boongo', (string) $password_reset->token));
 
-                    $object->password_reset = new ResourcesPasswordReset($password_reset);
+        //             // } catch (\Throwable $th) {
+        //             //     return $this->handleError($th->getMessage(), __('notifications.create_user_SMS_failed'), 500);
+        //             // }
 
-                    $inputs['password'] = Hash::make($password_reset->former_password);
-                }
-            }
-        }
+        //             $object->password_reset = new ResourcesPasswordReset($password_reset);
 
-        $user = User::create($inputs);
+        //             $inputs['password'] = Hash::make($password_reset->former_password);
+        //         }
+        //     }
+        // }
 
-        if ($request->role_id != null) {
-            $user->roles()->attach([$request->role_id]);
-        }
+        // $user = User::create($inputs);
 
-        if ($request->organization_id != null) {
-            $user->organizations()->attach([$request->organization_id]);
-        }
+        // if ($request->role_id != null) {
+        //     $user->roles()->attach([$request->role_id]);
+        // }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        // if ($request->organization_id != null) {
+        //     $user->organizations()->attach([$request->organization_id]);
+        // }
 
-        $user->update([
-            'api_token' => $token,
-            'updated_at' => now()
-        ]);
+        // $token = $user->createToken('auth_token')->plainTextToken;
+
+        // $user->update([
+        //     'api_token' => $token,
+        //     'updated_at' => now()
+        // ]);
 
         /*
             HISTORY AND/OR NOTIFICATION MANAGEMENT
         */
-        Notification::create([
-            'type_id' => is_null($type_new_user) ? null : $type_new_user->id,
-            'status_id' => is_null($status_unread) ? null : $status_unread->id,
-            'to_user_id' => $user->id
-        ]);
+        // Notification::create([
+        //     'type_id' => is_null($type_new_user) ? null : $type_new_user->id,
+        //     'status_id' => is_null($status_unread) ? null : $status_unread->id,
+        //     'to_user_id' => $user->id
+        // ]);
 
-        $object->user = new ResourcesUser($user);
-        $object->d7MessagingService = $sendOTP;
+        // $object->user = new ResourcesUser($user);
+        $sendOTP = $this->keccel_sms_service->sendSMS($inputs['phone'], "Le code OTP est : " . (string) random_int(1000000, 9999999));
+        $object->messagingService = $sendOTP;
 
         return $this->handleResponse($object, __('notifications.create_user_success'));
     }
