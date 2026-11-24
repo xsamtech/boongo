@@ -13,11 +13,22 @@ class KeccelSmsService
     /**
      * Envoie un SMS via l'API Keccel.
      *
-     * @param string $mobile Le numéro du destinataire.
-     * @param string $otp Le code OTP à envoyer.
-     * @param string $message Le message personnalisé.
-     * @return mixed
+     * @param   string $to          Le numéro de téléphone du destinataire.
+     * @param   string $message     Le message personnalisé.
+     * @param   string $from        L'expéditeur du message (par défaut 'GUEST').
+     * @return  array               La réponse de l'API Keccel.
      */
+    public function sendSMS(string $to, string $message, string $from = 'GUEST')
+    {
+        $response = Http::asJson()->post('https://api.keccel.com/sms/v2/message.asp', [
+            'token' => 'A64YP3KD9M59MF9',
+            'to' => $to,
+            'from' => $from,
+            'message' => $message,
+        ]);
+
+        return $response->json();
+    }
     // public function sendSMS(string $mobile, string $otp, string $message)
     // {
     //     // Données pour l'API Keccel
@@ -43,15 +54,4 @@ class KeccelSmsService
 
     //     return $response->json();
     // }
-    public function sendSMS(string $to, string $message, string $from = 'GUEST')
-    {
-        $response = Http::asJson()->post('https://api.keccel.com/sms/v2/message.asp', [
-            'token' => 'A64YP3KD9M59MF9',
-            'to' => $to,
-            'from' => $from,
-            'message' => $message,
-        ]);
-
-        return $response->json();
-    }
 }
