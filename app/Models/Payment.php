@@ -30,18 +30,6 @@ class Payment extends Model
     protected $guarded = [];
 
     /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'created_at' => 'datetime:Y-m-d H:i:s',
-        'updated_at' => 'datetime:Y-m-d H:i:s',
-        'coins_credited_at' => 'datetime:Y-m-d H:i:s',
-        'premium_activated_at' => 'datetime:Y-m-d H:i:s'
-    ];
-
-    /**
      * ONE-TO-MANY
      * One type for several payments
      */
