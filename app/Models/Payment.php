@@ -14,6 +14,12 @@ class Payment extends Model
 {
     use HasFactory;
 
+    public const STATUS_SUCCESSFUL = 0;
+
+    public const STATUS_FAILED = 1;
+
+    public const STATUS_PENDING = 2;
+
     protected $table = 'payments';
 
     /**
@@ -22,6 +28,18 @@ class Payment extends Model
      * @var array<int, string>
      */
     protected $guarded = [];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'coins_credited_at' => 'datetime:Y-m-d H:i:s',
+        'premium_activated_at' => 'datetime:Y-m-d H:i:s'
+    ];
 
     /**
      * ONE-TO-MANY

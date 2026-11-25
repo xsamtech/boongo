@@ -17,9 +17,10 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->command('subscriptions:invalidate')->hourly();
+        $schedule->command('subscriptions:invalidate')->hourly()->withoutOverlapping();
         $schedule->command('partnerships:terminate')->daily();
         $schedule->command('blockage:unlock')->daily();
+        $schedule->command('premium:expire')->hourly()->withoutOverlapping();
     }
 
     /**

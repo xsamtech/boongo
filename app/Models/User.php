@@ -44,7 +44,9 @@ class User extends Authenticatable
     protected $casts = [
         'last_connection' => 'datetime:Y-m-d H:i:s',
         'created_at' => 'datetime:Y-m-d H:i:s',
-        'updated_at' => 'datetime:Y-m-d H:i:s'
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'premium_started_at' => 'datetime:Y-m-d H:i:s',
+        'premium_expires_at' => 'datetime:Y-m-d H:i:s'
     ];
 
     /**
@@ -175,7 +177,7 @@ class User extends Authenticatable
     /**
      * MANY-TO-ONE
      * Several notifications_from for a user
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function notifications_from(): HasMany
@@ -186,7 +188,7 @@ class User extends Authenticatable
     /**
      * MANY-TO-ONE
      * Several notifications_to for a user
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function notifications_to(): HasMany
@@ -197,7 +199,7 @@ class User extends Authenticatable
     /**
      * MANY-TO-ONE
      * Several read_notification for a user
-     * 
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function read_notification(): HasMany

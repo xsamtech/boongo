@@ -311,7 +311,7 @@ class PasswordResetController extends BaseController
             $channel = $this->getChannelFromPhone($password_reset->phone);
             // $sendOTP =
             try {
-                $this->keccel_sms_service->sendSMS($password_reset->phone, "Le code OTP est : " . $password_reset->token);
+                $this->keccel_sms_service->sendSMS($password_reset->phone, "Le code OTP est : {$password_reset->token}", "boongo");
                 // $this->d7_messaging_service->sendMessage($channel, (string) $password_reset->phone, "Votre code de vérification est : " . $password_reset->token);
             } catch (\Throwable $th) {
                 return $this->handleError('Oups!', $th->getMessage(), 500);

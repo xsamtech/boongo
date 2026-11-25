@@ -98,6 +98,7 @@ Route::group(['middleware' => ['api', 'localization']], function () {
     Route::get('user/{id}', 'App\Http\Controllers\API\UserController@show')->name('user.api.show');
     Route::get('user/profile/{username}', 'App\Http\Controllers\API\UserController@profile')->name('user.api.profile');
     Route::post('user/login', 'App\Http\Controllers\API\UserController@login')->name('user.api.login');
+    Route::get('user/premium/pricing', 'App\Http\Controllers\API\UserController@premiumPricing')->name('user.api.premium_pricing');
     // PasswordReset
     Route::get('password_reset/search_by_email_or_phone/{data}', 'App\Http\Controllers\API\PasswordResetController@searchByEmailOrPhone')->name('password_reset.api.search_by_email_or_phone');
     Route::get('password_reset/search_by_email/{data}', 'App\Http\Controllers\API\PasswordResetController@searchByEmail')->name('password_reset.api.search_by_email');
@@ -182,6 +183,9 @@ Route::group(['middleware' => ['auth:sanctum', 'api', 'localization']], function
     Route::put('user/unsubscribe_to_group/{user_id}/{addressee_id}', 'App\Http\Controllers\API\UserController@unsubscribeToGroup')->name('user.api.unsubscribe_to_group');
     Route::put('user/update_avatar_picture/{id}', 'App\Http\Controllers\API\UserController@updateAvatarPicture')->name('user.api.update_avatar_picture');
     Route::post('user/search', 'App\Http\Controllers\API\UserController@search')->name('user.api.search');
+    Route::get('user/{user_id}/premium', 'App\Http\Controllers\API\UserController@isPremium')->whereNumber('userId')->name('user.api.is_premium');
+    Route::get('user/{user_id}/premium/days-remaining', 'App\Http\Controllers\API\UserController@premiumDaysRemaining')->whereNumber('userId')->name('user.api.premium_days_remaining');
+    Route::post('user/{user_id}/premium/activate', 'App\Http\Controllers\API\UserController@activatePremium')->whereNumber('userId')->name('user.api.premium_activate');
     // Organization
     Route::post('organization/search', 'App\Http\Controllers\API\OrganizationController@search')->name('organization.api.search');
     Route::get('organization/find_all_by_type/{type_id}', 'App\Http\Controllers\API\OrganizationController@findAllByType')->name('organization.api.find_all_by_type');

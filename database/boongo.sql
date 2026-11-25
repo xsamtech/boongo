@@ -103,6 +103,10 @@ CREATE TABLE IF NOT EXISTS `users` (
   `is_incognito` TINYINT NOT NULL DEFAULT 0,
   `promo_code` VARCHAR(45) NULL,
   `is_promoted` TINYINT NULL,
+  `type` ENUM('uncertified','certifying','certified','') NOT NULL DEFAULT 'uncertified',
+  `premium_started_at` TIMESTAMP NULL,
+  `premium_expires_at` TIMESTAMP NULL,
+  `premium_duration_months` TINYINT UNSIGNED NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `country_id` BIGINT NULL,
@@ -583,11 +587,21 @@ CREATE TABLE IF NOT EXISTS `payments` (
   `order_number` TEXT NULL,
   `amount` DECIMAL(9,2) NULL,
   `amount_customer` DECIMAL(9,2) NULL,
+  `coins_amount` BIGINT NULL,
+  `coin_unit_price` DECIMAL(12,6) NULL,
+  `premium_duration_months` TINYINT UNSIGNED NULL,
+  `premium_plan_amount` DECIMAL(12,2) NULL,
+  `premium_plan_currency` VARCHAR(45) NULL,
   `phone` VARCHAR(45) NULL,
   `currency` VARCHAR(45) NULL,
   `channel` VARCHAR(45) NULL,
+  `reason` ENUM('work_create', 'work_boost', 'user_certfied', 'ad', 'coin_price', 'earnings_send') NULL,
+  `entity` ENUM('work', 'cart', 'user', 'pricing') NULL,
+  `entity_id` BIGINT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `coins_credited_at` TIMESTAMP NULL,
+  `premium_activated_at` TIMESTAMP NULL,
   `type_id` BIGINT NULL,
   `status_id` BIGINT NULL,
   `user_id` BIGINT NULL,
@@ -670,6 +684,50 @@ CREATE TABLE IF NOT EXISTS `category_subscription` (
   CONSTRAINT `fk_categorysubscription_subscriptions`
     FOREIGN KEY (`subscription_id`)
     REFERENCES `subscriptions` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `pricings`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `pricings` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `pricing_name` JSON NOT NULL,
+  `pricing_type` ENUM('money', 'percentage') NOT NULL DEFAULT 'money' COMMENT 'The user must pay directly or pay a commission (percentage) on the payment they receive',
+  `coins_amount` BIGINT NULL,
+  `premium_duration_months` TINYINT UNSIGNED NULL,
+  `reason` ENUM('work_boost','ad','user_certfied','coin_price') NULL,
+  `pricing_cost` DECIMAL(12,2) NULL,
+  `currency` VARCHAR(45) NULL,
+  `image_url` TEXT NULL,
+  `icon` VARCHAR(45) NULL,
+  `color` VARCHAR(45) NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted_at` TIMESTAMP NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_pricings_UNIQUE` (`id` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `pricing_descriptions`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `pricing_descriptions` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `description_title` JSON NOT NULL,
+  `description_content` JSON NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted_at` TIMESTAMP NULL,
+  `pricing_id` BIGINT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_pricingdescriptions_UNIQUE` (`id` ASC),
+  INDEX `fk_pricingdescriptions_pricings_idx` (`pricing_id` ASC),
+  CONSTRAINT `fk_pricingdescriptions_pricings`
+    FOREIGN KEY (`pricing_id`)
+    REFERENCES `pricings` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -1307,5 +1365,24 @@ CREATE TABLE IF NOT EXISTS `favorites` (
     FOREIGN KEY (`work_id`)
     REFERENCES `works` (`id`)
     ON DELETE SET NULL
+    ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `wallets`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wallets` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `coins_balance` BIGINT NOT NULL DEFAULT 0,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `user_id` BIGINT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_wallets_UNIQUE` (`id` ASC),
+  INDEX `fk_wallets_users_idx` (`user_id` ASC),
+  CONSTRAINT `fk_wallets_users`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `users` (`id`)
+    ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
